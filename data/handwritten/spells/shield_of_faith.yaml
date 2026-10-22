@@ -1,0 +1,44 @@
+name: Shield of Faith
+source: XPHB
+level: 1
+school: abjuration
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a prayer scroll
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: protection
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - modify:
+      stat: ac
+      op: add
+      value: 2
+      scope: all
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

@@ -1,0 +1,53 @@
+name: Magic Missile
+source: XPHB
+level: 1
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: darts
+  event: on_cast
+  target:
+    select: n_targets
+    n: 3
+    distinct: false
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 1d4
+      bonus: 1
+      type: force
+    if: not target.has_status(shielded)
+  limit: null
+  resolution: simultaneous
+  damage_roll: shared
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: darts
+      target_n_add: 1
+ends_on: []
+unsupported: []

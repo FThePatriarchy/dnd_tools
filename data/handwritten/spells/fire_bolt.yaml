@@ -1,0 +1,52 @@
+name: Fire Bolt
+source: XPHB
+level: 0
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: bolt
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature_or_object
+    affects: any
+  attack:
+    type: ranged_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 1d10
+      bonus: 0
+      type: fire
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  cantrip:
+    at:
+    - 5
+    - 11
+    - 17
+    effect:
+      block: bolt
+      dice_add: 1d10
+ends_on: []
+unsupported:
+- Unworn, uncarried flammable objects hit by the spell start burning; object ignition is not simulated.

@@ -1,0 +1,93 @@
+name: Hex
+source: XPHB
+level: 1
+school: enchantment
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: point
+  feet: 90
+components:
+  v: true
+  s: true
+  m: the petrified eye of a newt
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: ability
+  options:
+  - str
+  - dex
+  - con
+  - int
+  - wis
+  - cha
+  when: on_cast
+effects:
+- id: mark
+  event: on_cast or bonus_action_command
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    - new_target
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - status:
+      id: hexed
+      data: {}
+  - disadvantage:
+      'on': ability_checks
+      scope: $ability
+      against: null
+  limit: null
+  if: event == on_cast or (mark.target_dropped_to_zero and turn.index > mark.drop_turn)
+- id: extra_damage
+  event: on_attack_hit(caster, defender)
+  target:
+    select: ref
+    ref: mark
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: necrotic
+    if: defender == mark.target
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - duration:
+        type: hours
+        n: 4
+      slot_min: 2
+      slot_max: 2
+    - duration:
+        type: hours
+        n: 8
+      slot_min: 3
+      slot_max: 4
+    - duration:
+        type: hours
+        n: 24
+      slot_min: 5
+      slot_max: null
+ends_on: []
+unsupported: []

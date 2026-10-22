@@ -1,0 +1,53 @@
+name: Eldritch Blast
+source: XPHB
+level: 0
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: beam
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: false
+    filter:
+    - creature_or_object
+    affects: any
+  attack:
+    type: ranged_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 1d10
+      bonus: 0
+      type: force
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  cantrip:
+    at:
+    - 5
+    - 11
+    - 17
+    effect:
+      block: beam
+      beam_count_add: 1
+ends_on: []
+unsupported: []

@@ -1,0 +1,45 @@
+name: Cure Wounds
+source: XPHB
+level: 1
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: healing
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - heal:
+      dice: 2d8
+      bonus: spell_mod
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: healing
+      dice_add: 2d8
+ends_on: []
+unsupported: []

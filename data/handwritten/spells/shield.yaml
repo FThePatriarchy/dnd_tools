@@ -1,0 +1,44 @@
+name: Shield
+source: XPHB
+level: 1
+school: abjuration
+casting_time: reaction
+reaction_trigger: on_attack_provisional_hit(any, caster) or on_spell_targeted(caster, magic_missile)
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: rounds
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: barrier
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - modify:
+      stat: ac
+      op: add
+      value: 5
+      scope: all
+  - status:
+      id: shielded
+      data: {}
+  limit: null
+scaling: null
+ends_on:
+- start_of_turn(caster.next_turn)
+unsupported: []

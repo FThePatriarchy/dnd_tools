@@ -1,0 +1,56 @@
+name: Guiding Bolt
+source: XPHB
+level: 1
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: rounds
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: bolt
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack:
+    type: ranged_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 4d6
+      bonus: 0
+      type: radiant
+  - advantage:
+      'on': attack_rolls
+      scope: all
+      against: target
+      recipient: any_attacker
+      uses: 1
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: bolt
+      dice_add: 1d6
+ends_on:
+- end_of_turn(caster.next_turn)
+unsupported: []

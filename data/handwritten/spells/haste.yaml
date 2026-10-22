@@ -1,0 +1,74 @@
+name: Haste
+source: XPHB
+level: 3
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: a shaving of licorice root
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: haste
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    - visible
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - modify:
+      stat: speed
+      op: mul
+      value: 2
+      scope: all
+  - modify:
+      stat: ac
+      op: add
+      value: 2
+      scope: all
+  - advantage:
+      'on': saves
+      scope: dex
+      against: null
+  - grant_action:
+      kind: action
+      restricted_to:
+      - attack
+      - dash
+      - disengage
+      - hide
+      - utilize
+      attack_limit: 1
+  - on_spell_end:
+    - apply_condition:
+        condition: incapacitated
+      until: end_of_turn(target.next_turn)
+    - modify:
+        stat: speed
+        op: set
+        value: 0
+        scope: all
+      until: end_of_turn(target.next_turn)
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

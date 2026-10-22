@@ -1,0 +1,44 @@
+name: Counterspell
+source: XPHB
+level: 3
+school: abjuration
+casting_time: reaction
+reaction_trigger: on_spell_cast_nearby(60) and trigger.caster.visible_to(caster) and trigger.spell.has_any_component(v,
+  s, m)
+range:
+  type: point
+  feet: 60
+components:
+  v: false
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: interrupt
+  event: on_cast
+  target:
+    select: ref
+    ref: trigger.caster
+  attack: null
+  save:
+    ability: con
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - counter_spell:
+      target: trigger.spell
+      cancel_effects: true
+      consume_casting_action: true
+      expend_slot: false
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

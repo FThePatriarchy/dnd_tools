@@ -1,0 +1,56 @@
+name: Spiritual Weapon
+source: XPHB
+level: 2
+school: evocation
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: weapon_attack
+  event: on_cast or bonus_action_command
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+    origin: spiritual_weapon
+    within_ft: 5
+  attack:
+    type: melee_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 1d8
+      bonus: spell_mod
+      type: force
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+  if: event == on_cast or turn.index > spell.cast_turn
+  optional: true
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: weapon_attack
+      dice_add: 1d8
+ends_on: []
+unsupported:
+- Weapon appearance is cosmetic.
+- The force is placed within 60 feet on casting and can move up to 20 feet with each later bonus-action command;
+  placement and movement are not simulated.

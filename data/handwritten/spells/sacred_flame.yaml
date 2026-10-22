@@ -1,0 +1,56 @@
+name: Sacred Flame
+source: XPHB
+level: 0
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: flame
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+    ignore_cover:
+    - half
+    - three_quarters
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 1d8
+      bonus: 0
+      type: radiant
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  cantrip:
+    at:
+    - 5
+    - 11
+    - 17
+    effect:
+      block: flame
+      dice_add: 1d8
+ends_on: []
+unsupported: []

@@ -1,0 +1,47 @@
+name: Healing Word
+source: XPHB
+level: 1
+school: abjuration
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: healing
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - heal:
+      dice: 2d4
+      bonus: spell_mod
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: healing
+      dice_add: 2d4
+ends_on: []
+unsupported: []

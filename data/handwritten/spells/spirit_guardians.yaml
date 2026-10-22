@@ -1,0 +1,88 @@
+name: Spirit Guardians
+source: XPHB
+level: 3
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a prayer scroll
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices:
+- id: spirit_damage
+  options:
+  - radiant
+  - necrotic
+  when: on_cast
+  option_conditions:
+    radiant: caster.alignment != evil
+    necrotic: caster.alignment == evil
+effects:
+- id: slowing
+  event: while_in_area
+  target:
+    select: area
+    shape: emanation
+    size_ft: 15
+    affects: all
+    filter:
+    - creature
+    origin: caster
+    exclude: designated_on_cast
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - modify:
+      stat: speed
+      op: mul
+      value: 0.5
+      scope: all
+  limit: null
+- id: spirits
+  # XPHB: "whenever the Emanation enters a creature's space and whenever a creature
+  # enters the Emanation or ends its turn there" -> Wisdom save, 3d8 on fail, half on success
+  event: on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: emanation
+    size_ft: 15
+    affects: all
+    filter:
+    - creature
+    origin: caster
+    exclude: designated_on_cast
+  attack: null
+  save:
+    ability: wis
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 3d8
+      bonus: 0
+      type: $spirit_damage
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+scaling:
+  upcast:
+    per_slot_above: 3
+    changes:
+    - block: spirits
+      dice_add: 1d8
+ends_on: []
+unsupported:
+- Angelic, fey, or fiendish spectral appearance is cosmetic.
+- Movement-triggered entries require abstract engine area events; no positions or movement are simulated.
