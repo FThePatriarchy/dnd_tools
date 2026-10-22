@@ -1,0 +1,80 @@
+name: Goblin Warrior
+source: XMM
+cr: 1/4
+ac: 15
+max_hp: 10
+hp_formula: 3d6
+abilities:
+  str: 8
+  dex: 15
+  con: 10
+  int: 10
+  wis: 8
+  cha: 8
+speed: 30
+creature_type: fey
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Scimitar
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: slashing
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: slashing
+    if: attack.advantage
+- name: Shortbow
+  kind: ranged
+  to_hit: 4
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: piercing
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: piercing
+    if: attack.advantage
+multiattack: []
+actions: []
+traits:
+- name: Nimble Escape
+  cost: bonus_action
+  restricted_to:
+  - disengage
+  - hide
+  effects:
+  - id: escape
+    event: on_cast
+    target:
+      select: self
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - status:
+        id: disengaged
+        data: {}
+      until: end_of_turn(caster.next_turn)
+    limit: null
+unsupported:
+- Hide requires concealment and a Stealth/Perception contest; default no-grid policy
+  chooses Disengage (recorded only).

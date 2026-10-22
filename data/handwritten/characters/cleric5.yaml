@@ -1,0 +1,51 @@
+name: Cleric 5
+source: XPHB
+level: 5
+max_hp: 38
+ac: 18
+abilities:
+  str: 14
+  dex: 10
+  con: 14
+  int: 10
+  wis: 18
+  cha: 10
+speed: 30
+creature_type: humanoid
+alignment: good
+proficiency_bonus: 3
+save_proficiencies:
+- wis
+- cha
+spell_ability: wis
+spell_dc: 15
+spell_attack_bonus: 7
+spell_slots:
+  1: 4
+  2: 3
+  3: 2
+spells:
+- Sacred Flame
+- Guiding Bolt
+- Bless
+- Cure Wounds
+- Healing Word
+- Shield of Faith
+- Spiritual Weapon
+- Hold Person
+- Spirit Guardians
+attacks:
+- name: Mace
+  kind: melee
+  to_hit: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: bludgeoning
+unsupported:
+- Channel Divinity (including Divine Spark and Turn Undead) is not modeled.
+- No subclass, species, feat, or background abilities are modeled. Protector Divine
+  Order permits Chain Mail; AC includes Shield.
+- Sear Undead, ritual utility, material inventory, and short-rest recovery are outside
+  this fixed combat sheet.

@@ -1,0 +1,47 @@
+name: Ogre
+source: XMM
+cr: '2'
+ac: 11
+max_hp: 68
+hp_formula: 8d10 + 24
+abilities:
+  str: 19
+  dex: 8
+  con: 16
+  int: 5
+  wis: 7
+  cha: 7
+speed: 40
+creature_type: giant
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Greatclub
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 4
+      type: bludgeoning
+- name: Javelin
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 4
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []

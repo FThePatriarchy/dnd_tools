@@ -1,0 +1,146 @@
+"""Mutable state owned by one simulation; no module-global RNG or counters."""
+from dataclasses import dataclass, field
+from copy import deepcopy
+
+
+@dataclass(eq=False)
+class Effect:
+    kind: str
+    data: dict
+    source: int
+    block: str
+    until: tuple[str, str, int] | None = None
+    uses: int | None = None
+    suppressed: bool = False
+
+
+@dataclass(eq=False)
+class Combatant:
+    id: str
+    name: str = "Dummy"
+    team: str = "enemy"
+    max_hp: int = 100
+    hp: int | None = None
+    temp_hp: int = 0
+    ac: int = 10
+    abilities: dict[str, int] = field(default_factory=lambda: dict.fromkeys(("str", "dex", "con", "int", "wis", "cha"), 10))
+    save_proficiencies: list[str] = field(default_factory=list)
+    save_bonuses: dict[str, int] = field(default_factory=dict)
+    proficiency_bonus: int = 2
+    spell_ability: str = "wis"
+    spell_dc: int = 13
+    spell_attack_bonus: int = 5
+    level: int = 1
+    speed: int = 30
+    resistances: list[str] = field(default_factory=list)
+    immunities: list[str] = field(default_factory=list)
+    vulnerabilities: list[str] = field(default_factory=list)
+    condition_immunities: list[str] = field(default_factory=list)
+    conditions: set[str] = field(default_factory=set)
+    exhaustion_level: int = 0
+    effects: list[Effect] = field(default_factory=list)
+    statuses: dict[str, dict] = field(default_factory=dict)
+    concentration: int | None = None
+    spell_slots: dict[int, int] = field(default_factory=dict)
+    limited_uses: dict[str, int] = field(default_factory=dict)
+    spells: list[str] = field(default_factory=list)
+    innate_spells: dict[str, int] = field(default_factory=dict)
+    attacks: list[dict] = field(default_factory=list)
+    multiattack: list[str] = field(default_factory=list)
+    extra_attack: int = 1
+    actions: list[dict] = field(default_factory=list)
+    traits: list[dict] = field(default_factory=list)
+    recharge_ready: dict[str, bool] = field(default_factory=dict)
+    creature_type: str = "humanoid"
+    alignment: str = "neutral"
+    visible: bool = True
+    willing: bool = True
+    removed: bool = False
+    permanently_removed: bool = False
+    action: int = 1
+    bonus_action: int = 1
+    reaction: int = 1
+    extra_actions: list[dict] = field(default_factory=list)
+    action_grants: set[tuple] = field(default_factory=set)
+    surge_actions: int = 0
+    slot_cast_turn: int | None = None
+    turns_taken: int = 0
+    initiative_bonus: int = 0
+    resources_spent: dict[str, int] = field(default_factory=dict)
+
+    def __post_init__(self):
+        if self.hp is None: self.hp = self.max_hp
+        self.abilities = {**dict.fromkeys(("str", "dex", "con", "int", "wis", "cha"), 10), **self.abilities}
+
+    @property
+    def alive(self):
+        return self.hp > 0 and self.exhaustion_level < 6 and not self.removed and not self.permanently_removed
+
+    def mod(self, ability: str) -> int:
+        return (self.abilities[ability] - 10) // 2
+
+    @property
+    def spell_mod(self):
+        return self.mod(self.spell_ability)
+
+    @property
+    def active_effects(self):
+        return [e for e in self.effects if not e.suppressed]
+
+    def has_condition(self, condition: str) -> bool:
+        if condition == "exhaustion" and self.exhaustion_level > 0: return True
+        if condition in self.conditions or any(e.kind == "apply_condition" and e.data["condition"] == condition for e in self.active_effects):
+            return True
+        if condition == "incapacitated":
+            return any(self.has_condition(x) for x in ("paralyzed", "stunned", "unconscious", "petrified"))
+        return False
+
+    def has_status(self, name: str) -> bool:
+        return name in self.statuses or any(e.kind == "status" and e.data["id"] == name for e in self.active_effects)
+
+    def visible_to(self, other) -> bool:
+        return self.visible and not self.has_condition("invisible") and not other.has_condition("blinded")
+
+    def spend(self, resource: str, n=1):
+        self.resources_spent[resource] = self.resources_spent.get(resource, 0) + n
+
+    @classmethod
+    def from_sheet(cls, sheet: dict, identifier: str, team: str):
+        fields = cls.__dataclass_fields__
+        data = {k: deepcopy(v) for k, v in sheet.items() if k in fields and k not in {"id", "team"}}
+        return cls(id=identifier, team=team, **data)
+
+
+@dataclass
+class Binding:
+    targets: list[Combatant] = field(default_factory=list)
+    target_dropped_to_zero: bool = False
+    drop_turn: int = -1
+
+    @property
+    def target(self):
+        return self.targets[0] if len(self.targets) == 1 else self.targets
+
+
+@dataclass
+class SpellInstance:
+    id: int
+    spec: dict
+    caster: Combatant
+    slot: int
+    cast_turn: int
+    cast_round: int
+    choices: dict = field(default_factory=dict)
+    bindings: dict[str, Binding] = field(default_factory=dict)
+    end_callbacks: list[tuple[Combatant, list[dict]]] = field(default_factory=list)
+    limits: set[tuple] = field(default_factory=set)
+    ends: list[tuple[str, str, int]] = field(default_factory=list)
+    exclusions: set[str] = field(default_factory=set)
+    area_members: dict[str, list[Combatant]] = field(default_factory=dict)
+    active: bool = True
+    elapsed_minutes: float = 0
+
+    @property
+    def target(self):
+        bindings = [b.target for b in self.bindings.values() if b.targets]
+        return bindings[0] if bindings else None

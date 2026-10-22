@@ -1,0 +1,59 @@
+name: Cultist Fanatic
+source: XMM
+cr: '2'
+ac: 13
+max_hp: 44
+hp_formula: 8d8 + 8
+abilities:
+  str: 11
+  dex: 14
+  con: 12
+  int: 10
+  wis: 14
+  cha: 13
+speed: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses:
+  wis: 4
+save_proficiencies:
+- wis
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Pact Blade
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 2
+      type: slashing
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: necrotic
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Light (at will): not in golden set.'
+- 'Thaumaturgy (at will): not in golden set.'
+- 'Command (2/day): not in golden set.'
+spell_ability: wis
+spell_dc: 12
+spell_attack_bonus: 4
+spells:
+- Hold Person
+- Spiritual Weapon
+innate_spells:
+  Hold Person: 1
+  Spiritual Weapon: 2
+limited_uses:
+  Hold Person: 1
+  Spiritual Weapon: 2

@@ -1,0 +1,63 @@
+name: Fighter 5
+source: XPHB
+level: 5
+max_hp: 49
+ac: 17
+abilities:
+  str: 18
+  dex: 12
+  con: 16
+  int: 10
+  wis: 10
+  cha: 8
+speed: 30
+creature_type: humanoid
+proficiency_bonus: 3
+save_proficiencies:
+- str
+- con
+extra_attack: 2
+attacks:
+- name: Greatsword
+  kind: melee
+  reach_ft: 5
+  ability: str
+  mastery: graze
+  to_hit: 7
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 4
+      type: slashing
+limited_uses:
+  second_wind: 3
+  action_surge: 1
+actions:
+- name: Second Wind
+  cost: bonus_action
+  resource: second_wind
+  effects:
+  - id: second_wind
+    event: on_cast
+    target:
+      select: self
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - heal:
+        dice: 1d10
+        bonus: 5
+    limit: null
+- name: Action Surge
+  cost: free
+  resource: action_surge
+  grants_action: true
+  effects: []
+unsupported:
+- No subclass, species, feat, or background abilities are modeled. Defense fighting
+  style is included in AC (Chain Mail 16 + 1).
+- Tactical Mind and Tactical Shift are outside combat without a grid; short-rest recovery
+  is not simulated.

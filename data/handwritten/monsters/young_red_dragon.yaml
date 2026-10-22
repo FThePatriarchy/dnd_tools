@@ -1,0 +1,77 @@
+name: Young Red Dragon
+source: XMM
+cr: '10'
+ac: 18
+max_hp: 178
+hp_formula: 17d10 + 85
+abilities:
+  str: 23
+  dex: 10
+  con: 21
+  int: 14
+  wis: 11
+  cha: 19
+speed: 40
+creature_type: dragon
+alignment: evil
+proficiency_bonus: 4
+save_bonuses:
+  dex: 4
+  wis: 4
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 4
+resistances: []
+immunities:
+- fire
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 10
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 6
+      type: slashing
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: fire
+multiattack:
+- Rend
+- Rend
+- Rend
+actions:
+- name: Fire Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: breath
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 30
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: dex
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 16d6
+        bonus: 0
+        type: fire
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported: []
+spell_dc: 17
