@@ -43,6 +43,13 @@ class Combatant:
     concentration: int | None = None
     spell_slots: dict[int, int] = field(default_factory=dict)
     limited_uses: dict[str, int] = field(default_factory=dict)
+    max_spell_slots: dict[int, int] = field(default_factory=dict)
+    max_limited_uses: dict[str, int] = field(default_factory=dict)
+    resource_recovery: dict[str, dict] = field(default_factory=dict)
+    hit_die: str | None = None
+    hit_dice: int = 0
+    max_hit_dice: int = 0
+    downs: int = 0
     spells: list[str] = field(default_factory=list)
     innate_spells: dict[str, int] = field(default_factory=dict)
     attacks: list[dict] = field(default_factory=list)
@@ -71,6 +78,8 @@ class Combatant:
     def __post_init__(self):
         if self.hp is None: self.hp = self.max_hp
         self.abilities = {**dict.fromkeys(("str", "dex", "con", "int", "wis", "cha"), 10), **self.abilities}
+        if not self.max_spell_slots: self.max_spell_slots = self.spell_slots.copy()
+        if not self.max_limited_uses: self.max_limited_uses = self.limited_uses.copy()
 
     @property
     def alive(self):
@@ -108,6 +117,15 @@ class Combatant:
     def from_sheet(cls, sheet: dict, identifier: str, team: str):
         fields = cls.__dataclass_fields__
         data = {k: deepcopy(v) for k, v in sheet.items() if k in fields and k not in {"id", "team"}}
+        if "hit_dice" in sheet:
+            data["hit_die"] = sheet["hit_dice"]["die"]
+            data["hit_dice"] = data["max_hit_dice"] = sheet["hit_dice"]["count"]
+        data["limited_uses"] = {}
+        data["resource_recovery"] = {}
+        for name, value in sheet.get("limited_uses", {}).items():
+            entry = value if isinstance(value, dict) else {"max": value, "long_rest": "all"}
+            data["limited_uses"][name] = entry["max"]
+            data["resource_recovery"][name] = {k: entry.get(k, 0) for k in ("short_rest", "long_rest")}
         return cls(id=identifier, team=team, **data)
 
 

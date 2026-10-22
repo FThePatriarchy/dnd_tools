@@ -21,7 +21,10 @@ spell primitives and full effect-block structure from `FORMAT.md` unchanged.
   `condition_immunities`: official condition names.
 - `spell_ability`, `spell_dc`, `spell_attack_bonus`, `spell_slots` (integer
   level-to-remaining-count map), `spells` (exact golden-set names).
-- `limited_uses`: resource-name-to-remaining-count map.
+- `limited_uses`: resource-name-to-maximum-count map (starts full). Legacy
+  integer counters remain supported; explicit recovery mappings and character
+  Hit Dice are documented in `CHARACTER_FORMAT.md`. Monsters are constructed
+  fresh for each day encounter, not carried through party rests.
 - `innate_spells`: exact spell-name-to-daily-maximum map; every entry also
   requires a `spells` entry and a same-named `limited_uses` counter. These
   casts spend that counter, not a slot, at the spell's base level. A countered
@@ -103,4 +106,6 @@ The Fighter uses Chain Mail + Defense (AC 17), Strength 18, Constitution 16,
 49 HP, Greatsword/Graze, two attacks, Second Wind 3 uses (1d10+5), Action Surge
 1 use. The Cleric uses Protector/Chain Mail + Shield (AC 18), Wisdom 18,
 Constitution 14, 38 HP, DC 15 / +7, slots 4/3/2. No subclass is modeled.
-Channel Divinity and other omissions are explicit in the Cleric sheet.
+Channel Divinity's two-use counter and rest recovery are tracked; its effects
+and other omissions are explicit in the Cleric sheet. See `CHARACTER_FORMAT.md`
+for the fixed character additions and day-file contract.

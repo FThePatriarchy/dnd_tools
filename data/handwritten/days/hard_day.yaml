@@ -1,0 +1,9 @@
+name: Into the red dragon's lair
+steps:
+  - encounter: [goblin_warrior x4]
+  - encounter: [ogre, cultist_fanatic]
+  - rest: short
+  - encounter: [ogre x2]
+  - encounter: [goblin_warrior x5, cultist_fanatic]
+  - rest: short
+  - encounter: [young_red_dragon]

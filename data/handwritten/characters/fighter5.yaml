@@ -1,6 +1,7 @@
 name: Fighter 5
 source: XPHB
 level: 5
+hit_dice: {die: d10, count: 5}
 max_hp: 49
 ac: 17
 abilities:
@@ -30,8 +31,8 @@ attacks:
       bonus: 4
       type: slashing
 limited_uses:
-  second_wind: 3
-  action_surge: 1
+  second_wind: {max: 3, short_rest: 1, long_rest: all}
+  action_surge: {max: 1, short_rest: all, long_rest: all}
 actions:
 - name: Second Wind
   cost: bonus_action
@@ -59,5 +60,4 @@ actions:
 unsupported:
 - No subclass, species, feat, or background abilities are modeled. Defense fighting
   style is included in AC (Chain Mail 16 + 1).
-- Tactical Mind and Tactical Shift are outside combat without a grid; short-rest recovery
-  is not simulated.
+- Tactical Mind and Tactical Shift are outside combat without a grid.

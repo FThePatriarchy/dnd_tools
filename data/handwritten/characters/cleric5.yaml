@@ -1,6 +1,7 @@
 name: Cleric 5
 source: XPHB
 level: 5
+hit_dice: {die: d8, count: 5}
 max_hp: 38
 ac: 18
 abilities:
@@ -24,6 +25,8 @@ spell_slots:
   1: 4
   2: 3
   3: 2
+limited_uses:
+  channel_divinity: {max: 2, short_rest: 1, long_rest: all}
 spells:
 - Sacred Flame
 - Guiding Bolt
@@ -44,8 +47,9 @@ attacks:
       bonus: 2
       type: bludgeoning
 unsupported:
-- Channel Divinity (including Divine Spark and Turn Undead) is not modeled.
+- Channel Divinity recovery is modeled; its effects (including Divine Spark and
+  Turn Undead) are not modeled.
 - No subclass, species, feat, or background abilities are modeled. Protector Divine
   Order permits Chain Mail; AC includes Shield.
-- Sear Undead, ritual utility, material inventory, and short-rest recovery are outside
+- Sear Undead, ritual utility, and material inventory are outside
   this fixed combat sheet.

@@ -11,7 +11,7 @@ def effect_block(identifier, *, target=None, save=None, apply=None, on_fail=None
 def validate_sheet(data, path):
     v = Validator(path)
     v.obj(data, "$", "name source max_hp ac abilities speed creature_type proficiency_bonus",
-          "hp_formula cr level save_proficiencies save_bonuses resistances immunities vulnerabilities condition_immunities spell_ability spell_dc spell_attack_bonus spell_slots spells innate_spells limited_uses attacks multiattack extra_attack actions traits alignment initiative_bonus unsupported")
+          "hp_formula cr level save_proficiencies save_bonuses resistances immunities vulnerabilities condition_immunities spell_ability spell_dc spell_attack_bonus spell_slots spells innate_spells limited_uses hit_dice attacks multiattack extra_attack actions traits alignment initiative_bonus unsupported")
     for k in ("name", "creature_type", "source"): v.text(data[k], k)
     v.enum(data["source"], {"XMM", "XPHB"}, "source")
     for k in ("max_hp", "ac", "proficiency_bonus"): v.number(data[k], k, 1, True)
@@ -33,6 +33,10 @@ def validate_sheet(data, path):
         if k in data: v.number(data[k], k, 1, True)
     for k in ("spell_attack_bonus", "initiative_bonus"):
         if k in data: v.number(data[k], k, integer=True)
+    if "hit_dice" in data:
+        v.obj(data["hit_dice"], "hit_dice", "die count")
+        v.enum(data["hit_dice"]["die"], {"d6", "d8", "d10", "d12"}, "hit_dice.die")
+        v.number(data["hit_dice"]["count"], "hit_dice.count", 1, True)
     if "save_bonuses" in data:
         v.check(isinstance(data["save_bonuses"], dict), "save_bonuses", "expected mapping")
         for k, val in data["save_bonuses"].items():
@@ -44,7 +48,16 @@ def validate_sheet(data, path):
                 if k == "spell_slots":
                     v.number(key, k, 1, True); v.check(key <= 9, k, "slot level > 9")
                 else: v.text(key, k)
-                v.number(val, k + "." + str(key), 0, True)
+                p = k + "." + str(key)
+                if k == "limited_uses" and isinstance(val, dict):
+                    v.obj(val, p, "max", "short_rest long_rest")
+                    v.number(val["max"], p + ".max", 0, True)
+                    for rest in ("short_rest", "long_rest"):
+                        if rest not in val: continue
+                        if val[rest] != "all":
+                            v.number(val[rest], p + "." + rest, 0, True)
+                            v.check(val[rest] <= val["max"], p + "." + rest, "recovery exceeds max")
+                else: v.number(val, p, 0, True)
     spells = None
     if "spells" in data:
         from .loader import load_spells

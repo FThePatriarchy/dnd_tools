@@ -13,13 +13,14 @@ MOVEMENT_EVENTS = {"on_aura_moves_onto_creature", "on_creature_enters_aura"}
 
 
 class Combat:
-    def __init__(self, combatants: list[Combatant], spells: dict, seed=1, policy=None, area=None):
+    def __init__(self, combatants: list[Combatant], spells: dict, seed=1, policy=None, area=None, monster_policy=None):
         if len({c.id for c in combatants}) != len(combatants):
             raise ValueError("combatant ids must be unique")
         self.combatants = combatants
         self.spells = spells
         self.rng = random.Random(seed)
         self.policy = policy or Policy()
+        self.monster_policy = monster_policy
         self.area = area or area_heuristic
         self.instances: dict[int, SpellInstance] = {}
         self.next_instance = 1
@@ -30,6 +31,9 @@ class Combat:
         self.log: list[dict] = []
         self.record_log = True
         self._damage_batch = None
+
+    def policy_for(self, actor):
+        return self.monster_policy if actor.team != "party" and self.monster_policy is not None else self.policy
 
     def record(self, kind, **data):
         if self.record_log: self.log.append({"event": kind, "turn": self.turn_index, **data})
@@ -234,6 +238,7 @@ class Combat:
         target.temp_hp -= absorbed
         target.hp = max(0, target.hp - (amount - absorbed))
         if before > 0 and target.hp == 0:
+            target.downs += 1
             target.conditions.update({"unconscious", "prone"})
             for instance in self.instances.values():
                 for binding in instance.bindings.values():
@@ -285,7 +290,8 @@ class Combat:
     def available_slot(self, actor, spec):
         if spec["level"] == 0: return 0
         if spec["name"] in actor.innate_spells: return spec["level"] if actor.limited_uses.get(spec["name"], 0) > 0 else None
-        return next((n for n in sorted(actor.spell_slots) if n >= spec["level"] and actor.spell_slots[n] > 0), None)
+        slots = [n for n in sorted(actor.spell_slots) if n >= spec["level"] and actor.spell_slots[n] > 0]
+        return self.policy_for(actor).slot(self, actor, spec, slots) if slots else None
 
     def can_cast(self, actor, name, slot=None):
         if name not in self.spells or name not in actor.spells or not actor.alive or actor.has_condition("incapacitated"): return False
@@ -314,10 +320,10 @@ class Combat:
         for choice in spec["choices"]:
             ctx = self.context(instance)
             options = [v for v in choice["options"] if v not in choice.get("option_conditions", {}) or evaluate(choice["option_conditions"][v], ctx)]
-            selected = (choices or {}).get(choice["id"], self.policy.choose(self, caster, choice, options) if options else None)
+            selected = (choices or {}).get(choice["id"], self.policy_for(caster).choose(self, caster, choice, options) if options else None)
             if selected not in options: raise ValueError(f"illegal choice {choice['id']}: {selected}")
             instance.choices[choice["id"]] = selected
-        instance.exclusions = {x.id for x in self.policy.exemptions(self, caster)}
+        instance.exclusions = {x.id for x in self.policy_for(caster).exemptions(self, caster)}
         # Reject explicit illegal input before spending anything or offering reactions.
         if targets is not None:
             for block in spec["effects"]:
@@ -371,7 +377,7 @@ class Combat:
                 if not spec or spec["casting_time"] != "reaction" or not self.can_cast(actor, name): continue
                 probe = SpellInstance(-1, spec, actor, spec["level"], self.turn_index, self.time_rounds)
                 if not self.event_matches(spec["reaction_trigger"], probe, event, frame): continue
-                if not self.policy.reaction(self, actor, spec, frame): continue
+                if not self.policy_for(actor).reaction(self, actor, spec, frame): continue
                 self.cast(actor, name, trigger=frame)
         return frame
 
@@ -419,7 +425,7 @@ class Combat:
             if frame.get("who") is not None: return [frame["who"]] if frame["who"] in members else []
             return members
         n = target.get("n", 1)
-        selected = list(explicit) if explicit is not None else self.policy.targets(self, instance, block, eligible, n)
+        selected = list(explicit) if explicit is not None else self.policy_for(instance.caster).targets(self, instance, block, eligible, n)
         if len(selected) > n or (target.get("distinct", True) and len({c.id for c in selected}) != len(selected)):
             raise ValueError(f"invalid selection count/distinctness for {block['id']}")
         minimum = target.get("min", 0) if target.get("up_to") else n
@@ -435,7 +441,7 @@ class Combat:
         if isinstance(count, int):
             if not 0 <= count <= len(eligible): raise ValueError("area heuristic returned invalid count")
             # Policy determines placement/order; it does not change legal allegiance.
-            ordered = self.policy.targets(self, instance, block, eligible, len(eligible))
+            ordered = self.policy_for(instance.caster).targets(self, instance, block, eligible, len(eligible))
             # An area may include allies: unlike optional individual targets, fill it.
             ordered += [x for x in eligible if x not in ordered]
             return ordered[:count]
@@ -445,7 +451,7 @@ class Combat:
 
     def resolve_block(self, instance, block, event, frame, explicit=None):
         if not instance.active: return False
-        if block.get("optional") and not self.policy.optional(self, instance, block): return False
+        if block.get("optional") and not self.policy_for(instance.caster).optional(self, instance, block): return False
         targets = self.select_targets(instance, block, frame, explicit)
         if "if" in block:
             targets = [t for t in targets if evaluate(block["if"], self.context(instance, t, event, frame, **frame))]
@@ -745,26 +751,120 @@ class Combat:
             if attack.get("mastery") == "graze": total += max(0, actor.mod("str")) * (1 - self.hit_probability(actor, target, attack["to_hit"]))
         return total
 
-    def expected_spell_damage(self, actor, spec, target):
+    def save_failure_probability(self, actor, target, ability):
+        bonus = target.save_bonuses.get(ability, target.mod(ability) + (target.proficiency_bonus if ability in target.save_proficiencies else 0))
+        return min(1, max(0, (actor.spell_dc - bonus - 1) / 20))
+
+    def at_will_damage_rate(self, actor, target):
+        # Explicit one-round horizon prevents recursion into encounter estimation.
+        return max([self.expected_weapon_damage(actor, target)] + [
+            self.expected_spell_damage(actor, self.scale(actor, self.spells[name], 0), target, horizon=1)
+            for name in actor.spells if self.spells[name]["level"] == 0])
+
+    def expected_remaining_rounds(self, actor):
+        enemies = self.enemies(actor)
+        if not enemies: return 1
+        allies = [c for c in self.combatants if c.team == actor.team and c.alive and not c.has_condition("incapacitated")]
+        rate = sum(self.at_will_damage_rate(c, enemies[0]) for c in allies)
+        return max(1, sum(c.hp for c in enemies) / max(1, rate))
+
+    def expected_attack_hits(self, actor, target):
+        names = actor.multiattack or ([actor.attacks[0]["name"]] * actor.extra_attack if actor.attacks else [])
+        hits = sum(self.hit_probability(actor, target, next(a for a in actor.attacks if a["name"] == name)["to_hit"]) for name in names)
+        for name in actor.spells:
+            spec = self.spells[name]
+            if spec["level"] != 0: continue
+            spec = self.scale(actor, spec, 0)
+            hits = max(hits, sum(self.hit_probability(actor, target, actor.spell_attack_bonus) * b["target"].get("n", 1)
+                                 for b in spec["effects"] if b["attack"] and "on_cast" in b["event"]))
+        return hits
+
+    def control_attack_gain(self, ally, target, condition):
+        if condition not in {"paralyzed", "stunned", "unconscious", "petrified", "restrained", "blinded"}: return 0
+        names = ally.multiattack or ([ally.attacks[0]["name"]] * ally.extra_attack if ally.attacks else [])
+        gain = 0
+        for name in names:
+            attack = next(a for a in ally.attacks if a["name"] == name)
+            hit = self.hit_probability(ally, target, attack["to_hit"])
+            advantage = 1 - (1 - hit) ** 2
+            damage = sum(dice.mean(p["damage"]["dice"]) + p["damage"].get("bonus", 0) for p in attack["effects"] if "damage" in p and "if" not in p)
+            crit_dice = sum(dice.mean(p["damage"]["dice"]) for p in attack["effects"] if "damage" in p and "if" not in p)
+            auto_crit = condition in {"paralyzed", "unconscious"} and attack.get("kind", "melee") == "melee"
+            gain += (advantage - hit) * damage + (advantage * crit_dice if auto_crit else 0)
+        return gain
+
+    def expected_spell_damage(self, actor, spec, target, *, horizon=None):
+        """Damage-equivalent EV, not search. See BUILD_REPORT's Step 1 fix round.
+
+        Lasting effects use enemy HP / allied at-will DPR, capped by duration.
+        Concentration reserves 10% of value; future commands reserve 15% of
+        bonus actions for healing/other uses. Repeat saves give geometric uptime.
+        """
         total = 0
+        probe = SpellInstance(0, spec, actor, 0, self.turn_index, self.time_rounds)
+        allies = [c for c in self.combatants if c.team == actor.team and c.alive and not c.has_condition("incapacitated")]
         for block in spec["effects"]:
-            damage = sum(dice.mean(p["damage"]["dice"]) + (actor.spell_mod if p["damage"]["bonus"] == "spell_mod" else p["damage"]["bonus"]) for key in ("on_hit", "on_fail", "apply") for p in block[key] if "damage" in p)
-            if not damage: continue
-            if block["attack"]: damage *= self.hit_probability(actor, target, actor.spell_attack_bonus)
-            if block["save"]:
-                ability = block["save"]["ability"]
-                bonus = target.save_bonuses.get(ability, target.mod(ability) + (target.proficiency_bonus if ability in target.save_proficiencies else 0))
-                fail = min(1, max(0, (actor.spell_dc - bonus - 1) / 20))
-                damage *= fail + ((1 - fail) / 2 if block["save"]["on_success"] == "half" else 0)
-            t = block["target"]
-            if t["select"] == "n_targets": damage *= t["n"]
+            primitives = [p for key in ("on_hit", "on_fail", "apply") for p in block[key]]
+            if not any("damage" in p or "apply_condition" in p or "remove_from_combat" in p for p in primitives): continue
+            declaration = block
+            if block["target"]["select"] == "ref":
+                declaration = next((b for b in spec["effects"] if b["id"] == block["target"]["ref"]), block)
+            eligible = [c for c in self.eligible(probe, declaration) if c.team != actor.team]
+            eligible.sort(key=lambda c: (c.hp, c.id))
+            t = declaration["target"]
+            if t["select"] == "self": continue
             if t["select"] == "area":
-                count = self.area(t["shape"], t["size_ft"], len(self.enemies(actor)))
-                damage *= count if isinstance(count, int) else len(count)
-            if block["event"] != "on_cast" and "on_cast" not in block["event"]:
-                if "end_of_turn_in_aura" in block["event"]: damage *= 2  # two-turn planning horizon
-                else: damage = 0
-            total += damage
+                count = self.area(t["shape"], t["size_ft"], len(eligible))
+                targets = eligible[:count] if isinstance(count, int) else [eligible[i] for i in count]
+            elif not t.get("distinct", True) and eligible:
+                targets = [eligible[0]] * t.get("n", 1)
+            else:
+                targets = eligible[:t.get("n", 1)]
+            if not targets: continue
+            event = block["event"]
+            command = "bonus_action_command" in event and any("damage" in p for p in primitives)
+            aura = "end_of_turn_in_aura" in event
+            rider = "on_attack_hit(caster, defender)" in event
+            control = any("apply_condition" in p or "remove_from_combat" in p for p in primitives)
+            lasting = command or aura or rider or control
+            rounds = 1
+            if lasting:
+                if horizon is None: horizon = self.expected_remaining_rounds(actor)
+                duration = spec.get("duration", {"type": "instant"})
+                cap = duration.get("n", 1) * {"rounds": 1, "minutes": 10, "hours": 600, "days": 14400}.get(duration["type"], 1)
+                rounds = min(horizon, cap)
+            for victim in targets:
+                damage = sum(dice.mean(p["damage"]["dice"]) + (actor.spell_mod if p["damage"]["bonus"] == "spell_mod" else p["damage"]["bonus"]) for p in primitives if "damage" in p)
+                fail = self.save_failure_probability(actor, victim, block["save"]["ability"]) if block["save"] else 1
+                if block["attack"]: damage *= self.hit_probability(actor, victim, actor.spell_attack_bonus)
+                if block["save"]: damage *= fail + ((1 - fail) / 2 if block["save"]["on_success"] == "half" else 0)
+                if command: damage *= 1 + .85 * max(0, rounds - 1)
+                elif aura: damage *= rounds
+                elif rider: damage *= rounds * self.expected_attack_hits(actor, victim)
+                elif "on_cast" not in event: damage = 0
+                removed = any("remove_from_combat" in p for p in primitives)
+                denied_rate = max((self.at_will_damage_rate(victim, ally) for ally in allies), default=0) if control else 0
+                condition_value = fail * rounds * denied_rate if removed else 0
+                for p in primitives:
+                    if "apply_condition" not in p: continue
+                    data = p["apply_condition"]
+                    condition = data["condition"]
+                    if condition in victim.condition_immunities or victim.has_condition(condition): continue
+                    repeat = data.get("repeat_save")
+                    uptime = rounds
+                    if repeat:
+                        q = self.save_failure_probability(actor, victim, repeat["ability"])
+                        whole = int(rounds)
+                        uptime = rounds if q == 1 else (1 - q ** whole) / (1 - q) + (rounds - whole) * q ** whole
+                        if repeat["timing"] == "start_of_turn": uptime *= q
+                    denied = 0
+                    if condition in {"incapacitated", "paralyzed", "stunned", "unconscious", "petrified"}:
+                        denied = denied_rate
+                    gained = 0 if removed else sum(self.control_attack_gain(ally, victim, condition) for ally in allies)
+                    condition_value = max(condition_value, fail * uptime * (denied + gained))
+                value = damage + condition_value
+                if lasting and spec.get("concentration"): value *= .9
+                total += value
         return total
 
     def expected_action_damage(self, actor, action, target):
@@ -777,7 +877,7 @@ class Combat:
             self.round = round_number
             for actor in initiative:
                 self.begin_turn(actor)
-                self.policy.take_turn(self, actor)
+                self.policy_for(actor).take_turn(self, actor)
                 self.end_turn(actor)
                 teams = {c.team for c in self.combatants if c.alive}
                 if len(teams) <= 1:

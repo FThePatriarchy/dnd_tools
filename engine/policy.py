@@ -2,6 +2,7 @@
 import math
 
 from .dice import mean
+from .state import SpellInstance
 
 
 FEET_PER_TARGET = {"cone": 10, "line": 30}  # every other shape: 5
@@ -19,6 +20,45 @@ def area_heuristic(shape: str, size_ft: float, eligible: int) -> int:
 
 
 class Policy:
+    def slot(self, combat, actor, spec, slots):
+        return slots[0]
+
+    def allow_spell(self, combat, actor, spec):
+        return True
+
+    def allow_healing(self, combat, actor, target):
+        return True
+
+    def allow_surge(self, combat, actor):
+        return True
+
+    def spend_hit_die(self, actor):
+        return actor.hp < actor.max_hp
+
+    def recover_downed(self, combat, party):
+        """One successful heal per downed ally, not a free full-party top-up."""
+        for target in party:
+            if target.hp != 0 or target.permanently_removed: continue
+            for healer in party:
+                if not healer.alive: continue
+                combat.begin_turn(healer)
+                def eligible_heal(spec):
+                    probe = SpellInstance(0, spec, healer, 0, combat.turn_index, combat.time_rounds)
+                    return any(b["target"]["select"] in {"single", "n_targets"}
+                               and any("heal" in p for p in b["apply"])
+                               and target in combat.eligible(probe, b) for b in spec["effects"])
+
+                name = next((name for name in ("Cure Wounds", "Healing Word")
+                             if combat.can_cast(healer, name) and eligible_heal(combat.spells[name])), None)
+                if name:
+                    combat.cast(healer, name, targets=[target])
+                else:
+                    # Only explicitly ally-targetable healing features can rescue another PC.
+                    action = next((a for a in healer.actions if combat.action_available(healer, a)
+                                   and eligible_heal(a)), None)
+                    if action: combat.use_action(healer, action["name"], [target])
+                if target.hp > 0: break
+
     def choose(self, combat, caster, choice, eligible):
         return eligible[0]
 
@@ -57,9 +97,9 @@ class Policy:
         # Bonus-action healing leaves the action available for a cantrip/weapon.
         wounded = sorted([x for x in combat.combatants if x.team == actor.team and not x.removed and x.hp < x.max_hp / 2], key=lambda c: c.hp / c.max_hp)
         if wounded:
-            if combat.can_cast(actor, "Healing Word"):
+            if self.allow_healing(combat, actor, wounded[0]) and combat.can_cast(actor, "Healing Word"):
                 combat.cast(actor, "Healing Word", targets=[wounded[0]])
-            elif combat.can_cast(actor, "Cure Wounds"):
+            elif self.allow_healing(combat, actor, wounded[0]) and combat.can_cast(actor, "Cure Wounds"):
                 combat.cast(actor, "Cure Wounds", targets=[wounded[0]])
         for action in actor.actions:
             if action.get("resource") == "second_wind" and actor.hp < actor.max_hp / 2:
@@ -74,6 +114,7 @@ class Policy:
             for name in actor.spells:
                 if not combat.can_cast(actor, name): continue
                 spec = combat.spells[name]
+                if not self.allow_spell(combat, actor, spec): continue
                 if spec["casting_time"] not in {"action", "bonus_action"}: continue
                 if spec["concentration"] and actor.concentration is not None: continue
                 slot = combat.available_slot(actor, spec)
@@ -94,7 +135,7 @@ class Policy:
             if actor.action and combat.enemies(actor): combat.weapon_action(actor)
         # Action Surge is deliberately nova; it never bypasses slot-per-turn rules.
         surge = next((x for x in actor.actions if x.get("resource") == "action_surge"), None)
-        if surge and combat.enemies(actor) and combat.action_available(actor, surge):
+        if surge and self.allow_surge(combat, actor) and combat.enemies(actor) and combat.action_available(actor, surge):
             combat.use_action(actor, surge["name"])
             combat.weapon_action(actor)
         for extra in list(actor.extra_actions):
@@ -104,3 +145,69 @@ class Policy:
         for trait in actor.traits:
             if trait["name"] == "Nimble Escape" and combat.action_available(actor, trait):
                 combat.use_action(actor, trait["name"])
+
+
+class NovaPolicy(Policy):
+    def slot(self, combat, actor, spec, slots):
+        return slots[-1]
+
+
+class ConservativePolicy(Policy):
+    def dangerous(self, combat, actor):
+        allies = [c for c in combat.combatants if c.team == actor.team and not c.permanently_removed]
+        if any(c.hp == 0 for c in allies): return True
+        hp = sum(c.hp for c in allies)
+        enemies = combat.enemies(actor)
+        if not enemies: return False
+        # Estimate a weapon/cantrip-only fight; no knowledge of future rolls.
+        outgoing = 0
+        for ally in allies:
+            damage = combat.expected_weapon_damage(ally, enemies[0])
+            for name in ally.spells:
+                spec = combat.spells[name]
+                if spec["level"] == 0:
+                    damage = max(damage, combat.expected_spell_damage(ally, combat.scale(ally, spec, 0), enemies[0]))
+            outgoing += damage
+        rounds = sum(c.hp for c in enemies) / max(1, outgoing)
+        incoming = sum(combat.expected_weapon_damage(enemy, ally) for enemy in enemies for ally in allies) / len(allies)
+        # Include ready nonspell damage, notably the dragon's breath.
+        for enemy in enemies:
+            for action in enemy.actions:
+                if combat.action_available(enemy, action):
+                    incoming = max(incoming, combat.expected_action_damage(enemy, action, allies[0]))
+        return rounds * incoming > hp * .35
+
+    def emergency(self, combat, actor):
+        return any(c.team == actor.team and (c.hp == 0 or c.hp < c.max_hp * .25) for c in combat.combatants)
+
+    def allow_spell(self, combat, actor, spec):
+        if spec["level"] == 0: return True
+        if self.emergency(combat, actor): return True
+        if not self.dangerous(combat, actor): return False
+        remaining = max(1, getattr(combat, "encounters_remaining", 1))
+        start = getattr(combat, "slots_at_start", {}).get(actor.id, actor.spell_slots)
+        budget = math.ceil(sum(start.values()) / remaining)
+        spent = sum(start.values()) - sum(actor.spell_slots.values())
+        if spec["name"] in actor.innate_spells:
+            return True  # daily innate counters have no slot budget
+        return spent < budget
+
+    def allow_healing(self, combat, actor, target):
+        return target.hp < target.max_hp * .35
+
+    def allow_surge(self, combat, actor):
+        return self.dangerous(combat, actor)
+
+    def reaction(self, combat, reactor, spell, trigger):
+        return self.allow_spell(combat, reactor, spell) and super().reaction(combat, reactor, spell, trigger)
+
+    def spend_hit_die(self, actor):
+        return actor.hp < actor.max_hp * .85
+
+
+STRATEGIES = {"default": Policy, "nova": NovaPolicy, "conservative": ConservativePolicy}
+
+
+def strategy_policy(name):
+    if name not in STRATEGIES: raise ValueError(f"unknown strategy: {name}")
+    return STRATEGIES[name]()

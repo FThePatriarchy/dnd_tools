@@ -1,0 +1,6 @@
+name: Easy border patrol
+steps:
+  - encounter: [goblin_warrior x3]
+  - encounter: [ogre]
+  - rest: short
+  - encounter: [goblin_warrior x3, cultist_fanatic]

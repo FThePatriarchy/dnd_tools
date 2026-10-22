@@ -20,6 +20,13 @@ def test_1000_run_encounters_reproduce_exactly(opponents):
     assert 1 <= first.mean_rounds <= 10
     assert 0 < first.mean_party_hp <= 87
     assert first.mean_resources_spent["action_surge"] <= 1
+    # Step 1 fix round: dynamic lasting-effect horizons change the Ogre's
+    # spell choices, not the encounter mechanics or statistical tolerances.
+    expected = {
+        ("goblin_warrior", "x4"): (1.820, 79.569, {"action_surge": .970, "slot_1": .169, "slot_3": 1.062}),
+        ("ogre",): (2.034, 78.541, {"action_surge": 1.000, "slot_1": .974, "slot_3": .633}),
+    }
+    assert (first.mean_rounds, first.mean_party_hp, first.mean_resources_spent) == expected[opponents]
 
 
 def test_cli_and_invalid_inputs():

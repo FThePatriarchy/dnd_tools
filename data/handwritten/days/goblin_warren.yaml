@@ -1,0 +1,11 @@
+name: Goblin warren (standard day)
+steps:
+  - encounter: [goblin_warrior x4]
+  - encounter: [ogre]
+  - rest: short
+  - encounter: [goblin_warrior x3, cultist_fanatic]
+  - encounter: [ogre x2]
+  - rest: short
+  - encounter: [goblin_warrior x5]
+  - encounter: [ogre, cultist_fanatic]
+  - encounter: [ogre x2]
