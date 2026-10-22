@@ -114,8 +114,9 @@ Monster/class omissions are recorded in their sheets:
 
 ## Rules approximations and policy choices
 
-- Default AoE coverage is `min(eligible_count, max(1, size_ft // 5))` for all
-  shapes. A replacement receives **only** shape, size and eligible count and
+- Default AoE coverage follows the DMG "Targets in Areas of Effect" table:
+  `min(eligible_count, max(1, ceil(size_ft / k)))` with k = 10 for cones,
+  30 for lines and 5 for every other shape. A replacement receives **only** shape, size and eligible count and
   returns a count or eligible-list indices. Policy orders placement. An area
   does not gain an allegiance exemption: legal allies/caster can be included
   when the heuristic fills the area. Spirit Guardians' designated exemptions

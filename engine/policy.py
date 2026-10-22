@@ -1,14 +1,21 @@
 """Replace Policy or area_heuristic without changing spell resolution."""
+import math
+
 from .dice import mean
 
 
-def area_heuristic(shape: str, size_ft: float, eligible: int) -> int:
-    """One no-grid AoE rule: one creature per 5 feet of radius/length.
+FEET_PER_TARGET = {"cone": 10, "line": 30}  # every other shape: 5
 
+
+def area_heuristic(shape: str, size_ft: float, eligible: int) -> int:
+    """No-grid AoE rule from the DMG "Targets in Areas of Effect" table.
+
+    Cone size/10, line length/30, sphere/cylinder/emanation radius/5 and cube
+    size/5, rounded up, at least one, capped by the eligible creatures.
     Returns a count; a custom heuristic may instead return indices into the
     eligible list. Placement and ordering remain policy decisions.
     """
-    return min(eligible, max(1, int(size_ft // 5)))
+    return min(eligible, max(1, math.ceil(size_ft / FEET_PER_TARGET.get(shape, 5))))
 
 
 class Policy:

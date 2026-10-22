@@ -131,6 +131,23 @@ def test_single_pluggable_area_heuristic_and_slow_noop(spells):
     assert d.speed == 30  # modification recorded but no speed/movement simulation
 
 
+@pytest.mark.parametrize("shape,size,eligible,expected", [
+    ("cone", 30, 6, 3),         # Young Red Dragon breath
+    ("cone", 15, 6, 2),         # rounds up
+    ("line", 100, 6, 4),
+    ("line", 30, 6, 1),
+    ("sphere", 20, 6, 4),       # Fireball
+    ("emanation", 15, 6, 3),    # Spirit Guardians
+    ("cube", 10, 6, 2),
+    ("cylinder", 5, 6, 1),
+    ("sphere", 20, 2, 2),       # capped by eligible creatures
+    ("cone", 5, 6, 1),          # at least one
+])
+def test_default_area_heuristic_follows_dmg_table(shape, size, eligible, expected):
+    from engine.policy import area_heuristic
+    assert area_heuristic(shape, size, eligible) == expected
+
+
 def test_round_duration_and_exact_next_turn_boundary(spells):
     c = Combatant("c", team="party", spells=["Guiding Bolt", "Shield of Faith"], spell_slots={1: 2}, spell_attack_bonus=100)
     d = Combatant("d", max_hp=1000)
