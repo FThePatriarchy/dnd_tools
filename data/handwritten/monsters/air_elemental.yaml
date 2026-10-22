@@ -1,0 +1,96 @@
+name: Air Elemental
+source: XMM
+cr: '5'
+ac: 15
+max_hp: 90
+hp_formula: 12d10 + 24
+abilities:
+  str: 14
+  dex: 20
+  con: 14
+  int: 6
+  wis: 10
+  cha: 6
+speed: 10
+movement_modes:
+  walk: 10
+creature_type: elemental
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- bludgeoning
+- lightning
+- piercing
+- slashing
+immunities:
+- poison
+- thunder
+vulnerabilities: []
+condition_immunities:
+- exhaustion
+- grappled
+- paralyzed
+- petrified
+- poisoned
+- prone
+- restrained
+- unconscious
+attacks:
+- name: Thunderous Slam
+  kind: melee
+  to_hit: 8
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 5
+      type: thunder
+multiattack:
+- Thunderous Slam
+- Thunderous Slam
+actions:
+- name: Whirlwind
+  cost: action
+  recharge: 4
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: str
+      dc: 13
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 4d10
+        bonus: 2
+        type: thunder
+    - apply_condition:
+        condition: prone
+        max_size: M
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Whirlwind {@recharge 4}
+  duration:
+    type: special
+traits: []
+unsupported:
+- 'Conditional fly speed: {"condition": "(hover)", "number": 90}; movement is not
+  simulated'
+- 'Air Form: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Whirlwind: forced 20-foot movement and exact occupied-space targeting need a grid;
+  single eligible target approximated.'
+size: L
+spells: []
+unsupported_spells: []

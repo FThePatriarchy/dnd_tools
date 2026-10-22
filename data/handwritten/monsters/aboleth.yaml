@@ -1,0 +1,178 @@
+name: Aboleth
+source: XMM
+cr: '10'
+ac: 17
+max_hp: 150
+hp_formula: 20d10 + 40
+abilities:
+  str: 21
+  dex: 9
+  con: 15
+  int: 18
+  wis: 15
+  cha: 18
+speed: 10
+movement_modes:
+  walk: 10
+  swim: 40
+creature_type: aberration
+alignment: evil
+proficiency_bonus: 4
+save_bonuses:
+  dex: 3
+  con: 6
+  int: 8
+  wis: 6
+save_proficiencies:
+- dex
+- con
+- int
+- wis
+initiative_bonus: 8
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Tentacle
+  kind: melee
+  to_hit: 9
+  reach_ft: 15
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 5
+      type: bludgeoning
+  - apply_condition:
+      condition: grappled
+      escape_dc: 14
+      max_size: L
+      linked: true
+      capacity: 4
+multiattack: []
+actions:
+- name: Consume Memories
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+      eligible_if: target.has_condition_from(grappled, caster) or target.has_condition_from(charmed,
+        caster)
+    attack: null
+    save:
+      ability: int
+      dc: 16
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 3d6
+        bonus: 0
+        type: psychic
+    on_success: []
+    apply: []
+    limit: null
+    if: target.has_condition_from(grappled, caster) or target.has_condition_from(charmed,
+      caster)
+    source_ref: action:Consume Memories
+- name: Dominate Mind
+  cost: action
+  resource: Dominate Mind
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: wis
+      dc: 16
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: charmed
+        linked: true
+        control: true
+        repeat_on_damage: true
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Dominate Mind (2/Day)
+  duration:
+    type: special
+traits: []
+unsupported:
+- 'Amphibious: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Eldritch Restoration: noncombat, sensory, movement, environment or post-encounter
+  restoration; no grid/noncombat adjudication.'
+- 'Mucus Cloud: underwater-only Constitution save DC 14, healing curse and Acid damage
+  every 10 minutes require water/environment and noncombat time; unsupported in dry,
+  lair-free encounters.'
+- 'Probing Telepathy: noncombat, sensory, movement, environment or post-encounter
+  restoration; no grid/noncombat adjudication.'
+- 'Tentacle: no grid/limb occupancy; grapple size, escape DC and explicitly printed
+  limb capacity are enforced; exact limb positioning is not modeled.'
+- 'Consume Memories: memory acquisition is noncombat. Dominate Mind: cross-plane and
+  mile/day repeat saves are outside encounter time. Lair actions (including tagged
+  Constitution saves) are deliberately excluded.'
+limited_uses:
+  Dominate Mind: 2
+  legendary_resistance: 3
+legendary:
+  uses: 3
+  options:
+  - name: Lash
+    cost: 1
+    attacks:
+    - Tentacle
+  - name: Psychic Drain
+    cost: 1
+    effects:
+    - id: main
+      event: on_cast
+      target:
+        select: single
+        filter:
+        - creature
+        affects: any
+        eligible_if: target.has_condition_from(grappled, caster) or target.has_condition_from(charmed,
+          caster)
+      attack: null
+      save:
+        ability: int
+        dc: 16
+        on_success: half
+      on_hit: []
+      on_fail:
+      - damage:
+          dice: 3d6
+          bonus: 0
+          type: psychic
+      on_success: []
+      apply: []
+      limit: null
+      if: target.has_condition_from(grappled, caster) or target.has_condition_from(charmed,
+        caster)
+      source_ref: action:Consume Memories
+    heal: 1d10
+    requires_bound_target: true
+size: L
+routines:
+- - Tentacle
+  - Tentacle
+  - Consume Memories
+- - Tentacle
+  - Tentacle
+  - Dominate Mind
+spells: []
+unsupported_spells: []

@@ -1,0 +1,129 @@
+name: Vampire Spawn
+source: XMM
+cr: '5'
+ac: 16
+max_hp: 90
+hp_formula: 12d8 + 36
+abilities:
+  str: 16
+  dex: 16
+  con: 16
+  int: 11
+  wis: 10
+  cha: 12
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: undead
+alignment: evil
+proficiency_bonus: 3
+save_bonuses:
+  dex: 6
+  wis: 3
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 0
+resistances:
+- necrotic
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Claw
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d4
+      bonus: 3
+      type: slashing
+  - apply_condition:
+      condition: grappled
+      escape_dc: 13
+      max_size: M
+      linked: true
+      capacity: 2
+multiattack: []
+actions:
+- name: Bite
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+      eligible_if: target.has_condition(grappled) or target.has_condition(incapacitated)
+        or target.has_condition(restrained)
+    attack: null
+    save:
+      ability: con
+      dc: 14
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 1d4
+        bonus: 3
+        type: piercing
+    - damage:
+        dice: 3d6
+        bonus: 0
+        type: necrotic
+    on_success: []
+    apply: []
+    limit: null
+    if: target.has_condition(grappled) or target.has_condition(incapacitated) or target.has_condition(restrained)
+    source_ref: action:Bite
+traits:
+- name: Deathless Agility
+  cost: bonus_action
+  effects:
+  - id: escape
+    event: on_cast
+    target:
+      select: self
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - status:
+        id: disengaged
+        data: {}
+      until: end_of_turn(caster.next_turn)
+    limit: null
+    source_ref: bonus:Deathless Agility
+unsupported:
+- 'Spider Climb: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Vampire Weakness: Forbiddance, running-water Acid damage, staking, and sunlight
+  Radiant damage require environment/adjudication; not generated in default indoor
+  encounters. Sunlight attack/check disadvantage is executable via combat.sunlight.'
+- 'Claw: no grid/limb occupancy; grapple size, escape DC and explicitly printed limb
+  capacity are enforced; exact limb positioning is not modeled.'
+- 'Life Drain: revival and maximum-HP recovery after the encounter are outside this
+  single-encounter monster model.'
+- 'Bite: Grappled from any source, Incapacitated and Restrained eligibility execute;
+  AI does not ask enemies to become willing bite targets.'
+- 'Deathless Agility: no-grid Disengage bookkeeping only; Hide/Dash need concealment/movement
+  and are unsupported.'
+size: M
+features:
+  sunlight_sensitivity: true
+  life_drain:
+    attacks:
+    - Bite
+    type: necrotic
+    heal: true
+routines:
+- - Claw
+  - Claw
+  - Bite
+spells: []
+unsupported_spells: []

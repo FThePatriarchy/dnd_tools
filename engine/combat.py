@@ -12,7 +12,10 @@ from .state import Combatant, Effect, Binding, SpellInstance
 MOVEMENT_EVENTS = {"on_aura_moves_onto_creature", "on_creature_enters_aura"}
 
 
-class Combat:
+from .monster_mechanics import MonsterMechanics
+
+
+class Combat(MonsterMechanics):
     def __init__(self, combatants: list[Combatant], spells: dict, seed=1, policy=None, area=None, monster_policy=None):
         if len({c.id for c in combatants}) != len(combatants):
             raise ValueError("combatant ids must be unique")
@@ -31,6 +34,7 @@ class Combat:
         self.log: list[dict] = []
         self.record_log = True
         self._damage_batch = None
+        self.initialize_monsters()
 
     def policy_for(self, actor):
         return self.monster_policy if actor.team != "party" and self.monster_policy is not None else self.policy
@@ -124,7 +128,7 @@ class Combat:
         return 2 * max(actor.exhaustion_level, int(actor.has_condition("exhaustion")))
 
     def roll_flags(self, actor, on, scope="all", against=None, consume=False):
-        advantage = disadvantage = False
+        advantage, disadvantage = self.monster_flags(actor, on, against)
         effects = list(actor.active_effects)
         if on == "attack_rolls" and against is not None:
             effects += [e for e in against.active_effects if e.kind in {"advantage", "disadvantage"} and e.data.get("recipient") == "any_attacker"]
@@ -141,21 +145,22 @@ class Combat:
         if consume: self.refresh_spell_effects()
         return advantage, disadvantage
 
-    def saving_throw(self, target, ability, dc, ignore_cover=None):
+    def saving_throw(self, target, ability, dc, ignore_cover=None, magical=False):
         if ability in {"str", "dex"} and any(target.has_condition(x) for x in ("paralyzed", "stunned", "unconscious", "petrified")):
-            self.record("save", target=target.id, ability=ability, success=False, automatic=True)
-            return False
+            success = self.legendary_resist(target, ability, dc)
+            self.record("save", target=target.id, ability=ability, success=success, automatic=True)
+            return success
         advantage, disadvantage = self.roll_flags(target, "saves", ability)
+        if magical and target.features.get("magic_resistance"):
+            advantage = True
+            self.feature_log(target, "Magic Resistance")
         disadvantage |= ability == "dex" and target.has_condition("restrained")
         bonus = target.save_bonuses.get(ability, target.mod(ability) + (target.proficiency_bonus if ability in target.save_proficiencies else 0))
         total = dice.d20(self.rng, advantage, disadvantage) + self.modifier(target, "save", bonus, ability)
         total -= self.exhaustion_penalty(target)
         success = total >= dc
         # Sheets may use the same counter for monster Legendary Resistance.
-        if not success and target.limited_uses.get("legendary_resistance", 0):
-            target.limited_uses["legendary_resistance"] -= 1
-            target.spend("legendary_resistance")
-            success = True
+        if not success: success = self.legendary_resist(target, ability, dc)
         self.record("save", target=target.id, ability=ability, total=total, dc=dc, success=success)
         return success
 
@@ -189,6 +194,7 @@ class Combat:
         if hit:
             self.offer_reactions("on_attack_provisional_hit", attacker=attacker, defender=defender, who=defender, attack=attack)
             hit = natural != 1 and (natural == 20 or total >= self.armor_class(defender))
+            if hit and self.monster_reaction(attacker, defender, attack, melee): hit = False
         self.record("attack", attacker=attacker.id, defender=defender.id, hit=hit, **attack)
         if hit:
             previous = self._damage_batch
@@ -197,7 +203,10 @@ class Combat:
             self.dispatch("on_attack_hit", attacker=attacker, defender=defender, attack=attack, critical=critical)
             batch = self._damage_batch
             self._damage_batch = previous
+            old_critical = self._critical_damage
+            self._critical_damage = critical
             self.flush_damage(batch)
+            self._critical_damage = old_critical
         return hit
 
     def damage(self, target, amount, dtype, source=None, half=False):
@@ -207,7 +216,8 @@ class Combat:
             return amount
         if half: amount //= 2
         amount = self.mitigate_damage(target, amount, dtype, source)
-        self.apply_damage(target, amount, source)
+        self.apply_damage(target, amount, source, {dtype} if amount else set())
+        self.monster_drain(source, target, {dtype: amount})
         return amount
 
     def mitigate_damage(self, target, amount, dtype, source):
@@ -215,6 +225,7 @@ class Combat:
         else:
             if dtype in target.resistances or target.has_condition("petrified"): amount //= 2
             if dtype in target.vulnerabilities: amount *= 2
+        self.monster_damage(target, amount, dtype)
         self.record("damage", target=target.id, amount=amount, type=dtype, source=source.id if source else None)
         return amount
 
@@ -227,16 +238,22 @@ class Combat:
         typed = defaultdict(int)
         for (target, dtype, half), amount in components.items():
             typed[target, dtype] += amount // 2 if half else amount
-        grouped = defaultdict(int)
+        grouped = defaultdict(dict)
         for (target, dtype), amount in typed.items():
-            grouped[target] += self.mitigate_damage(target, amount, dtype, sources[target])
-        for target, amount in grouped.items(): self.apply_damage(target, amount, sources[target])
+            grouped[target][dtype] = self.mitigate_damage(target, amount, dtype, sources[target])
+        for target, values in grouped.items():
+            self.apply_damage(target, sum(values.values()), sources[target], {k for k, v in values.items() if v})
+            self.monster_drain(sources[target], target, values)
 
-    def apply_damage(self, target, amount, source=None):
+    def apply_damage(self, target, amount, source=None, damage_types=None):
         before = target.hp
         absorbed = min(target.temp_hp, amount)
         target.temp_hp -= absorbed
         target.hp = max(0, target.hp - (amount - absorbed))
+        if before > 0 and target.hp == 0 and target.features.get("undead_fortitude") and "radiant" not in (damage_types or set()) and not self._critical_damage:
+            if self.saving_throw(target, "con", target.features["undead_fortitude"] + amount):
+                target.hp = 1
+                self.feature_log(target, "Undead Fortitude")
         if before > 0 and target.hp == 0:
             target.downs += 1
             target.conditions.update({"unconscious", "prone"})
@@ -250,9 +267,14 @@ class Combat:
                 self.end_spell(target.concentration)
             elif amount and not self.saving_throw(target, "con", min(30, max(10, amount // 2))):
                 self.end_spell(target.concentration)
-        if amount: self.dispatch("on_damaged", who=target, attacker=source, defender=target)
+        if amount:
+            for effect in list(target.active_effects):
+                inst = self.instances.get(effect.source)
+                if effect.data.get("repeat_on_damage") and inst and self.saving_throw(target, "wis", effect.data["save_dc"]): self.remove_effects(inst, target)
+            self.dispatch("on_damaged", who=target, attacker=source, defender=target)
 
     def heal(self, target, amount):
+        if target.has_status("healing_blocked"): return
         target.hp = min(target.max_hp, target.hp + max(0, int(amount)))
         if target.hp > 0: target.conditions.discard("unconscious")
 
@@ -288,6 +310,9 @@ class Combat:
         return bool(evaluate(expression, ctx))
 
     def available_slot(self, actor, spec):
+        if spec["name"] in actor.spell_resources:
+            return actor.spell_levels.get(spec["name"], spec["level"]) if actor.limited_uses.get(actor.spell_resources[spec["name"]], 0) else None
+        if spec["name"] in actor.spell_levels: return actor.spell_levels[spec["name"]]
         if spec["level"] == 0: return 0
         if spec["name"] in actor.innate_spells: return spec["level"] if actor.limited_uses.get(spec["name"], 0) > 0 else None
         slots = [n for n in sorted(actor.spell_slots) if n >= spec["level"] and actor.spell_slots[n] > 0]
@@ -296,16 +321,19 @@ class Combat:
     def can_cast(self, actor, name, slot=None):
         if name not in self.spells or name not in actor.spells or not actor.alive or actor.has_condition("incapacitated"): return False
         spec = self.spells[name]
-        kind = spec["casting_time"]
+        if actor.has_status("engulfed") and spec["components"]["v"]: return False
+        kind = actor.spell_costs.get(name, spec["casting_time"])
         if kind not in {"action", "bonus_action", "reaction"} or getattr(actor, kind) < 1: return False
         if kind == "action" and actor.action <= actor.surge_actions: return False
         if kind != "reaction" and self.current is not actor: return False
-        innate = name in actor.innate_spells
+        innate = name in actor.innate_spells or name in actor.spell_resources or name in actor.spell_levels
         if spec["level"] and not innate and actor.slot_cast_turn == self.turn_index: return False
         available = self.available_slot(actor, spec) if slot is None else slot
         if available is None or available < spec["level"]: return False
-        if innate and available != spec["level"]: return False
+        if innate and available != actor.spell_levels.get(name, spec["level"]): return False
         if not spec["level"]: return available == 0
+        if name in actor.spell_resources: return actor.limited_uses.get(actor.spell_resources[name], 0) > 0
+        if name in actor.spell_levels: return True
         return actor.limited_uses.get(name, 0) > 0 if innate else actor.spell_slots.get(available, 0) > 0
 
     def scale(self, actor, spec, slot):
@@ -331,18 +359,20 @@ class Combat:
                 if not self.event_matches(block["event"], instance, "on_cast", trigger or {}): continue
                 if "if" in block and not any(evaluate(block["if"], self.context(instance, target, trigger=trigger)) for target in targets): continue
                 self.select_targets(instance, block, trigger or {}, targets)
-        kind = spec["casting_time"]
+        kind = caster.spell_costs.get(name, spec["casting_time"])
         setattr(caster, kind, getattr(caster, kind) - 1)
         if spec["concentration"] and caster.concentration is not None:
             self.end_spell(caster.concentration)
         # Ending self-Haste (or a reaction) can make this casting impossible.
         if caster.has_condition("incapacitated") or not caster.alive: return None
         pending = {"caster": caster, "spell": spec, "targets": targets or [], "cancelled": False}
-        innate = name in caster.innate_spells
+        innate = name in caster.innate_spells or name in caster.spell_resources or name in caster.spell_levels
         previous_slot_turn = caster.slot_cast_turn
         if innate:
-            caster.limited_uses[name] -= 1
-            caster.spend(name)
+            resource = caster.spell_resources.get(name, name)
+            if resource in caster.limited_uses:
+                caster.limited_uses[resource] -= 1
+                caster.spend(resource)
         if slot and not innate: caster.slot_cast_turn = self.turn_index
         pending = self.offer_reactions("on_spell_cast_nearby", **pending)
         if pending["cancelled"]:
@@ -404,6 +434,8 @@ class Combat:
             if "new_target" in filters and creature in binding.targets: continue
             if target.get("shape") == "emanation" and creature is caster: continue
             if target.get("exclude") == "designated_on_cast" and creature.id in instance.exclusions: continue
+            if "max_size" in target and "TSMLHG".index(creature.size) > "TSMLHG".index(target["max_size"]): continue
+            if "eligible_if" in target and not evaluate(target["eligible_if"], self.context(instance, creature)): continue
             result.append(creature)
         return result
 
@@ -417,12 +449,15 @@ class Combat:
             if ref == "spell_target":
                 value = instance.target
                 return value if isinstance(value, list) else [value] if value else []
-            return instance.bindings.get(ref, Binding()).targets[:]
+            members = instance.bindings.get(ref, Binding()).targets[:]
+            if block["event"] in {"start_of_turn(target)", "end_of_turn(target)", "start_of_turn(affected)", "end_of_turn(affected)"}:
+                return [frame["who"]] if frame.get("who") in members else []
+            return members
         eligible = self.eligible(instance, block)
         if kind == "area":
             cached = instance.area_members.get(block["id"])
             members = [c for c in cached if c in eligible] if cached is not None else self.area_members(instance, block, eligible)
-            if frame.get("who") is not None: return [frame["who"]] if frame["who"] in members else []
+            if frame.get("who") is not None and block["event"] not in {"start_of_turn(caster)", "end_of_turn(caster)"}: return [frame["who"]] if frame["who"] in members else []
             return members
         n = target.get("n", 1)
         selected = list(explicit) if explicit is not None else self.policy_for(instance.caster).targets(self, instance, block, eligible, n)
@@ -472,6 +507,7 @@ class Combat:
         performed = False
         for target in targets:
             if not instance.active: break
+            if block.get("admission") and not self.has_capacity(instance, target, block["admission"]): continue
             ctx = self.context(instance, target, event, frame, **frame)
             if event not in {"on_cast", "while_in_area"} and not self.spell_applies(instance, target, event, frame): continue
             key = (block["id"], self.turn_index, target.id if block["limit"] == "once_per_turn_per_target" else None)
@@ -479,6 +515,8 @@ class Combat:
             if block["limit"]: instance.limits.add(key)
             performed = True
             if block["attack"]:
+                target = self.redirect_target(instance.caster, target)
+                ctx = self.context(instance, target, event, frame, **frame)
                 self.attack(instance.caster, target, instance.caster.spell_attack_bonus,
                     lambda crit, attack, t=target, c=ctx: self.execute(instance, t, block["on_hit"], {**c, "attacker": instance.caster, "defender": t, "critical": crit, "attack": attack}, block["id"], shared=shared),
                     melee=block["attack"]["type"] == "melee_spell")
@@ -487,10 +525,14 @@ class Combat:
                 self._damage_batch = []
                 if block["save"]:
                     save = block["save"]
-                    success = self.saving_throw(target, save["ability"], instance.caster.spell_dc, save.get("ignore_cover"))
-                    if not success: self.execute(instance, target, block["on_fail"], ctx, block["id"], shared=shared)
+                    success = self.saving_throw(target, save["ability"], save.get("dc", instance.caster.spell_dc), save.get("ignore_cover"), magical="level" in instance.spec)
+                    evasion = save["ability"] == "dex" and save["on_success"] == "half" and target.features.get("evasion") and not target.has_condition("incapacitated")
+                    if evasion: self.feature_log(target, "Evasion")
+                    if not success:
+                        self.execute(instance, target, block["on_fail"], ctx, block["id"], half=bool(evasion), shared=shared)
+                        if evasion: self.execute(instance, target, [p for p in block["on_fail"] if "damage" not in p], ctx, block["id"], shared=shared)
                     else:
-                        if save["on_success"] == "half": self.execute(instance, target, block["on_fail"], ctx, block["id"], half=True, shared=shared)
+                        if save["on_success"] == "half" and not evasion: self.execute(instance, target, block["on_fail"], ctx, block["id"], half=True, shared=shared)
                         self.execute(instance, target, block["on_success"], ctx, block["id"], shared=shared)
                 else: self.execute(instance, target, block["apply"], ctx, block["id"], shared=shared)
                 batch = self._damage_batch
@@ -509,6 +551,34 @@ class Combat:
         actor_name = node[2][0][1][1]
         actor = instance.caster if actor_name == "caster" else target
         return event, actor.id, actor.turns_taken + 1
+
+    def has_capacity(self, instance, target, value):
+        def occupied(c):
+            return c.has_status_from(value["status"], instance.caster) if "status" in value else c.has_condition_from(value["condition"], instance.caster)
+        if not value.get("capacity") or occupied(target): return True
+        occupants = [c for c in self.combatants if occupied(c)]
+        def cost(c): return value.get("large_cost", 1) if c.size == "L" else 1
+        return sum(cost(c) for c in occupants) + cost(target) <= value["capacity"]
+
+    def ignite(self, target, source=None):
+        # XPHB Burning is a single hazard, independent of the igniting effect's lifetime.
+        target.statuses.setdefault("burning", {"source_id": source.id if source else None})
+
+    def extinguish(self, actor, *, method="roll"):
+        if not actor.has_status("burning"): return False
+        if method == "roll":
+            if self.current is not actor or not actor.alive or actor.has_condition("incapacitated") or actor.action < 1 or "prone" in actor.condition_immunities: return False
+            actor.action -= 1
+            actor.conditions.add("prone")
+        elif method not in {"doused", "submerged", "suffocated"}: raise ValueError("unknown extinguishing method")
+        actor.statuses.pop("burning", None)
+        self.record("extinguish", actor=actor.id, method=method)
+        return True
+
+    def tick_burning(self, actor):
+        if actor.alive and actor.has_status("burning"):
+            source = next((c for c in self.combatants if c.id == actor.statuses["burning"].get("source_id")), None)
+            self.damage(actor, dice.roll(self.rng, "1d4"), "fire", source)
 
     def execute(self, instance, target, primitives, ctx, block, half=False, shared=None):
         for primitive in primitives:
@@ -532,12 +602,32 @@ class Combat:
                     self.damage(target, amount, dtype, instance.caster, half=half)
                 elif key == "heal": self.heal(target, amount)
                 else: target.temp_hp = max(target.temp_hp, amount)
+            elif key == "burning": self.ignite(target, instance.caster)
             elif key == "end_spell": self.end_spell(instance.id)
             elif key == "counter_spell": ctx["trigger"]["cancelled"] = True
             elif key == "on_spell_end": instance.end_callbacks.append((target, value))
             else:
-                if key == "apply_condition" and value["condition"] in target.condition_immunities: continue
+                if key == "status" and value["id"] == "engulfed":
+                    for old in list(target.status_effects("engulfed")):
+                        other = self.instances.get(old.source)
+                        if other and other is not instance and other.caster is instance.caster:
+                            self.remove_effects(other, target)
+                if key == "apply_condition":
+                    if value["condition"] in target.condition_immunities: continue
+                    if "max_size" in value and "TSMLHG".index(target.size) > "TSMLHG".index(value["max_size"]): continue
+                    if not self.has_capacity(instance, target, value): continue
+                    for old in list(target.effects):
+                        other = self.instances.get(old.source)
+                        if old.source != instance.id and old.kind == key and old.data.get("condition") == value["condition"] and other and other.caster is instance.caster and (value.get("linked") or other.spec["name"] == instance.spec["name"]):
+                            self.remove_effects(other, target)
                 data = dict(value)
+                if key in {"apply_condition", "status"}: data["caster_id"] = instance.caster.id
+                if key == "apply_condition" and (data.get("repeat_save") or data.get("repeat_on_damage")):
+                    declaration = next((b for b in instance.spec.get("effects", []) if b["id"] == block), {})
+                    data["save_dc"] = (declaration.get("save") or {}).get("dc", instance.caster.spell_dc)
+                if key == "apply_condition" and data.get("control"):
+                    data["original_team"] = target.team
+                    target.team = instance.caster.team
                 if isinstance(data.get("scope"), str) and data["scope"].startswith("$"): data["scope"] = instance.choices[data["scope"][1:]]
                 effect = Effect(key, data, instance.id, block,
                     self.boundary(primitive["until"], instance, target) if "until" in primitive else None, data.get("uses"))
@@ -551,7 +641,13 @@ class Combat:
 
     def remove_effects(self, instance, target=None, block=None):
         for actor in ([target] if target else self.combatants):
-            actor.effects = [e for e in actor.effects if not (e.source == instance.id and (block is None or e.block == block))]
+            removed = [e for e in actor.effects if e.source == instance.id and (block is None or e.block == block)]
+            for effect in removed:
+                if "original_team" in effect.data: actor.team = effect.data["original_team"]
+            actor.effects = [e for e in actor.effects if e not in removed]
+        if target is not None and block is None and "level" not in instance.spec:
+            for binding in instance.bindings.values():
+                if target in binding.targets: binding.targets.remove(target)
         self.refresh_spell_effects()
 
     def end_spell(self, identifier):
@@ -598,10 +694,12 @@ class Combat:
         if event in MOVEMENT_EVENTS: return  # Accepted declarations, never simulated.
         for instance in list(self.instances.values()):
             if not instance.active: continue
+            if instance.spec.get("monster_passive") and not instance.caster.alive: continue
             instance.elapsed_minutes = round((self.time_rounds - instance.cast_round) / 10, 10)
             for block in instance.spec["effects"]:
                 if not instance.active: break
                 if self.event_matches(block["event"], instance, event, frame):
+                    if instance.spec.get("monster_passive"): self.feature_log(instance.caster, instance.spec["name"])
                     self.resolve_block(instance, block, event, frame)
 
     def command(self, instance, event="bonus_action_command", targets=None):
@@ -642,11 +740,13 @@ class Combat:
         self.expire("start_of_turn", actor)
         self.grant_current_actions(actor)
         actor.action = int(self.modifier(actor, "action_count", actor.action))
-        for action in actor.actions:
+        for action in actor.actions + actor.attacks:
             if "recharge" in action and not actor.recharge_ready.get(action["name"], True):
                 actor.recharge_ready[action["name"]] = self.rng.randint(1, 6) >= action["recharge"]
+        self.start_monster_turn(actor)
         self.repeat_saves(actor, "start_of_turn")
         self.refresh_areas()
+        self.tick_burning(actor)
         self.dispatch("start_of_turn", who=actor)
         self.record("turn_start", actor=actor.id, round=self.round)
 
@@ -655,24 +755,52 @@ class Combat:
             repeat = effect.data.get("repeat_save") if effect.kind == "apply_condition" else None
             instance = self.instances.get(effect.source)
             if repeat and repeat["timing"] == timing and instance and instance.active:
-                if self.saving_throw(actor, repeat["ability"], instance.caster.spell_dc):
+                if self.saving_throw(actor, repeat["ability"], effect.data.get("save_dc", instance.caster.spell_dc), magical="level" in instance.spec):
                     self.remove_effects(instance, actor)
                     for binding in instance.bindings.values():
                         if actor in binding.targets: binding.targets.remove(actor)
+                elif effect.data.get("upgrade_on_failure"):
+                    data = dict(effect.data)
+                    data["condition"] = data.pop("upgrade_on_failure")
+                    data.pop("repeat_save", None)
+                    actor.effects.remove(effect)
+                    self.execute(instance, actor, [{"apply_condition": data}], self.context(instance, actor), effect.block)
+                    for replacement in actor.effects:
+                        if replacement.source == effect.source and replacement.block == effect.block:
+                            replacement.until = effect.until
 
     def end_turn(self, actor):
         self.dispatch("end_of_turn", who=actor)
         self.dispatch("end_of_turn_in_aura", who=actor)
         self.repeat_saves(actor, "end_of_turn")
         self.expire("end_of_turn", actor)
+        for c in self.combatants:
+            for e in list(c.effects):
+                inst = self.instances.get(e.source)
+                if inst and e.data.get("linked") and (not inst.caster.alive or (inst.caster.has_condition("incapacitated") and not e.data.get("control"))): self.remove_effects(inst, c)
         self.time_rounds += 1 / max(1, len(self.combatants))
         self.current = None
+        self.legendary_actions(actor)
 
     def weapon_attack(self, actor, target, attack):
+        if not actor.alive or not target.alive or actor.has_condition("incapacitated"): return False
+        if not actor.recharge_ready.get(attack["name"], True): return False
+        if attack.get("resource") and not actor.limited_uses.get(attack["resource"]): return False
+        if attack.get("recharge"): actor.recharge_ready[attack["name"]] = False
+        if attack.get("resource"):
+            actor.limited_uses[attack["resource"]] -= 1
+            actor.spend(attack["resource"])
+        target = self.redirect_target(actor, target)
+        self.record("weapon", actor=actor.id, name=attack["name"])
+        before_hp = target.hp
+        previous_context = self._monster_attack
+        self._monster_attack = actor, attack["name"]
         def hit(critical, roll):
-            instance = SpellInstance(0, {"name": attack["name"]}, actor, 0, self.turn_index, self.time_rounds)
+            persistent = attack.get("riders") or any("damage" not in p for p in attack["effects"])
+            instance = self.monster_instance(actor, attack["name"], attack.get("riders", [])) if persistent else SpellInstance(0, {"name": attack["name"]}, actor, 0, self.turn_index, self.time_rounds)
             frame = {"attacker": actor, "defender": target, "attack": roll, "critical": critical}
             self.execute(instance, target, attack["effects"], self.context(instance, target, "on_attack_hit", frame, **frame), "weapon")
+            for block in attack.get("riders", []): self.resolve_block(instance, block, "on_cast", {}, [target])
             if attack.get("mastery") == "sap":
                 target.effects.append(Effect("disadvantage", {"on": "attack_rolls", "scope": "all", "against": None}, 0, "sap", ("start_of_turn", actor.id, actor.turns_taken + 1), uses=1))
             if attack.get("mastery") == "vex":
@@ -683,10 +811,20 @@ class Combat:
         if vex and vex["target"] == target.id and actor.turns_taken <= vex["expires"]:
             extra = Effect("advantage", {"on": "attack_rolls", "scope": "all", "against": None}, 0, "vex", uses=1)
             actor.effects.append(extra)
+        if attack.get("advantage_if") == "grappled_by_self" and actor in self.condition_sources(target, "grappled"):
+            from_effect = Effect("advantage", {"on": "attack_rolls", "scope": "all", "against": None}, 0, "grapple", uses=1)
+            actor.effects.append(from_effect)
         success = self.attack(actor, target, attack["to_hit"], hit, attack.get("kind", "melee") == "melee")
+        self._monster_attack = previous_context
         if not success and attack.get("mastery") == "graze":
             self.damage(target, max(0, actor.mod(attack.get("ability", "str"))), attack["effects"][0]["damage"]["type"], actor)
         if extra in actor.effects: actor.effects.remove(extra)
+        if success and actor.features.get("rampage") and actor.bonus_action and actor.limited_uses.get("Rampage") and before_hp <= target.max_hp / 2 and target.hp < before_hp and self.enemies(actor):
+            actor.bonus_action -= 1
+            actor.limited_uses["Rampage"] -= 1
+            actor.spend("Rampage")
+            self.feature_log(actor, "Rampage")
+            self.perform_option(actor, "Rend")
         return success
 
     def weapon_action(self, actor, granted=None):
@@ -695,17 +833,20 @@ class Combat:
             actor.action -= 1
             if actor.surge_actions: actor.surge_actions -= 1
         self.record("action", actor=actor.id, name="Attack", granted=bool(granted))
-        names = actor.multiattack or [actor.attacks[0]["name"]] * actor.extra_attack
+        names = self.routine(actor, self.enemies(actor)[0]) if self.enemies(actor) else []
+        if not granted and actor.replacements:
+            names = self.policy_for(actor).monster_replacements(self, actor, names)
         if granted: names = names[:granted.get("attack_limit", 1)]
         for name in names:
             enemies = self.enemies(actor)
             if not enemies: break
             target = min(enemies, key=lambda c: (c.hp, c.id))
-            self.weapon_attack(actor, target, next(a for a in actor.attacks if a["name"] == name))
+            self.perform_option(actor, name, [target])
         return True
 
     def action_available(self, actor, action):
         if not actor.alive or actor.has_condition("incapacitated"): return False
+        if action.get("passive") or action.get("trigger"): return False
         if self.current is not actor: return False
         if action["cost"] != "free" and getattr(actor, action["cost"]) < 1: return False
         if action.get("resource") and actor.limited_uses.get(action["resource"], 0) < 1: return False
@@ -726,11 +867,16 @@ class Combat:
             actor.action += 1
             if action.get("resource") == "action_surge": actor.surge_actions += 1
             return True
-        spec = {"name": name, "duration": {"type": "instant"}, "effects": action["effects"], "ends_on": []}
+        spec = {"name": name, "duration": action.get("duration", {"type": "instant"}), "effects": action["effects"], "ends_on": []}
         inst = SpellInstance(self.next_instance, spec, actor, 0, self.turn_index, self.time_rounds)
         self.next_instance += 1
         self.instances[inst.id] = inst
-        for block in action["effects"]: self.resolve_block(inst, block, "on_cast", {}, targets)
+        previous_context = self._monster_attack
+        self._monster_attack = actor, name
+        for block in action["effects"]:
+            if self.event_matches(block["event"], inst, "on_cast", {}): self.resolve_block(inst, block, "on_cast", {}, targets)
+        self._monster_attack = previous_context
+        if action.get("duration"): return True
         for creature in self.combatants:
             for effect in creature.effects:
                 if effect.source == inst.id and effect.until: effect.source = -inst.id
@@ -741,6 +887,7 @@ class Combat:
         return min(.95, max(.05, (21 + bonus - self.armor_class(target)) / 20))
 
     def expected_weapon_damage(self, actor, target):
+        if actor.routines: return max(self.routine_value(actor, names, target) for names in actor.routines)
         if not actor.attacks: return 0
         total = 0
         names = actor.multiattack or [actor.attacks[0]["name"]] * actor.extra_attack
@@ -751,9 +898,9 @@ class Combat:
             if attack.get("mastery") == "graze": total += max(0, actor.mod("str")) * (1 - self.hit_probability(actor, target, attack["to_hit"]))
         return total
 
-    def save_failure_probability(self, actor, target, ability):
+    def save_failure_probability(self, actor, target, ability, dc=None):
         bonus = target.save_bonuses.get(ability, target.mod(ability) + (target.proficiency_bonus if ability in target.save_proficiencies else 0))
-        return min(1, max(0, (actor.spell_dc - bonus - 1) / 20))
+        return min(1, max(0, ((actor.spell_dc if dc is None else dc) - bonus - 1) / 20))
 
     def at_will_damage_rate(self, actor, target):
         # Explicit one-round horizon prevents recursion into encounter estimation.
@@ -793,7 +940,7 @@ class Combat:
             gain += (advantage - hit) * damage + (advantage * crit_dice if auto_crit else 0)
         return gain
 
-    def expected_spell_damage(self, actor, spec, target, *, horizon=None):
+    def expected_spell_damage(self, actor, spec, target, *, horizon=None, control_value=True):
         """Damage-equivalent EV, not search. See BUILD_REPORT's Step 1 fix round.
 
         Lasting effects use enemy HP / allied at-will DPR, capped by duration.
@@ -825,7 +972,7 @@ class Combat:
             command = "bonus_action_command" in event and any("damage" in p for p in primitives)
             aura = "end_of_turn_in_aura" in event
             rider = "on_attack_hit(caster, defender)" in event
-            control = any("apply_condition" in p or "remove_from_combat" in p for p in primitives)
+            control = control_value and any("apply_condition" in p or "remove_from_combat" in p for p in primitives)
             lasting = command or aura or rider or control
             rounds = 1
             if lasting:
@@ -835,7 +982,7 @@ class Combat:
                 rounds = min(horizon, cap)
             for victim in targets:
                 damage = sum(dice.mean(p["damage"]["dice"]) + (actor.spell_mod if p["damage"]["bonus"] == "spell_mod" else p["damage"]["bonus"]) for p in primitives if "damage" in p)
-                fail = self.save_failure_probability(actor, victim, block["save"]["ability"]) if block["save"] else 1
+                fail = self.save_failure_probability(actor, victim, block["save"]["ability"], block["save"].get("dc")) if block["save"] else 1
                 if block["attack"]: damage *= self.hit_probability(actor, victim, actor.spell_attack_bonus)
                 if block["save"]: damage *= fail + ((1 - fail) / 2 if block["save"]["on_success"] == "half" else 0)
                 if command: damage *= 1 + .85 * max(0, rounds - 1)
@@ -846,7 +993,7 @@ class Combat:
                 denied_rate = max((self.at_will_damage_rate(victim, ally) for ally in allies), default=0) if control else 0
                 condition_value = fail * rounds * denied_rate if removed else 0
                 for p in primitives:
-                    if "apply_condition" not in p: continue
+                    if not control or "apply_condition" not in p: continue
                     data = p["apply_condition"]
                     condition = data["condition"]
                     if condition in victim.condition_immunities or victim.has_condition(condition): continue
@@ -857,7 +1004,7 @@ class Combat:
                         whole = int(rounds)
                         uptime = rounds if q == 1 else (1 - q ** whole) / (1 - q) + (rounds - whole) * q ** whole
                         if repeat["timing"] == "start_of_turn": uptime *= q
-                    denied = 0
+                    denied = 2 * denied_rate if data.get("control") else 0
                     if condition in {"incapacitated", "paralyzed", "stunned", "unconscious", "petrified"}:
                         denied = denied_rate
                     gained = 0 if removed else sum(self.control_attack_gain(ally, victim, condition) for ally in allies)
@@ -879,7 +1026,7 @@ class Combat:
                 self.begin_turn(actor)
                 self.policy_for(actor).take_turn(self, actor)
                 self.end_turn(actor)
-                teams = {c.team for c in self.combatants if c.alive}
+                teams = {c.team for c in self.combatants if c.alive or (c.features.get("regeneration", {}).get("at_zero") and not c.has_status("regeneration_blocked") and not c.removed and not c.permanently_removed)}
                 if len(teams) <= 1:
                     return {"winner": next(iter(teams), None), "rounds": round_number, "hp": self.party_hp(), "resources": self.resources()}
         return {"winner": None, "rounds": max_rounds, "hp": self.party_hp(), "resources": self.resources()}

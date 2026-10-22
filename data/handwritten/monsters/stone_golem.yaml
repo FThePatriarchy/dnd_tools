@@ -1,0 +1,85 @@
+name: Stone Golem
+source: XMM
+cr: '10'
+ac: 18
+max_hp: 220
+hp_formula: 21d10 + 105
+abilities:
+  str: 22
+  dex: 9
+  con: 20
+  int: 3
+  wis: 11
+  cha: 1
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: construct
+alignment: neutral
+proficiency_bonus: 4
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 4
+resistances: []
+immunities:
+- poison
+- psychic
+vulnerabilities: []
+condition_immunities:
+- charmed
+- exhaustion
+- frightened
+- paralyzed
+- petrified
+- poisoned
+attacks:
+- name: Slam
+  kind: melee
+  to_hit: 10
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 6
+      type: bludgeoning
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: force
+- name: Force Bolt
+  kind: ranged
+  to_hit: 9
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 4d10
+      bonus: 0
+      type: force
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Immutable Form: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Slow {@recharge 5}: spell outside golden set, recharge declaration is not executable
+  until that spell is supplied.'
+- 'Spellcasting outside golden set: Slow. No substitute effects or invented slots.'
+- 'Slow: Wisdom save spell outside golden set; unsupported.'
+spell_ability: con
+spell_dc: 17
+spell_attack_bonus: 9
+size: L
+features:
+  magic_resistance: true
+routines:
+- - Slam
+  - Slam
+- - Slam
+  - Force Bolt
+- - Force Bolt
+  - Slam
+- - Force Bolt
+  - Force Bolt
+spells: []
+unsupported_spells:
+- Slow

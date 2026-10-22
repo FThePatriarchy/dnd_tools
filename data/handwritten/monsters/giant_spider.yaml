@@ -1,0 +1,91 @@
+name: Giant Spider
+source: XMM
+cr: '1'
+ac: 14
+max_hp: 26
+hp_formula: 4d10 + 4
+abilities:
+  str: 14
+  dex: 16
+  con: 12
+  int: 2
+  wis: 11
+  cha: 4
+speed: 30
+movement_modes:
+  walk: 30
+  climb: 30
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 3
+      type: piercing
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: poison
+multiattack: []
+actions:
+- name: Web
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: dex
+      dc: 13
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: restrained
+        obstacle:
+          ac: 10
+          hp: 5
+          vulnerabilities:
+          - fire
+          immunities:
+          - poison
+          - psychic
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Web {@recharge 5}
+  duration:
+    type: special
+traits: []
+unsupported:
+- 'Spider Climb: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Web Walker: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Web: AC 10/HP 5 destructible restraint executes via the trapped creature''s Attack
+  action; ally rescue/positioning and object-targeted spell choice are not planned
+  by default AI.'
+size: L
+routines:
+- - Bite
+spells: []
+unsupported_spells: []

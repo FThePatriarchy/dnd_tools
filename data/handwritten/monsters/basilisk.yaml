@@ -1,0 +1,84 @@
+name: Basilisk
+source: XMM
+cr: '3'
+ac: 15
+max_hp: 52
+hp_formula: 8d8 + 16
+abilities:
+  str: 16
+  dex: 8
+  con: 15
+  int: 2
+  wis: 8
+  cha: 7
+speed: 20
+movement_modes:
+  walk: 20
+creature_type: monstrosity
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 3
+      type: piercing
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: poison
+multiattack: []
+actions:
+- name: Petrifying Gaze
+  cost: bonus_action
+  recharge: 4
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 30
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 12
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: restrained
+        repeat_save:
+          ability: con
+          timing: end_of_turn
+          on_success: end
+        upgrade_on_failure: petrified
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: bonus:Petrifying Gaze {@recharge 4}
+  duration:
+    type: special
+traits: []
+unsupported:
+- 'Petrifying Gaze: self-reflection requires mirrors/grid; unsupported. Failed first
+  save restrains; failed next-turn save petrifies.'
+size: M
+routines:
+- - Bite
+spells: []
+unsupported_spells: []

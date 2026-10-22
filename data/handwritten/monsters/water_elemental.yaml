@@ -1,0 +1,129 @@
+name: Water Elemental
+source: XMM
+cr: '5'
+ac: 14
+max_hp: 114
+hp_formula: 12d10 + 48
+abilities:
+  str: 18
+  dex: 14
+  con: 18
+  int: 5
+  wis: 10
+  cha: 8
+speed: 30
+movement_modes:
+  walk: 30
+  swim: 90
+creature_type: elemental
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- acid
+- fire
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- exhaustion
+- grappled
+- paralyzed
+- petrified
+- poisoned
+- prone
+- restrained
+- unconscious
+attacks:
+- name: Slam
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 4
+      type: bludgeoning
+  - apply_condition:
+      condition: prone
+      max_size: M
+multiattack:
+- Slam
+- Slam
+actions:
+- name: Whelm
+  cost: action
+  recharge: 4
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: n_targets
+      n: 2
+      up_to: true
+      distinct: true
+      filter:
+      - creature
+      affects: enemy
+      max_size: L
+    attack: null
+    save:
+      ability: str
+      dc: 15
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 4d8
+        bonus: 4
+        type: bludgeoning
+    - apply_condition:
+        condition: grappled
+        escape_dc: 14
+        max_size: L
+        linked: true
+        capacity: 2
+        large_cost: 2
+    - apply_condition:
+        condition: restrained
+        max_size: L
+        linked: true
+      if: target.has_condition_from(grappled, caster)
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Whelm {@recharge 4}
+  - id: ongoing
+    event: start_of_turn(caster)
+    target:
+      select: ref
+      ref: main
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - damage:
+        dice: 2d8
+        bonus: 0
+        type: bludgeoning
+    limit: null
+    if: target.has_condition_from(grappled, caster)
+    source_ref: action:Whelm {@recharge 4}
+  duration:
+    type: special
+traits: []
+unsupported:
+- 'Freeze: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Water Form: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Whelm: up to two targets selected without grid; one Large or two smaller creatures
+  capacity is enforced. External rescue and suffocation require grid/breath timers;
+  self escape and recurring damage execute.'
+size: L
+spells: []
+unsupported_spells: []

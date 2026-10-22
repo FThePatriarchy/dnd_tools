@@ -1,0 +1,84 @@
+name: Mage
+source: XMM
+cr: '6'
+ac: 15
+max_hp: 81
+hp_formula: 18d8
+abilities:
+  str: 9
+  dex: 14
+  con: 11
+  int: 17
+  wis: 12
+  cha: 11
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses:
+  int: 6
+  wis: 4
+save_proficiencies:
+- int
+- wis
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Arcane Burst
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 3d8
+      bonus: 3
+      type: force
+multiattack:
+- Arcane Burst
+- Arcane Burst
+- Arcane Burst
+actions: []
+traits: []
+unsupported:
+- 'Spellcasting outside golden set: Cone of Cold, Detect Magic, Fly, Invisibility,
+  Light, Mage Armor, Mage Hand, Misty Step, Prestidigitation. No substitute effects
+  or invented slots.'
+- 'Invisibility: Invisible condition is from a spell outside the golden set; unsupported.'
+spell_ability: int
+spell_dc: 14
+spell_attack_bonus: 6
+spells:
+- Fireball
+- Counterspell
+- Shield
+spell_levels:
+  Fireball: 4
+  Counterspell: 3
+  Shield: 1
+spell_costs:
+  Fireball: action
+  Counterspell: reaction
+  Shield: reaction
+limited_uses:
+  Fireball: 2
+  Protective Magic: 3
+spell_resources:
+  Fireball: Fireball
+  Counterspell: Protective Magic
+  Shield: Protective Magic
+size: M
+unsupported_spells:
+- Cone of Cold
+- Detect Magic
+- Fly
+- Invisibility
+- Light
+- Mage Armor
+- Mage Hand
+- Misty Step
+- Prestidigitation

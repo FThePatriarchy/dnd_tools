@@ -1,0 +1,50 @@
+name: Wolf
+source: XMM
+cr: 1/4
+ac: 12
+max_hp: 11
+hp_formula: 2d8 + 2
+abilities:
+  str: 14
+  dex: 15
+  con: 12
+  int: 3
+  wis: 12
+  cha: 6
+speed: 40
+movement_modes:
+  walk: 40
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: piercing
+  - apply_condition:
+      condition: prone
+      max_size: M
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+features:
+  pack_tactics: true
+routines:
+- - Bite
+spells: []
+unsupported_spells: []

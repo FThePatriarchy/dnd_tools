@@ -1,0 +1,92 @@
+name: Fire Elemental
+source: XMM
+cr: '5'
+ac: 13
+max_hp: 93
+hp_formula: 11d10 + 33
+abilities:
+  str: 10
+  dex: 17
+  con: 16
+  int: 6
+  wis: 10
+  cha: 7
+speed: 50
+movement_modes:
+  walk: 50
+creature_type: elemental
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- bludgeoning
+- piercing
+- slashing
+immunities:
+- fire
+- poison
+vulnerabilities: []
+condition_immunities:
+- exhaustion
+- grappled
+- paralyzed
+- petrified
+- poisoned
+- prone
+- restrained
+- unconscious
+attacks:
+- name: Burn
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 3
+      type: fire
+  - burning: {}
+multiattack:
+- Burn
+- Burn
+actions: []
+traits:
+- name: Fire Aura
+  cost: free
+  passive: true
+  effects:
+  - id: aura
+    event: end_of_turn(caster)
+    target:
+      select: area
+      shape: emanation
+      size_ft: 10
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - damage:
+        dice: 1d10
+        bonus: 0
+        type: fire
+    - burning: {}
+    limit: null
+    source_ref: trait:Fire Aura
+unsupported:
+- 'Fire Aura/Burn: creature burning and extinguishing execute; terrain/object ignition
+  is unsupported.'
+- 'Fire Form: squeezing/space entry and entry Fire damage require movement/grid; unsupported.'
+- 'Illumination: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Water Susceptibility: environmental water movement/splash Cold damage needs water
+  quantities and movement; unsupported.'
+size: L
+spells: []
+unsupported_spells: []

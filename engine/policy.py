@@ -20,6 +20,31 @@ def area_heuristic(shape: str, size_ft: float, eligible: int) -> int:
 
 
 class Policy:
+    def legendary_resistance(self, combat, actor, ability, dc):
+        return True
+
+    def redirect_attack(self, combat, actor, allies):
+        return max(allies, key=lambda c: c.hp, default=None)
+
+    def legendary_action(self, combat, actor, finished, options):
+        def value(option):
+            target = combat.enemies(actor)[0]
+            if "attacks" in option: return combat.routine_value(actor, option["attacks"], target)
+            if "spell" in option: return combat.expected_spell_damage(actor, combat.scale(actor, combat.spells[option["spell"]], actor.spell_levels.get(option["spell"])), target, horizon=1)
+            return combat.expected_action_damage(actor, option, target)
+        return max(options, key=value, default=None)
+
+    def monster_routine(self, combat, actor, target, options):
+        return max(options, key=lambda names: combat.routine_value(actor, names, target, control=True), default=[])
+
+    def monster_replacements(self, combat, actor, names):
+        if not names or not combat.enemies(actor): return names
+        target = combat.enemies(actor)[0]
+        best = max(actor.replacements, key=lambda name: combat.routine_value(actor, [name], target))
+        if combat.routine_value(actor, [best], target) > combat.routine_value(actor, [names[-1]], target):
+            return names[:-1] + [best]
+        return names
+
     def slot(self, combat, actor, spec, slots):
         return slots[0]
 
@@ -94,6 +119,15 @@ class Policy:
         if not actor.alive or actor.has_condition("incapacitated"): return
         enemies = combat.enemies(actor)
         if not enemies: return
+        if actor.has_status("burning"): combat.extinguish(actor)
+        if actor.has_condition("restrained") or actor.has_condition("grappled") or actor.has_status("engulfed"):
+            combat.escape(actor)
+        if actor.has_condition("prone") and not actor.has_condition("grappled") and not actor.has_condition("restrained") and actor.speed > 0:
+            actor.conditions.discard("prone")
+            actor.effects = [e for e in actor.effects if not (e.kind == "apply_condition" and e.data["condition"] == "prone")]
+            combat.record("stand", actor=actor.id)
+        for option in actor.actions:
+            if option["cost"] == "bonus_action" and any(b["on_fail"] or b["on_hit"] for b in option["effects"]) and combat.action_available(actor, option): combat.use_action(actor, option["name"])
         # Bonus-action healing leaves the action available for a cantrip/weapon.
         wounded = sorted([x for x in combat.combatants if x.team == actor.team and not x.removed and x.hp < x.max_hp / 2], key=lambda c: c.hp / c.max_hp)
         if wounded:
@@ -111,18 +145,20 @@ class Policy:
         if actor.action and not actor.has_condition("incapacitated"):
             options = []
             weapon = combat.expected_weapon_damage(actor, enemies[0])
+            if actor.routines: weapon = max(weapon, max(combat.routine_value(actor, r, enemies[0], control=True) for r in actor.routines))
             for name in actor.spells:
                 if not combat.can_cast(actor, name): continue
                 spec = combat.spells[name]
                 if not self.allow_spell(combat, actor, spec): continue
-                if spec["casting_time"] not in {"action", "bonus_action"}: continue
+                casting_time = actor.spell_costs.get(name, spec["casting_time"])
+                if casting_time not in {"action", "bonus_action"}: continue
                 if spec["concentration"] and actor.concentration is not None: continue
                 slot = combat.available_slot(actor, spec)
                 scaled = combat.scale(actor, spec, slot)
                 value = combat.expected_spell_damage(actor, scaled, enemies[0])
                 if value > 0:
                     # A bonus-action spell leaves the weapon routine available.
-                    options.append((value + (weapon if spec["casting_time"] == "bonus_action" else 0), name))
+                    options.append((value + (weapon if casting_time == "bonus_action" else 0), name))
             for action in actor.actions:
                 if combat.action_available(actor, action):
                     value = combat.expected_action_damage(actor, action, enemies[0])
@@ -143,7 +179,7 @@ class Policy:
                 actor.extra_actions.remove(extra)
                 combat.weapon_action(actor, granted=extra)
         for trait in actor.traits:
-            if trait["name"] == "Nimble Escape" and combat.action_available(actor, trait):
+            if trait["name"] in {"Nimble Escape", "Cunning Action", "Deathless Agility"} and combat.action_available(actor, trait):
                 combat.use_action(actor, trait["name"])
 
 

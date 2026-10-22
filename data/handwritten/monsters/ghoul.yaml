@@ -1,0 +1,87 @@
+name: Ghoul
+source: XMM
+cr: '1'
+ac: 12
+max_hp: 22
+hp_formula: 5d8
+abilities:
+  str: 13
+  dex: 15
+  con: 10
+  int: 7
+  wis: 10
+  cha: 6
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: undead
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- charmed
+- exhaustion
+- poisoned
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: piercing
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: necrotic
+- name: Claw
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 2
+      type: slashing
+  riders:
+  - id: paralysis
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: enemy
+    attack: null
+    save:
+      ability: con
+      dc: 10
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: paralyzed
+      until: end_of_turn(target.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+    if: target.creature_type != undead
+    source_ref: action:Claw
+multiattack:
+- Bite
+- Bite
+actions: []
+traits: []
+unsupported:
+- 'Claw: elf ancestry immunity is unsupported because fixed combatants have no species/ancestry
+  field; Undead exclusion is enforced.'
+size: M
+spells: []
+unsupported_spells: []

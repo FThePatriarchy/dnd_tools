@@ -1,0 +1,61 @@
+name: Hobgoblin Warrior
+source: XMM
+cr: 1/2
+ac: 18
+max_hp: 11
+hp_formula: 2d8 + 2
+abilities:
+  str: 13
+  dex: 12
+  con: 12
+  int: 10
+  wis: 10
+  cha: 9
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: fey
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 2
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Longsword
+  kind: melee
+  to_hit: 3
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 1
+      type: slashing
+- name: Longbow
+  kind: ranged
+  to_hit: 3
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 1
+      type: piercing
+  - damage:
+      dice: 3d4
+      bonus: 0
+      type: poison
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+features:
+  pack_tactics: true
+routines:
+- - Longsword
+- - Longbow
+spells: []
+unsupported_spells: []

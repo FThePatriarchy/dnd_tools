@@ -1,0 +1,71 @@
+name: Hobgoblin Captain
+source: XMM
+cr: '3'
+ac: 17
+max_hp: 58
+hp_formula: 9d8 + 18
+abilities:
+  str: 15
+  dex: 14
+  con: 14
+  int: 12
+  wis: 10
+  cha: 13
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: fey
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 2
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Greatsword
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 2
+      type: slashing
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: poison
+- name: Longbow
+  kind: ranged
+  to_hit: 4
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 2
+      type: piercing
+  - damage:
+      dice: 2d4
+      bonus: 0
+      type: poison
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+features:
+  authority_aura: true
+routines:
+- - Greatsword
+  - Greatsword
+- - Greatsword
+  - Longbow
+- - Longbow
+  - Greatsword
+- - Longbow
+  - Longbow
+spells: []
+unsupported_spells: []

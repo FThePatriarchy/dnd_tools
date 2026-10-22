@@ -1,0 +1,122 @@
+name: Adult Red Dragon
+source: XMM
+cr: '17'
+ac: 19
+max_hp: 256
+hp_formula: 19d12 + 133
+abilities:
+  str: 27
+  dex: 10
+  con: 25
+  int: 16
+  wis: 13
+  cha: 23
+speed: 40
+movement_modes:
+  walk: 40
+  climb: 40
+  fly: 80
+creature_type: dragon
+alignment: evil
+proficiency_bonus: 6
+save_bonuses:
+  dex: 6
+  wis: 7
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 12
+resistances: []
+immunities:
+- fire
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 14
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 8
+      type: slashing
+  - damage:
+      dice: 2d4
+      bonus: 0
+      type: fire
+multiattack: []
+actions:
+- name: Fire Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 60
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: dex
+      dc: 21
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 17d6
+        bonus: 0
+        type: fire
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Fire Breath {@recharge 5}
+traits: []
+unsupported:
+- 'Commanding Presence: Command is outside golden set (Wisdom save; can inflict Prone);
+  unsupported. Pounce movement needs grid. Lair actions (tagged Constitution saves)
+  are deliberately excluded; resistance uses the lair-free 3/day count.'
+- 'Spellcasting outside golden set: Command, Detect Magic. No substitute effects or
+  invented slots.'
+spell_ability: cha
+spell_dc: 20
+spell_attack_bonus: 12
+spells:
+- Scorching Ray
+- Fireball
+spell_levels:
+  Scorching Ray: 2
+  Fireball: 3
+spell_costs:
+  Scorching Ray: action
+  Fireball: action
+limited_uses:
+  Fireball: 1
+  legendary_resistance: 3
+spell_resources:
+  Fireball: Fireball
+legendary:
+  uses: 3
+  options:
+  - name: Fiery Rays
+    cost: 1
+    spell: Scorching Ray
+    once_per_round: true
+  - name: Pounce
+    cost: 1
+    attacks:
+    - Rend
+size: H
+routines:
+- - Rend
+  - Rend
+  - Rend
+replacements:
+- Scorching Ray
+unsupported_spells:
+- Command
+- Detect Magic

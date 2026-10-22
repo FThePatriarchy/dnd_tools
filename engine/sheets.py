@@ -11,7 +11,7 @@ def effect_block(identifier, *, target=None, save=None, apply=None, on_fail=None
 def validate_sheet(data, path):
     v = Validator(path)
     v.obj(data, "$", "name source max_hp ac abilities speed creature_type proficiency_bonus",
-          "hp_formula cr level save_proficiencies save_bonuses resistances immunities vulnerabilities condition_immunities spell_ability spell_dc spell_attack_bonus spell_slots spells innate_spells limited_uses hit_dice attacks multiattack extra_attack actions traits alignment initiative_bonus unsupported")
+          "hp_formula cr level save_proficiencies save_bonuses resistances immunities vulnerabilities condition_immunities spell_ability spell_dc spell_attack_bonus spell_slots spells innate_spells limited_uses hit_dice attacks multiattack extra_attack actions traits alignment initiative_bonus unsupported unsupported_spells features movement_modes size routines replacements legendary spell_resources spell_levels spell_costs")
     for k in ("name", "creature_type", "source"): v.text(data[k], k)
     v.enum(data["source"], {"XMM", "XPHB"}, "source")
     for k in ("max_hp", "ac", "proficiency_bonus"): v.number(data[k], k, 1, True)
@@ -71,7 +71,7 @@ def validate_sheet(data, path):
     v.check(len({a.get('name') for a in attacks}) == len(attacks), "attacks", "duplicate attack name")
     for i, a in enumerate(attacks):
         p = f"attacks[{i}]"
-        v.obj(a, p, "name kind to_hit effects", "reach_ft ability mastery")
+        v.obj(a, p, "name kind to_hit effects", "reach_ft ability mastery recharge resource riders advantage_if")
         v.text(a["name"], p + ".name")
         v.enum(a["kind"], {"melee", "ranged"}, p + ".kind")
         v.number(a["to_hit"], p + ".to_hit", integer=True)
@@ -79,7 +79,12 @@ def validate_sheet(data, path):
         if "ability" in a: v.enum(a["ability"], ABILITIES, p + ".ability")
         if "mastery" in a: v.enum(a["mastery"], {"graze", "vex", "sap"}, p + ".mastery")
         v.primitives(a["effects"], p + ".effects")
-        v.check(all("damage" in x for x in a["effects"]), p, "weapon attacks only support damage; use action blocks otherwise")
+        if "riders" in a: v.blocks(a["riders"], p + ".riders")
+        if "advantage_if" in a: v.enum(a["advantage_if"], {"grappled_by_self"}, p)
+        if "recharge" in a:
+            v.number(a["recharge"], p + ".recharge", 1, True)
+            v.check(a["recharge"] <= 6, p, "recharge must be 1..6")
+        if "resource" in a: v.check(a["resource"] in data.get("limited_uses", {}), p, "counter not defined")
     if "multiattack" in data:
         v.sequence(data["multiattack"], "multiattack")
         for name in data["multiattack"]: v.check(name in {a["name"] for a in attacks}, "multiattack", "unknown attack")
@@ -87,7 +92,7 @@ def validate_sheet(data, path):
         v.sequence(data.get(k, []), k)
         for i, a in enumerate(data.get(k, [])):
             p = f"{k}[{i}]"
-            v.obj(a, p, "name cost effects", "resource recharge grants_action restricted_to")
+            v.obj(a, p, "name cost effects", "resource recharge grants_action restricted_to duration passive trigger")
             v.text(a["name"], p + ".name")
             v.enum(a["cost"], {"action", "bonus_action", "reaction", "free"}, p + ".cost")
             if "resource" in a: v.check(a["resource"] in data.get("limited_uses", {}), p + ".resource", "counter not defined")
@@ -100,7 +105,76 @@ def validate_sheet(data, path):
             if "restricted_to" in a:
                 v.sequence(a["restricted_to"], p + ".restricted_to")
                 for x in a["restricted_to"]: v.enum(x, {"hide", "disengage", "attack"}, p)
+            if "duration" in a: v.duration(a["duration"], p + ".duration")
+            if "passive" in a: v.boolean(a["passive"], p + ".passive")
+            if "trigger" in a: v.enum(a["trigger"], {"enemy_turn_start", "creature_turn_start"}, p + ".trigger")
             v.blocks(a["effects"], p + ".effects")
     if "unsupported" in data:
         v.sequence(data["unsupported"], "unsupported")
         for x in data["unsupported"]: v.text(x, "unsupported")
+
+    if "size" in data: v.enum(data["size"], {"T", "S", "M", "L", "H", "G"}, "size")
+    for key in ("routines", "replacements"):
+        if key not in data: continue
+        v.sequence(data[key], key)
+        options = {a["name"] for a in attacks + data.get("actions", [])} | set(data.get("spells", []))
+        for routine in (data[key] if key == "routines" else [data[key]]):
+            v.sequence(routine, key)
+            v.check(bool(routine), key, "empty routine")
+            for name in routine: v.check(name in options, key, "unknown routine option")
+    for key in ("spell_resources", "spell_levels", "spell_costs"):
+        if key not in data: continue
+        v.check(isinstance(data[key], dict), key, "expected mapping")
+        for name, value in data[key].items():
+            v.check(name in data.get("spells", []), key, "spell not prepared")
+            if key == "spell_resources": v.check(value in data.get("limited_uses", {}), key, "unknown spell counter")
+            elif key == "spell_costs": v.enum(value, {"action", "bonus_action", "reaction"}, key)
+            else:
+                v.number(value, key, 1, True)
+                v.check(spells[name]["level"] <= value <= 9, key, "invalid innate spell level")
+    if "features" in data:
+        f = data["features"]
+        v.obj(f, "features", "", "pack_tactics magic_resistance sunlight_sensitivity bloodied_frenzy evasion parry regeneration undead_fortitude life_drain redirect_attack authority_aura grapple_damage rampage")
+        for key, value in f.items():
+            if key in {"parry", "undead_fortitude"}: v.number(value, "features." + key, 1, True)
+            elif key == "regeneration":
+                v.obj(value, "features.regeneration", "amount blocked_by at_zero")
+                v.number(value["amount"], "features.regeneration.amount", 1, True)
+                v.boolean(value["at_zero"], "features.regeneration.at_zero")
+                v.sequence(value["blocked_by"], "features.regeneration.blocked_by")
+                for x in value["blocked_by"]: v.enum(x, DAMAGE_TYPES, "features.regeneration.blocked_by")
+            elif key == "life_drain":
+                v.obj(value, "features.life_drain", "attacks type heal")
+                v.sequence(value["attacks"], "features.life_drain.attacks")
+                for name in value["attacks"]: v.check(name in {a["name"] for a in attacks + data.get("actions", [])}, "features.life_drain", "unknown drain")
+                v.enum(value["type"], DAMAGE_TYPES | {"all"}, "features.life_drain.type")
+                v.boolean(value["heal"], "features.life_drain.heal")
+            else: v.boolean(value, "features." + key)
+    if "legendary" in data:
+        l = data["legendary"]
+        v.obj(l, "legendary", "uses options")
+        v.number(l["uses"], "legendary.uses", 1, True)
+        v.sequence(l["options"], "legendary.options")
+        v.check(len({a.get("name") for a in l["options"]}) == len(l["options"]), "legendary.options", "duplicate name")
+        for i, option in enumerate(l["options"]):
+            p = f"legendary.options[{i}]"
+            v.obj(option, p, "name cost", "attacks effects spell once_per_round heal requires_bound_target")
+            v.text(option["name"], p)
+            v.number(option["cost"], p + ".cost", 1, True)
+            v.check(option["cost"] <= l["uses"], p, "cost exceeds budget")
+            v.check(sum(k in option for k in ("attacks", "effects", "spell")) == 1, p, "one executable payload required")
+            if "attacks" in option:
+                v.sequence(option["attacks"], p)
+                for name in option["attacks"]: v.check(name in {a["name"] for a in attacks}, p, "unknown attack")
+            if "effects" in option: v.blocks(option["effects"], p + ".effects")
+            if "spell" in option: v.check(option["spell"] in data.get("spells", []), p, "unknown spell")
+            if "once_per_round" in option: v.boolean(option["once_per_round"], p)
+            if "requires_bound_target" in option: v.boolean(option["requires_bound_target"], p)
+            if "heal" in option: v.dice(option["heal"], p)
+    if "unsupported_spells" in data:
+        v.sequence(data["unsupported_spells"], "unsupported_spells")
+        for name in data["unsupported_spells"]: v.text(name, "unsupported_spells")
+
+    if "movement_modes" in data:
+        v.obj(data["movement_modes"], "movement_modes", "", "walk fly climb swim burrow")
+        for key, value in data["movement_modes"].items(): v.number(value, "movement_modes." + key, 0)

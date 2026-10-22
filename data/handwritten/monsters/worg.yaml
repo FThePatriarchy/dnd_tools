@@ -1,0 +1,52 @@
+name: Worg
+source: XMM
+cr: 1/2
+ac: 13
+max_hp: 26
+hp_formula: 4d10 + 4
+abilities:
+  str: 16
+  dex: 13
+  con: 13
+  int: 7
+  wis: 11
+  cha: 8
+speed: 50
+movement_modes:
+  walk: 50
+creature_type: fey
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 3
+      type: piercing
+  - advantage:
+      'on': attack_rolls
+      scope: all
+      against: target
+      recipient: any_attacker
+      uses: 1
+    until: start_of_turn(caster.next_turn)
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: L
+routines:
+- - Bite
+spells: []
+unsupported_spells: []

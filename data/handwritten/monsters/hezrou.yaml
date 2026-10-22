@@ -1,0 +1,95 @@
+name: Hezrou
+source: XMM
+cr: '8'
+ac: 18
+max_hp: 157
+hp_formula: 15d10 + 75
+abilities:
+  str: 19
+  dex: 17
+  con: 20
+  int: 5
+  wis: 12
+  cha: 13
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 3
+save_bonuses:
+  str: 7
+  con: 8
+  wis: 4
+save_proficiencies:
+- str
+- con
+- wis
+initiative_bonus: 3
+resistances:
+- cold
+- fire
+- lightning
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 4
+      type: slashing
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: poison
+multiattack:
+- Rend
+- Rend
+- Rend
+actions: []
+traits:
+- name: Stench
+  cost: free
+  trigger: creature_turn_start
+  duration:
+    type: special
+  effects:
+  - id: stench
+    event: on_cast
+    target:
+      select: area
+      shape: emanation
+      size_ft: 10
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 16
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: poisoned
+      until: start_of_turn(target.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: trait:Stench
+unsupported:
+- 'Demonic Restoration: noncombat, sensory, movement, environment or post-encounter
+  restoration; no grid/noncombat adjudication.'
+- 'Leap: movement-only bonus action needs a grid; unsupported.'
+size: L
+features:
+  magic_resistance: true
+spells: []
+unsupported_spells: []

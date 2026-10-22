@@ -45,6 +45,7 @@ unsupported:
 - 'Light (at will): not in golden set.'
 - 'Thaumaturgy (at will): not in golden set.'
 - 'Command (2/day): not in golden set.'
+- 'Command: outside golden set; its Wisdom save and Prone condition are unsupported.'
 spell_ability: wis
 spell_dc: 12
 spell_attack_bonus: 4
@@ -57,3 +58,9 @@ innate_spells:
 limited_uses:
   Hold Person: 1
   Spiritual Weapon: 2
+movement_modes:
+  walk: 30
+unsupported_spells:
+- Light
+- Thaumaturgy
+- Command

@@ -1,0 +1,64 @@
+name: Imp
+source: XMM
+cr: '1'
+ac: 13
+max_hp: 21
+hp_formula: 6d4 + 6
+abilities:
+  str: 6
+  dex: 17
+  con: 13
+  int: 11
+  wis: 12
+  cha: 14
+speed: 20
+movement_modes:
+  walk: 20
+  fly: 40
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- cold
+immunities:
+- fire
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Sting
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 3
+      type: piercing
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: poison
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Shape-Shift: shape, corpse spawning, or noncombat adjudication is unsupported.'
+- 'Spellcasting outside golden set: Invisibility. No substitute effects or invented
+  slots.'
+- 'Invisibility: Invisible condition is from a spell outside the golden set; unsupported.'
+spell_ability: cha
+spell_dc: 12
+spell_attack_bonus: 4
+size: T
+features:
+  magic_resistance: true
+routines:
+- - Sting
+spells: []
+unsupported_spells:
+- Invisibility

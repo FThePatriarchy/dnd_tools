@@ -1,0 +1,96 @@
+name: Goblin Boss
+source: XMM
+cr: '1'
+ac: 17
+max_hp: 21
+hp_formula: 6d6
+abilities:
+  str: 10
+  dex: 15
+  con: 10
+  int: 10
+  wis: 8
+  cha: 10
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: fey
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Scimitar
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: slashing
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: slashing
+    if: attack.advantage
+- name: Shortbow
+  kind: ranged
+  to_hit: 4
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: piercing
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: piercing
+    if: attack.advantage
+multiattack: []
+actions: []
+traits:
+- name: Nimble Escape
+  cost: bonus_action
+  effects:
+  - id: escape
+    event: on_cast
+    target:
+      select: self
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - status:
+        id: disengaged
+        data: {}
+      until: end_of_turn(caster.next_turn)
+    limit: null
+    source_ref: bonus:Nimble Escape
+unsupported:
+- 'Redirect Attack: gridless adjacency assumes any living Small/Medium ally is within
+  5 feet; redirects both weapon and spell attack rolls.'
+- 'Nimble Escape: no-grid Disengage bookkeeping only; Hide/Dash need concealment/movement
+  and are unsupported.'
+size: S
+features:
+  redirect_attack: true
+routines:
+- - Scimitar
+  - Scimitar
+- - Scimitar
+  - Shortbow
+- - Shortbow
+  - Scimitar
+- - Shortbow
+  - Shortbow
+spells: []
+unsupported_spells: []

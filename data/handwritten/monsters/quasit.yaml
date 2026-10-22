@@ -1,0 +1,96 @@
+name: Quasit
+source: XMM
+cr: '1'
+ac: 13
+max_hp: 25
+hp_formula: 10d4
+abilities:
+  str: 5
+  dex: 17
+  con: 10
+  int: 7
+  wis: 10
+  cha: 10
+speed: 40
+movement_modes:
+  walk: 40
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- cold
+- fire
+- lightning
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 3
+      type: slashing
+  - apply_condition:
+      condition: poisoned
+    until: start_of_turn(caster.next_turn)
+multiattack: []
+actions:
+- name: Scare
+  cost: action
+  resource: Scare
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: wis
+      dc: 10
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: frightened
+        repeat_save:
+          ability: wis
+          timing: end_of_turn
+          on_success: end
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Scare (1/Day)
+  duration:
+    type: rounds
+    n: 10
+traits: []
+unsupported:
+- 'Shape-Shift: shape, corpse spawning, or noncombat adjudication is unsupported.'
+- 'Spellcasting outside golden set: Invisibility. No substitute effects or invented
+  slots.'
+- 'Invisibility: Invisible condition is from a spell outside the golden set; unsupported.'
+limited_uses:
+  Scare: 1
+spell_ability: cha
+spell_dc: 10
+spell_attack_bonus: 2
+size: T
+features:
+  magic_resistance: true
+routines:
+- - Rend
+spells: []
+unsupported_spells:
+- Invisibility

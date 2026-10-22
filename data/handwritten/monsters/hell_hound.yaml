@@ -1,0 +1,80 @@
+name: Hell Hound
+source: XMM
+cr: '3'
+ac: 15
+max_hp: 58
+hp_formula: 9d8 + 18
+abilities:
+  str: 17
+  dex: 12
+  con: 14
+  int: 6
+  wis: 13
+  cha: 6
+speed: 50
+movement_modes:
+  walk: 50
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities:
+- fire
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 3
+      type: piercing
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: fire
+multiattack:
+- Bite
+- Bite
+actions:
+- name: Fire Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 15
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: dex
+      dc: 12
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 5d6
+        bonus: 0
+        type: fire
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Fire Breath {@recharge 5}
+traits: []
+unsupported: []
+size: M
+features:
+  pack_tactics: true
+spells: []
+unsupported_spells: []

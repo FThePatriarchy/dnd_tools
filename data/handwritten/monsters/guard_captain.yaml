@@ -1,0 +1,61 @@
+name: Guard Captain
+source: XMM
+cr: '4'
+ac: 18
+max_hp: 75
+hp_formula: 10d8 + 30
+abilities:
+  str: 18
+  dex: 14
+  con: 16
+  int: 12
+  wis: 14
+  cha: 13
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 2
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Javelin
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 3d6
+      bonus: 4
+      type: piercing
+- name: Longsword
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 4
+      type: slashing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+routines:
+- - Javelin
+  - Javelin
+- - Javelin
+  - Longsword
+- - Longsword
+  - Javelin
+- - Longsword
+  - Longsword
+spells: []
+unsupported_spells: []

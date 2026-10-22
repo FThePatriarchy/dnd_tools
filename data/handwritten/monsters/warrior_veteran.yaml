@@ -1,0 +1,63 @@
+name: Warrior Veteran
+source: XMM
+cr: '3'
+ac: 17
+max_hp: 65
+hp_formula: 10d8 + 20
+abilities:
+  str: 16
+  dex: 13
+  con: 14
+  int: 10
+  wis: 11
+  cha: 10
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 2
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Greatsword
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 3
+      type: slashing
+- name: Heavy Crossbow
+  kind: ranged
+  to_hit: 3
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 1
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+features:
+  parry: 2
+size: M
+routines:
+- - Greatsword
+  - Greatsword
+- - Greatsword
+  - Heavy Crossbow
+- - Heavy Crossbow
+  - Greatsword
+- - Heavy Crossbow
+  - Heavy Crossbow
+spells: []
+unsupported_spells: []

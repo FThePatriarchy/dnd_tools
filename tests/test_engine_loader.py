@@ -16,7 +16,8 @@ def spells():
 
 def test_all_reviewed_assets_validate(spells):
     assert len(spells) == 20
-    assert len(list((ROOT / "monsters").glob("*.yaml"))) == 4
+    from engine.monster_import import ORIGINAL, STEP2, slug
+    assert {p.stem for p in (ROOT / "monsters").glob("*.yaml")} == {slug(n) for n in ORIGINAL + STEP2}
     assert len(list((ROOT / "characters").glob("*.yaml"))) == 2
     for folder in ("monsters", "characters"):
         for path in (ROOT / folder).glob("*.yaml"):

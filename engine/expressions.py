@@ -14,9 +14,10 @@ EVENTS = {
     "on_creature_enters_aura": 1, "end_of_turn_in_aura": 1,
     "on_spell_targeted": 2, "on_attack_provisional_hit": 2,
 }
-METHODS = {"has_status", "visible_to", "has_any_component"}
+METHODS = {"has_status", "has_status_from", "has_condition", "has_condition_from", "visible_to", "has_any_component"}
 ATTRS = {
-    "alignment", "creature_type", "hp", "max_hp", "next_turn", "index",
+    "size",
+    "has_status_from", "has_condition", "has_condition_from", "alignment", "creature_type", "hp", "max_hp", "next_turn", "index",
     "cast_turn", "elapsed_minutes", "caster", "spell", "target",
     "target_dropped_to_zero", "drop_turn", "has_status", "visible_to",
     "has_any_component", "advantage", "critical", "total", "natural",
@@ -84,7 +85,7 @@ class Parser:
                     if len(args) != EVENTS[node[1]]:
                         raise ExpressionError(f"wrong arity for {node[1]}")
                 elif node[0] == "attr" and node[2] in METHODS:
-                    if len(args) != (3 if node[2] == "has_any_component" else 1):
+                    if len(args) != (3 if node[2] == "has_any_component" else 2 if node[2] in {"has_status_from", "has_condition_from"} else 1):
                         raise ExpressionError(f"wrong arity for {node[2]}")
                 else:
                     raise ExpressionError("unknown function")
@@ -149,6 +150,10 @@ def evaluate(source: str, context: dict):
             method = func[2]
             if method == "has_status":
                 return obj is not None and obj.has_status(values[0])
+            if method in {"has_status_from", "has_condition_from"}:
+                return obj is not None and getattr(obj, method)(*values)
+            if method == "has_condition":
+                return obj is not None and obj.has_condition(values[0])
             if method == "visible_to":
                 return obj is not None and obj.visible_to(values[0])
             components = obj.get("components", {}) if isinstance(obj, dict) else {}

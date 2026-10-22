@@ -1,0 +1,48 @@
+name: Kobold Warrior
+source: XMM
+cr: 1/8
+ac: 14
+max_hp: 7
+hp_formula: 3d6 - 3
+abilities:
+  str: 7
+  dex: 15
+  con: 9
+  int: 8
+  wis: 7
+  cha: 8
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: dragon
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Dagger
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 2
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: S
+features:
+  pack_tactics: true
+  sunlight_sensitivity: true
+routines:
+- - Dagger
+spells: []
+unsupported_spells: []

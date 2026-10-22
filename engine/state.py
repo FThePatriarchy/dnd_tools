@@ -32,6 +32,7 @@ class Combatant:
     spell_attack_bonus: int = 5
     level: int = 1
     speed: int = 30
+    movement_modes: dict = field(default_factory=dict)
     resistances: list[str] = field(default_factory=list)
     immunities: list[str] = field(default_factory=list)
     vulnerabilities: list[str] = field(default_factory=list)
@@ -53,6 +54,16 @@ class Combatant:
     spells: list[str] = field(default_factory=list)
     innate_spells: dict[str, int] = field(default_factory=dict)
     attacks: list[dict] = field(default_factory=list)
+    features: dict = field(default_factory=dict)
+    size: str = "M"
+    routines: list[list[str]] = field(default_factory=list)
+    replacements: list[str] = field(default_factory=list)
+    legendary: dict = field(default_factory=dict)
+    legendary_remaining: int = 0
+    legendary_used: set[str] = field(default_factory=set)
+    spell_resources: dict[str, str] = field(default_factory=dict)
+    spell_levels: dict[str, int] = field(default_factory=dict)
+    spell_costs: dict[str, str] = field(default_factory=dict)
     multiattack: list[str] = field(default_factory=list)
     extra_attack: int = 1
     actions: list[dict] = field(default_factory=list)
@@ -104,8 +115,21 @@ class Combatant:
             return any(self.has_condition(x) for x in ("paralyzed", "stunned", "unconscious", "petrified"))
         return False
 
+    def status_effects(self, name):
+        active = self.active_effects
+        return [e for e in active if e.kind == "status" and e.data["id"] == name
+                and (not e.data["data"].get("requires_condition") or any(
+                    c.kind == "apply_condition" and c.source == e.source
+                    and c.data["condition"] == e.data["data"]["requires_condition"] for c in active))]
+
     def has_status(self, name: str) -> bool:
-        return name in self.statuses or any(e.kind == "status" and e.data["id"] == name for e in self.active_effects)
+        return name in self.statuses or bool(self.status_effects(name))
+
+    def has_status_from(self, name, other) -> bool:
+        return any(e.data.get("caster_id") == other.id for e in self.status_effects(name))
+
+    def has_condition_from(self, name, other) -> bool:
+        return any(e.kind == "apply_condition" and e.data["condition"] == name and e.data.get("caster_id") == other.id for e in self.active_effects)
 
     def visible_to(self, other) -> bool:
         return self.visible and not self.has_condition("invisible") and not other.has_condition("blinded")

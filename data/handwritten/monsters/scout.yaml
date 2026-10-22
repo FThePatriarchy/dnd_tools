@@ -1,0 +1,61 @@
+name: Scout
+source: XMM
+cr: 1/2
+ac: 13
+max_hp: 16
+hp_formula: 3d8 + 3
+abilities:
+  str: 11
+  dex: 14
+  con: 12
+  int: 11
+  wis: 13
+  cha: 11
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Shortsword
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: piercing
+- name: Longbow
+  kind: ranged
+  to_hit: 4
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 2
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+routines:
+- - Shortsword
+  - Shortsword
+- - Shortsword
+  - Longbow
+- - Longbow
+  - Shortsword
+- - Longbow
+  - Longbow
+spells: []
+unsupported_spells: []

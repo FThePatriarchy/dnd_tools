@@ -1,0 +1,57 @@
+name: Tough
+source: XMM
+cr: 1/2
+ac: 12
+max_hp: 32
+hp_formula: 5d8 + 10
+abilities:
+  str: 15
+  dex: 12
+  con: 14
+  int: 10
+  wis: 10
+  cha: 11
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Mace
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: bludgeoning
+- name: Heavy Crossbow
+  kind: ranged
+  to_hit: 3
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 1
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+features:
+  pack_tactics: true
+routines:
+- - Mace
+- - Heavy Crossbow
+spells: []
+unsupported_spells: []

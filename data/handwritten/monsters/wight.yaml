@@ -1,0 +1,111 @@
+name: Wight
+source: XMM
+cr: '3'
+ac: 14
+max_hp: 82
+hp_formula: 11d8 + 33
+abilities:
+  str: 15
+  dex: 14
+  con: 16
+  int: 10
+  wis: 13
+  cha: 15
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: undead
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 2
+resistances:
+- necrotic
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- exhaustion
+- poisoned
+attacks:
+- name: Necrotic Sword
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 2
+      type: slashing
+  - damage:
+      dice: 1d8
+      bonus: 0
+      type: necrotic
+- name: Necrotic Bow
+  kind: ranged
+  to_hit: 4
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 2
+      type: piercing
+  - damage:
+      dice: 1d8
+      bonus: 0
+      type: necrotic
+multiattack: []
+actions:
+- name: Life Drain
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: con
+      dc: 13
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 1d8
+        bonus: 2
+        type: necrotic
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Life Drain
+traits: []
+unsupported:
+- 'Life Drain: revival and maximum-HP recovery after the encounter are outside this
+  single-encounter monster model.'
+- 'Life Drain: Zombie creation after 24 hours and controlled undead roster are noncombat;
+  unsupported.'
+size: M
+features:
+  sunlight_sensitivity: true
+  life_drain:
+    attacks:
+    - Life Drain
+    type: all
+    heal: false
+routines:
+- - Necrotic Sword
+  - Necrotic Sword
+- - Necrotic Sword
+  - Necrotic Bow
+- - Necrotic Bow
+  - Necrotic Sword
+- - Necrotic Bow
+  - Necrotic Bow
+replacements:
+- Life Drain
+spells: []
+unsupported_spells: []

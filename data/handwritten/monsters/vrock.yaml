@@ -1,0 +1,153 @@
+name: Vrock
+source: XMM
+cr: '6'
+ac: 15
+max_hp: 152
+hp_formula: 16d10 + 64
+abilities:
+  str: 17
+  dex: 15
+  con: 18
+  int: 8
+  wis: 13
+  cha: 8
+speed: 40
+movement_modes:
+  walk: 40
+  fly: 60
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 3
+save_bonuses:
+  dex: 5
+  wis: 4
+  cha: 2
+save_proficiencies:
+- dex
+- wis
+- cha
+initiative_bonus: 0
+resistances:
+- cold
+- fire
+- lightning
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Shred
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 3
+      type: piercing
+  - damage:
+      dice: 3d6
+      bonus: 0
+      type: poison
+multiattack:
+- Shred
+- Shred
+actions:
+- name: Spores
+  cost: action
+  recharge: 6
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: emanation
+      size_ft: 20
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 15
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: poisoned
+        repeat_save:
+          ability: con
+          timing: end_of_turn
+          on_success: end
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Spores {@recharge}
+  - id: ongoing
+    event: start_of_turn(target)
+    target:
+      select: ref
+      ref: main
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - damage:
+        dice: 1d10
+        bonus: 0
+        type: poison
+    limit: null
+    if: target.has_condition_from(poisoned, caster)
+    source_ref: action:Spores {@recharge}
+  duration:
+    type: special
+- name: Stunning Screech
+  cost: action
+  resource: Stunning Screech
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: emanation
+      size_ft: 20
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 15
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 3d6
+        bonus: 0
+        type: thunder
+    - apply_condition:
+        condition: stunned
+      until: end_of_turn(caster.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+    if: target.creature_type != fiend
+    source_ref: action:Stunning Screech (1/Day)
+  duration:
+    type: special
+traits: []
+unsupported:
+- 'Demonic Restoration: noncombat, sensory, movement, environment or post-encounter
+  restoration; no grid/noncombat adjudication.'
+- 'Stunning Screech: demons auto-succeed, approximated as fiends (no fiend-subtype
+  field). Spores: Holy Water removal is an unsupported inventory interaction.'
+limited_uses:
+  Stunning Screech: 1
+size: L
+features:
+  magic_resistance: true
+spells: []
+unsupported_spells: []

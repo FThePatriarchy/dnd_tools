@@ -1,0 +1,59 @@
+name: Skeleton
+source: XMM
+cr: 1/4
+ac: 14
+max_hp: 13
+hp_formula: 2d8 + 4
+abilities:
+  str: 10
+  dex: 16
+  con: 15
+  int: 6
+  wis: 8
+  cha: 5
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: undead
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities:
+- poison
+vulnerabilities:
+- bludgeoning
+condition_immunities:
+- exhaustion
+- poisoned
+attacks:
+- name: Shortsword
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 3
+      type: piercing
+- name: Shortbow
+  kind: ranged
+  to_hit: 5
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 3
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+routines:
+- - Shortsword
+- - Shortbow
+spells: []
+unsupported_spells: []

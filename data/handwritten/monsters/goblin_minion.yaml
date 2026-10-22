@@ -1,0 +1,66 @@
+name: Goblin Minion
+source: XMM
+cr: 1/8
+ac: 12
+max_hp: 7
+hp_formula: 2d6
+abilities:
+  str: 8
+  dex: 15
+  con: 10
+  int: 10
+  wis: 8
+  cha: 8
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: fey
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Dagger
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 2
+      type: piercing
+multiattack: []
+actions: []
+traits:
+- name: Nimble Escape
+  cost: bonus_action
+  effects:
+  - id: escape
+    event: on_cast
+    target:
+      select: self
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - status:
+        id: disengaged
+        data: {}
+      until: end_of_turn(caster.next_turn)
+    limit: null
+    source_ref: bonus:Nimble Escape
+unsupported:
+- 'Nimble Escape: no-grid Disengage bookkeeping only; Hide/Dash need concealment/movement
+  and are unsupported.'
+size: S
+routines:
+- - Dagger
+spells: []
+unsupported_spells: []

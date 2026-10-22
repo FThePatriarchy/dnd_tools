@@ -1,0 +1,50 @@
+name: Dire Wolf
+source: XMM
+cr: '1'
+ac: 14
+max_hp: 22
+hp_formula: 3d10 + 6
+abilities:
+  str: 17
+  dex: 15
+  con: 15
+  int: 3
+  wis: 12
+  cha: 7
+speed: 50
+movement_modes:
+  walk: 50
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 3
+      type: piercing
+  - apply_condition:
+      condition: prone
+      max_size: L
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: L
+features:
+  pack_tactics: true
+routines:
+- - Bite
+spells: []
+unsupported_spells: []

@@ -1,0 +1,52 @@
+name: Zombie
+source: XMM
+cr: 1/4
+ac: 8
+max_hp: 15
+hp_formula: 2d8 + 6
+abilities:
+  str: 13
+  dex: 6
+  con: 16
+  int: 3
+  wis: 6
+  cha: 5
+speed: 20
+movement_modes:
+  walk: 20
+creature_type: undead
+alignment: evil
+proficiency_bonus: 2
+save_bonuses:
+  wis: 0
+save_proficiencies:
+- wis
+initiative_bonus: 0
+resistances: []
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- exhaustion
+- poisoned
+attacks:
+- name: Slam
+  kind: melee
+  to_hit: 3
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 1
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+features:
+  undead_fortitude: 5
+size: M
+routines:
+- - Slam
+spells: []
+unsupported_spells: []

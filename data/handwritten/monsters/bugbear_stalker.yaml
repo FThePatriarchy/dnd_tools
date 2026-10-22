@@ -1,0 +1,96 @@
+name: Bugbear Stalker
+source: XMM
+cr: '3'
+ac: 15
+max_hp: 65
+hp_formula: 10d8 + 20
+abilities:
+  str: 17
+  dex: 14
+  con: 14
+  int: 11
+  wis: 12
+  cha: 11
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: fey
+alignment: evil
+proficiency_bonus: 2
+save_bonuses:
+  con: 4
+  wis: 3
+save_proficiencies:
+- con
+- wis
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Javelin
+  kind: melee
+  to_hit: 5
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 3d6
+      bonus: 3
+      type: piercing
+- name: Morningstar
+  kind: melee
+  to_hit: 5
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 3
+      type: piercing
+  advantage_if: grappled_by_self
+multiattack: []
+actions:
+- name: Quick Grapple
+  cost: bonus_action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: dex
+      dc: 13
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: grappled
+        escape_dc: 13
+        max_size: M
+        linked: true
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: bonus:Quick Grapple
+  duration:
+    type: special
+traits: []
+unsupported:
+- 'Abduct: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+size: M
+routines:
+- - Javelin
+  - Javelin
+- - Javelin
+  - Morningstar
+- - Morningstar
+  - Javelin
+- - Morningstar
+  - Morningstar
+spells: []
+unsupported_spells: []

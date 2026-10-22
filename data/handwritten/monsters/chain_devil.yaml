@@ -1,0 +1,136 @@
+name: Chain Devil
+source: XMM
+cr: '8'
+ac: 15
+max_hp: 85
+hp_formula: 10d8 + 40
+abilities:
+  str: 18
+  dex: 15
+  con: 18
+  int: 11
+  wis: 12
+  cha: 14
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 3
+save_bonuses:
+  con: 7
+  wis: 4
+save_proficiencies:
+- con
+- wis
+initiative_bonus: 3
+resistances:
+- bludgeoning
+- cold
+- piercing
+- slashing
+immunities:
+- fire
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Chain
+  kind: melee
+  to_hit: 7
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 4
+      type: slashing
+  - apply_condition:
+      condition: grappled
+      escape_dc: 14
+      max_size: L
+      linked: true
+      capacity: 2
+  - apply_condition:
+      condition: restrained
+      max_size: L
+      linked: true
+    if: target.has_condition_from(grappled, caster)
+multiattack: []
+actions:
+- name: Conjure Infernal Chain
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: dex
+      dc: 15
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 2d4
+        bonus: 4
+        type: fire
+    - apply_condition:
+        condition: restrained
+      until: end_of_turn(caster.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Conjure Infernal Chain
+  duration:
+    type: special
+traits:
+- name: Unnerving Gaze
+  cost: reaction
+  trigger: enemy_turn_start
+  duration:
+    type: special
+  effects:
+  - id: gaze
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: enemy
+    attack: null
+    save:
+      ability: wis
+      dc: 15
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: frightened
+      until: end_of_turn(target.next_turn)
+    on_success:
+    - status:
+        id: gaze_immune
+        data: {}
+    apply: []
+    limit: null
+    source_ref: reaction:Unnerving Gaze
+unsupported:
+- 'Diabolical Restoration: noncombat, sensory, movement, environment or post-encounter
+  restoration; no grid/noncombat adjudication.'
+- 'Chain: no grid/limb occupancy; grapple size, escape DC and explicitly printed limb
+  capacity are enforced; exact limb positioning is not modeled.'
+- 'Conjure Infernal Chain: 30-foot pull has no grid effect.'
+size: M
+features:
+  magic_resistance: true
+routines:
+- - Chain
+  - Chain
+  - Conjure Infernal Chain
+spells: []
+unsupported_spells: []

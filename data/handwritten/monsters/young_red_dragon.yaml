@@ -75,3 +75,7 @@ actions:
 traits: []
 unsupported: []
 spell_dc: 17
+movement_modes:
+  walk: 40
+  climb: 40
+  fly: 80

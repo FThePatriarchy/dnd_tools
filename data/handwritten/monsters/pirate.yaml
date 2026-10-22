@@ -1,0 +1,78 @@
+name: Pirate
+source: XMM
+cr: '1'
+ac: 14
+max_hp: 33
+hp_formula: 6d8 + 6
+abilities:
+  str: 10
+  dex: 16
+  con: 12
+  int: 8
+  wis: 12
+  cha: 14
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses:
+  dex: 5
+  cha: 4
+save_proficiencies:
+- dex
+- cha
+initiative_bonus: 2
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Dagger
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 3
+      type: piercing
+multiattack: []
+actions:
+- name: Enthralling Panache
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: wis
+      dc: 12
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: charmed
+      until: start_of_turn(caster.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Enthralling Panache
+  duration:
+    type: special
+traits: []
+unsupported: []
+size: M
+routines:
+- - Dagger
+  - Dagger
+replacements:
+- Enthralling Panache
+spells: []
+unsupported_spells: []

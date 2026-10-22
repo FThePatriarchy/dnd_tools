@@ -15,12 +15,12 @@ BLOCK = "id event target attack save on_hit on_fail on_success apply limit".spli
 PRIMITIVES = {
     "damage": ("dice bonus type", ""), "heal": ("dice bonus", ""),
     "temp_hp": ("", "dice amount"),
-    "apply_condition": ("condition", "repeat_save"),
+    "apply_condition": ("condition", "repeat_save escape_dc max_size linked upgrade_on_failure control repeat_on_damage obstacle capacity large_cost"),
     "modify": ("stat op value scope", ""),
     "advantage": ("on scope against", "recipient uses"),
     "disadvantage": ("on scope against", "recipient uses"),
     "grant_action": ("kind restricted_to", "attack_limit"),
-    "status": ("id data", ""),
+    "status": ("id data", ""), "burning": ("", ""),
     "remove_from_combat": ("until returns", ""),
     "counter_spell": ("target cancel_effects consume_casting_action expend_slot", ""),
     "end_spell": ("", ""), "on_spell_end": ("", ""),
@@ -88,7 +88,7 @@ class Validator:
                     chain.insert(0, current[2]); current = current[1]
                 domain = "binding" if root[1] in self.ids else {"caster": "creature", "target": "creature", "attacker": "creature", "defender": "creature", "affected": "creature"}.get(root[1], root[1])
                 attributes = {
-                    "creature": {k: "scalar" for k in ("alignment", "creature_type", "hp", "max_hp", "next_turn", "has_status", "visible_to")},
+                    "creature": {k: "scalar" for k in ("alignment", "creature_type", "size", "hp", "max_hp", "next_turn", "has_status", "has_status_from", "has_condition", "has_condition_from", "visible_to")},
                     "binding": {"target": "creature", "target_dropped_to_zero": "scalar", "drop_turn": "scalar"},
                     "spell": {"elapsed_minutes": "scalar", "cast_turn": "scalar"},
                     "trigger": {"caster": "creature", "spell": "pending_spell"},
@@ -148,10 +148,12 @@ class Validator:
         self.check(isinstance(value, dict) and "select" in value, path, "target requires select")
         kind = value["select"]
         self.enum(kind, {"self", "single", "n_targets", "area", "ref"}, path + ".select")
-        common = "origin within_ft"
+        common = "origin within_ft eligible_if max_size"
         req = {"self": "select", "single": "select filter affects", "n_targets": "select n distinct filter affects", "area": "select shape size_ft affects", "ref": "select ref"}[kind]
         opt = common + (" up_to min" if kind == "n_targets" else "") + (" filter exclude" if kind == "area" else "")
         self.obj(value, path, req, opt)
+        if "max_size" in value: self.enum(value["max_size"], {"T", "S", "M", "L", "H", "G"}, path + ".max_size")
+        if "eligible_if" in value: self.expr(value["eligible_if"], path + ".eligible_if")
         if "affects" in value: self.enum(value["affects"], {"any", "enemy", "ally", "all", "enemies", "chosen"}, path + ".affects")
         if "filter" in value:
             self.sequence(value["filter"], path + ".filter")
@@ -205,6 +207,20 @@ class Validator:
                     self.enum(r["ability"], ABILITIES, q)
                     self.enum(r["timing"], {"start_of_turn", "end_of_turn"}, q)
                     self.check(r["on_success"] == "end", q, "repeat success must end")
+                for k in ("capacity", "large_cost"):
+                    if k in value: self.number(value[k], q + "." + k, 1, True)
+                if "escape_dc" in value: self.number(value["escape_dc"], q + ".escape_dc", 1, True)
+                if "max_size" in value: self.enum(value["max_size"], {"T", "S", "M", "L", "H", "G"}, q + ".max_size")
+                for flag in ("linked", "control", "repeat_on_damage"):
+                    if flag in value: self.boolean(value[flag], q + "." + flag)
+                if "upgrade_on_failure" in value: self.enum(value["upgrade_on_failure"], CONDITIONS, q + ".upgrade_on_failure")
+                if "obstacle" in value:
+                    o = value["obstacle"]
+                    self.obj(o, q + ".obstacle", "ac hp vulnerabilities immunities")
+                    for k in ("ac", "hp"): self.number(o[k], q + ".obstacle." + k, 1, True)
+                    for k in ("vulnerabilities", "immunities"):
+                        self.sequence(o[k], q + ".obstacle." + k)
+                        for t in o[k]: self.enum(t, DAMAGE_TYPES, q + ".obstacle." + k)
             elif key == "modify":
                 self.enum(value["stat"], {"ac", "speed", "attack_roll", "save", "damage_roll", "ability_check", "action_count"}, q + ".stat")
                 self.enum(value["op"], {"add", "mul", "set"}, q + ".op")
@@ -225,6 +241,9 @@ class Validator:
             elif key == "status":
                 self.text(value["id"], q + ".id")
                 self.check(isinstance(value["data"], dict), q + ".data", "expected mapping")
+                if value["id"] == "engulfed":
+                    self.obj(value["data"], q + ".data", "escape_dc")
+                    self.number(value["data"]["escape_dc"], q + ".data.escape_dc", 1, True)
             elif key == "remove_from_combat":
                 self.check(value["until"] == "spell_ends", q, "invalid removal lifetime")
                 self.expr(value["returns"], q + ".returns")
@@ -239,7 +258,14 @@ class Validator:
         self.ids = set(ids)
         for i, block in enumerate(blocks):
             p = f"{path}[{i}]"
-            self.obj(block, p, BLOCK, "if optional resolution damage_roll")
+            self.obj(block, p, BLOCK, "if optional resolution damage_roll source_ref admission")
+            if "source_ref" in block: self.text(block["source_ref"], p + ".source_ref")
+            if "admission" in block:
+                self.obj(block["admission"], p + ".admission", "capacity large_cost", "condition status")
+                self.check(("condition" in block["admission"]) != ("status" in block["admission"]), p, "admission requires condition or status")
+                if "condition" in block["admission"]: self.enum(block["admission"]["condition"], CONDITIONS, p)
+                if "status" in block["admission"]: self.text(block["admission"]["status"], p + ".admission.status")
+                for key in ("capacity", "large_cost"): self.number(block["admission"][key], p, 1, True)
             self.expr(block["event"], p + ".event", event=True)
             if "if" in block: self.expr(block["if"], p + ".if")
             if "optional" in block: self.boolean(block["optional"], p + ".optional")
@@ -253,8 +279,9 @@ class Validator:
                 self.obj(block["attack"], p + ".attack", "type")
                 self.enum(block["attack"]["type"], {"ranged_spell", "melee_spell"}, p + ".attack.type")
             if block["save"] is not None:
-                self.obj(block["save"], p + ".save", "ability on_success", "ignore_cover")
+                self.obj(block["save"], p + ".save", "ability on_success", "ignore_cover dc")
                 self.enum(block["save"]["ability"], ABILITIES, p + ".save.ability")
+                if "dc" in block["save"]: self.number(block["save"]["dc"], p + ".save.dc", 1, True)
                 self.enum(block["save"]["on_success"], {"half", "negate"}, p + ".save.on_success")
                 if "ignore_cover" in block["save"]:
                     self.sequence(block["save"]["ignore_cover"], p + ".save.ignore_cover")

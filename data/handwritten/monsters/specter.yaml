@@ -1,0 +1,77 @@
+name: Specter
+source: XMM
+cr: '1'
+ac: 12
+max_hp: 22
+hp_formula: 5d8
+abilities:
+  str: 1
+  dex: 14
+  con: 11
+  int: 10
+  wis: 10
+  cha: 11
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: undead
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- acid
+- bludgeoning
+- cold
+- fire
+- lightning
+- piercing
+- slashing
+- thunder
+immunities:
+- necrotic
+- poison
+vulnerabilities: []
+condition_immunities:
+- charmed
+- exhaustion
+- grappled
+- paralyzed
+- petrified
+- poisoned
+- prone
+- restrained
+- unconscious
+attacks:
+- name: Life Drain
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: necrotic
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Conditional fly speed: {"condition": "(hover)", "number": 50}; movement is not
+  simulated'
+- 'Incorporeal Movement: object traversal, Difficult Terrain and self Force damage
+  inside objects require terrain/grid; unsupported.'
+- 'Life Drain: revival and maximum-HP recovery after the encounter are outside this
+  single-encounter monster model.'
+size: M
+features:
+  sunlight_sensitivity: true
+  life_drain:
+    attacks:
+    - Life Drain
+    type: all
+    heal: false
+routines:
+- - Life Drain
+spells: []
+unsupported_spells: []

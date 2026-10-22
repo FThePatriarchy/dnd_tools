@@ -1,0 +1,92 @@
+name: Priest
+source: XMM
+cr: '2'
+ac: 13
+max_hp: 38
+hp_formula: 7d8 + 7
+abilities:
+  str: 16
+  dex: 10
+  con: 12
+  int: 13
+  wis: 16
+  cha: 13
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Mace
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 3
+      type: bludgeoning
+  - damage:
+      dice: 2d4
+      bonus: 0
+      type: radiant
+- name: Radiant Flame
+  kind: ranged
+  to_hit: 5
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 0
+      type: radiant
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Spellcasting outside golden set: Dispel Magic, Lesser Restoration, Light, Thaumaturgy.
+  No substitute effects or invented slots.'
+spell_ability: wis
+spell_dc: 13
+spell_attack_bonus: 5
+spells:
+- Spirit Guardians
+- Bless
+- Healing Word
+spell_levels:
+  Spirit Guardians: 3
+  Bless: 1
+  Healing Word: 1
+spell_costs:
+  Spirit Guardians: action
+  Bless: bonus_action
+  Healing Word: bonus_action
+limited_uses:
+  Spirit Guardians: 1
+  Divine Aid: 3
+spell_resources:
+  Spirit Guardians: Spirit Guardians
+  Bless: Divine Aid
+  Healing Word: Divine Aid
+size: M
+routines:
+- - Mace
+  - Mace
+- - Mace
+  - Radiant Flame
+- - Radiant Flame
+  - Mace
+- - Radiant Flame
+  - Radiant Flame
+unsupported_spells:
+- Dispel Magic
+- Lesser Restoration
+- Light
+- Thaumaturgy

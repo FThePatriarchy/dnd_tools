@@ -78,3 +78,5 @@ traits:
 unsupported:
 - Hide requires concealment and a Stealth/Perception contest; default no-grid policy
   chooses Disengage (recorded only).
+movement_modes:
+  walk: 30

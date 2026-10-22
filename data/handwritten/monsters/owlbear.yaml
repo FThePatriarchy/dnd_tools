@@ -1,0 +1,46 @@
+name: Owlbear
+source: XMM
+cr: '3'
+ac: 13
+max_hp: 59
+hp_formula: 7d10 + 21
+abilities:
+  str: 20
+  dex: 12
+  con: 17
+  int: 3
+  wis: 12
+  cha: 7
+speed: 40
+movement_modes:
+  walk: 40
+  climb: 40
+creature_type: monstrosity
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 5
+      type: slashing
+multiattack:
+- Rend
+- Rend
+actions: []
+traits: []
+unsupported: []
+size: L
+spells: []
+unsupported_spells: []

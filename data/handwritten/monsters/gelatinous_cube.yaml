@@ -1,0 +1,120 @@
+name: Gelatinous Cube
+source: XMM
+cr: '2'
+ac: 6
+max_hp: 63
+hp_formula: 6d10 + 30
+abilities:
+  str: 14
+  dex: 3
+  con: 20
+  int: 1
+  wis: 6
+  cha: 1
+speed: 15
+movement_modes:
+  walk: 15
+creature_type: ooze
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities:
+- acid
+vulnerabilities: []
+condition_immunities:
+- blinded
+- charmed
+- deafened
+- exhaustion
+- frightened
+- prone
+attacks:
+- name: Pseudopod
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 3d6
+      bonus: 2
+      type: acid
+multiattack: []
+actions:
+- name: Engulf
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: n_targets
+      n: 4
+      up_to: true
+      distinct: true
+      filter:
+      - creature
+      affects: enemy
+      max_size: L
+    attack: null
+    save:
+      ability: dex
+      dc: 12
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 3d6
+        bonus: 0
+        type: acid
+    - status:
+        id: engulfed
+        data:
+          escape_dc: 12
+    - apply_condition:
+        condition: restrained
+        max_size: L
+    on_success: []
+    apply: []
+    limit: null
+    admission:
+      status: engulfed
+      capacity: 4
+      large_cost: 4
+    source_ref: action:Engulf
+  - id: ongoing
+    event: start_of_turn(caster)
+    target:
+      select: ref
+      ref: main
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - damage:
+        dice: 3d6
+        bonus: 0
+        type: acid
+    limit: null
+    if: target.has_status_from(engulfed, caster)
+    source_ref: action:Engulf
+  duration:
+    type: special
+traits: []
+unsupported:
+- 'Ooze Cube: entry disadvantage, total cover, external rescue (Strength check DC
+  12 plus Acid damage) and transport require grid/object interactions; unsupported.
+  Engulf itself, its escape action and recurring damage execute.'
+- 'Transparent: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Engulf: up to four targets selected without grid; one Large or four smaller creatures
+  capacity is enforced. Exact entry path and suffocation need grid/breath timers.
+  Verbal spells are blocked while engulfed.'
+size: L
+routines:
+- - Pseudopod
+spells: []
+unsupported_spells: []

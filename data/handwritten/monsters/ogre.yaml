@@ -45,3 +45,5 @@ multiattack: []
 actions: []
 traits: []
 unsupported: []
+movement_modes:
+  walk: 40

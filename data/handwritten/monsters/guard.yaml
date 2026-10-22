@@ -1,0 +1,45 @@
+name: Guard
+source: XMM
+cr: 1/8
+ac: 16
+max_hp: 11
+hp_formula: 2d8 + 2
+abilities:
+  str: 13
+  dex: 12
+  con: 12
+  int: 10
+  wis: 11
+  cha: 10
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Spear
+  kind: melee
+  to_hit: 3
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 1
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+routines:
+- - Spear
+spells: []
+unsupported_spells: []

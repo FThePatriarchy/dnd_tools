@@ -1,0 +1,116 @@
+name: Assassin
+source: XMM
+cr: '8'
+ac: 16
+max_hp: 97
+hp_formula: 15d8 + 30
+abilities:
+  str: 11
+  dex: 18
+  con: 14
+  int: 16
+  wis: 11
+  cha: 10
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses:
+  dex: 7
+  int: 6
+save_proficiencies:
+- dex
+- int
+initiative_bonus: 6
+resistances:
+- poison
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Shortsword
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 4
+      type: piercing
+  - damage:
+      dice: 5d6
+      bonus: 0
+      type: poison
+  - apply_condition:
+      condition: poisoned
+    until: start_of_turn(caster.next_turn)
+- name: Light Crossbow
+  kind: ranged
+  to_hit: 7
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 4
+      type: piercing
+  - damage:
+      dice: 6d6
+      bonus: 0
+      type: poison
+multiattack: []
+actions: []
+traits:
+- name: Cunning Action
+  cost: bonus_action
+  effects:
+  - id: escape
+    event: on_cast
+    target:
+      select: self
+    attack: null
+    save: null
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply:
+    - status:
+        id: disengaged
+        data: {}
+      until: end_of_turn(caster.next_turn)
+    limit: null
+    source_ref: bonus:Cunning Action
+unsupported:
+- 'Cunning Action: no-grid Disengage bookkeeping only; Hide/Dash need concealment/movement
+  and are unsupported.'
+size: M
+features:
+  evasion: true
+routines:
+- - Shortsword
+  - Shortsword
+  - Shortsword
+- - Shortsword
+  - Shortsword
+  - Light Crossbow
+- - Shortsword
+  - Light Crossbow
+  - Shortsword
+- - Shortsword
+  - Light Crossbow
+  - Light Crossbow
+- - Light Crossbow
+  - Shortsword
+  - Shortsword
+- - Light Crossbow
+  - Shortsword
+  - Light Crossbow
+- - Light Crossbow
+  - Light Crossbow
+  - Shortsword
+- - Light Crossbow
+  - Light Crossbow
+  - Light Crossbow
+spells: []
+unsupported_spells: []

@@ -1,0 +1,96 @@
+name: Mummy
+source: XMM
+cr: '3'
+ac: 11
+max_hp: 58
+hp_formula: 9d8 + 18
+abilities:
+  str: 16
+  dex: 8
+  con: 15
+  int: 6
+  wis: 12
+  cha: 12
+speed: 20
+movement_modes:
+  walk: 20
+creature_type: undead
+alignment: evil
+proficiency_bonus: 2
+save_bonuses:
+  wis: 3
+save_proficiencies:
+- wis
+initiative_bonus: 0
+resistances: []
+immunities:
+- necrotic
+- poison
+vulnerabilities:
+- fire
+condition_immunities:
+- charmed
+- exhaustion
+- frightened
+- paralyzed
+- poisoned
+attacks:
+- name: Rotting Fist
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 3
+      type: bludgeoning
+  - damage:
+      dice: 3d6
+      bonus: 0
+      type: necrotic
+  - status:
+      id: healing_blocked
+      data: {}
+multiattack: []
+actions:
+- name: Dreadful Glare
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: wis
+      dc: 11
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: frightened
+      until: end_of_turn(caster.next_turn)
+    on_success:
+    - status:
+        id: glare_immune
+        data: {}
+    apply: []
+    limit: null
+    if: not target.has_status_from(glare_immune, caster)
+    source_ref: action:Dreadful Glare
+  duration:
+    type: special
+traits: []
+unsupported:
+- 'Rotting Fist: 24-hour maximum-HP curse, dust/death and long-rest recovery require
+  noncombat time; healing prevention executes.'
+size: M
+routines:
+- - Rotting Fist
+  - Rotting Fist
+  - Dreadful Glare
+spells: []
+unsupported_spells: []

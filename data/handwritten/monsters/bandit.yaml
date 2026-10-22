@@ -1,0 +1,55 @@
+name: Bandit
+source: XMM
+cr: 1/8
+ac: 12
+max_hp: 11
+hp_formula: 2d8 + 2
+abilities:
+  str: 11
+  dex: 12
+  con: 12
+  int: 10
+  wis: 10
+  cha: 10
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Scimitar
+  kind: melee
+  to_hit: 3
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 1
+      type: slashing
+- name: Light Crossbow
+  kind: ranged
+  to_hit: 3
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 1
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+routines:
+- - Scimitar
+- - Light Crossbow
+spells: []
+unsupported_spells: []

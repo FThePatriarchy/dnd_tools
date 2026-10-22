@@ -1,0 +1,89 @@
+name: Gladiator
+source: XMM
+cr: '5'
+ac: 16
+max_hp: 112
+hp_formula: 15d8 + 45
+abilities:
+  str: 18
+  dex: 15
+  con: 16
+  int: 10
+  wis: 12
+  cha: 15
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses:
+  str: 7
+  dex: 5
+  con: 6
+  wis: 4
+save_proficiencies:
+- str
+- dex
+- con
+- wis
+initiative_bonus: 3
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Spear
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 4
+      type: piercing
+multiattack: []
+actions:
+- name: Shield Bash
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: str
+      dc: 15
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 2d4
+        bonus: 4
+        type: bludgeoning
+    - apply_condition:
+        condition: prone
+        max_size: M
+    on_success: []
+    apply: []
+    limit: null
+    source_ref: action:Shield Bash
+  duration:
+    type: special
+traits: []
+unsupported: []
+features:
+  parry: 3
+size: M
+routines:
+- - Spear
+  - Spear
+  - Spear
+replacements:
+- Shield Bash
+spells: []
+unsupported_spells: []

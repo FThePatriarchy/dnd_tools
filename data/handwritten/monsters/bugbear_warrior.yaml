@@ -1,0 +1,65 @@
+name: Bugbear Warrior
+source: XMM
+cr: '1'
+ac: 14
+max_hp: 33
+hp_formula: 6d8 + 6
+abilities:
+  str: 15
+  dex: 14
+  con: 13
+  int: 8
+  wis: 11
+  cha: 9
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: fey
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Grab
+  kind: melee
+  to_hit: 4
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 2
+      type: bludgeoning
+  - apply_condition:
+      condition: grappled
+      escape_dc: 12
+      max_size: M
+      linked: true
+- name: Light Hammer
+  kind: melee
+  to_hit: 4
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 3d4
+      bonus: 2
+      type: bludgeoning
+  advantage_if: grappled_by_self
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Abduct: noncombat, sensory, movement, environment or post-encounter restoration;
+  no grid/noncombat adjudication.'
+- 'Grab: no grid/limb occupancy; grapple size, escape DC and explicitly printed limb
+  capacity are enforced; exact limb positioning is not modeled.'
+size: M
+routines:
+- - Grab
+- - Light Hammer
+spells: []
+unsupported_spells: []

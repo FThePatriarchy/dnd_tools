@@ -1,0 +1,92 @@
+name: Barbed Devil
+source: XMM
+cr: '5'
+ac: 15
+max_hp: 110
+hp_formula: 13d8 + 52
+abilities:
+  str: 16
+  dex: 17
+  con: 18
+  int: 12
+  wis: 14
+  cha: 14
+speed: 30
+movement_modes:
+  walk: 30
+  climb: 30
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 3
+save_bonuses:
+  str: 6
+  con: 7
+  wis: 5
+  cha: 5
+save_proficiencies:
+- str
+- con
+- wis
+- cha
+initiative_bonus: 0
+resistances:
+- cold
+immunities:
+- fire
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Claws
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 3
+      type: piercing
+  - apply_condition:
+      condition: grappled
+      escape_dc: 13
+      max_size: L
+      linked: true
+      capacity: 1
+- name: Tail
+  kind: melee
+  to_hit: 6
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 3
+      type: slashing
+- name: Hurl Flame
+  kind: ranged
+  to_hit: 5
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 5d6
+      bonus: 0
+      type: fire
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Diabolical Restoration: noncombat, sensory, movement, environment or post-encounter
+  restoration; no grid/noncombat adjudication.'
+- 'Claws: no grid/limb occupancy; grapple size, escape DC and explicitly printed limb
+  capacity are enforced; exact limb positioning is not modeled.'
+size: M
+features:
+  grapple_damage: true
+  magic_resistance: true
+routines:
+- - Claws
+  - Tail
+- - Hurl Flame
+  - Hurl Flame
+spells: []
+unsupported_spells: []

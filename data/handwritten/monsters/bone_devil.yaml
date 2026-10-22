@@ -1,0 +1,84 @@
+name: Bone Devil
+source: XMM
+cr: '9'
+ac: 16
+max_hp: 161
+hp_formula: 17d10 + 68
+abilities:
+  str: 18
+  dex: 16
+  con: 18
+  int: 13
+  wis: 14
+  cha: 16
+speed: 40
+movement_modes:
+  walk: 40
+  fly: 40
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 4
+save_bonuses:
+  str: 8
+  int: 5
+  wis: 6
+  cha: 7
+save_proficiencies:
+- str
+- int
+- wis
+- cha
+initiative_bonus: 4
+resistances:
+- cold
+immunities:
+- fire
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Claw
+  kind: melee
+  to_hit: 8
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 4
+      type: slashing
+- name: Infernal Sting
+  kind: melee
+  to_hit: 8
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 4
+      type: piercing
+  - damage:
+      dice: 4d8
+      bonus: 0
+      type: poison
+  - apply_condition:
+      condition: poisoned
+    until: start_of_turn(caster.next_turn)
+  - status:
+      id: healing_blocked
+      data:
+        requires_condition: poisoned
+    until: start_of_turn(caster.next_turn)
+multiattack:
+- Claw
+- Claw
+- Infernal Sting
+actions: []
+traits: []
+unsupported:
+- 'Diabolical Restoration: noncombat, sensory, movement, environment or post-encounter
+  restoration; no grid/noncombat adjudication.'
+size: L
+features:
+  magic_resistance: true
+spells: []
+unsupported_spells: []

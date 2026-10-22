@@ -1,0 +1,62 @@
+name: Mage Apprentice
+source: XMM
+cr: '2'
+ac: 15
+max_hp: 49
+hp_formula: 9d8 + 9
+abilities:
+  str: 8
+  dex: 14
+  con: 12
+  int: 16
+  wis: 13
+  cha: 10
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses:
+  int: 5
+  wis: 3
+save_proficiencies:
+- int
+- wis
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Arcane Burst
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 3
+      type: force
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Spellcasting outside golden set: Disguise Self, Ice Knife, Mage Armor, Mage Hand,
+  Prestidigitation, Thunderwave. No substitute effects or invented slots.'
+- 'Ice Knife: Piercing/Cold damage and Dexterity save; Thunderwave: Constitution save,
+  all outside the golden set and unsupported.'
+spell_ability: int
+spell_dc: 13
+spell_attack_bonus: 5
+size: M
+routines:
+- - Arcane Burst
+spells: []
+unsupported_spells:
+- Disguise Self
+- Ice Knife
+- Mage Armor
+- Mage Hand
+- Prestidigitation
+- Thunderwave

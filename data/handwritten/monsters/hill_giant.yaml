@@ -1,0 +1,67 @@
+name: Hill Giant
+source: XMM
+cr: '5'
+ac: 13
+max_hp: 105
+hp_formula: 10d12 + 40
+abilities:
+  str: 21
+  dex: 8
+  con: 19
+  int: 5
+  wis: 9
+  cha: 6
+speed: 40
+movement_modes:
+  walk: 40
+creature_type: giant
+alignment: evil
+proficiency_bonus: 3
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 3
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Tree Club
+  kind: melee
+  to_hit: 8
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 3d8
+      bonus: 5
+      type: bludgeoning
+  - apply_condition:
+      condition: prone
+      max_size: L
+- name: Trash Lob
+  kind: ranged
+  to_hit: 8
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 5
+      type: bludgeoning
+  - apply_condition:
+      condition: poisoned
+    until: end_of_turn(target.next_turn)
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: H
+routines:
+- - Tree Club
+  - Tree Club
+- - Tree Club
+  - Trash Lob
+- - Trash Lob
+  - Tree Club
+- - Trash Lob
+  - Trash Lob
+spells: []
+unsupported_spells: []

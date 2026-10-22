@@ -1,0 +1,1278 @@
+[
+  {
+    "name": "Bandit",
+    "cr": "1/8",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.508,
+    "mean_resources_spent": {
+      "action_surge": 0.038,
+      "slot_1": 0.094,
+      "slot_2": 0.48
+    },
+    "source_attack_dpr_ac16": 2.2,
+    "yaml_attack_dpr_ac16": 2.2
+  },
+  {
+    "name": "Cultist",
+    "cr": "1/8",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.57,
+    "mean_resources_spent": {
+      "action_surge": 0.04,
+      "slot_1": 0.074,
+      "slot_2": 0.5
+    },
+    "source_attack_dpr_ac16": 1.8,
+    "yaml_attack_dpr_ac16": 1.8
+  },
+  {
+    "name": "Goblin Minion",
+    "cr": "1/8",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.556,
+    "mean_resources_spent": {
+      "slot_1": 0.476
+    },
+    "source_attack_dpr_ac16": 2.025,
+    "yaml_attack_dpr_ac16": 2.025
+  },
+  {
+    "name": "Guard",
+    "cr": "1/8",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.596,
+    "mean_resources_spent": {
+      "action_surge": 0.162,
+      "slot_2": 0.48,
+      "slot_3": 0.094
+    },
+    "source_attack_dpr_ac16": 1.8,
+    "yaml_attack_dpr_ac16": 1.8
+  },
+  {
+    "name": "Kobold Warrior",
+    "cr": "1/8",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.398,
+    "mean_resources_spent": {
+      "slot_3": 0.55
+    },
+    "source_attack_dpr_ac16": 2.025,
+    "yaml_attack_dpr_ac16": 2.025
+  },
+  {
+    "name": "Goblin Warrior",
+    "cr": "1/4",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.222,
+    "mean_resources_spent": {
+      "action_surge": 0.136,
+      "slot_3": 0.556
+    },
+    "source_attack_dpr_ac16": 2.475,
+    "yaml_attack_dpr_ac16": 2.475
+  },
+  {
+    "name": "Skeleton",
+    "cr": "1/4",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 172.816,
+    "mean_resources_spent": {
+      "action_surge": 0.164,
+      "slot_3": 0.568
+    },
+    "source_attack_dpr_ac16": 3.25,
+    "yaml_attack_dpr_ac16": 3.25
+  },
+  {
+    "name": "Wolf",
+    "cr": "1/4",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.366,
+    "mean_resources_spent": {
+      "action_surge": 0.04,
+      "slot_1": 0.49
+    },
+    "source_attack_dpr_ac16": 2.475,
+    "yaml_attack_dpr_ac16": 2.475
+  },
+  {
+    "name": "Zombie",
+    "cr": "1/4",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.678,
+    "mean_resources_spent": {
+      "action_surge": 0.244,
+      "slot_1": 0.546
+    },
+    "source_attack_dpr_ac16": 2.2,
+    "yaml_attack_dpr_ac16": 2.2
+  },
+  {
+    "name": "Gnoll Warrior",
+    "cr": "1/2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.16,
+    "mean_resources_spent": {
+      "action_surge": 0.884,
+      "slot_3": 0.672
+    },
+    "source_attack_dpr_ac16": 2.6,
+    "yaml_attack_dpr_ac16": 2.6
+  },
+  {
+    "name": "Hobgoblin Warrior",
+    "cr": "1/2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 172.31,
+    "mean_resources_spent": {
+      "action_surge": 0.254,
+      "slot_1": 0.014,
+      "slot_3": 0.55
+    },
+    "source_attack_dpr_ac16": 5.2,
+    "yaml_attack_dpr_ac16": 5.2
+  },
+  {
+    "name": "Scout",
+    "cr": "1/2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 172.752,
+    "mean_resources_spent": {
+      "action_surge": 0.202,
+      "slot_1": 0.09,
+      "slot_2": 0.484
+    },
+    "source_attack_dpr_ac16": 5.8500000000000005,
+    "yaml_attack_dpr_ac16": 5.8500000000000005
+  },
+  {
+    "name": "Tough",
+    "cr": "1/2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.374,
+    "mean_resources_spent": {
+      "action_surge": 0.708,
+      "slot_1": 0.108,
+      "slot_2": 0.548
+    },
+    "source_attack_dpr_ac16": 2.6,
+    "yaml_attack_dpr_ac16": 2.6
+  },
+  {
+    "name": "Worg",
+    "cr": "1/2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.018,
+    "mean_resources_spent": {
+      "action_surge": 0.594,
+      "slot_1": 0.6
+    },
+    "source_attack_dpr_ac16": 3.75,
+    "yaml_attack_dpr_ac16": 3.75
+  },
+  {
+    "name": "Brown Bear",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 172.498,
+    "mean_resources_spent": {
+      "action_surge": 0.354,
+      "slot_1": 0.574
+    },
+    "source_attack_dpr_ac16": 6.5,
+    "yaml_attack_dpr_ac16": 6.5
+  },
+  {
+    "name": "Bugbear Warrior",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 172.268,
+    "mean_resources_spent": {
+      "action_surge": 0.956,
+      "slot_1": 0.002,
+      "slot_3": 0.784
+    },
+    "source_attack_dpr_ac16": 4.275,
+    "yaml_attack_dpr_ac16": 4.275
+  },
+  {
+    "name": "Dire Wolf",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 172.612,
+    "mean_resources_spent": {
+      "action_surge": 0.68,
+      "slot_1": 0.002,
+      "slot_3": 0.6
+    },
+    "source_attack_dpr_ac16": 4.25,
+    "yaml_attack_dpr_ac16": 4.25
+  },
+  {
+    "name": "Ghoul",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 171.842,
+    "mean_resources_spent": {
+      "action_surge": 0.406,
+      "slot_1": 0.576
+    },
+    "source_attack_dpr_ac16": 8.1,
+    "yaml_attack_dpr_ac16": 8.1
+  },
+  {
+    "name": "Giant Spider",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 171.404,
+    "mean_resources_spent": {
+      "action_surge": 0.834,
+      "slot_1": 0.024,
+      "slot_3": 0.598
+    },
+    "source_attack_dpr_ac16": 7.25,
+    "yaml_attack_dpr_ac16": 7.25
+  },
+  {
+    "name": "Goblin Boss",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 172.45,
+    "mean_resources_spent": {
+      "action_surge": 0.718,
+      "slot_1": 0.002,
+      "slot_3": 0.614
+    },
+    "source_attack_dpr_ac16": 4.95,
+    "yaml_attack_dpr_ac16": 4.95
+  },
+  {
+    "name": "Imp",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 171.984,
+    "mean_resources_spent": {
+      "action_surge": 0.402,
+      "slot_1": 0.57
+    },
+    "source_attack_dpr_ac16": 6.75,
+    "yaml_attack_dpr_ac16": 6.75
+  },
+  {
+    "name": "Pirate",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 171.886,
+    "mean_resources_spent": {
+      "action_surge": 0.814,
+      "slot_2": 0.636,
+      "slot_3": 0.132
+    },
+    "source_attack_dpr_ac16": 5.5,
+    "yaml_attack_dpr_ac16": 5.5
+  },
+  {
+    "name": "Quasit",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.116,
+    "mean_resources_spent": {
+      "action_surge": 0.558,
+      "slot_1": 0.596
+    },
+    "source_attack_dpr_ac16": 2.75,
+    "yaml_attack_dpr_ac16": 2.75
+  },
+  {
+    "name": "Specter",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 172.8,
+    "mean_resources_spent": {
+      "action_surge": 0.714,
+      "slot_1": 0.888
+    },
+    "source_attack_dpr_ac16": 3.15,
+    "yaml_attack_dpr_ac16": 3.15
+  },
+  {
+    "name": "Spy",
+    "cr": "1",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 172.236,
+    "mean_resources_spent": {
+      "action_surge": 0.656,
+      "slot_1": 0.086,
+      "slot_2": 0.508
+    },
+    "source_attack_dpr_ac16": 5.625,
+    "yaml_attack_dpr_ac16": 5.625
+  },
+  {
+    "name": "Bandit Captain",
+    "cr": "2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.056,
+    "mean_party_hp": 170.606,
+    "mean_resources_spent": {
+      "action_surge": 1.31,
+      "slot_1": 0.052,
+      "slot_2": 0.994,
+      "slot_3": 0.188
+    },
+    "source_attack_dpr_ac16": 8.5,
+    "yaml_attack_dpr_ac16": 8.5
+  },
+  {
+    "name": "Berserker",
+    "cr": "2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.066,
+    "mean_party_hp": 171.736,
+    "mean_resources_spent": {
+      "action_surge": 1.418,
+      "slot_1": 0.154,
+      "slot_2": 1.066,
+      "slot_3": 0.092
+    },
+    "source_attack_dpr_ac16": 4.75,
+    "yaml_attack_dpr_ac16": 4.75
+  },
+  {
+    "name": "Cultist Fanatic",
+    "cr": "2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 171.038,
+    "mean_resources_spent": {
+      "action_surge": 1.016,
+      "slot_1": 0.12,
+      "slot_2": 0.892
+    },
+    "source_attack_dpr_ac16": 6.075,
+    "yaml_attack_dpr_ac16": 6.075
+  },
+  {
+    "name": "Gelatinous Cube",
+    "cr": "2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.03,
+    "mean_party_hp": 164.392,
+    "mean_resources_spent": {
+      "action_surge": 1.222,
+      "second_wind": 0.022,
+      "slot_1": 1.08
+    },
+    "source_attack_dpr_ac16": 5.625,
+    "yaml_attack_dpr_ac16": 5.625
+  },
+  {
+    "name": "Ghast",
+    "cr": "2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 171.276,
+    "mean_resources_spent": {
+      "action_surge": 0.806,
+      "slot_1": 0.768
+    },
+    "source_attack_dpr_ac16": 8.25,
+    "yaml_attack_dpr_ac16": 8.25
+  },
+  {
+    "name": "Mage Apprentice",
+    "cr": "2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.014,
+    "mean_party_hp": 171.348,
+    "mean_resources_spent": {
+      "action_surge": 1.18,
+      "slot_1": 0.032,
+      "slot_2": 0.958,
+      "slot_3": 0.148
+    },
+    "source_attack_dpr_ac16": 7.0,
+    "yaml_attack_dpr_ac16": 7.0
+  },
+  {
+    "name": "Ogre",
+    "cr": "2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.004,
+    "mean_party_hp": 170.34,
+    "mean_resources_spent": {
+      "action_surge": 1.398,
+      "slot_1": 0.696,
+      "slot_3": 0.554
+    },
+    "source_attack_dpr_ac16": 7.15,
+    "yaml_attack_dpr_ac16": 7.15
+  },
+  {
+    "name": "Priest",
+    "cr": "2",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.516,
+    "mean_resources_spent": {
+      "action_surge": 0.914,
+      "slot_1": 0.098,
+      "slot_2": 0.766
+    },
+    "source_attack_dpr_ac16": 11.5,
+    "yaml_attack_dpr_ac16": 11.5
+  },
+  {
+    "name": "Basilisk",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.024,
+    "mean_party_hp": 169.07,
+    "mean_resources_spent": {
+      "action_surge": 1.402,
+      "slot_1": 0.04,
+      "slot_3": 1.18
+    },
+    "source_attack_dpr_ac16": 8.5,
+    "yaml_attack_dpr_ac16": 8.5
+  },
+  {
+    "name": "Bugbear Stalker",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.208,
+    "mean_party_hp": 164.87,
+    "mean_resources_spent": {
+      "action_surge": 1.748,
+      "slot_1": 0.168,
+      "slot_3": 1.148
+    },
+    "source_attack_dpr_ac16": 13.5,
+    "yaml_attack_dpr_ac16": 13.5
+  },
+  {
+    "name": "Hell Hound",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.088,
+    "mean_party_hp": 156.004,
+    "mean_resources_spent": {
+      "action_surge": 1.536,
+      "slot_1": 0.132,
+      "slot_3": 1.204
+    },
+    "source_attack_dpr_ac16": 11.0,
+    "yaml_attack_dpr_ac16": 11.0
+  },
+  {
+    "name": "Hobgoblin Captain",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.164,
+    "mean_party_hp": 161.346,
+    "mean_resources_spent": {
+      "action_surge": 1.696,
+      "slot_1": 0.236,
+      "slot_3": 1.18
+    },
+    "source_attack_dpr_ac16": 11.25,
+    "yaml_attack_dpr_ac16": 11.25
+  },
+  {
+    "name": "Knight",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.132,
+    "mean_party_hp": 169.66,
+    "mean_resources_spent": {
+      "action_surge": 1.426,
+      "slot_1": 0.122,
+      "slot_2": 1.046,
+      "slot_3": 0.236
+    },
+    "source_attack_dpr_ac16": 14.5,
+    "yaml_attack_dpr_ac16": 14.5
+  },
+  {
+    "name": "Manticore",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.194,
+    "mean_party_hp": 165.602,
+    "mean_resources_spent": {
+      "action_surge": 1.776,
+      "slot_1": 0.08,
+      "slot_3": 1.394
+    },
+    "source_attack_dpr_ac16": 11.25,
+    "yaml_attack_dpr_ac16": 11.25
+  },
+  {
+    "name": "Minotaur of Baphomet",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.382,
+    "mean_party_hp": 166.006,
+    "mean_resources_spent": {
+      "action_surge": 1.916,
+      "slot_1": 1.224,
+      "slot_3": 0.778
+    },
+    "source_attack_dpr_ac16": 11.55,
+    "yaml_attack_dpr_ac16": 11.55
+  },
+  {
+    "name": "Mummy",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 166.958,
+    "mean_resources_spent": {
+      "action_surge": 1.062,
+      "slot_1": 1.078
+    },
+    "source_attack_dpr_ac16": 19.0,
+    "yaml_attack_dpr_ac16": 19.0
+  },
+  {
+    "name": "Owlbear",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.008,
+    "mean_party_hp": 165.504,
+    "mean_resources_spent": {
+      "action_surge": 1.34,
+      "slot_1": 0.69,
+      "slot_3": 0.516
+    },
+    "source_attack_dpr_ac16": 16.8,
+    "yaml_attack_dpr_ac16": 16.8
+  },
+  {
+    "name": "Warrior Veteran",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.258,
+    "mean_party_hp": 170.07,
+    "mean_resources_spent": {
+      "action_surge": 1.562,
+      "slot_1": 0.126,
+      "slot_2": 1.134,
+      "slot_3": 0.34
+    },
+    "source_attack_dpr_ac16": 10.0,
+    "yaml_attack_dpr_ac16": 10.0
+  },
+  {
+    "name": "Wight",
+    "cr": "3",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.602,
+    "mean_party_hp": 164.782,
+    "mean_resources_spent": {
+      "action_surge": 1.97,
+      "slot_1": 0.314,
+      "slot_3": 1.702
+    },
+    "source_attack_dpr_ac16": 9.9,
+    "yaml_attack_dpr_ac16": 9.9
+  },
+  {
+    "name": "Guard Captain",
+    "cr": "4",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.45,
+    "mean_party_hp": 166.196,
+    "mean_resources_spent": {
+      "action_surge": 1.774,
+      "slot_1": 0.44,
+      "slot_2": 1.2,
+      "slot_3": 0.302
+    },
+    "source_attack_dpr_ac16": 16.5,
+    "yaml_attack_dpr_ac16": 16.5
+  },
+  {
+    "name": "Air Elemental",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 2.868,
+    "mean_party_hp": 148.77,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "slot_1": 2.686,
+      "slot_2": 0.002,
+      "slot_3": 1.898
+    },
+    "source_attack_dpr_ac16": 18.2,
+    "yaml_attack_dpr_ac16": 18.2
+  },
+  {
+    "name": "Barbed Devil",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 2.074,
+    "mean_party_hp": 156.992,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "slot_1": 1.91,
+      "slot_3": 1.23
+    },
+    "source_attack_dpr_ac16": 17.5,
+    "yaml_attack_dpr_ac16": 17.5
+  },
+  {
+    "name": "Earth Elemental",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 2.816,
+    "mean_party_hp": 150.336,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "slot_1": 2.54,
+      "slot_3": 1.96
+    },
+    "source_attack_dpr_ac16": 18.2,
+    "yaml_attack_dpr_ac16": 18.2
+  },
+  {
+    "name": "Fire Elemental",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 489,
+    "draws": 0,
+    "win_rate": 0.978,
+    "mean_rounds": 4.286,
+    "mean_party_hp": 119.6,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 0.098,
+      "slot_1": 3.596,
+      "slot_2": 0.008,
+      "slot_3": 0.778
+    },
+    "source_attack_dpr_ac16": 11.0,
+    "yaml_attack_dpr_ac16": 11.0
+  },
+  {
+    "name": "Gladiator",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 2.13,
+    "mean_party_hp": 160.738,
+    "mean_resources_spent": {
+      "action_surge": 1.978,
+      "slot_1": 1.406,
+      "slot_2": 1.462,
+      "slot_3": 0.306
+    },
+    "source_attack_dpr_ac16": 19.799999999999997,
+    "yaml_attack_dpr_ac16": 19.799999999999997
+  },
+  {
+    "name": "Hill Giant",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.942,
+    "mean_party_hp": 150.826,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "slot_1": 1.124,
+      "slot_3": 1.418
+    },
+    "source_attack_dpr_ac16": 24.05,
+    "yaml_attack_dpr_ac16": 24.05
+  },
+  {
+    "name": "Troll",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 0,
+    "draws": 0,
+    "win_rate": 0.0,
+    "mean_rounds": 14.062,
+    "mean_party_hp": 0,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 2.75,
+      "slot_1": 2.864,
+      "slot_2": 0.68,
+      "slot_3": 2.014
+    },
+    "source_attack_dpr_ac16": 19.799999999999997,
+    "yaml_attack_dpr_ac16": 19.799999999999997
+  },
+  {
+    "name": "Vampire Spawn",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.962,
+    "mean_party_hp": 157.416,
+    "mean_resources_spent": {
+      "action_surge": 1.992,
+      "slot_1": 0.804,
+      "slot_3": 1.464
+    },
+    "source_attack_dpr_ac16": 8.8,
+    "yaml_attack_dpr_ac16": 8.8
+  },
+  {
+    "name": "Water Elemental",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 2.27,
+    "mean_party_hp": 128.4,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 0.006,
+      "slot_1": 1.51,
+      "slot_3": 1.362
+    },
+    "source_attack_dpr_ac16": 15.6,
+    "yaml_attack_dpr_ac16": 15.6
+  },
+  {
+    "name": "Wraith",
+    "cr": "5",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.828,
+    "mean_party_hp": 159.748,
+    "mean_resources_spent": {
+      "action_surge": 1.984,
+      "slot_1": 1.934,
+      "slot_3": 0.782
+    },
+    "source_attack_dpr_ac16": 11.55,
+    "yaml_attack_dpr_ac16": 11.55
+  },
+  {
+    "name": "Mage",
+    "cr": "6",
+    "runs": 500,
+    "seed": 1,
+    "wins": 470,
+    "draws": 0,
+    "win_rate": 0.94,
+    "mean_rounds": 1.766,
+    "mean_party_hp": 95.37,
+    "mean_resources_spent": {
+      "action_surge": 1.876,
+      "second_wind": 0.978,
+      "slot_1": 0.986,
+      "slot_2": 0.882,
+      "slot_3": 0.09
+    },
+    "source_attack_dpr_ac16": 27.225,
+    "yaml_attack_dpr_ac16": 27.225
+  },
+  {
+    "name": "Vrock",
+    "cr": "6",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 3.56,
+    "mean_party_hp": 131.172,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 0.086,
+      "slot_1": 2.672,
+      "slot_3": 1.606
+    },
+    "source_attack_dpr_ac16": 22.55,
+    "yaml_attack_dpr_ac16": 22.55
+  },
+  {
+    "name": "Wyvern",
+    "cr": "6",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 2.264,
+    "mean_party_hp": 148.584,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "slot_1": 1.69,
+      "slot_3": 1.632
+    },
+    "source_attack_dpr_ac16": 29.1,
+    "yaml_attack_dpr_ac16": 29.1
+  },
+  {
+    "name": "Young White Dragon",
+    "cr": "6",
+    "runs": 500,
+    "seed": 1,
+    "wins": 453,
+    "draws": 0,
+    "win_rate": 0.906,
+    "mean_rounds": 3.13,
+    "mean_party_hp": 68.528,
+    "mean_resources_spent": {
+      "action_surge": 1.978,
+      "second_wind": 1.068,
+      "slot_1": 2.0,
+      "slot_3": 0.904
+    },
+    "source_attack_dpr_ac16": 20.7,
+    "yaml_attack_dpr_ac16": 20.7
+  },
+  {
+    "name": "Young Black Dragon",
+    "cr": "7",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 2.894,
+    "mean_party_hp": 137.726,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 0.002,
+      "slot_1": 2.95,
+      "slot_3": 0.94
+    },
+    "source_attack_dpr_ac16": 22.5,
+    "yaml_attack_dpr_ac16": 22.5
+  },
+  {
+    "name": "Assassin",
+    "cr": "8",
+    "runs": 500,
+    "seed": 1,
+    "wins": 497,
+    "draws": 0,
+    "win_rate": 0.994,
+    "mean_rounds": 1.924,
+    "mean_party_hp": 138.668,
+    "mean_resources_spent": {
+      "action_surge": 1.934,
+      "second_wind": 0.038,
+      "slot_1": 1.466,
+      "slot_2": 0.586,
+      "slot_3": 0.172
+    },
+    "source_attack_dpr_ac16": 53.099999999999994,
+    "yaml_attack_dpr_ac16": 53.099999999999994
+  },
+  {
+    "name": "Chain Devil",
+    "cr": "8",
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 3.422,
+    "mean_party_hp": 136.684,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "slot_1": 3.534,
+      "slot_2": 0.014,
+      "slot_3": 1.26
+    },
+    "source_attack_dpr_ac16": 13.2,
+    "yaml_attack_dpr_ac16": 13.2
+  },
+  {
+    "name": "Hezrou",
+    "cr": "8",
+    "runs": 500,
+    "seed": 1,
+    "wins": 491,
+    "draws": 0,
+    "win_rate": 0.982,
+    "mean_rounds": 3.836,
+    "mean_party_hp": 127.726,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 0.086,
+      "slot_1": 3.84,
+      "slot_2": 0.01,
+      "slot_3": 1.58
+    },
+    "source_attack_dpr_ac16": 27.9,
+    "yaml_attack_dpr_ac16": 27.9
+  },
+  {
+    "name": "Young Green Dragon",
+    "cr": "8",
+    "runs": 500,
+    "seed": 1,
+    "wins": 348,
+    "draws": 0,
+    "win_rate": 0.696,
+    "mean_rounds": 3.572,
+    "mean_party_hp": 48.412,
+    "mean_resources_spent": {
+      "action_surge": 1.988,
+      "second_wind": 1.108,
+      "slot_1": 2.092,
+      "slot_3": 0.818
+    },
+    "source_attack_dpr_ac16": 32.4,
+    "yaml_attack_dpr_ac16": 32.4
+  },
+  {
+    "name": "Bone Devil",
+    "cr": "9",
+    "runs": 500,
+    "seed": 1,
+    "wins": 435,
+    "draws": 0,
+    "win_rate": 0.87,
+    "mean_rounds": 3.922,
+    "mean_party_hp": 88.294,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 0.25,
+      "slot_1": 2.57,
+      "slot_2": 0.002,
+      "slot_3": 1.184
+    },
+    "source_attack_dpr_ac16": 38.35,
+    "yaml_attack_dpr_ac16": 38.35
+  },
+  {
+    "name": "Young Blue Dragon",
+    "cr": "9",
+    "runs": 500,
+    "seed": 1,
+    "wins": 180,
+    "draws": 0,
+    "win_rate": 0.36,
+    "mean_rounds": 3.91,
+    "mean_party_hp": 22.382,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 0.928,
+      "slot_1": 0.932,
+      "slot_3": 0.72
+    },
+    "source_attack_dpr_ac16": 36.75,
+    "yaml_attack_dpr_ac16": 36.75
+  },
+  {
+    "name": "Aboleth",
+    "cr": "10",
+    "runs": 500,
+    "seed": 1,
+    "wins": 29,
+    "draws": 0,
+    "win_rate": 0.058,
+    "mean_rounds": 4.582,
+    "mean_party_hp": 5.49,
+    "mean_resources_spent": {
+      "action_surge": 1.4,
+      "second_wind": 0.58,
+      "slot_1": 1.982,
+      "slot_2": 0.008,
+      "slot_3": 0.604
+    },
+    "source_attack_dpr_ac16": 16.799999999999997,
+    "yaml_attack_dpr_ac16": 16.799999999999997
+  },
+  {
+    "name": "Stone Golem",
+    "cr": "10",
+    "runs": 500,
+    "seed": 1,
+    "wins": 438,
+    "draws": 0,
+    "win_rate": 0.876,
+    "mean_rounds": 5.254,
+    "mean_party_hp": 92.448,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 0.294,
+      "slot_1": 4.65,
+      "slot_2": 0.098,
+      "slot_3": 1.358
+    },
+    "source_attack_dpr_ac16": 36.0,
+    "yaml_attack_dpr_ac16": 36.0
+  },
+  {
+    "name": "Young Red Dragon",
+    "cr": "10",
+    "runs": 500,
+    "seed": 1,
+    "wins": 19,
+    "draws": 0,
+    "win_rate": 0.038,
+    "mean_rounds": 3.288,
+    "mean_party_hp": 2.096,
+    "mean_resources_spent": {
+      "action_surge": 1.682,
+      "second_wind": 1.196,
+      "slot_1": 0.574,
+      "slot_3": 0.704
+    },
+    "source_attack_dpr_ac16": 37.125,
+    "yaml_attack_dpr_ac16": 37.125
+  },
+  {
+    "name": "Adult Red Dragon",
+    "cr": "17",
+    "runs": 500,
+    "seed": 1,
+    "wins": 0,
+    "draws": 0,
+    "win_rate": 0.0,
+    "mean_rounds": 1.014,
+    "mean_party_hp": 0,
+    "mean_resources_spent": {
+      "action_surge": 0.306,
+      "second_wind": 0.09,
+      "slot_1": 0.036,
+      "slot_3": 0.144
+    },
+    "source_attack_dpr_ac16": 52.724999999999994,
+    "yaml_attack_dpr_ac16": 52.724999999999994
+  }
+]

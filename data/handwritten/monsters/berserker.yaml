@@ -1,0 +1,47 @@
+name: Berserker
+source: XMM
+cr: '2'
+ac: 13
+max_hp: 67
+hp_formula: 9d8 + 27
+abilities:
+  str: 16
+  dex: 12
+  con: 17
+  int: 9
+  wis: 11
+  cha: 9
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Greataxe
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d12
+      bonus: 3
+      type: slashing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M
+features:
+  bloodied_frenzy: true
+routines:
+- - Greataxe
+spells: []
+unsupported_spells: []

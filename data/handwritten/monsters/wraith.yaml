@@ -1,0 +1,76 @@
+name: Wraith
+source: XMM
+cr: '5'
+ac: 13
+max_hp: 67
+hp_formula: 9d8 + 27
+abilities:
+  str: 6
+  dex: 16
+  con: 16
+  int: 12
+  wis: 14
+  cha: 15
+speed: 5
+movement_modes:
+  walk: 5
+creature_type: undead
+alignment: evil
+proficiency_bonus: 3
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- acid
+- bludgeoning
+- cold
+- fire
+- piercing
+- slashing
+immunities:
+- necrotic
+- poison
+vulnerabilities: []
+condition_immunities:
+- charmed
+- exhaustion
+- grappled
+- paralyzed
+- petrified
+- poisoned
+- prone
+- restrained
+- unconscious
+attacks:
+- name: Life Drain
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 4d8
+      bonus: 3
+      type: necrotic
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Conditional fly speed: {"condition": "(hover)", "number": 60}; movement is not
+  simulated'
+- 'Incorporeal Movement: object traversal, Difficult Terrain and self Force damage
+  inside objects require terrain/grid; unsupported.'
+- 'Life Drain: revival and maximum-HP recovery after the encounter are outside this
+  single-encounter monster model.'
+- 'Create Specter: shape, corpse spawning, or noncombat adjudication is unsupported.'
+size: M
+features:
+  sunlight_sensitivity: true
+  life_drain:
+    attacks:
+    - Life Drain
+    type: all
+    heal: false
+routines:
+- - Life Drain
+spells: []
+unsupported_spells: []
