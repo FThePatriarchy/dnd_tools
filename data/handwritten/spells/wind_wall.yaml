@@ -1,0 +1,51 @@
+name: Wind Wall
+source: XPHB
+level: 3
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: a fan and a feather
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: line
+    size_ft: 50
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: str
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 4d8
+      bonus: 0
+      type: bludgeoning
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Exact placement, surfaces, height, entry/movement, line-of-sight, lighting and environmental eligibility require
+  a grid. Recurring commands/end-turn damage execute where declared.
+- Projectile interception, flying-creature crossing, gas dispersal and Gaseous Form passage require relative positions/projectile
+  kinds.

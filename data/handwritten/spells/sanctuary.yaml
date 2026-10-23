@@ -1,0 +1,41 @@
+name: Sanctuary
+source: XPHB
+level: 1
+school: abjuration
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: a shard of glass from a mirror
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - sanctuary:
+      ability: wis
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

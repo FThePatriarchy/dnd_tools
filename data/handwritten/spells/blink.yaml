@@ -1,0 +1,40 @@
+name: Blink
+source: XPHB
+level: 3
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - blink:
+      dice: 1d6
+      threshold: 4
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Ethereal sensory range, existing Ethereal creatures and return-space placement require planar/position state;
+  start/end-turn cross-plane isolation executes.

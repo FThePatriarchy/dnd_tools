@@ -1,0 +1,53 @@
+name: Longstrider
+source: XPHB
+level: 1
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a pinch of dirt
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - modify:
+      stat: speed
+      op: add
+      value: 10
+      scope: all
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: main
+      target_n_add: 1
+ends_on: []
+unsupported:
+- Speed is stored; movement is not simulated.

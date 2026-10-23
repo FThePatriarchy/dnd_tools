@@ -80,20 +80,24 @@ unsupported:
 - 'Commanding Presence: Command is outside golden set (Wisdom save; can inflict Prone);
   unsupported. Pounce movement needs grid. Lair actions (tagged Constitution saves)
   are deliberately excluded; resistance uses the lair-free 3/day count.'
-- 'Spellcasting outside golden set: Command, Detect Magic. No substitute effects or
-  invented slots.'
 spell_ability: cha
 spell_dc: 20
 spell_attack_bonus: 12
 spells:
 - Scorching Ray
 - Fireball
+- Command
+- Detect Magic
 spell_levels:
   Scorching Ray: 2
   Fireball: 3
+  Command: 2
+  Detect Magic: 1
 spell_costs:
   Scorching Ray: action
   Fireball: action
+  Command: action
+  Detect Magic: action
 limited_uses:
   Fireball: 1
   legendary_resistance: 3
@@ -110,6 +114,9 @@ legendary:
     cost: 1
     attacks:
     - Rend
+  - name: Commanding Presence
+    cost: 1
+    spell: Command
 size: H
 routines:
 - - Rend
@@ -117,6 +124,13 @@ routines:
   - Rend
 replacements:
 - Scorching Ray
-unsupported_spells:
-- Command
-- Detect Magic
+unsupported_spells: []
+spell_components:
+  Command:
+    m: false
+  Detect Magic:
+    m: false
+  Scorching Ray:
+    m: false
+  Fireball:
+    m: false

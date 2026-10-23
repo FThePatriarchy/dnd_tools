@@ -1,0 +1,67 @@
+name: Crown of Madness
+source: XPHB
+level: 2
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+    auto_success_if: target.creature_type != humanoid
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: charmed
+      repeat_save:
+        ability: wis
+        timing: end_of_turn
+        on_success: end
+  - turn_rules:
+      forced_melee: true
+      maintained_by_action: true
+    requires_condition: charmed
+  on_success: []
+  apply: []
+  limit: null
+- id: maintain
+  event: action_command
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - maintain_spell: true
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Melee reach is assumed under the no-grid convention; if there is no eligible other creature or melee attack, the
+  victim can act normally. The chosen target is an enemy of the caster other than the victim.

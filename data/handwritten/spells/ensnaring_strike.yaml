@@ -1,0 +1,69 @@
+name: Ensnaring Strike
+source: XPHB
+level: 1
+school: conjuration
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save:
+    ability: str
+    on_success: negate
+    advantage_if: target.size in [L, H, G]
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: restrained
+      escape_dc: spell_dc
+  on_success:
+  - end_spell: true
+  apply: []
+  limit: null
+- id: vines
+  event: start_of_turn(target)
+  target:
+    select: ref
+    ref: main
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: piercing
+    requires_condition: restrained
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: vines
+      dice_add: 1d6
+ends_on: []
+unsupported:
+- Another creature's in-reach Strength (Athletics) rescue needs an explicit ally action choice; self-escape executes.
+casting_trigger: weapon_hit

@@ -1,0 +1,57 @@
+name: Charm Monster
+source: XPHB
+level: 4
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+    advantage_if: target.team != caster.team
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: charmed
+      ends_on_damage: caster_allies
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 4
+    changes:
+    - block: main
+      target_n_add: 1
+ends_on: []
+unsupported:
+- Friendly attitude, social checks and remembering the charm are outside the arena; Charmed combat restrictions
+  and allied-damage ending execute.

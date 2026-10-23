@@ -1,0 +1,49 @@
+name: Guardian of Faith
+source: XPHB
+level: 4
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_creature_enters_aura(target) or start_of_turn(target)
+  target:
+    select: area
+    shape: sphere
+    size_ft: 10
+    affects: enemy
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      amount: 20
+      type: radiant
+      end_after_total: 60
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+scaling: null
+ends_on: []
+unsupported:
+- Guardian placement, space occupancy and movement entry require positions; starting enemies use the declared proximity
+  heuristic. This invulnerable spectral force is not a creature summon.

@@ -1,0 +1,43 @@
+name: Barkskin
+source: XPHB
+level: 2
+school: transmutation
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a handful of oak bark
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - base_ac:
+      base: 17
+      ability: null
+      unarmored_only: false
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

@@ -1,0 +1,28 @@
+name: Levitate
+source: XPHB
+level: 2
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a metal spring
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- 'Vertical movement, suspension, climbing against surfaces, 500-pound loose objects, altitude commands and range
+  require a grid/object state. The Constitution saving throw has no nonspatial condition: levitation is not Restrained
+  or Incapacitated.'

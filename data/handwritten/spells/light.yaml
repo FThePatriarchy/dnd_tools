@@ -1,0 +1,25 @@
+name: Light
+source: XPHB
+level: 0
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: false
+  m: a firefly or phosphorescent moss
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Lighting, object covering and recoloring need a lighting/object model.

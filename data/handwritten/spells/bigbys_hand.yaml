@@ -1,0 +1,112 @@
+name: Bigby's Hand
+source: XPHB
+level: 5
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: an eggshell and a glove
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: mode
+  options:
+  - fist
+  - grasp
+  - crush
+  when: on_cast
+effects:
+- id: hand
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - force_object:
+      ac: 20
+      hp: caster_max_hp
+  limit: null
+- id: fist
+  event: on_cast or bonus_action_command
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack:
+    type: melee_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 5d8
+      bonus: 0
+      type: force
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+  if: $mode == "fist"
+- id: grasp
+  event: on_cast or bonus_action_command
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+    max_size: H
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: grappled
+      escape_dc: spell_dc
+      capacity: 1
+  on_success: []
+  apply: []
+  limit: null
+  if: $mode == "grasp"
+- id: crush
+  event: bonus_action_command
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+    eligible_if: target.has_condition_from(grappled, spell)
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 4d6
+      bonus: spell_mod
+      type: bludgeoning
+  limit: null
+  if: $mode == "crush"
+  requires_condition: grappled
+scaling: null
+ends_on: []
+unsupported:
+- Clenched Fist/Grasping Hand are chosen commands, not autonomous creature turns.
+  Forceful Hand's Strength-save push, interposing Half Cover, Difficult Terrain and
+  movement/reach require positions. Object has real AC/HP; its destruction ends the
+  spell.

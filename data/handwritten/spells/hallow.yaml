@@ -1,0 +1,98 @@
+name: Hallow
+source: XPHB
+level: 5
+school: abjuration
+casting_time: hour
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: incense worth 1,000+ GP, which the spell consumes
+  m_consumed: true
+  m_cost_gp: 1000.0
+duration:
+  type: until_dispelled
+concentration: false
+ritual: false
+choices:
+- id: effect
+  options:
+  - courage
+  - fear
+  - resistance
+  - vulnerability
+  - silence
+  when: on_cast
+- id: type
+  options:
+  - acid
+  - bludgeoning
+  - cold
+  - fire
+  - force
+  - lightning
+  - necrotic
+  - piercing
+  - poison
+  - psychic
+  - radiant
+  - slashing
+  - thunder
+  when: on_cast
+effects:
+- id: main
+  event: while_in_area
+  target:
+    select: area
+    shape: sphere
+    size_ft: 60
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - ward:
+      types:
+      - aberration
+      - celestial
+      - elemental
+      - fey
+      - fiend
+      - undead
+      conditions:
+      - charmed
+      - frightened
+      suppress_existing: true
+  - defense:
+      condition_immunity:
+      - frightened
+    if: $effect == courage
+  - apply_condition:
+      condition: frightened
+    if: $effect == fear
+  - defense:
+      resistance:
+      - $type
+    if: $effect == resistance
+  - defense:
+      vulnerability:
+      - $type
+    if: $effect == vulnerability
+  - status:
+      id: verbal_components_blocked
+      data: {}
+    if: $effect == silence
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Default type selection is all eligible types; exact chosen groups, possession, overlapping areas, entry/teleport
+  prohibition, darkness/daylight, interred corpses and languages need geometry/possession/sensory state. Frightened
+  and source-typed suppression execute, without inventing a saving throw.
+casting_time_n: 24

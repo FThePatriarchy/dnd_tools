@@ -1,0 +1,27 @@
+name: Feather Fall
+source: XPHB
+level: 1
+school: transmutation
+casting_time: reaction
+reaction_trigger: on_falling(target)
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: false
+  m: a small feather or piece of down
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Falling eligibility, altitude, descent, landing and fall-damage prevention require falling/position state; on_falling
+  is an explicit external reaction event.

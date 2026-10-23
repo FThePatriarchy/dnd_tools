@@ -1,0 +1,189 @@
+name: Polymorph
+source: XPHB
+level: 4
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a caterpillar cocoon
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: form
+  options:
+  - wolf
+  - brown bear
+  - riding horse
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - transform:
+      choice: $form
+      forms:
+        wolf:
+          name: Wolf
+          source: XMM
+          cr: 1/4
+          ac: 12
+          max_hp: 11
+          abilities:
+            str: 14
+            dex: 15
+            con: 12
+            int: 3
+            wis: 12
+            cha: 6
+          speed: 40
+          movement_modes:
+            walk: 40
+          creature_type: beast
+          alignment: neutral
+          proficiency_bonus: 2
+          save_bonuses: {}
+          save_proficiencies: []
+          resistances: []
+          immunities: []
+          vulnerabilities: []
+          condition_immunities: []
+          attacks:
+          - name: Bite
+            kind: melee
+            to_hit: 4
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d6
+                bonus: 2
+                type: piercing
+            - apply_condition:
+                condition: prone
+                max_size: M
+          multiattack: []
+          actions: []
+          traits: []
+          unsupported: []
+          size: M
+          features:
+            pack_tactics: true
+          routines:
+          - - Bite
+        brown bear:
+          name: Brown Bear
+          source: XMM
+          cr: '1'
+          ac: 11
+          max_hp: 22
+          abilities:
+            str: 17
+            dex: 12
+            con: 15
+            int: 2
+            wis: 13
+            cha: 7
+          speed: 40
+          movement_modes:
+            walk: 40
+            climb: 30
+          creature_type: beast
+          alignment: neutral
+          proficiency_bonus: 2
+          save_bonuses: {}
+          save_proficiencies: []
+          resistances: []
+          immunities: []
+          vulnerabilities: []
+          condition_immunities: []
+          attacks:
+          - name: Bite
+            kind: melee
+            to_hit: 5
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 3
+                type: piercing
+          - name: Claw
+            kind: melee
+            to_hit: 5
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d4
+                bonus: 3
+                type: slashing
+            - apply_condition:
+                condition: prone
+                max_size: L
+          multiattack:
+          - Bite
+          - Claw
+          actions: []
+          traits: []
+          unsupported: []
+          size: L
+        riding horse:
+          name: Riding Horse
+          source: XMM
+          ac: 11
+          max_hp: 13
+          abilities:
+            str: 16
+            dex: 13
+            con: 12
+            int: 2
+            wis: 11
+            cha: 7
+          speed: 60
+          movement_modes:
+            walk: 60
+          creature_type: beast
+          proficiency_bonus: 2
+          resistances: []
+          immunities: []
+          vulnerabilities: []
+          condition_immunities: []
+          attacks:
+          - name: Hooves
+            kind: melee
+            to_hit: 5
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 3
+                type: bludgeoning
+          size: L
+          cr: 1/4
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Embedded Beast choices are Wolf, Brown Bear and Riding Horse; other Beast forms need a reviewed stat block, not
+  invented statistics. Anatomy/equipment/speech, movement and gear merging require inventory/geometry. CR eligibility,
+  replaced statistics, retained HP/type, form Temporary HP and reversion execute.

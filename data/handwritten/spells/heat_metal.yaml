@@ -1,0 +1,63 @@
+name: Heat Metal
+source: XPHB
+level: 2
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a piece of iron and a flame
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast or bonus_action_command
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+    eligible_if: target.has_status(heated_metal)
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: fire
+  - disadvantage:
+      'on': attack_rolls
+      scope: all
+      against: null
+    until: start_of_turn(caster.next_turn)
+  - disadvantage:
+      'on': ability_checks
+      scope: all
+      against: null
+    until: start_of_turn(caster.next_turn)
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: main
+      dice_add: 1d8
+ends_on: []
+unsupported:
+- The caller must mark an eligible worn metal item as heated_metal; armor cannot be dropped. Constitution saving
+  throws, held-object dropping, object contact/visibility/range and donning inventory require equipment state; no
+  invented drop failure is imposed on a wearer.

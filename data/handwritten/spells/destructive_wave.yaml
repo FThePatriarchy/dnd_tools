@@ -1,0 +1,58 @@
+name: Destructive Wave
+source: XPHB
+level: 5
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices:
+- id: damage_type
+  options:
+  - radiant
+  - necrotic
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: emanation
+    size_ft: 30
+    affects: chosen
+    filter:
+    - creature
+    origin: caster
+  attack: null
+  save:
+    ability: con
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 5d6
+      bonus: 0
+      type: thunder
+  - damage:
+      dice: 5d6
+      bonus: 0
+      type: $damage_type
+  - apply_condition:
+      condition: prone
+      persistent: true
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

@@ -1,0 +1,45 @@
+name: Protection from Poison
+source: XPHB
+level: 2
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - remove_condition:
+      condition: poisoned
+  - defense:
+      resistance:
+      - poison
+      save_conditions:
+      - poisoned
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

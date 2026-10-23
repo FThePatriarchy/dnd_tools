@@ -1,0 +1,78 @@
+name: Fount of Moonlight
+source: XPHB
+level: 4
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: protection
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - defense:
+      resistance:
+      - radiant
+  limit: null
+- id: main
+  event: on_attack_hit(caster, defender)
+  target:
+    select: ref
+    ref: trigger.defender
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: radiant
+  limit: null
+  if: attack.melee
+- id: flare
+  event: on_damaged(caster)
+  target:
+    select: ref
+    ref: trigger.attacker
+    within_ft: 60
+  attack: null
+  save:
+    ability: con
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: blinded
+    until: end_of_turn(caster.next_turn)
+  on_success: []
+  apply: []
+  limit: null
+  cost: reaction
+  optional: true
+  if: attacker.visible_to(caster)
+scaling: null
+ends_on: []
+unsupported:
+- Emanation proximity, lighting and difficult terrain require positions/lighting; legal hit riders execute using
+  the no-grid range convention.

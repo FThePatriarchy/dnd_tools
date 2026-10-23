@@ -1,0 +1,154 @@
+name: Summon Beast
+source: XPHB
+level: 2
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 90
+components:
+  v: true
+  s: true
+  m: a feather, tuft of fur, and fish tail inside a gilded acorn worth 200+ GP
+  m_consumed: false
+  m_cost_gp: 200.0
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: form
+  options:
+  - air
+  - land
+  - water
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        air:
+          name: Bestial Spirit (Air)
+          source: XPHB
+          max_hp: 20
+          ac: 13
+          abilities:
+            str: 18
+            dex: 11
+            con: 16
+            int: 4
+            wis: 14
+            cha: 5
+          speed: 30
+          movement_modes:
+            walk: 30
+            fly: 60
+          creature_type: beast
+          size: S
+          proficiency_bonus: caster
+          attacks:
+          - name: Rend
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 6
+                type: piercing
+          resistances: []
+          immunities: []
+          condition_immunities: []
+          features: {}
+        land:
+          name: Bestial Spirit (Land)
+          source: XPHB
+          max_hp: 30
+          ac: 13
+          abilities:
+            str: 18
+            dex: 11
+            con: 16
+            int: 4
+            wis: 14
+            cha: 5
+          speed: 30
+          movement_modes:
+            walk: 30
+            climb: 30
+          creature_type: beast
+          size: S
+          proficiency_bonus: caster
+          attacks:
+          - name: Rend
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 6
+                type: piercing
+          resistances: []
+          immunities: []
+          condition_immunities: []
+          features:
+            pack_tactics: true
+        water:
+          name: Bestial Spirit (Water)
+          source: XPHB
+          max_hp: 30
+          ac: 13
+          abilities:
+            str: 18
+            dex: 11
+            con: 16
+            int: 4
+            wis: 14
+            cha: 5
+          speed: 30
+          movement_modes:
+            walk: 30
+            swim: 30
+          creature_type: beast
+          size: S
+          proficiency_bonus: caster
+          attacks:
+          - name: Rend
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 6
+                type: piercing
+          resistances: []
+          immunities: []
+          condition_immunities: []
+          features:
+            pack_tactics: true
+      base_slot: 2
+      per_slot:
+        ac: 1
+        max_hp: 5
+        damage_bonus: 1
+      attack_count_divisor: 2
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Unoccupied-space placement, senses, languages, flight, swimming, Flyby and exact Pack Tactics proximity require
+  a grid/environment. Pack Tactics uses the existing no-grid engaged-ally heuristic.

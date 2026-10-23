@@ -1,0 +1,41 @@
+name: Arcane Vigor
+source: XPHB
+level: 2
+school: abjuration
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - hit_dice_heal:
+      max_dice: 2
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: main
+      value_add: 1
+ends_on: []
+unsupported: []

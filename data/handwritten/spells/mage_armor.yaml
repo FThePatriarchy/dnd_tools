@@ -1,0 +1,44 @@
+name: Mage Armor
+source: XPHB
+level: 1
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a piece of cured leather
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - base_ac:
+      base: 13
+      ability: dex
+      unarmored_only: true
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Armor inventory and donning are not modeled; caller must mark armored creatures through the armored feature.

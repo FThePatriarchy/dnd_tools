@@ -1,0 +1,211 @@
+name: Summon Elemental
+source: XPHB
+level: 4
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 90
+components:
+  v: true
+  s: true
+  m: air, a pebble, ash, and water inside a gold-inlaid vial worth 400+ GP
+  m_consumed: false
+  m_cost_gp: 400.0
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: form
+  options:
+  - air
+  - earth
+  - fire
+  - water
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        air:
+          name: Elemental Spirit (Air)
+          source: XPHB
+          max_hp: 50
+          ac: 15
+          abilities:
+            str: 18
+            dex: 15
+            con: 17
+            int: 4
+            wis: 10
+            cha: 16
+          speed: 40
+          movement_modes:
+            walk: 40
+            fly: 40
+          creature_type: elemental
+          size: M
+          proficiency_bonus: caster
+          attacks:
+          - name: Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d10
+                bonus: 8
+                type: lightning
+          resistances:
+          - lightning
+          - thunder
+          immunities:
+          - poison
+          condition_immunities:
+          - exhaustion
+          - paralyzed
+          - petrified
+          - poisoned
+          features: {}
+        earth:
+          name: Elemental Spirit (Earth)
+          source: XPHB
+          max_hp: 50
+          ac: 15
+          abilities:
+            str: 18
+            dex: 15
+            con: 17
+            int: 4
+            wis: 10
+            cha: 16
+          speed: 40
+          movement_modes:
+            walk: 40
+            burrow: 40
+          creature_type: elemental
+          size: M
+          proficiency_bonus: caster
+          attacks:
+          - name: Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d10
+                bonus: 8
+                type: bludgeoning
+          resistances:
+          - piercing
+          - slashing
+          immunities:
+          - poison
+          condition_immunities:
+          - exhaustion
+          - paralyzed
+          - petrified
+          - poisoned
+          features: {}
+        fire:
+          name: Elemental Spirit (Fire)
+          source: XPHB
+          max_hp: 50
+          ac: 15
+          abilities:
+            str: 18
+            dex: 15
+            con: 17
+            int: 4
+            wis: 10
+            cha: 16
+          speed: 40
+          movement_modes:
+            walk: 40
+          creature_type: elemental
+          size: M
+          proficiency_bonus: caster
+          attacks:
+          - name: Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d10
+                bonus: 8
+                type: fire
+          resistances: []
+          immunities:
+          - poison
+          - fire
+          condition_immunities:
+          - exhaustion
+          - paralyzed
+          - petrified
+          - poisoned
+          features: {}
+        water:
+          name: Elemental Spirit (Water)
+          source: XPHB
+          max_hp: 50
+          ac: 15
+          abilities:
+            str: 18
+            dex: 15
+            con: 17
+            int: 4
+            wis: 10
+            cha: 16
+          speed: 40
+          movement_modes:
+            walk: 40
+            swim: 40
+          creature_type: elemental
+          size: M
+          proficiency_bonus: caster
+          attacks:
+          - name: Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d10
+                bonus: 8
+                type: cold
+          resistances:
+          - acid
+          immunities:
+          - poison
+          condition_immunities:
+          - exhaustion
+          - paralyzed
+          - petrified
+          - poisoned
+          features: {}
+      base_slot: 4
+      per_slot:
+        ac: 1
+        max_hp: 10
+        damage_bonus: 1
+      attack_count_divisor: 2
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Placement, Amorphous Form's narrow-space movement, burrowing, hovering, swimming and senses require positions/environment.
+  The main XPHB stat block determines each form's damage type; conflicting generated _versions are not used.

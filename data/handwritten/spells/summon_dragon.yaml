@@ -1,0 +1,383 @@
+name: Summon Dragon
+source: XPHB
+level: 5
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: an object with the image of a dragon engraved on it worth 500+ GP
+  m_consumed: false
+  m_cost_gp: 500.0
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: form
+  options:
+  - acid
+  - cold
+  - fire
+  - lightning
+  - poison
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        acid:
+          name: Draconic Spirit
+          source: XPHB
+          max_hp: 50
+          ac: 19
+          abilities:
+            str: 19
+            dex: 14
+            con: 17
+            int: 10
+            wis: 14
+            cha: 14
+          speed: 30
+          movement_modes:
+            walk: 30
+            fly: 60
+            swim: 30
+          creature_type: dragon
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Rend
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 10
+            effects:
+            - damage:
+                dice: 1d6
+                bonus: 9
+                type: piercing
+                slot_bonus: true
+          resistances: &id001
+          - acid
+          - cold
+          - fire
+          - lightning
+          - poison
+          immunities: []
+          condition_immunities: &id002
+          - charmed
+          - frightened
+          - poisoned
+          features: {}
+          actions:
+          - name: Breath Weapon
+            cost: free
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: area
+                shape: cone
+                size_ft: 30
+                affects: all
+                filter:
+                - creature
+                origin: caster
+              attack: null
+              save:
+                ability: dex
+                on_success: half
+              on_hit: []
+              on_fail:
+              - damage:
+                  dice: 2d6
+                  bonus: 0
+                  type: acid
+                  slot_bonus: false
+              on_success: []
+              apply: []
+              limit: null
+        cold:
+          name: Draconic Spirit
+          source: XPHB
+          max_hp: 50
+          ac: 19
+          abilities:
+            str: 19
+            dex: 14
+            con: 17
+            int: 10
+            wis: 14
+            cha: 14
+          speed: 30
+          movement_modes:
+            walk: 30
+            fly: 60
+            swim: 30
+          creature_type: dragon
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Rend
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 10
+            effects:
+            - damage:
+                dice: 1d6
+                bonus: 9
+                type: piercing
+                slot_bonus: true
+          resistances: *id001
+          immunities: []
+          condition_immunities: *id002
+          features: {}
+          actions:
+          - name: Breath Weapon
+            cost: free
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: area
+                shape: cone
+                size_ft: 30
+                affects: all
+                filter:
+                - creature
+                origin: caster
+              attack: null
+              save:
+                ability: dex
+                on_success: half
+              on_hit: []
+              on_fail:
+              - damage:
+                  dice: 2d6
+                  bonus: 0
+                  type: cold
+                  slot_bonus: false
+              on_success: []
+              apply: []
+              limit: null
+        fire:
+          name: Draconic Spirit
+          source: XPHB
+          max_hp: 50
+          ac: 19
+          abilities:
+            str: 19
+            dex: 14
+            con: 17
+            int: 10
+            wis: 14
+            cha: 14
+          speed: 30
+          movement_modes:
+            walk: 30
+            fly: 60
+            swim: 30
+          creature_type: dragon
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Rend
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 10
+            effects:
+            - damage:
+                dice: 1d6
+                bonus: 9
+                type: piercing
+                slot_bonus: true
+          resistances: *id001
+          immunities: []
+          condition_immunities: *id002
+          features: {}
+          actions:
+          - name: Breath Weapon
+            cost: free
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: area
+                shape: cone
+                size_ft: 30
+                affects: all
+                filter:
+                - creature
+                origin: caster
+              attack: null
+              save:
+                ability: dex
+                on_success: half
+              on_hit: []
+              on_fail:
+              - damage:
+                  dice: 2d6
+                  bonus: 0
+                  type: fire
+                  slot_bonus: false
+              on_success: []
+              apply: []
+              limit: null
+        lightning:
+          name: Draconic Spirit
+          source: XPHB
+          max_hp: 50
+          ac: 19
+          abilities:
+            str: 19
+            dex: 14
+            con: 17
+            int: 10
+            wis: 14
+            cha: 14
+          speed: 30
+          movement_modes:
+            walk: 30
+            fly: 60
+            swim: 30
+          creature_type: dragon
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Rend
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 10
+            effects:
+            - damage:
+                dice: 1d6
+                bonus: 9
+                type: piercing
+                slot_bonus: true
+          resistances: *id001
+          immunities: []
+          condition_immunities: *id002
+          features: {}
+          actions:
+          - name: Breath Weapon
+            cost: free
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: area
+                shape: cone
+                size_ft: 30
+                affects: all
+                filter:
+                - creature
+                origin: caster
+              attack: null
+              save:
+                ability: dex
+                on_success: half
+              on_hit: []
+              on_fail:
+              - damage:
+                  dice: 2d6
+                  bonus: 0
+                  type: lightning
+                  slot_bonus: false
+              on_success: []
+              apply: []
+              limit: null
+        poison:
+          name: Draconic Spirit
+          source: XPHB
+          max_hp: 50
+          ac: 19
+          abilities:
+            str: 19
+            dex: 14
+            con: 17
+            int: 10
+            wis: 14
+            cha: 14
+          speed: 30
+          movement_modes:
+            walk: 30
+            fly: 60
+            swim: 30
+          creature_type: dragon
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Rend
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 10
+            effects:
+            - damage:
+                dice: 1d6
+                bonus: 9
+                type: piercing
+                slot_bonus: true
+          resistances: *id001
+          immunities: []
+          condition_immunities: *id002
+          features: {}
+          actions:
+          - name: Breath Weapon
+            cost: free
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: area
+                shape: cone
+                size_ft: 30
+                affects: all
+                filter:
+                - creature
+                origin: caster
+              attack: null
+              save:
+                ability: dex
+                on_success: half
+              on_hit: []
+              on_fail:
+              - damage:
+                  dice: 2d6
+                  bonus: 0
+                  type: poison
+                  slot_bonus: false
+              on_success: []
+              apply: []
+              limit: null
+      base_slot: 5
+      per_slot:
+        ac: 1
+        max_hp: 10
+        damage_bonus: 1
+      attack_count_divisor: 2
+      after_attack_action: Breath Weapon
+  - defense:
+      resistance:
+      - $form
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Unoccupied placement, ranges, languages, senses and movement need geometry/environment. Summoned creatures are
+  real targetable combatants immediately after the caster. The printed parent stat blocks, not contradictory generated
+  versions, determine statistics.

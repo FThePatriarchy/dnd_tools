@@ -1,0 +1,45 @@
+name: Circle of Power
+source: XPHB
+level: 5
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: while_in_area
+  target:
+    select: area
+    shape: emanation
+    size_ft: 30
+    affects: ally
+    filter:
+    - creature
+    include_caster: true
+    origin: caster
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - magic_saves: {}
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Exact emanation membership requires positions; magical saving-throw Advantage and successful half-damage-save
+  negation execute.

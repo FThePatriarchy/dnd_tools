@@ -1,0 +1,50 @@
+name: Invisibility
+source: XPHB
+level: 2
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: an eyelash in gum arabic
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - apply_condition:
+      condition: invisible
+      ends_on_activity: true
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: main
+      target_n_add: 1
+ends_on: []
+unsupported: []

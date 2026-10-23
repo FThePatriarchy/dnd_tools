@@ -1,0 +1,40 @@
+name: Goodberry
+source: XPHB
+level: 1
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a sprig of mistletoe
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 24
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - berries:
+      count: 10
+      healing: 1
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Inventory transfer and nourishment are outside the arena; eat_berry consumes the shared stock using a living creature's
+  Bonus Action.

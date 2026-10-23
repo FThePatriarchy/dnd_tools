@@ -1,0 +1,51 @@
+name: Magic Weapon
+source: XPHB
+level: 2
+school: transmutation
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - weapon_enchantment:
+      attack_bonus: 1
+      damage_bonus: 1
+      tiers:
+      - slot_min: 3
+        attack_bonus: 2
+        damage_bonus: 2
+      - slot_min: 6
+        attack_bonus: 3
+        damage_bonus: 3
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Targets use the wielding creature's first weapon as the touched weapon; nonmagical eligibility, transfers and
+  inventory must be supplied externally. This does not enchant spell attacks.
+recast_ends_previous: true

@@ -1,0 +1,48 @@
+name: Telekinesis
+source: XPHB
+level: 5
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast or action_command
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+    max_size: H
+  attack: null
+  save:
+    ability: str
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: restrained
+    until: end_of_turn(caster.next_turn)
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Creature displacement, suspension/falling and object disarming/manipulation require positions and inventory; target
+  replacement and short-lived Restrained execute.

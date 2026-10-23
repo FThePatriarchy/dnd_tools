@@ -1,0 +1,46 @@
+name: Lesser Restoration
+source: XPHB
+level: 2
+school: abjuration
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices:
+- id: condition
+  options:
+  - blinded
+  - deafened
+  - paralyzed
+  - poisoned
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - remove_condition:
+      condition: $condition
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

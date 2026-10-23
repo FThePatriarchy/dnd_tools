@@ -1,0 +1,25 @@
+name: Detect Magic
+source: XPHB
+level: 1
+school: divination
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: true
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Magic detection, auras, schools and barriers need a sensory/environment model.

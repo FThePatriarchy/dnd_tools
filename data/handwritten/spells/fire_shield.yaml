@@ -1,0 +1,73 @@
+name: Fire Shield
+source: XPHB
+level: 4
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a bit of phosphorus or a firefly
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: false
+ritual: false
+choices:
+- id: shield
+  options:
+  - warm
+  - chill
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - defense:
+      resistance:
+      - cold
+    if: $shield == warm
+  - defense:
+      resistance:
+      - fire
+    if: $shield == chill
+  limit: null
+- id: retaliate
+  event: on_attack_hit(any, caster)
+  target:
+    select: ref
+    ref: trigger.attacker
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: fire
+    if: $shield == warm
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: cold
+    if: $shield == chill
+  limit: null
+  if: attack.melee
+scaling: null
+ends_on: []
+unsupported:
+- Lighting and 5-foot attacker proximity use the melee no-grid convention; retaliation dice are not doubled by the
+  attacker's critical hit.

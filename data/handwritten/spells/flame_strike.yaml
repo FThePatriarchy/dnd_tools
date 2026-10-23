@@ -1,0 +1,56 @@
+name: Flame Strike
+source: XPHB
+level: 5
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a pinch of sulfur
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: cylinder
+    size_ft: 10
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 5d6
+      bonus: 0
+      type: fire
+  - damage:
+      dice: 5d6
+      bonus: 0
+      type: radiant
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 5
+    changes:
+    - block: main
+      dice_add: 1d6
+ends_on: []
+unsupported:
+- Cylinder height/placement are abstracted by the area heuristic.

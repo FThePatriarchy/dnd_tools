@@ -61,10 +61,6 @@ traits: []
 unsupported:
 - 'Immutable Form: noncombat, sensory, movement, environment or post-encounter restoration;
   no grid/noncombat adjudication.'
-- 'Slow {@recharge 5}: spell outside golden set, recharge declaration is not executable
-  until that spell is supplied.'
-- 'Spellcasting outside golden set: Slow. No substitute effects or invented slots.'
-- 'Slow: Wisdom save spell outside golden set; unsupported.'
 spell_ability: con
 spell_dc: 17
 spell_attack_bonus: 9
@@ -80,6 +76,17 @@ routines:
   - Slam
 - - Force Bolt
   - Force Bolt
-spells: []
-unsupported_spells:
+spells:
 - Slow
+unsupported_spells: []
+spell_levels:
+  Slow: 3
+spell_costs:
+  Slow: bonus_action
+spell_recharge:
+  Slow: 5
+spell_components:
+  Slow:
+    v: false
+    s: false
+    m: false

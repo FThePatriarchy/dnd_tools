@@ -1,0 +1,54 @@
+name: Create or Destroy Water
+source: XPHB
+level: 1
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: a mix of water and sand
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices:
+- id: mode
+  options:
+  - rain
+  - destroy fog
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: cube
+    size_ft: 30
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - extinguish: {}
+  limit: null
+  if: $mode == rain
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: main
+      area_size_add: 5
+ends_on: []
+unsupported:
+- Rain douses exposed burning combatants in the chosen volume. Container water quantities, fog-volume destruction
+  and object flames need environmental geometry; destroying fog does not dispel the spell producing it.

@@ -1,0 +1,45 @@
+name: Compelled Duel
+source: XPHB
+level: 1
+school: enchantment
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - duel: {}
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- The distance leash and end-turn separation check require positions; disadvantage against other attackers and offensive/allied-damage
+  ending rules execute.

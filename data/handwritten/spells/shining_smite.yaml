@@ -1,0 +1,58 @@
+name: Shining Smite
+source: XPHB
+level: 2
+school: transmutation
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: radiant
+  - advantage:
+      'on': attack_rolls
+      scope: all
+      against: target
+      recipient: any_attacker
+  - status:
+      id: invisibility_suppressed
+      data: {}
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: main
+      dice_add: 1d6
+ends_on: []
+unsupported:
+- Five-foot Bright Light radius needs sensory/position adjudication; incoming Advantage and Invisible suppression
+  execute.
+casting_trigger: melee_hit

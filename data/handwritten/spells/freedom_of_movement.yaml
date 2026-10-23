@@ -1,0 +1,57 @@
+name: Freedom of Movement
+source: XPHB
+level: 4
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a leather strap
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - defense:
+      magical_condition_immunity:
+      - paralyzed
+      - restrained
+  - status:
+      id: magical_speed_protected
+      data: {}
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 4
+    changes:
+    - block: main
+      target_n_add: 1
+ends_on: []
+unsupported:
+- Difficult terrain, Swim Speed equal to Speed and spending movement to leave nonmagical restraints require movement/terrain
+  state.

@@ -1,0 +1,53 @@
+name: Shatter
+source: XPHB
+level: 2
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a chip of mica
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: sphere
+    size_ft: 10
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: con
+    on_success: half
+    disadvantage_if: target.creature_type == construct
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 3d8
+      bonus: 0
+      type: thunder
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: main
+      dice_add: 1d8
+ends_on: []
+unsupported:
+- Nonmagical unworn/uncarried object damage needs an object model.

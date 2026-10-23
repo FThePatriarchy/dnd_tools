@@ -1,0 +1,26 @@
+name: Gust of Wind
+source: XPHB
+level: 2
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a legume seed
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Strength saves resolve directional pushing only. Wind direction, movement costs, gas dispersal and flame extinguishing
+  require a grid/environment.

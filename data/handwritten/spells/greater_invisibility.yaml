@@ -1,0 +1,40 @@
+name: Greater Invisibility
+source: XPHB
+level: 4
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - apply_condition:
+      condition: invisible
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

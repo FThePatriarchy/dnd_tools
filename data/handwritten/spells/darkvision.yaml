@@ -1,0 +1,26 @@
+name: Darkvision
+source: XPHB
+level: 2
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a dried carrot
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Sense-specific visibility and Darkvision distance require lighting; Darkvision is not immunity to Invisible or
+  Blinded.

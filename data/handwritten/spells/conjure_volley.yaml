@@ -1,0 +1,48 @@
+name: Conjure Volley
+source: XPHB
+level: 5
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 150
+components:
+  v: true
+  s: true
+  m: a Melee or Ranged weapon worth at least 1 CP
+  m_consumed: false
+  m_cost_gp: 0.01
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: cylinder
+    size_ft: 40
+    affects: chosen
+    filter:
+    - creature
+    - visible
+  attack: null
+  save:
+    ability: dex
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 8d8
+      bonus: 0
+      type: force
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Area cross-section/height and exact placement are abstracted by the area heuristic.

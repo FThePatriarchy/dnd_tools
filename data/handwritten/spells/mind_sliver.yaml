@@ -1,0 +1,60 @@
+name: Mind Sliver
+source: XPHB
+level: 0
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: int
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: psychic
+  - modify:
+      stat: save
+      op: sub
+      value: 1d4
+      scope: all
+      uses: 1
+    until: end_of_turn(caster.next_turn)
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  cantrip:
+    at:
+    - 5
+    - 11
+    - 17
+    effect:
+      block: main
+      dice_add: 1d6
+ends_on: []
+unsupported: []

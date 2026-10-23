@@ -1,0 +1,27 @@
+name: Control Water
+source: XPHB
+level: 4
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 300
+components:
+  v: true
+  s: true
+  m: a mixture of water and dust
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Water availability, flooding, redirected flow, parting, whirlpool entry, Strength saves and Bludgeoning damage
+  from water movement require fluid terrain/positions; damage is not front-loaded.

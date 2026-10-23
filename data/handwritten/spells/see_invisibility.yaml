@@ -1,0 +1,39 @@
+name: See Invisibility
+source: XPHB
+level: 2
+school: divination
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a pinch of talc
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - status:
+      id: see_invisible
+      data: {}
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Ethereal-plane sensing and objects require a sensory/object model; seeing Invisible combatants is executable.

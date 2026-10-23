@@ -1,0 +1,56 @@
+name: True Strike
+source: XPHB
+level: 0
+school: divination
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: false
+  s: true
+  m: a weapon with which you have proficiency and that is worth 1+ CP
+  m_consumed: false
+  m_cost_gp: 0.01
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices:
+- id: type
+  options:
+  - radiant
+  - bludgeoning
+  - piercing
+  - slashing
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - weapon_strike:
+      count: 1
+      spell_ability: true
+      type: $type
+      upgrade_levels:
+      - 5
+      - 11
+      - 17
+      upgrade_dice: 1d6
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- The caster must supply the material weapon's attack; normal damage-type choices
+  must match that weapon. Radiant upgrade dice and the weapon's normal attack/damage
+  execute.

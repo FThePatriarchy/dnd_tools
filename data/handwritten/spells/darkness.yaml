@@ -1,0 +1,27 @@
+name: Darkness
+source: XPHB
+level: 2
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: false
+  m: bat fur and a piece of coal
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Lighting, hearing/sound propagation, spatial overlap dispelling, opaque coverings and object targeting require
+  sensory/position adjudication; no blanket Blinded is invented for magical Darkness.

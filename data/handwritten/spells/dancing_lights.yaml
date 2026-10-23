@@ -1,0 +1,26 @@
+name: Dancing Lights
+source: XPHB
+level: 0
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: a bit of phosphorus
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Light-source placement, illumination, movement and inter-light distances require positions and lighting.

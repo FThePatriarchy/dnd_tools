@@ -1,0 +1,49 @@
+name: Alter Self
+source: XPHB
+level: 2
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: type
+  options:
+  - slashing
+  - piercing
+  - bludgeoning
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - weapon_enchantment:
+      names:
+      - unarmed strike
+      spell_ability: true
+      dice: 1d6
+      type: $type
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Aquatic adaptation, appearance, and changing options with a Magic action require environment/sensory choices;
+  the Natural Weapons option alters an existing Unarmed Strike, not all weapons.

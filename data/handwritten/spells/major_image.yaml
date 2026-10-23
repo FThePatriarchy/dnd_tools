@@ -1,0 +1,27 @@
+name: Major Image
+source: XPHB
+level: 3
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: a bit of fleece
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Multisensory illusion placement, movement, interaction and observer-specific Intelligence (Investigation) Study
+  checks require sensory/environment adjudication.

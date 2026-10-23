@@ -265,18 +265,24 @@ def supplement(raw, golden):
                 s.setdefault("spell_levels", {})[sn] = int(level[1]) if level else golden[sn]["level"]
                 cost = {"bonus": "bonus_action"}.get(sc.get("displayAs", "action"), sc.get("displayAs", "action"))
                 s.setdefault("spell_costs", {})[sn] = cost
-                if frequency != "will":
+                if "requiring no spell components" in header:
+                    s.setdefault("spell_components", {})[sn] = {"v": False, "s": False, "m": False}
+                elif "requiring no Material components" in header:
+                    s.setdefault("spell_components", {})[sn] = {"m": False}
+                if frequency.startswith("recharge "):
+                    s.setdefault("spell_recharge", {})[sn] = int(frequency.split()[1])
+                elif frequency != "will":
                     count = int(frequency.rstrip("e"))
                     resource = sn if frequency.endswith("e") or len(spells) == 1 else clean_name(sc["name"])
                     s.setdefault("limited_uses", {})[resource] = count
                     s.setdefault("spell_resources", {})[sn] = resource
-        if sc.get("recharge"): note(f"{sc['name']}: spell outside golden set, recharge declaration is not executable until that spell is supplied.")
+        if sc.get("recharge") and any(sn not in golden for sn in s["unsupported_spells"]): note(f"{sc['name']}: spell outside golden set, recharge declaration is not executable until that spell is supplied.")
     if s["unsupported_spells"]:
         s["unsupported_spells"] = sorted(set(s["unsupported_spells"]))
         note("Spellcasting outside golden set: " + ", ".join(s["unsupported_spells"]) + ". No substitute effects or invented slots.")
-    if name in {"Mage", "Imp", "Quasit"}: note("Invisibility: Invisible condition is from a spell outside the golden set; unsupported.")
-    if name == "Mage Apprentice": note("Ice Knife: Piercing/Cold damage and Dexterity save; Thunderwave: Constitution save, all outside the golden set and unsupported.")
-    if name == "Stone Golem": note("Slow: Wisdom save spell outside golden set; unsupported.")
+    if name in {"Mage", "Imp", "Quasit"} and "Invisibility" not in golden: note("Invisibility: Invisible condition is from a spell outside the golden set; unsupported.")
+    if name == "Mage Apprentice" and not {"Ice Knife", "Thunderwave"} <= golden.keys(): note("Ice Knife: Piercing/Cold damage and Dexterity save; Thunderwave: Constitution save, all outside the golden set and unsupported.")
+    if name == "Stone Golem" and "Slow" not in golden: note("Slow: Wisdom save spell outside golden set; unsupported.")
     if not f: s.pop("features")
     # Explicit entry provenance for every supplemented block (including copied legendary blocks).
     entries = {clean_name(e["name"]): f"{kind}:{e['name']}" for kind in ("action", "trait", "reaction", "bonus") for e in raw.get(kind, [])}

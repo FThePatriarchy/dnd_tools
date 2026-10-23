@@ -1,0 +1,52 @@
+name: Thorn Whip
+source: XPHB
+level: 0
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: the stem of a plant with thorns
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack:
+    type: melee_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: piercing
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  cantrip:
+    at:
+    - 5
+    - 11
+    - 17
+    effect:
+      block: main
+      dice_add: 1d6
+ends_on: []
+unsupported:
+- Optional pull of a Large-or-smaller target needs positions.

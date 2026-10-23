@@ -1,0 +1,43 @@
+name: Dispel Magic
+source: XPHB
+level: 3
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - dispel:
+      auto_level: 3
+      dc_base: 10
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Object and independently targeted magical-effect selection needs an object model; ongoing spells on creatures
+  can be dispelled.

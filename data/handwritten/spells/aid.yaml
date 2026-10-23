@@ -1,0 +1,49 @@
+name: Aid
+source: XPHB
+level: 2
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: a strip of white cloth
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 3
+    distinct: true
+    up_to: true
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - max_hp:
+      amount: 5
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: main
+      value_add: 5
+ends_on: []
+unsupported: []

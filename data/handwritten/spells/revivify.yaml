@@ -1,0 +1,26 @@
+name: Revivify
+source: XPHB
+level: 3
+school: necromancy
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a diamond worth 300+ GP, which the spell consumes
+  m_consumed: true
+  m_cost_gp: 300.0
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- 'Impossible in the current knockout-only arena: a 0-HP creature is unconscious, not Dead. No death timestamp,
+  old-age cause or missing-body-parts state exists to validate the last-minute prerequisite. The spell loads but
+  intentionally does not heal an unconscious creature as if it were dead.'

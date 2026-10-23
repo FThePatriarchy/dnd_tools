@@ -44,11 +44,7 @@ multiattack:
 - Arcane Burst
 actions: []
 traits: []
-unsupported:
-- 'Spellcasting outside golden set: Cone of Cold, Detect Magic, Fly, Invisibility,
-  Light, Mage Armor, Mage Hand, Misty Step, Prestidigitation. No substitute effects
-  or invented slots.'
-- 'Invisibility: Invisible condition is from a spell outside the golden set; unsupported.'
+unsupported: []
 spell_ability: int
 spell_dc: 14
 spell_attack_bonus: 6
@@ -56,29 +52,55 @@ spells:
 - Fireball
 - Counterspell
 - Shield
+- Detect Magic
+- Light
+- Mage Armor
+- Mage Hand
+- Prestidigitation
+- Invisibility
+- Misty Step
+- Fly
+- Cone of Cold
 spell_levels:
   Fireball: 4
   Counterspell: 3
   Shield: 1
+  Detect Magic: 1
+  Light: 0
+  Mage Armor: 1
+  Mage Hand: 0
+  Prestidigitation: 0
+  Invisibility: 2
+  Misty Step: 2
+  Fly: 3
+  Cone of Cold: 5
 spell_costs:
   Fireball: action
   Counterspell: reaction
   Shield: reaction
+  Detect Magic: action
+  Light: action
+  Mage Armor: action
+  Mage Hand: action
+  Prestidigitation: action
+  Invisibility: action
+  Misty Step: bonus_action
+  Fly: action
+  Cone of Cold: action
 limited_uses:
   Fireball: 2
   Protective Magic: 3
+  Invisibility: 2
+  Misty Step: 3
+  Fly: 1
+  Cone of Cold: 1
 spell_resources:
   Fireball: Fireball
   Counterspell: Protective Magic
   Shield: Protective Magic
+  Invisibility: Invisibility
+  Misty Step: Misty Step
+  Fly: Fly
+  Cone of Cold: Cone of Cold
 size: M
-unsupported_spells:
-- Cone of Cold
-- Detect Magic
-- Fly
-- Invisibility
-- Light
-- Mage Armor
-- Mage Hand
-- Misty Step
-- Prestidigitation
+unsupported_spells: []

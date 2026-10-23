@@ -1,0 +1,53 @@
+name: Faerie Fire
+source: XPHB
+level: 1
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: cube
+    size_ft: 20
+    affects: all
+    filter:
+    - creature_or_object
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - status:
+      id: invisibility_suppressed
+      data: {}
+  - advantage:
+      'on': attack_rolls
+      scope: all
+      against: target
+      recipient: any_attacker
+      require_visible: true
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Outlined object lighting and precise Cube placement require lighting/positions.

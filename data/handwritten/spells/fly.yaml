@@ -1,0 +1,54 @@
+name: Fly
+source: XPHB
+level: 3
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a feather
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - modify:
+      stat: fly_speed
+      op: set
+      value: 60
+      scope: all
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 3
+    changes:
+    - block: main
+      target_n_add: 1
+ends_on: []
+unsupported:
+- Flight speed is stored; hovering, altitude, movement and falling require positions.

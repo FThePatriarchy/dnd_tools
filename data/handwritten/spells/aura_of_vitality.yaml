@@ -1,0 +1,44 @@
+name: Aura of Vitality
+source: XPHB
+level: 3
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast or start_of_turn(caster)
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+    origin: caster
+    within_ft: 30
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - heal:
+      dice: 2d6
+      bonus: 0
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Emanation membership is assumed under the no-grid range convention.

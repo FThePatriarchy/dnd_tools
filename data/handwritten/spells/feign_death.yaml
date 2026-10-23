@@ -1,0 +1,65 @@
+name: Feign Death
+source: XPHB
+level: 3
+school: necromancy
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a pinch of graveyard dirt
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: true
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - apply_condition:
+      condition: blinded
+  - apply_condition:
+      condition: incapacitated
+  - modify:
+      stat: speed
+      op: set
+      value: 0
+      scope: all
+  - defense:
+      resistance:
+      - acid
+      - bludgeoning
+      - cold
+      - fire
+      - force
+      - lightning
+      - necrotic
+      - piercing
+      - poison
+      - radiant
+      - slashing
+      - thunder
+      condition_immunity:
+      - poisoned
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Apparent death and diagnostic spell deception require sensory/social adjudication.

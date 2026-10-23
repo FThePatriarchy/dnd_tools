@@ -1,0 +1,25 @@
+name: Stone Shape
+source: XPHB
+level: 4
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: soft clay
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Can seal a stone door or make a passage or other shape. Eligible stone objects, dimensions, barrier access and
+  hinges need object geometry; no arbitrary creature removal is invented.

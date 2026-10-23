@@ -1,0 +1,54 @@
+name: Insect Plague
+source: XPHB
+level: 5
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 300
+components:
+  v: true
+  s: true
+  m: a locust
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast or on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: sphere
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: con
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 4d10
+      bonus: 0
+      type: piercing
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+scaling:
+  upcast:
+    per_slot_above: 5
+    changes:
+    - block: main
+      dice_add: 1d10
+ends_on: []
+unsupported:
+- Obscurement, difficult terrain, wind dispersal, fog movement and exact entry/area geometry require positions/environment;
+  creation and end-turn damage execute.

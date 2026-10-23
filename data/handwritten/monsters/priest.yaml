@@ -50,9 +50,7 @@ attacks:
 multiattack: []
 actions: []
 traits: []
-unsupported:
-- 'Spellcasting outside golden set: Dispel Magic, Lesser Restoration, Light, Thaumaturgy.
-  No substitute effects or invented slots.'
+unsupported: []
 spell_ability: wis
 spell_dc: 13
 spell_attack_bonus: 5
@@ -60,14 +58,26 @@ spells:
 - Spirit Guardians
 - Bless
 - Healing Word
+- Light
+- Thaumaturgy
+- Lesser Restoration
+- Dispel Magic
 spell_levels:
   Spirit Guardians: 3
   Bless: 1
   Healing Word: 1
+  Light: 0
+  Thaumaturgy: 0
+  Lesser Restoration: 2
+  Dispel Magic: 3
 spell_costs:
   Spirit Guardians: action
   Bless: bonus_action
   Healing Word: bonus_action
+  Light: action
+  Thaumaturgy: action
+  Lesser Restoration: bonus_action
+  Dispel Magic: bonus_action
 limited_uses:
   Spirit Guardians: 1
   Divine Aid: 3
@@ -75,6 +85,8 @@ spell_resources:
   Spirit Guardians: Spirit Guardians
   Bless: Divine Aid
   Healing Word: Divine Aid
+  Lesser Restoration: Divine Aid
+  Dispel Magic: Divine Aid
 size: M
 routines:
 - - Mace
@@ -85,8 +97,4 @@ routines:
   - Mace
 - - Radiant Flame
   - Radiant Flame
-unsupported_spells:
-- Dispel Magic
-- Lesser Restoration
-- Light
-- Thaumaturgy
+unsupported_spells: []

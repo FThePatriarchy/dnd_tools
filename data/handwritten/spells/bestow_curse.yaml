@@ -1,0 +1,101 @@
+name: Bestow Curse
+source: XPHB
+level: 3
+school: necromancy
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: curse
+  options:
+  - ability
+  - attacks
+  - dodge
+  - damage
+  when: on_cast
+- id: ability
+  options:
+  - cha
+  - con
+  - dex
+  - int
+  - str
+  - wis
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - status:
+      id: cursed
+      data: {}
+  - disadvantage:
+      'on': ability_checks
+      scope: $ability
+      against: null
+    if: $curse == ability
+  - disadvantage:
+      'on': saves
+      scope: $ability
+      against: null
+    if: $curse == ability
+  - disadvantage:
+      'on': attack_rolls
+      scope: all
+      against: target
+    if: $curse == attacks
+  - curse_dodge:
+      ability: wis
+    if: $curse == dodge
+  - curse_damage:
+      dice: 1d8
+      type: necrotic
+    if: $curse == damage
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []
+duration_tiers:
+- slot_min: 4
+  duration:
+    type: minutes
+    n: 10
+  concentration: true
+- slot_min: 5
+  duration:
+    type: hours
+    n: 8
+  concentration: false
+- slot_min: 7
+  duration:
+    type: hours
+    n: 24
+  concentration: false
+- slot_min: 9
+  duration:
+    type: until_dispelled
+  concentration: false

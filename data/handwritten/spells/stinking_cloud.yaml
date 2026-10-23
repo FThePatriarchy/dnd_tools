@@ -1,0 +1,52 @@
+name: Stinking Cloud
+source: XPHB
+level: 3
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 90
+components:
+  v: true
+  s: true
+  m: a rotten egg
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: start_of_turn(target)
+  target:
+    select: area
+    shape: sphere
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: con
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: poisoned
+    until: end_of_turn(target.this_turn)
+  - turn_rules:
+      no_action: true
+      no_bonus_action: true
+    until: end_of_turn(target.this_turn)
+    requires_condition: poisoned
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Heavy obscurement, strong-wind dispersal and membership need sensory/position adjudication.

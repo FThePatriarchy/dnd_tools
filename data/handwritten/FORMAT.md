@@ -144,3 +144,223 @@ preserve filters, distinctness, and selection semantics. Unlisted scaling is abs
   Initial creation alone is not treated as entry; later abstract entry events and
   end-of-turn membership trigger the save. Even without movement events, end-turn
   damage works. Area IDs/membership and exclusions belong to the spell instance.
+
+## Step 3 additions
+
+- `modify.op: sub` subtracts the rolled value; `modify.recipient: any_attacker`
+  applies to the attacker against the effect recipient (Blade Ward, Bane).
+  `modify.uses: 1` consumes the modifier on the next qualifying roll (Mind Sliver).
+- Instantaneous spells detach primitives with exact `until` boundaries instead of
+  deleting their riders at cast completion (Chill Touch, Mind Sliver, Starry Wisp,
+  Ray of Frost, Vicious Mockery). Other instantaneous effects still end normally.
+- `damage.explode_max: spell_mod` rolls additional dice on maximum results, capped
+  at the spellcasting modifier in added dice (Sorcerous Burst).
+- `damage.wounded_dice` replaces damage dice for a target below maximum HP;
+  cantrip scaling adds the same number of dice of the alternate die size (Toll the Dead).
+- Optional `recast_ends_previous: true` ends the same caster's previous instance
+  on successful recast (Produce Flame). Hurling uses `action_command`.
+- Engine-recognized status `invisibility_suppressed` suppresses Invisible
+  benefits without deleting their source (Starry Wisp).
+- `turn_rules` stores explicit action restrictions (`no_action`, `no_bonus_action`,
+  `no_reactions`); `on_turn_condition` applies at the recipient's turn start
+  (Command's Grovel, rather than knocking the target prone early). Exact
+  `until` boundaries govern these restrictions (Command, Arms of Hadar).
+- `spend_reaction: true` spends an available reaction without movement
+  (Dissonant Whispers).
+- `base_ac: {base, ability, unarmored_only}` supplies an alternative AC
+  calculation; use the better legal base before AC bonuses (Mage Armor).
+- Upcast `{block, amount_add}` adds flat temporary HP per slot (False Life).
+- An area `origin` may name an earlier block; its bound target is included
+  first by the no-grid heuristic (Ice Knife's hit-or-miss explosion).
+- A spell block's optional `source_ref: entries.N` identifies the XPHB paragraph
+  for independent numeric checking (Witch Bolt's initial versus sustained damage).
+- `base_ac.ability: null` is a static alternative base AC (Barkskin).
+- `remove_condition: {condition}` ends one named condition, including a `$choice`
+  (Lesser Restoration). `defense: {resistance: [...]}` supplies source-scoped
+  resistances which never stack with existing resistance (Stoneskin).
+- `apply_condition.ends_on_activity: true` ends that recipient's participation
+  after an attack roll, dealing damage or casting a spell (Invisibility).
+  `persistent: true` installs a normal condition that survives the originating
+  instantaneous spell and is removed normally, e.g. by standing (Destructive Wave).
+- `save.auto_fail_if` and `save.disadvantage_if` are target-local expressions
+  (Blight's Plants and Shatter's Constructs).
+- `modify.stat: fly_speed` stores a separate Fly Speed, not walking speed (Fly).
+- `dispel: {auto_level, dc_base}` ends ongoing spells on the recipient;
+  compare their cast slot against max(auto_level, this cast slot), otherwise
+  check the caster's spellcasting ability against dc_base + that slot (Dispel Magic).
+- `turn_rules` also supports `action_or_bonus`, `attack_limit`,
+  `somatic_failure_percent` and the existing `repeat_save` structure (Slow).
+  Somatic failure spends the casting economy and slot, but creates no effects.
+- An upcast dice change may include `damage_type` to scale only that damage
+  component without changing the block's shared save (Ice Storm).
+- `summon: {choice, forms, base_slot, per_slot, attack_count_divisor}` embeds
+  complete stat sheets keyed by form. `per_slot` has `ac`, `max_hp` and
+  `damage_bonus` increments above base_slot; attacks per turn are floor(slot /
+  attack_count_divisor). Only embedded sheets may use `proficiency_bonus: caster`
+  and attack `to_hit: spell_attack`. These inherit the original caster's actual
+  values, as does their save DC (Summon Beast, Summon Undead).
+  Each creature has independent HP, defenses, conditions and actions; it acts
+  immediately after its caster. `Policy.command_summon` chooses commands without
+  an action cost; false takes Dodge. Zero HP or spell ending makes it disappear.
+  `target.exclude: summoner` excludes only its summoner from an aura (Summon Undead).
+  Skeletal attacks declare `range_ft` alongside the existing ranged reach sentinel.
+- Monster `spell_recharge: {spell: d6_threshold}` reuses the existing recharge
+  clocks instead of inventing daily uses (Stone Golem's Slow).
+- The same embedded `summon` contract also supports all four Summon Elemental
+  forms; their damage types use the printed main stat block, not conflicting
+  generated 5etools `_versions`. No additional primitive is introduced.
+- Engine-recognized status `verbal_components_blocked` prohibits only spells
+  whose effective components include V, honoring innate component exemptions
+  (Jallarzi's Storm of Radiance). `while_in_area` removes it and the storm's
+  Blinded/Deafened conditions when membership ends; these do not allow saves.
+- Long castings retain `casting_time_n` (Leomund's Tiny Hut; later long
+  castings). `Combat.prepare` explicitly completes an uninterrupted preparation
+  interval, spends its slot and advances time before effects begin; normal
+  combat casting does not turn minutes/hours into one action. `on_falling(target)`
+  declares an external falling reaction event (Feather Fall); the arena does not
+  invent falling damage or movement.
+- `target.n: all` means any number of otherwise legal targets (Beacon of Hope);
+  `include_caster: true` explicitly includes the origin in an Emanation (Auras
+  of Life/Purity). `exclude: caster` implements Entangle's exception.
+- `defense` also supports damage `immunity`, `condition_immunity`,
+  `magical_condition_immunity` and `save_conditions` (Protection from Poison,
+  Heroism, Feign Death, Gaseous Form, Freedom of Movement, Aura of Purity).
+- `heal.amount` represents flat healing; `temp_hp.amount: spell_mod` represents
+  Heroism. `maximize_healing` and `max_hp_protected` are recognized statuses
+  (Beacon of Hope, Aura of Life). `see_invisible` affects visibility and attack
+  benefits (See Invisibility). Incoming Advantage may `require_visible` (Faerie Fire).
+- `modify.scope` accepts a chosen skill (Guidance); `ability_check` accepts an
+  optional skill tag. `choices.per_target` allows recipient-keyed ability choices
+  (Enhance Ability). `escape_dc: spell_dc` uses the caster's actual DC (Entangle, Web).
+- `turn_rules.no_attacks/no_spells` prohibit those activities (Gaseous Form).
+  `restore: {kind, all?}` removes one declared condition/Exhaustion level, curse,
+  HP-maximum or ability reduction; `all` only controls curse count (Greater
+  Restoration, Remove Curse). Item attunement remains outside the object model.
+- `stabilize: true` records Stable without healing (Spare the Dying); damage or
+  healing clears it. `cantrip.effect.range_multiplier` scales range at thresholds.
+  The knockout arena has no death-saving-throw clock; this is not resurrection.
+
+- Damage phases may use a flat `amount`, `delay` boundary, `leech`, `half`, or
+  `end_after_total` (Guardian of Faith, Vampiric Touch, Vitriolic Sphere, Acid
+  Arrow). A block may add `on_miss`; `miss_dice_add` scales only that branch.
+  Fixed damage/retaliation does not inherit the triggering attack's critical.
+- `grant_command: {block, action}` lets the recipient activate a command
+  (Dragon's Breath). A command's acting recipient supplies its damage source.
+  Reactive blocks can spend `cost: reaction` (Fount of Moonlight).
+- Damage hit events expose `attack.weapon/melee/hit` and trigger attacker/
+  defender references (Divine Favor, Crusader's Mantle, Fire Shield, smites).
+  Delayed phases and `duration` on a primitive survive an instantaneous parent
+  (Synaptic Static). `modify.stat: concentration_save` affects maintenance only.
+- Scaling changes can select `if`, `timing`, `area_size_add`, `value_add`,
+  `capacity_add`, `uses_add`, or `exclude_conditional` (Hunger of Hadar,
+  Vitriolic Sphere, Confusion, Aid, Arcane Vigor, Agathys, Grasping Vine,
+  Cordon of Arrows, Divine Smite). The fiend/undead Smite bonus never upcasts.
+- Blocks can share a `limit_group`; `max_uses` consumes ammunition even on a
+  save (Conjure Elemental, Cordon of Arrows). `after_damage` flushes the triggering
+  packet before an HP gate (Banishing Smite). `end_after_resolution` ends a
+  single triggered area after all its targets resolve (Glyph of Warding).
+  `glyph_triggered` is an external event, not automatic preparation damage.
+- Saves can have `if`, `advantage_if` or `auto_success_if` (Enlarge/Reduce,
+  charms, Ensnaring Strike, Sleep). Conditions can `ends_on_damage`, request
+  damage-save Advantage, tally successes/failures, or `resist_removal`
+  (charms, Sleep, Hideous Laughter, Hypnotic Pattern, Contagion).
+- `pacify`, `duel`, `sanctuary: {ability}` and source-typed `ward` express
+  combat restrictions rather than prose effects (Suggestion, Calm Emotions,
+  Compelled Duel, Sanctuary, Protection from Evil and Good, Dispel Evil and
+  Good, Magic Circle, Hallow). `restore.source_types` restricts Break Enchantment.
+  Wards distinguish new-condition immunity from existing-condition suppression
+  or repeat-save Advantage. `defense.vulnerability` is nonstacking (Hallow).
+- `turn_rules.behavior_die/forced_melee/maintained_by_action` express Confusion
+  and Crown of Madness; `dismiss_action/end_at_zero` permit target-local Magic
+  dismissal and zero-HP ending (Gaseous Form). `isolated` blocks cross-boundary
+  targeting/damage without Incapacitating the recipient (Resilient Sphere).
+- `max_hp`, `hit_dice_heal`, `death_ward`, `berries`, `reduce_damage`,
+  `magic_saves` and `bond` handle Aid, Arcane Vigor, Death Ward, Goodberry,
+  Resistance, Circle of Power and Warding Bond. `eat_berry` spends the eater's
+  Bonus Action and shared stock. Bond copies actual damage and excludes
+  overlapping participant bonds. Stable/knockout is still not a death clock.
+- `mirror_images: {count, dice, threshold}` redirects confirmed hits; `blink`
+  uses the same dice/threshold structure at turn end (Mirror Image, Blink).
+- `weapon_strike` uses the supplied weapon, optional spell ability/type, count
+  and source-declared `upgrade_levels/upgrade_dice` (True Strike, Swift Quiver).
+  `weapon_enchantment` binds one eligible weapon, with `tiers/cantrip_dice`,
+  bonuses and damage overrides (Shillelagh, Magic Weapon, Elemental Weapon,
+  Alter Self). `weapon_adjustment` and `size_change` model Enlarge/Reduce.
+- `casting_trigger` distinguishes `melee_hit`, `weapon_hit` and
+  `ranged_hit_or_miss`; a post-hit cast needs the actual attacker/defender/attack
+  frame (all smites, Ensnaring Strike, Hail of Thorns, Lightning Arrow).
+  `replace_weapon_attack` suppresses Lightning Arrow's original weapon packet.
+  `duration_tiers` can replace duration/concentration (Bestow Curse);
+  `curse_dodge/curse_damage/control` express its orders/damage and Planar Binding.
+  `leap_on_duplicate` uses actual rolled faces and distinct slot-limited targets
+  (Chromatic Orb), not an assumed guaranteed leap.
+- Embedded summons may instead declare `fixed_attacks`; use exactly one count
+  rule. XMM-referenced forms retain fixed PB/to-hit (Animate Dead, Find Familiar,
+  Phantom Steed). `count/count_per_slot/form_cost/damage_dice_add` support
+  Animate Dead/Objects; `command_cost`, `control_hours`, `persistent`, `familiar`,
+  `creature_type_choice`, `mount/fly_slot`, and `after_attack_action` retain their
+  distinct control/lifetime rules (also Find Steed, Summon Dragon).
+  `slot_bonus/add_caster_mod` distinguish scaled damage components; `summon_slot`
+  supplies a summoned creature's slot-based healing (Celestial/Steed).
+- Summon stat sheets also use `on_hit_self`, `own_turn_start` and existing
+  actions/passive traits for source riders (Summon Aberration/Celestial/Construct/
+  Fey, Giant Insect). The same strict referenced-block numeric gate covers them.
+  `force_object` creates a targetable object with caster-max HP (Bigby's Hand),
+  not an autonomous extra attacker. `transform` embeds legal CR-checked Beast
+  sheets, retaining HP/type and restoring statistics on reversion (Polymorph).
+
+### Step 3 fix round: persistent dependencies and source-aware targeting
+
+- A persistent primitive can declare `requires_condition: charmed` alongside
+  its primitive mapping. The rider is active only while a condition from that
+  same spell instance is effective on that recipient, including immunity and
+  suppression. Removing the condition does not let another caster's charm
+  activate the rider. Existing `if` remains a one-time application predicate.
+- `type_mask: {type: $type}` declares a chosen magical creature type. Actual
+  creature type is unchanged; spell eligibility, magical expression type checks
+  and magical protection checks use the mask. `extinguish: {}` douses exposed
+  Burning without spending a separate recipient action.
+- `apply_condition` additionally accepts boolean `ends_on_spell_targeted` and
+  `ends_spell`. The former ends its originating spell when another spell
+  targets the recipient; the latter makes its damage-ending rule end the spell
+  instead of merely removing target-local effects.
+- Ongoing spell recipients are tracked separately from their stored effects.
+  The default hostile-area heuristic assumes freely chosen enemy-only placement;
+  custom count/index heuristics may explicitly model friendly spill-over. Fixed
+  self-origin emanations and known bound origins retain their own target rules.
+
+For Mask's "other than actual type" eligibility, expressions can read
+`target.actual_creature_type`; ordinary `target.creature_type` inside a magical
+spell context reads the effective masked type. This does not change the
+combatant's actual type. Implicit-caster emanations, such as ambient monster
+auras, are fixed-origin geometry too; their hostile effects can still affect
+eligible allies.
+
+
+## Step 3 fix round 2: participants and condition dependencies
+
+- A persistent primitive may declare `participants: [caster, target]`. The
+  recipient is always registered; this list additionally registers every named
+  participant for Dispel Magic and spell-ending cleanup. Warding Bond explicitly
+  registers both endpoints; range `self` is not an ownership inference for bonds.
+- `requires_condition: CONDITION` is persistent primitive metadata, not an
+  application-time `if`. The condition must be effective on the same recipient
+  from the **same spell instance**. Removing/suppressing it disables its riders;
+  resumption re-enables surviving riders without reapplying them. Dependent
+  conditions can themselves supply dependencies; unrooted cycles stay inactive.
+- The same `requires_condition` metadata on an effect block gates the whole
+  resolution (including its save and action cost), and on instantaneous
+  primitives gates each recurring application. `has_condition_from(NAME, spell)`
+  tests an exact instance; the existing `..., caster` form tests caster ownership.
+- When a conditional save is skipped, use the explicit `apply` branch if one
+  exists; otherwise apply `on_fail` without rolling. This covers willing
+  Enlarge/Reduce without changing Dispel Evil and Good's Break Enchantment branch.
+- Controlling Charmed effects derive allegiance only while effective. Base
+  allegiance is retained. HP maximum is base maximum plus effective spell
+  bonuses; maximum-HP restoration changes only the underlying base.
+- Transformations retain one original-stat snapshot and a stack of forms with
+  separate remaining temporary HP. Ending a suppressed form does not alter the
+  effective form. Ending/depleting the effective form resumes the next eligible
+  form, or restores the original. Single-target depletion also ends its spell
+  and concentration. Temporary action prohibitions mask, not spend, budgets;
+  removing a condition-dependent prohibition restores only unspent actions.

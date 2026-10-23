@@ -1,0 +1,59 @@
+name: Elemental Weapon
+source: XPHB
+level: 3
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: type
+  options:
+  - acid
+  - cold
+  - fire
+  - lightning
+  - thunder
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - weapon_enchantment:
+      attack_bonus: 1
+      extra_dice: 1d4
+      extra_type: $type
+      tiers:
+      - slot_min: 5
+        attack_bonus: 2
+        extra_dice: 2d4
+      - slot_min: 7
+        attack_bonus: 3
+        extra_dice: 3d4
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Targets use the wielding creature's first weapon as the touched weapon; nonmagical eligibility, transfers and
+  inventory must be supplied externally. This does not enchant spell attacks.

@@ -1,0 +1,25 @@
+name: Arcane Lock
+source: XPHB
+level: 2
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: gold dust worth 25+ GP, which the spell consumes
+  m_consumed: true
+  m_cost_gp: 25.0
+duration:
+  type: until_dispelled
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Locks doors, windows, gates, containers or hatches against nonmagical unlocking. Designated access, password proximity
+  and barriers require an object/access model.

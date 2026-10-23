@@ -1,0 +1,69 @@
+name: Ray of Enfeeblement
+source: XPHB
+level: 2
+school: necromancy
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save:
+    ability: con
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - disadvantage:
+      'on': attack_rolls
+      scope: str
+      against: null
+  - disadvantage:
+      'on': ability_checks
+      scope: str
+      against: null
+  - disadvantage:
+      'on': saves
+      scope: str
+      against: null
+  - modify:
+      stat: damage_roll
+      op: sub
+      value: 1d8
+      scope: all
+  - turn_rules:
+      repeat_save:
+        ability: con
+        timing: end_of_turn
+        on_success: end
+  on_success:
+  - disadvantage:
+      'on': attack_rolls
+      scope: all
+      against: null
+      uses: 1
+    until: start_of_turn(caster.next_turn)
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

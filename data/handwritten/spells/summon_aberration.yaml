@@ -1,0 +1,192 @@
+name: Summon Aberration
+source: XPHB
+level: 4
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 90
+components:
+  v: true
+  s: true
+  m: a pickled tentacle and an eyeball in a platinum-inlaid vial worth 400+ GP
+  m_consumed: false
+  m_cost_gp: 400.0
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: form
+  options:
+  - beholderkin
+  - mind flayer
+  - slaad
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        beholderkin:
+          name: Aberrant Spirit
+          source: XPHB
+          max_hp: 40
+          ac: 15
+          abilities:
+            str: 16
+            dex: 10
+            con: 15
+            int: 16
+            wis: 10
+            cha: 6
+          speed: 30
+          movement_modes:
+            walk: 30
+            fly: 30
+          creature_type: aberration
+          size: M
+          proficiency_bonus: caster
+          attacks:
+          - name: Eye Ray (Beholderkin Only)
+            kind: ranged
+            to_hit: spell_attack
+            reach_ft: 0
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 7
+                type: psychic
+                slot_bonus: true
+            range_ft: 150
+          resistances: []
+          immunities: &id001
+          - psychic
+          condition_immunities: []
+          features: {}
+        mind flayer:
+          name: Aberrant Spirit
+          source: XPHB
+          max_hp: 40
+          ac: 15
+          abilities:
+            str: 16
+            dex: 10
+            con: 15
+            int: 16
+            wis: 10
+            cha: 6
+          speed: 30
+          movement_modes:
+            walk: 30
+          creature_type: aberration
+          size: M
+          proficiency_bonus: caster
+          attacks:
+          - name: Psychic Slam (Mind Flayer Only)
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 7
+                type: psychic
+                slot_bonus: true
+          resistances: []
+          immunities: *id001
+          condition_immunities: []
+          features: {}
+          traits:
+          - name: Whispering Aura
+            cost: free
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: area
+                shape: emanation
+                size_ft: 5
+                affects: all
+                filter:
+                - creature
+                exclude: summoner
+              attack: null
+              save:
+                ability: wis
+                on_success: negate
+              on_hit: []
+              on_fail:
+              - damage:
+                  dice: 2d6
+                  bonus: 0
+                  type: psychic
+              on_success: []
+              apply: []
+              limit: null
+            trigger: own_turn_start
+        slaad:
+          name: Aberrant Spirit
+          source: XPHB
+          max_hp: 40
+          ac: 15
+          abilities:
+            str: 16
+            dex: 10
+            con: 15
+            int: 16
+            wis: 10
+            cha: 6
+          speed: 30
+          movement_modes:
+            walk: 30
+          creature_type: aberration
+          size: M
+          proficiency_bonus: caster
+          attacks:
+          - name: Claw (Slaad Only)
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d10
+                bonus: 7
+                type: slashing
+                slot_bonus: true
+            - status:
+                id: healing_blocked
+                data: {}
+              until: start_of_turn(caster.next_turn)
+          resistances: []
+          immunities: *id001
+          condition_immunities: []
+          features:
+            regeneration:
+              amount: 5
+              blocked_by: []
+              at_zero: false
+      base_slot: 4
+      per_slot:
+        ac: 1
+        max_hp: 10
+        damage_bonus: 1
+      attack_count_divisor: 2
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Unoccupied placement, ranges, languages, senses and movement need geometry/environment. Summoned creatures are
+  real targetable combatants immediately after the caster. The printed parent stat blocks, not contradictory generated
+  versions, determine statistics.

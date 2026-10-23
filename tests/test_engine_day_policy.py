@@ -141,9 +141,11 @@ def test_seeded_day_reproducibility(strategy):
 def test_1000_run_standard_day_strategy_comparison():
     nova = simulate_day(day="goblin_warren", runs=1000, seed=1, strategy="nova")
     conservative = simulate_day(day="goblin_warren", runs=1000, seed=1, strategy="conservative")
-    assert (nova.survived, conservative.survived) == (128, 163)
-    assert nova.encounters_cleared_distribution == {2: 11, 3: 98, 5: 431, 6: 332, 7: 128}
-    assert conservative.encounters_cleared_distribution == {1: 1, 2: 59, 3: 192, 4: 1, 5: 412, 6: 172, 7: 163}
+    # Newly wired Cultist Command; disabling only that spell restores the old
+    # exact baseline (engine/step3_day_baselines.json). No tolerances changed.
+    assert (nova.survived, conservative.survived) == (127, 162)
+    assert nova.encounters_cleared_distribution == {2: 8, 3: 97, 5: 449, 6: 319, 7: 127}
+    assert conservative.encounters_cleared_distribution == {1: 1, 2: 47, 3: 203, 4: 1, 5: 397, 6: 189, 7: 162}
     # Fixed before comparison: .07 exceeds 3 * sqrt(2 * .25 / 1000), the
     # worst-case independent-binomial SE bound; no tuning to seeded outcomes.
     assert conservative.survival_probability + .07 >= nova.survival_probability

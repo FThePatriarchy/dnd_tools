@@ -1,0 +1,69 @@
+name: Warding Bond
+source: XPHB
+level: 2
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a pair of platinum rings worth 50+ GP each, which you and the target must wear for the duration
+  m_consumed: false
+  m_cost_gp: 50.0
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    affects: any
+    eligible_if: target != caster
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - modify:
+      stat: ac
+      op: add
+      value: 1
+      scope: all
+  - modify:
+      stat: save
+      op: add
+      value: 1
+      scope: all
+  - defense:
+      resistance:
+      - acid
+      - bludgeoning
+      - cold
+      - fire
+      - force
+      - lightning
+      - necrotic
+      - piercing
+      - poison
+      - psychic
+      - radiant
+      - slashing
+      - thunder
+  - bond: {}
+    participants: [caster, target]
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Separation beyond 60 feet and ring inventory require positions/equipment. Same post-mitigation damage is copied
+  directly to the caster without another resistance reduction.

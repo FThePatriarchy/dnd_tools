@@ -1,0 +1,1020 @@
+{
+  "scope_counts": {
+    "combat": 190,
+    "out_of_scope": 83,
+    "partial": 118
+  },
+  "levels": [
+    {
+      "level": 0,
+      "scopes": {
+        "combat": 20,
+        "partial": 6,
+        "out_of_scope": 8
+      },
+      "required": 29,
+      "loaded": 29
+    },
+    {
+      "level": 1,
+      "scopes": {
+        "out_of_scope": 12,
+        "combat": 34,
+        "partial": 18
+      },
+      "required": 54,
+      "loaded": 54
+    },
+    {
+      "level": 2,
+      "scopes": {
+        "combat": 30,
+        "out_of_scope": 14,
+        "partial": 19
+      },
+      "required": 49,
+      "loaded": 49
+    },
+    {
+      "level": 3,
+      "scopes": {
+        "combat": 24,
+        "partial": 21,
+        "out_of_scope": 7
+      },
+      "required": 45,
+      "loaded": 45
+    },
+    {
+      "level": 4,
+      "scopes": {
+        "out_of_scope": 7,
+        "combat": 20,
+        "partial": 14
+      },
+      "required": 34,
+      "loaded": 34
+    },
+    {
+      "level": 5,
+      "scopes": {
+        "combat": 19,
+        "partial": 15,
+        "out_of_scope": 14
+      },
+      "required": 34,
+      "loaded": 34
+    },
+    {
+      "level": 6,
+      "scopes": {
+        "partial": 11,
+        "combat": 16,
+        "out_of_scope": 7
+      },
+      "required": 0,
+      "loaded": 0
+    },
+    {
+      "level": 7,
+      "scopes": {
+        "partial": 6,
+        "combat": 9,
+        "out_of_scope": 6
+      },
+      "required": 0,
+      "loaded": 0
+    },
+    {
+      "level": 8,
+      "scopes": {
+        "combat": 7,
+        "partial": 6,
+        "out_of_scope": 5
+      },
+      "required": 0,
+      "loaded": 0
+    },
+    {
+      "level": 9,
+      "scopes": {
+        "out_of_scope": 3,
+        "combat": 11,
+        "partial": 2
+      },
+      "required": 0,
+      "loaded": 0
+    }
+  ],
+  "loaded": 245,
+  "new": 225,
+  "required": 245,
+  "missing": [],
+  "numeric_fields": 2082,
+  "mutations": 2359,
+  "failures": [],
+  "rejected": 2359,
+  "allowlist": {},
+  "per_spell": {
+    "Acid Splash": {
+      "numeric_fields": 9,
+      "mutations": 11
+    },
+    "Aid": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Alter Self": {
+      "numeric_fields": 3,
+      "mutations": 4
+    },
+    "Animal Friendship": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Animate Dead": {
+      "numeric_fields": 47,
+      "mutations": 50
+    },
+    "Animate Objects": {
+      "numeric_fields": 54,
+      "mutations": 60
+    },
+    "Antilife Shell": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Arcane Lock": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Arcane Vigor": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Armor of Agathys": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Arms of Hadar": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Aura of Life": {
+      "numeric_fields": 6,
+      "mutations": 6
+    },
+    "Aura of Purity": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Aura of Vitality": {
+      "numeric_fields": 5,
+      "mutations": 6
+    },
+    "Bane": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Banishing Smite": {
+      "numeric_fields": 6,
+      "mutations": 7
+    },
+    "Barkskin": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Beacon of Hope": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Bestow Curse": {
+      "numeric_fields": 10,
+      "mutations": 11
+    },
+    "Bigby's Hand": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Blade Ward": {
+      "numeric_fields": 3,
+      "mutations": 4
+    },
+    "Blight": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Blinding Smite": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Blindness/Deafness": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Blink": {
+      "numeric_fields": 4,
+      "mutations": 5
+    },
+    "Blur": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Burning Hands": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Call Lightning": {
+      "numeric_fields": 10,
+      "mutations": 13
+    },
+    "Calm Emotions": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Charm Monster": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Charm Person": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Chill Touch": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Chromatic Orb": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Circle of Power": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Cloud of Daggers": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Cloudkill": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Color Spray": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Command": {
+      "numeric_fields": 6,
+      "mutations": 6
+    },
+    "Compelled Duel": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Compulsion": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Cone of Cold": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Confusion": {
+      "numeric_fields": 8,
+      "mutations": 9
+    },
+    "Conjure Animals": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Conjure Barrage": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Conjure Elemental": {
+      "numeric_fields": 11,
+      "mutations": 13
+    },
+    "Conjure Minor Elementals": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Conjure Volley": {
+      "numeric_fields": 7,
+      "mutations": 8
+    },
+    "Conjure Woodland Beings": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Contagion": {
+      "numeric_fields": 7,
+      "mutations": 8
+    },
+    "Continual Flame": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Control Water": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Cordon of Arrows": {
+      "numeric_fields": 8,
+      "mutations": 9
+    },
+    "Create or Destroy Water": {
+      "numeric_fields": 5,
+      "mutations": 5
+    },
+    "Crown of Madness": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Crusader's Mantle": {
+      "numeric_fields": 5,
+      "mutations": 6
+    },
+    "Dancing Lights": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Darkness": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Darkvision": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Daylight": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Death Ward": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Destructive Wave": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Detect Magic": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Dimension Door": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Disguise Self": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Dispel Evil and Good": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Dispel Magic": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Dissonant Whispers": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Divine Favor": {
+      "numeric_fields": 4,
+      "mutations": 5
+    },
+    "Divine Smite": {
+      "numeric_fields": 7,
+      "mutations": 10
+    },
+    "Dominate Beast": {
+      "numeric_fields": 14,
+      "mutations": 14
+    },
+    "Dominate Person": {
+      "numeric_fields": 14,
+      "mutations": 14
+    },
+    "Dragon's Breath": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Elemental Weapon": {
+      "numeric_fields": 10,
+      "mutations": 13
+    },
+    "Enhance Ability": {
+      "numeric_fields": 6,
+      "mutations": 6
+    },
+    "Enlarge/Reduce": {
+      "numeric_fields": 8,
+      "mutations": 12
+    },
+    "Ensnaring Strike": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Entangle": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Evard's Black Tentacles": {
+      "numeric_fields": 6,
+      "mutations": 7
+    },
+    "Expeditious Retreat": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Faerie Fire": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "False Life": {
+      "numeric_fields": 4,
+      "mutations": 6
+    },
+    "Fear": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Feather Fall": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Feign Death": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Find Familiar": {
+      "numeric_fields": 143,
+      "mutations": 143
+    },
+    "Find Steed": {
+      "numeric_fields": 50,
+      "mutations": 54
+    },
+    "Fire Shield": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Flame Blade": {
+      "numeric_fields": 5,
+      "mutations": 7
+    },
+    "Flame Strike": {
+      "numeric_fields": 9,
+      "mutations": 12
+    },
+    "Flaming Sphere": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Fly": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Fog Cloud": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Fount of Moonlight": {
+      "numeric_fields": 5,
+      "mutations": 6
+    },
+    "Freedom of Movement": {
+      "numeric_fields": 6,
+      "mutations": 6
+    },
+    "Gaseous Form": {
+      "numeric_fields": 8,
+      "mutations": 8
+    },
+    "Giant Insect": {
+      "numeric_fields": 62,
+      "mutations": 69
+    },
+    "Glyph of Warding": {
+      "numeric_fields": 9,
+      "mutations": 11
+    },
+    "Goodberry": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Grasping Vine": {
+      "numeric_fields": 9,
+      "mutations": 10
+    },
+    "Grease": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Greater Invisibility": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Greater Restoration": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Guardian of Faith": {
+      "numeric_fields": 6,
+      "mutations": 6
+    },
+    "Guidance": {
+      "numeric_fields": 3,
+      "mutations": 4
+    },
+    "Gust of Wind": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Hail of Thorns": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Hallow": {
+      "numeric_fields": 5,
+      "mutations": 6
+    },
+    "Heat Metal": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Hellish Rebuke": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Heroism": {
+      "numeric_fields": 6,
+      "mutations": 6
+    },
+    "Hold Monster": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Hunger of Hadar": {
+      "numeric_fields": 13,
+      "mutations": 17
+    },
+    "Hypnotic Pattern": {
+      "numeric_fields": 5,
+      "mutations": 5
+    },
+    "Ice Knife": {
+      "numeric_fields": 9,
+      "mutations": 12
+    },
+    "Ice Storm": {
+      "numeric_fields": 10,
+      "mutations": 18
+    },
+    "Inflict Wounds": {
+      "numeric_fields": 5,
+      "mutations": 7
+    },
+    "Insect Plague": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Invisibility": {
+      "numeric_fields": 6,
+      "mutations": 6
+    },
+    "Jallarzi's Storm of Radiance": {
+      "numeric_fields": 11,
+      "mutations": 14
+    },
+    "Jump": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Leomund's Tiny Hut": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Lesser Restoration": {
+      "numeric_fields": 1,
+      "mutations": 1
+    },
+    "Levitate": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Light": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Lightning Arrow": {
+      "numeric_fields": 9,
+      "mutations": 13
+    },
+    "Lightning Bolt": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Longstrider": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Mage Armor": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Mage Hand": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Magic Circle": {
+      "numeric_fields": 9,
+      "mutations": 9
+    },
+    "Magic Weapon": {
+      "numeric_fields": 10,
+      "mutations": 10
+    },
+    "Major Image": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Mass Cure Wounds": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Mass Healing Word": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Meld into Stone": {
+      "numeric_fields": 3,
+      "mutations": 5
+    },
+    "Melf's Acid Arrow": {
+      "numeric_fields": 11,
+      "mutations": 16
+    },
+    "Mind Sliver": {
+      "numeric_fields": 10,
+      "mutations": 13
+    },
+    "Mind Spike": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Minor Illusion": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Mirror Image": {
+      "numeric_fields": 5,
+      "mutations": 6
+    },
+    "Mislead": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Misty Step": {
+      "numeric_fields": 1,
+      "mutations": 1
+    },
+    "Modify Memory": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Moonbeam": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Mordenkainen's Faithful Hound": {
+      "numeric_fields": 6,
+      "mutations": 7
+    },
+    "Nystul's Magic Aura": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Otiluke's Resilient Sphere": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Passwall": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Phantasmal Force": {
+      "numeric_fields": 6,
+      "mutations": 7
+    },
+    "Phantasmal Killer": {
+      "numeric_fields": 10,
+      "mutations": 14
+    },
+    "Phantom Steed": {
+      "numeric_fields": 24,
+      "mutations": 25
+    },
+    "Planar Binding": {
+      "numeric_fields": 6,
+      "mutations": 7
+    },
+    "Plant Growth": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Poison Spray": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Polymorph": {
+      "numeric_fields": 56,
+      "mutations": 62
+    },
+    "Prestidigitation": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Produce Flame": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Protection from Energy": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Protection from Evil and Good": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Protection from Poison": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Ray of Enfeeblement": {
+      "numeric_fields": 5,
+      "mutations": 6
+    },
+    "Ray of Frost": {
+      "numeric_fields": 9,
+      "mutations": 11
+    },
+    "Ray of Sickness": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Remove Curse": {
+      "numeric_fields": 1,
+      "mutations": 1
+    },
+    "Resistance": {
+      "numeric_fields": 3,
+      "mutations": 4
+    },
+    "Revivify": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Rope Trick": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Sanctuary": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Searing Smite": {
+      "numeric_fields": 9,
+      "mutations": 13
+    },
+    "See Invisibility": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Shatter": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Shillelagh": {
+      "numeric_fields": 9,
+      "mutations": 13
+    },
+    "Shining Smite": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Shocking Grasp": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Silence": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Silent Image": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Sleep": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Sleet Storm": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Slow": {
+      "numeric_fields": 9,
+      "mutations": 9
+    },
+    "Sorcerous Burst": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Spare the Dying": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Speak with Plants": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Spider Climb": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Spike Growth": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Staggering Smite": {
+      "numeric_fields": 5,
+      "mutations": 7
+    },
+    "Starry Wisp": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Steel Wind Strike": {
+      "numeric_fields": 7,
+      "mutations": 8
+    },
+    "Stinking Cloud": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Stone Shape": {
+      "numeric_fields": 1,
+      "mutations": 1
+    },
+    "Stoneskin": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Suggestion": {
+      "numeric_fields": 5,
+      "mutations": 5
+    },
+    "Summon Aberration": {
+      "numeric_fields": 55,
+      "mutations": 59
+    },
+    "Summon Beast": {
+      "numeric_fields": 52,
+      "mutations": 55
+    },
+    "Summon Celestial": {
+      "numeric_fields": 44,
+      "mutations": 49
+    },
+    "Summon Construct": {
+      "numeric_fields": 54,
+      "mutations": 58
+    },
+    "Summon Dragon": {
+      "numeric_fields": 100,
+      "mutations": 110
+    },
+    "Summon Elemental": {
+      "numeric_fields": 65,
+      "mutations": 69
+    },
+    "Summon Fey": {
+      "numeric_fields": 54,
+      "mutations": 57
+    },
+    "Summon Undead": {
+      "numeric_fields": 53,
+      "mutations": 58
+    },
+    "Swift Quiver": {
+      "numeric_fields": 5,
+      "mutations": 5
+    },
+    "Synaptic Static": {
+      "numeric_fields": 12,
+      "mutations": 16
+    },
+    "Tasha's Hideous Laughter": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Telekinesis": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Thaumaturgy": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Thorn Whip": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Thunderclap": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Thunderous Smite": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Thunderwave": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Toll the Dead": {
+      "numeric_fields": 9,
+      "mutations": 12
+    },
+    "Tree Stride": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "True Strike": {
+      "numeric_fields": 8,
+      "mutations": 9
+    },
+    "Vampiric Touch": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Vicious Mockery": {
+      "numeric_fields": 9,
+      "mutations": 11
+    },
+    "Vitriolic Sphere": {
+      "numeric_fields": 9,
+      "mutations": 12
+    },
+    "Wall of Fire": {
+      "numeric_fields": 12,
+      "mutations": 16
+    },
+    "Wall of Force": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Wall of Stone": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Warding Bond": {
+      "numeric_fields": 7,
+      "mutations": 7
+    },
+    "Water Walk": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Web": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Wind Wall": {
+      "numeric_fields": 6,
+      "mutations": 7
+    },
+    "Witch Bolt": {
+      "numeric_fields": 11,
+      "mutations": 14
+    },
+    "Word of Radiance": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
+    "Wrathful Smite": {
+      "numeric_fields": 6,
+      "mutations": 8
+    },
+    "Yolande's Regal Presence": {
+      "numeric_fields": 5,
+      "mutations": 6
+    }
+  }
+}

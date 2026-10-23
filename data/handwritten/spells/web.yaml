@@ -1,0 +1,50 @@
+name: Web
+source: XPHB
+level: 2
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a bit of spiderweb
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_creature_enters_aura(target) or start_of_turn(target)
+  target:
+    select: area
+    shape: cube
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: restrained
+      escape_dc: spell_dc
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Difficult terrain, ground/surface eligibility, anchoring, precise membership and movement entry require a grid/environment.
+  Escape uses an action and Strength (Athletics).
+- Burning Webs' Fire damage and local web removal require external fire/object geometry; no automatic burning damage
+  is invented.

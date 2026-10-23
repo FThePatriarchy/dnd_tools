@@ -78,9 +78,6 @@ actions:
 traits: []
 unsupported:
 - 'Shape-Shift: shape, corpse spawning, or noncombat adjudication is unsupported.'
-- 'Spellcasting outside golden set: Invisibility. No substitute effects or invented
-  slots.'
-- 'Invisibility: Invisible condition is from a spell outside the golden set; unsupported.'
 limited_uses:
   Scare: 1
 spell_ability: cha
@@ -91,6 +88,15 @@ features:
   magic_resistance: true
 routines:
 - - Rend
-spells: []
-unsupported_spells:
+spells:
 - Invisibility
+unsupported_spells: []
+spell_levels:
+  Invisibility: 2
+spell_costs:
+  Invisibility: action
+spell_components:
+  Invisibility:
+    v: false
+    s: false
+    m: false

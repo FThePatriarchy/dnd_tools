@@ -1,0 +1,58 @@
+name: Ice Storm
+source: XPHB
+level: 4
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 300
+components:
+  v: true
+  s: true
+  m: a mitten
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: cylinder
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 2d10
+      bonus: 0
+      type: bludgeoning
+  - damage:
+      dice: 4d6
+      bonus: 0
+      type: cold
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 4
+    changes:
+    - block: main
+      dice_add: 1d10
+      damage_type: bludgeoning
+ends_on: []
+unsupported:
+- Cylinder height and difficult terrain until the next turn need a grid. Source upcast tag says 2d8, but base text
+  explicitly says 2d10; retain base text and the explicit 1d10 increment.

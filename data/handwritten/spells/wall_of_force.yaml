@@ -1,0 +1,27 @@
+name: Wall of Force
+source: XPHB
+level: 5
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: a shard of glass
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Wall shape, physical/ethereal blocking, displacement and Disintegrate interaction require barrier geometry; no
+  blanket combat removal or damage immunity is invented.

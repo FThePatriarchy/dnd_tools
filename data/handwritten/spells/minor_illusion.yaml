@@ -1,0 +1,28 @@
+name: Minor Illusion
+source: XPHB
+level: 0
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: false
+  s: true
+  m: a bit of fleece
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Sound/image placement, physical interaction and observer-specific Intelligence (Investigation) Study checks need
+  sensory/object adjudication.
+recast_ends_previous: true

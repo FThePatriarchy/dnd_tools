@@ -1,0 +1,39 @@
+name: Mirror Image
+source: XPHB
+level: 2
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - mirror_images:
+      count: 3
+      dice: 1d6
+      threshold: 3
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

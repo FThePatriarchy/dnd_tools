@@ -1,0 +1,90 @@
+name: Conjure Elemental
+source: XPHB
+level: 5
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices:
+- id: type
+  options:
+  - lightning
+  - thunder
+  - fire
+  - cold
+  when: on_cast
+effects:
+- id: catch
+  event: start_of_turn(target) or on_creature_enters_aura(target)
+  target:
+    select: area
+    shape: sphere
+    size_ft: 5
+    affects: chosen
+    filter: &id001
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 8d8
+      bonus: 0
+      type: $type
+  - apply_condition:
+      condition: restrained
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+  admission:
+    condition: restrained
+    capacity: 1
+    large_cost: 1
+  if: not target.has_condition_from(restrained, spell)
+  limit_group: elemental_save
+- id: hold
+  event: start_of_turn(target)
+  target:
+    select: area
+    shape: sphere
+    size_ft: 5
+    affects: chosen
+    filter: *id001
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 4d8
+      bonus: 0
+      type: $type
+  on_success:
+  - remove_condition:
+      condition: restrained
+  apply: []
+  limit: once_per_turn_per_target
+  requires_condition: restrained
+  limit_group: elemental_save
+scaling: null
+ends_on: []
+unsupported:
+- Intangible Large spirit is an area force, not a creature; placement, entering its
+  exact space and choosing not to force a save require positions/choices. Only one
+  creature is restrained at a time.

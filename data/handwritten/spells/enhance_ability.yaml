@@ -1,0 +1,60 @@
+name: Enhance Ability
+source: XPHB
+level: 2
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: fur or a feather
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: ability
+  when: on_cast
+  options:
+  - str
+  - dex
+  - int
+  - wis
+  - cha
+  per_target: true
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - advantage:
+      'on': ability_checks
+      scope: $ability
+      against: null
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: main
+      target_n_add: 1
+ends_on: []
+unsupported: []

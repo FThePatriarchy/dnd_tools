@@ -1,0 +1,47 @@
+name: Planar Binding
+source: XPHB
+level: 5
+school: abjuration
+casting_time: hour
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a jewel worth 1,000+ GP, which the spell consumes
+  m_consumed: true
+  m_cost_gp: 1000.0
+duration:
+  type: hours
+  n: 24
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+    eligible_if: target.creature_type in [celestial, elemental, fey, fiend]
+  attack: null
+  save:
+    ability: cha
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - control: {}
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- The uninterrupted hour-long casting must be supplied with prepare(). Hostile interpretation of natural-language
+  orders and planar reporting need DM adjudication. Bound creatures attack the caster's enemies; this is service,
+  not an invented Charmed condition. Extending another spell's duration does not waive its concentration.
+casting_time_n: 1

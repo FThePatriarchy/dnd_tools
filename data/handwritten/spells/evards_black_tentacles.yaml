@@ -1,0 +1,52 @@
+name: Evard's Black Tentacles
+source: XPHB
+level: 4
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 90
+components:
+  v: true
+  s: true
+  m: a tentacle
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast or on_creature_enters_aura(target) or end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: cube
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: str
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 3d6
+      bonus: 0
+      type: bludgeoning
+  - apply_condition:
+      condition: restrained
+      escape_dc: spell_dc
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+scaling: null
+ends_on: []
+unsupported:
+- Ground placement, entry and Difficult Terrain require positions. Strength (Athletics) escape uses escape(); no
+  Acrobatics alternative.

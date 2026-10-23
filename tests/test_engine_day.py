@@ -227,7 +227,7 @@ def test_postcombat_healing_enables_rest_and_counts_repeated_downs(spells, monke
     assert second.start["cleric5"]["slots"][1] == 4
     assert fighter is identity
     assert monsters_seen[0] is not monsters_seen[1]
-    assert monsters_seen[1].limited_uses == {"Hold Person": 1, "Spiritual Weapon": 2}
+    assert monsters_seen[1].limited_uses == {"Hold Person": 1, "Spiritual Weapon": 2, "Command": 2}
 
 
 def test_unhealed_downed_pc_stays_out_across_rests(spells, monkeypatch):

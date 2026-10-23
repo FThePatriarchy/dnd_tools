@@ -1,0 +1,52 @@
+name: Thunderwave
+source: XPHB
+level: 1
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: cube
+    size_ft: 15
+    affects: all
+    filter:
+    - creature
+    origin: caster
+  attack: null
+  save:
+    ability: con
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: thunder
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: main
+      dice_add: 1d8
+ends_on: []
+unsupported:
+- Creature/object pushing and sound propagation require positions/environment.

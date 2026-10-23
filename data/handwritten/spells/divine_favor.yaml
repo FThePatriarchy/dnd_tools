@@ -1,0 +1,43 @@
+name: Divine Favor
+source: XPHB
+level: 1
+school: transmutation
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_attack_hit(caster, defender)
+  target:
+    select: ref
+    ref: trigger.defender
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: radiant
+  limit: null
+  if: attack.weapon
+scaling: null
+ends_on: []
+unsupported:
+- Emanation proximity, lighting and difficult terrain require positions/lighting; legal hit riders execute using
+  the no-grid range convention.

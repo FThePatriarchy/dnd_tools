@@ -1,0 +1,26 @@
+name: Dimension Door
+source: XPHB
+level: 4
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 500
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Teleportation, willing companion eligibility and Force damage only on an occupied arrival require destination
+  geometry; mishap damage is not front-loaded.

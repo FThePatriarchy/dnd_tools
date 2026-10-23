@@ -1,0 +1,86 @@
+name: Phantom Steed
+source: XPHB
+level: 3
+school: illusion
+casting_time: minute
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: true
+choices:
+- id: form
+  options:
+  - horse
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        horse:
+          name: Riding Horse
+          source: XMM
+          ac: 11
+          max_hp: 13
+          abilities:
+            str: 16
+            dex: 13
+            con: 12
+            int: 2
+            wis: 11
+            cha: 7
+          speed: 100
+          movement_modes:
+            walk: 100
+          creature_type: beast
+          proficiency_bonus: 2
+          resistances: []
+          immunities: []
+          vulnerabilities: []
+          condition_immunities: []
+          attacks:
+          - name: Hooves
+            kind: melee
+            to_hit: 5
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 3
+                type: bludgeoning
+          size: L
+      base_slot: 3
+      per_slot:
+        ac: 0
+        max_hp: 0
+        damage_bonus: 0
+      fixed_attacks: 1
+      ends_on_damage: true
+      mount: true
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Equipment distance, mounted movement, travel and the one-minute dismount grace require positions/rider state.
+  Any damage ends combat utility immediately; the horse is targetable and does not ignore hits.
+casting_time_n: 1

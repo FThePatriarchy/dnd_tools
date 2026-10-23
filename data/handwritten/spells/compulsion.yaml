@@ -1,0 +1,50 @@
+name: Compulsion
+source: XPHB
+level: 4
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: all
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: charmed
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Bonus-action horizontal directions, safe-route movement and the Wisdom repeat save after that movement require
+  a grid; Charmed applies without inventing an end-turn save.

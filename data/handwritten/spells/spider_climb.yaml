@@ -1,0 +1,26 @@
+name: Spider Climb
+source: XPHB
+level: 2
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a drop of bitumen and a spider
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Surface traversal, hands-free climbing and Climb Speed equal to Speed require movement; higher slots add willing
+  targets.

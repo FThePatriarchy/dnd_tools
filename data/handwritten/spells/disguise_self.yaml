@@ -1,0 +1,25 @@
+name: Disguise Self
+source: XPHB
+level: 1
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Illusory appearance and Investigation discovery need social/vision adjudication.

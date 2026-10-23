@@ -1,0 +1,1568 @@
+source: XPHB
+spells:
+- name: Acid Splash
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Aid
+  level: 2
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Alarm
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Alter Self
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Animal Friendship
+  level: 1
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Animal Messenger
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Animal Shapes
+  level: 8
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Animate Dead
+  level: 3
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Animate Objects
+  level: 5
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Antilife Shell
+  level: 5
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Antimagic Field
+  level: 8
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Antipathy/Sympathy
+  level: 8
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Arcane Eye
+  level: 4
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Arcane Gate
+  level: 6
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Arcane Lock
+  level: 2
+  scope: partial
+  reason: Magically locks doors and other barriers against nonmagical entry; objects and access paths require geometry.
+- name: Arcane Vigor
+  level: 2
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Armor of Agathys
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Arms of Hadar
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Astral Projection
+  level: 9
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Augury
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Aura of Life
+  level: 4
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Aura of Purity
+  level: 4
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Aura of Vitality
+  level: 3
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Awaken
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Bane
+  level: 1
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Banishing Smite
+  level: 5
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Banishment
+  level: 4
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Barkskin
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Beacon of Hope
+  level: 3
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Beast Sense
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Befuddlement
+  level: 8
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Bestow Curse
+  level: 3
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Bigby's Hand
+  level: 5
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Blade Barrier
+  level: 6
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Blade Ward
+  level: 0
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Bless
+  level: 1
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Blight
+  level: 4
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Blinding Smite
+  level: 3
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Blindness/Deafness
+  level: 2
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Blink
+  level: 3
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Blur
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Burning Hands
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Call Lightning
+  level: 3
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Calm Emotions
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Chain Lightning
+  level: 6
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Charm Monster
+  level: 4
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Charm Person
+  level: 1
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Chill Touch
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Chromatic Orb
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Circle of Death
+  level: 6
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Circle of Power
+  level: 5
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Clairvoyance
+  level: 3
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Clone
+  level: 8
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Cloud of Daggers
+  level: 2
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Cloudkill
+  level: 5
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Color Spray
+  level: 1
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Command
+  level: 1
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Commune
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Commune with Nature
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Compelled Duel
+  level: 1
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Comprehend Languages
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Compulsion
+  level: 4
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Cone of Cold
+  level: 5
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Confusion
+  level: 4
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Conjure Animals
+  level: 3
+  scope: partial
+  reason: 2024 intangible pack is a damaging area, not summoned creature stat blocks; end-turn saves are simulable.
+- name: Conjure Barrage
+  level: 3
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Conjure Celestial
+  level: 7
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Conjure Elemental
+  level: 5
+  scope: partial
+  reason: 2024 intangible spirit restrains and damages; adjacency and movement triggers need adjudication.
+- name: Conjure Fey
+  level: 6
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Conjure Minor Elementals
+  level: 4
+  scope: partial
+  reason: Attack damage rider is simulable; emanation membership and difficult terrain need adjudication.
+- name: Conjure Volley
+  level: 5
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Conjure Woodland Beings
+  level: 4
+  scope: partial
+  reason: End-turn force damage is simulable; moving emanation and Disengage movement need adjudication.
+- name: Contact Other Plane
+  level: 5
+  scope: out_of_scope
+  reason: Divination with a self-inflicted failure risk, not an attack spell.
+- name: Contagion
+  level: 5
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Contingency
+  level: 6
+  scope: combat
+  reason: Stores a triggered spell, changing combat action economy without requiring positions.
+- name: Continual Flame
+  level: 2
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Control Water
+  level: 4
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Control Weather
+  level: 8
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Cordon of Arrows
+  level: 2
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Counterspell
+  level: 3
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Create Food and Water
+  level: 3
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Create or Destroy Water
+  level: 1
+  scope: partial
+  reason: Extinguishes exposed flames or destroys fog; quantities and affected volumes require environmental geometry.
+- name: Create Undead
+  level: 6
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Creation
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Crown of Madness
+  level: 2
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Crusader's Mantle
+  level: 3
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Cure Wounds
+  level: 1
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Dancing Lights
+  level: 0
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Darkness
+  level: 2
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Darkvision
+  level: 2
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Daylight
+  level: 3
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Death Ward
+  level: 4
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Delayed Blast Fireball
+  level: 7
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Demiplane
+  level: 8
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Destructive Wave
+  level: 5
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Detect Evil and Good
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Detect Magic
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Detect Poison and Disease
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Detect Thoughts
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Dimension Door
+  level: 4
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Disguise Self
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Disintegrate
+  level: 6
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Dispel Evil and Good
+  level: 5
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Dispel Magic
+  level: 3
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Dissonant Whispers
+  level: 1
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Divination
+  level: 4
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Divine Favor
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Divine Smite
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Divine Word
+  level: 7
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Dominate Beast
+  level: 4
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Dominate Monster
+  level: 8
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Dominate Person
+  level: 5
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Dragon's Breath
+  level: 2
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Drawmij's Instant Summons
+  level: 6
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Dream
+  level: 5
+  scope: out_of_scope
+  reason: Long-cast sleeping-target communication/nightmare, not an arena damage attack.
+- name: Druidcraft
+  level: 0
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Earthquake
+  level: 8
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Eldritch Blast
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Elemental Weapon
+  level: 3
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Elementalism
+  level: 0
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Enhance Ability
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Enlarge/Reduce
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Ensnaring Strike
+  level: 1
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Entangle
+  level: 1
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Enthrall
+  level: 2
+  scope: out_of_scope
+  reason: Fighting targets automatically succeed; distracting noncombatants' Perception is social/exploration utility.
+- name: Etherealness
+  level: 7
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Evard's Black Tentacles
+  level: 4
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Expeditious Retreat
+  level: 1
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Eyebite
+  level: 6
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Fabricate
+  level: 4
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Faerie Fire
+  level: 1
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: False Life
+  level: 1
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Fear
+  level: 3
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Feather Fall
+  level: 1
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Feign Death
+  level: 3
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Find Familiar
+  level: 1
+  scope: partial
+  reason: An allied familiar can Help; scouting, senses and placement need adjudication.
+- name: Find Steed
+  level: 2
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Find the Path
+  level: 6
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Find Traps
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Finger of Death
+  level: 7
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Fire Bolt
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Fire Shield
+  level: 4
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Fire Storm
+  level: 7
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Fireball
+  level: 3
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Flame Blade
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Flame Strike
+  level: 5
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Flaming Sphere
+  level: 2
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Flesh to Stone
+  level: 6
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Fly
+  level: 3
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Fog Cloud
+  level: 1
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Forbiddance
+  level: 6
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Forcecage
+  level: 7
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Foresight
+  level: 9
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Fount of Moonlight
+  level: 4
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Freedom of Movement
+  level: 4
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Friends
+  level: 0
+  scope: out_of_scope
+  reason: Social charm automatically fails against a creature you are fighting.
+- name: Gaseous Form
+  level: 3
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Gate
+  level: 9
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Geas
+  level: 5
+  scope: out_of_scope
+  reason: Minute-long coercion with daily punishment, primarily social rather than a combat action.
+- name: Gentle Repose
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Giant Insect
+  level: 4
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Glibness
+  level: 8
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Globe of Invulnerability
+  level: 6
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Glyph of Warding
+  level: 3
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Goodberry
+  level: 1
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Grasping Vine
+  level: 4
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Grease
+  level: 1
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Greater Invisibility
+  level: 4
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Greater Restoration
+  level: 5
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Guardian of Faith
+  level: 4
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Guards and Wards
+  level: 6
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Guidance
+  level: 0
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Guiding Bolt
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Gust of Wind
+  level: 2
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Hail of Thorns
+  level: 1
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Hallow
+  level: 5
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Hallucinatory Terrain
+  level: 4
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Harm
+  level: 6
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Haste
+  level: 3
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Heal
+  level: 6
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Healing Word
+  level: 1
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Heat Metal
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Hellish Rebuke
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Heroes' Feast
+  level: 6
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Heroism
+  level: 1
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Hex
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Hold Monster
+  level: 5
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Hold Person
+  level: 2
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Holy Aura
+  level: 8
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Hunger of Hadar
+  level: 3
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Hunter's Mark
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Hypnotic Pattern
+  level: 3
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Ice Knife
+  level: 1
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Ice Storm
+  level: 4
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Identify
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Illusory Script
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Imprisonment
+  level: 9
+  scope: combat
+  reason: A failed save imposes indefinite combat removal; prison location and objects need separate adjudication.
+- name: Incendiary Cloud
+  level: 8
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Inflict Wounds
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Insect Plague
+  level: 5
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Invisibility
+  level: 2
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Jallarzi's Storm of Radiance
+  level: 5
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Jump
+  level: 1
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Knock
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Legend Lore
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Leomund's Secret Chest
+  level: 4
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Leomund's Tiny Hut
+  level: 3
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Lesser Restoration
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Levitate
+  level: 2
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Light
+  level: 0
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Lightning Arrow
+  level: 3
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Lightning Bolt
+  level: 3
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Locate Animals or Plants
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Locate Creature
+  level: 4
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Locate Object
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Longstrider
+  level: 1
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Mage Armor
+  level: 1
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Mage Hand
+  level: 0
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Magic Circle
+  level: 3
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Magic Jar
+  level: 6
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Magic Missile
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Magic Mouth
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Magic Weapon
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Major Image
+  level: 3
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Mass Cure Wounds
+  level: 5
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Mass Heal
+  level: 9
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Mass Healing Word
+  level: 3
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Mass Suggestion
+  level: 6
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Maze
+  level: 8
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Meld into Stone
+  level: 3
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Melf's Acid Arrow
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Mending
+  level: 0
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Message
+  level: 0
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Meteor Swarm
+  level: 9
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Mind Blank
+  level: 8
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Mind Sliver
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Mind Spike
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Minor Illusion
+  level: 0
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Mirage Arcane
+  level: 7
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Mirror Image
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Mislead
+  level: 5
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Misty Step
+  level: 2
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Modify Memory
+  level: 5
+  scope: combat
+  reason: Fighting targets have Advantage, not automatic success; failed saves cause Charmed and dependent Incapacitated.
+- name: Moonbeam
+  level: 2
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Mordenkainen's Faithful Hound
+  level: 4
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Mordenkainen's Magnificent Mansion
+  level: 7
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Mordenkainen's Private Sanctum
+  level: 4
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Mordenkainen's Sword
+  level: 7
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Move Earth
+  level: 6
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Nondetection
+  level: 3
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Nystul's Magic Aura
+  level: 2
+  scope: combat
+  reason: Mask changes how spells and magical effects treat creature type, affecting combat targeting and protection.
+- name: Otiluke's Freezing Sphere
+  level: 6
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Otiluke's Resilient Sphere
+  level: 4
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Otto's Irresistible Dance
+  level: 6
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Pass without Trace
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Passwall
+  level: 5
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Phantasmal Force
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Phantasmal Killer
+  level: 4
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Phantom Steed
+  level: 3
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Planar Ally
+  level: 6
+  scope: partial
+  reason: Explicitly permits negotiated battle assistance; creature selection, willingness and payment require DM
+    adjudication.
+- name: Planar Binding
+  level: 5
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Plane Shift
+  level: 7
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Plant Growth
+  level: 3
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Poison Spray
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Polymorph
+  level: 4
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Power Word Fortify
+  level: 7
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Power Word Heal
+  level: 9
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Power Word Kill
+  level: 9
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Power Word Stun
+  level: 8
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Prayer of Healing
+  level: 2
+  scope: out_of_scope
+  reason: Ten-minute Short Rest recovery cannot resolve during an arena fight.
+- name: Prestidigitation
+  level: 0
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Prismatic Spray
+  level: 7
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Prismatic Wall
+  level: 9
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Produce Flame
+  level: 0
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Programmed Illusion
+  level: 6
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Project Image
+  level: 7
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Protection from Energy
+  level: 3
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Protection from Evil and Good
+  level: 1
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Protection from Poison
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Purify Food and Drink
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Raise Dead
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Rary's Telepathic Bond
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Ray of Enfeeblement
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Ray of Frost
+  level: 0
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Ray of Sickness
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Regenerate
+  level: 7
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Reincarnate
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Remove Curse
+  level: 3
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Resistance
+  level: 0
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Resurrection
+  level: 7
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Reverse Gravity
+  level: 7
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Revivify
+  level: 3
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Rope Trick
+  level: 2
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Sacred Flame
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Sanctuary
+  level: 1
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Scorching Ray
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Scrying
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Searing Smite
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: See Invisibility
+  level: 2
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Seeming
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Sending
+  level: 3
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Sequester
+  level: 7
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Shapechange
+  level: 9
+  scope: combat
+  reason: Healing or temporary hit points changes combat survival.
+- name: Shatter
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Shield
+  level: 1
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Shield of Faith
+  level: 1
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Shillelagh
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Shining Smite
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Shocking Grasp
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Silence
+  level: 2
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Silent Image
+  level: 1
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Simulacrum
+  level: 7
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Sleep
+  level: 1
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Sleet Storm
+  level: 3
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Slow
+  level: 3
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Sorcerous Burst
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Spare the Dying
+  level: 0
+  scope: combat
+  reason: Stabilizes a dying combatant; death-save state is required but no grid is needed.
+- name: Speak with Animals
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Speak with Dead
+  level: 3
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Speak with Plants
+  level: 3
+  scope: partial
+  reason: Creates or removes plant-based Difficult Terrain; plants and terrain membership need a map.
+- name: Spider Climb
+  level: 2
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Spike Growth
+  level: 2
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Spirit Guardians
+  level: 3
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Spiritual Weapon
+  level: 2
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Staggering Smite
+  level: 4
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Starry Wisp
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Steel Wind Strike
+  level: 5
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Stinking Cloud
+  level: 3
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Stone Shape
+  level: 4
+  scope: partial
+  reason: Can seal a stone door or open a passage, changing barriers and battlefield access; object geometry is
+    required.
+- name: Stoneskin
+  level: 4
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Storm of Vengeance
+  level: 9
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Suggestion
+  level: 2
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Summon Aberration
+  level: 4
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Summon Beast
+  level: 2
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Summon Celestial
+  level: 5
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Summon Construct
+  level: 4
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Summon Dragon
+  level: 5
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Summon Elemental
+  level: 4
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Summon Fey
+  level: 3
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Summon Fiend
+  level: 6
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Summon Undead
+  level: 3
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: Sunbeam
+  level: 6
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Sunburst
+  level: 8
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Swift Quiver
+  level: 5
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Symbol
+  level: 7
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Synaptic Static
+  level: 5
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Tasha's Bubbling Cauldron
+  level: 6
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Tasha's Hideous Laughter
+  level: 1
+  scope: combat
+  reason: Applies combat conditions/control; attack and save resolution does not require a grid.
+- name: Telekinesis
+  level: 5
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Telepathy
+  level: 8
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Teleport
+  level: 7
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Teleportation Circle
+  level: 5
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Tenser's Floating Disk
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Thaumaturgy
+  level: 0
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Thorn Whip
+  level: 0
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Thunderclap
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Thunderous Smite
+  level: 1
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Thunderwave
+  level: 1
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Time Stop
+  level: 9
+  scope: combat
+  reason: Extra personal turns directly change action economy without requiring a grid.
+- name: Toll the Dead
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Tongues
+  level: 3
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Transport via Plants
+  level: 6
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Tree Stride
+  level: 5
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: True Polymorph
+  level: 9
+  scope: combat
+  reason: Creates allied combatants that change attacks, defenses or action economy.
+- name: True Resurrection
+  level: 9
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: True Seeing
+  level: 6
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: True Strike
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Tsunami
+  level: 8
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Unseen Servant
+  level: 1
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Vampiric Touch
+  level: 3
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Vicious Mockery
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Vitriolic Sphere
+  level: 4
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Wall of Fire
+  level: 4
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Wall of Force
+  level: 5
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Wall of Ice
+  level: 6
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Wall of Stone
+  level: 5
+  scope: partial
+  reason: Control/save consequences are simulable; spatial or sensory eligibility needs adjudication.
+- name: Wall of Thorns
+  level: 6
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Warding Bond
+  level: 2
+  scope: combat
+  reason: Combat buff, debuff, defense, restoration or action economy changes fight outcomes.
+- name: Water Breathing
+  level: 3
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Water Walk
+  level: 3
+  scope: partial
+  reason: Combat positioning, protection or visibility use; geometry/vision is not modeled.
+- name: Web
+  level: 2
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Weird
+  level: 9
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Wind Walk
+  level: 6
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Wind Wall
+  level: 3
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Wish
+  level: 9
+  scope: combat
+  reason: Its explicit lower-level spell duplication includes no-grid combat effects; free-form wishes need adjudication.
+- name: Witch Bolt
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Word of Radiance
+  level: 0
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Word of Recall
+  level: 6
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.
+- name: Wrathful Smite
+  level: 1
+  scope: combat
+  reason: Direct damage or an attack damage rider changes combat outcomes without a grid.
+- name: Yolande's Regal Presence
+  level: 5
+  scope: partial
+  reason: Damage is simulable where a trigger/target is known; movement, terrain or vision needs adjudication.
+- name: Zone of Truth
+  level: 2
+  scope: out_of_scope
+  reason: Utility, information, social or downtime effect; no primary no-grid combat resolution.

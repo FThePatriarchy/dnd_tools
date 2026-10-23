@@ -20,6 +20,9 @@ def area_heuristic(shape: str, size_ft: float, eligible: int) -> int:
 
 
 class Policy:
+    def command_summon(self, combat, caster, creature):
+        return True
+
     def legendary_resistance(self, combat, actor, ability, dc):
         return True
 
@@ -88,7 +91,7 @@ class Policy:
         return eligible[0]
 
     def targets(self, combat, instance, block, eligible, n):
-        beneficial = any(k in p for key in ("apply", "on_hit") for p in block[key] for k in ("heal", "temp_hp", "grant_action")) or instance.spec["name"] in {"Bless", "Shield of Faith", "Haste"}
+        beneficial = any(k in p for key in ("apply", "on_hit") for p in block[key] for k in ("heal", "temp_hp", "grant_action", "base_ac", "defense", "remove_condition")) or any(p.get("apply_condition", {}).get("condition") == "invisible" for p in block["apply"]) or instance.spec["name"] in {"Bless", "Shield of Faith", "Haste", "Fly"}
         # Allegiance-neutral legality stays in the engine; this is preference only.
         preferred = [x for x in eligible if (x.team == instance.caster.team) == beneficial]
         ordered = sorted(preferred or eligible, key=lambda x: (x.hp / x.max_hp if beneficial else x.hp, x.id))
@@ -117,6 +120,8 @@ class Policy:
 
     def take_turn(self, combat, actor):
         if not actor.alive or actor.has_condition("incapacitated"): return
+        rules = combat.turn_rules(actor)
+        if rules.get("no_action") and rules.get("no_bonus_action"): return
         enemies = combat.enemies(actor)
         if not enemies: return
         if actor.has_status("burning"): combat.extinguish(actor)

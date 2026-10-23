@@ -1,0 +1,47 @@
+name: Fear
+source: XPHB
+level: 3
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a white feather
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: cone
+    size_ft: 30
+    affects: all
+    filter:
+    - creature
+    origin: caster
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: frightened
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Dropping inventory, mandatory Dash when an escape route exists, safe-route movement and repeat Wisdom saves only
+  after losing line of sight require inventory/positions. No unconditional action denial or repeat save is invented.

@@ -15,7 +15,7 @@ def spells():
 
 
 def test_all_reviewed_assets_validate(spells):
-    assert len(spells) == 20
+    assert len(spells) == 245
     from engine.monster_import import ORIGINAL, STEP2, slug
     assert {p.stem for p in (ROOT / "monsters").glob("*.yaml")} == {slug(n) for n in ORIGINAL + STEP2}
     assert len(list((ROOT / "characters").glob("*.yaml"))) == 2

@@ -41,22 +41,42 @@ attacks:
 multiattack: []
 actions: []
 traits: []
-unsupported:
-- 'Spellcasting outside golden set: Disguise Self, Ice Knife, Mage Armor, Mage Hand,
-  Prestidigitation, Thunderwave. No substitute effects or invented slots.'
-- 'Ice Knife: Piercing/Cold damage and Dexterity save; Thunderwave: Constitution save,
-  all outside the golden set and unsupported.'
+unsupported: []
 spell_ability: int
 spell_dc: 13
 spell_attack_bonus: 5
 size: M
 routines:
 - - Arcane Burst
-spells: []
-unsupported_spells:
+spells:
+- Mage Hand
+- Prestidigitation
 - Disguise Self
 - Ice Knife
 - Mage Armor
-- Mage Hand
-- Prestidigitation
 - Thunderwave
+unsupported_spells: []
+spell_levels:
+  Mage Hand: 0
+  Prestidigitation: 0
+  Disguise Self: 1
+  Ice Knife: 1
+  Mage Armor: 1
+  Thunderwave: 1
+spell_costs:
+  Mage Hand: action
+  Prestidigitation: action
+  Disguise Self: action
+  Ice Knife: action
+  Mage Armor: action
+  Thunderwave: action
+spell_resources:
+  Disguise Self: Disguise Self
+  Ice Knife: Ice Knife
+  Mage Armor: Mage Armor
+  Thunderwave: Thunderwave
+limited_uses:
+  Disguise Self: 1
+  Ice Knife: 1
+  Mage Armor: 1
+  Thunderwave: 1

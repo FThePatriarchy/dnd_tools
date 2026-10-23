@@ -1,0 +1,27 @@
+name: Leomund's Tiny Hut
+source: XPHB
+level: 3
+school: evocation
+casting_time: minute
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a crystal bead
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: false
+ritual: true
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Fixed dome occupants, one-way visibility, physical/spell crossing and dismissal on leaving require geometry; there
+  is no blanket damage immunity.
+casting_time_n: 1

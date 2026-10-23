@@ -1,0 +1,65 @@
+name: Phantasmal Force
+source: XPHB
+level: 2
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a bit of fleece
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: int
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - status:
+      id: phantasmal_force
+      data: {}
+  on_success:
+  - end_spell: true
+  apply: []
+  limit: null
+- id: hazard
+  event: start_of_turn(caster)
+  target:
+    select: ref
+    ref: main
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: psychic
+  limit: null
+  source_ref: entries.3
+scaling: null
+ends_on: []
+unsupported:
+- Illusion content, rationalization, dangerous-hazard eligibility/proximity and sensory reactions need DM/position
+  adjudication; the seeded hazard assumes an eligible dangerous illusion. A Study check can end it via study_illusion.

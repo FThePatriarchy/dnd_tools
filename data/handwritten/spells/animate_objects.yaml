@@ -1,0 +1,152 @@
+name: Animate Objects
+source: XPHB
+level: 5
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: form
+  options:
+  - medium
+  - large
+  - huge
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        medium:
+          name: Animated Object
+          source: XPHB
+          max_hp: 10
+          ac: 15
+          abilities:
+            str: 16
+            dex: 10
+            con: 10
+            int: 3
+            wis: 3
+            cha: 1
+          speed: 30
+          movement_modes:
+            walk: 30
+          creature_type: construct
+          size: M
+          proficiency_bonus: caster
+          attacks:
+          - name: Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d4
+                bonus: 3
+                type: force
+                add_caster_mod: true
+        large:
+          name: Animated Object
+          source: XPHB
+          max_hp: 20
+          ac: 15
+          abilities:
+            str: 16
+            dex: 10
+            con: 10
+            int: 3
+            wis: 3
+            cha: 1
+          speed: 30
+          movement_modes:
+            walk: 30
+          creature_type: construct
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 2d6
+                bonus: 3
+                type: force
+                add_caster_mod: true
+        huge:
+          name: Animated Object
+          source: XPHB
+          max_hp: 40
+          ac: 15
+          abilities:
+            str: 16
+            dex: 10
+            con: 10
+            int: 3
+            wis: 3
+            cha: 1
+          speed: 30
+          movement_modes:
+            walk: 30
+          creature_type: construct
+          size: H
+          proficiency_bonus: caster
+          attacks:
+          - name: Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 2d12
+                bonus: 3
+                type: force
+                add_caster_mod: true
+      base_slot: 5
+      per_slot:
+        ac: 0
+        max_hp: 0
+        damage_bonus: 0
+      fixed_attacks: 1
+      count: spell_mod
+      form_cost:
+        medium: 1
+        large: 2
+        huge: 3
+      damage_dice_add:
+        medium: 1d4
+        large: 1d6
+        huge: 1d12
+      command_cost: bonus_action
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Caller supplies eligible loose nonmagical non-Gargantuan objects. A homogeneous selected size is supported with
+  exact weighted count; mixed-size inventories require explicit object selections. The printed Animated Object Slam
+  deals Force, not the obsolete Bludgeoning/Piercing/Slashing spell tags. Object-form overflow after reversion,
+  legs/placement and 500-foot commands need object/geometry state.

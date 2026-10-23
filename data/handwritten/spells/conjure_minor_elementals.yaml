@@ -1,0 +1,54 @@
+name: Conjure Minor Elementals
+source: XPHB
+level: 4
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices:
+- id: damage_type
+  options:
+  - acid
+  - cold
+  - fire
+  - lightning
+  when: on_attack
+effects:
+- id: main
+  event: on_attack_hit(caster, defender)
+  target:
+    select: ref
+    ref: trigger.defender
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: $damage_type
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 4
+    changes:
+    - block: main
+      dice_add: 1d8
+ends_on: []
+unsupported:
+- Emanation proximity, lighting and difficult terrain require positions/lighting; legal hit riders execute using
+  the no-grid range convention.

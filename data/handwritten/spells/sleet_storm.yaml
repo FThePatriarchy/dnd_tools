@@ -1,0 +1,48 @@
+name: Sleet Storm
+source: XPHB
+level: 3
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 150
+components:
+  v: true
+  s: true
+  m: a miniature umbrella
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_creature_enters_aura(target) or start_of_turn(target)
+  target:
+    select: area
+    shape: cylinder
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: prone
+      persistent: true
+  - end_concentration: true
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Heavy obscurement, difficult terrain, exposed flame extinguishing and entry geometry require positions/environment.

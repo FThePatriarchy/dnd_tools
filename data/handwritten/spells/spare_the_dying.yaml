@@ -1,0 +1,49 @@
+name: Spare the Dying
+source: XPHB
+level: 0
+school: necromancy
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 15
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+    eligible_if: target.hp == 0
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - stabilize: true
+  limit: null
+scaling:
+  cantrip:
+    at:
+    - 5
+    - 11
+    - 17
+    effect:
+      range_multiplier: 2
+ends_on: []
+unsupported:
+- Stable state is recorded and cleared by damage/healing; this arena does not roll death saving throws or track
+  elapsed dying time.

@@ -1,0 +1,26 @@
+name: Speak with Plants
+source: XPHB
+level: 3
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Plants can create or remove Difficult Terrain. Plant presence, immobile area membership, communication and terrain
+  movement costs require environmental geometry.

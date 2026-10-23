@@ -1,0 +1,54 @@
+name: Sleep
+source: XPHB
+level: 1
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a pinch of sand or rose petals
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: sphere
+    size_ft: 5
+    affects: chosen
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+    auto_success_if: target.immune_to(exhaustion) or target.has_status(no_sleep)
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: incapacitated
+      ends_on_damage: any
+      repeat_save:
+        ability: wis
+        timing: end_of_turn
+        on_success: end
+      upgrade_on_failure: unconscious
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Non-sleeping species must be supplied as no_sleep; proximity and another creature's shake-awake action require
+  an external rescue choice.

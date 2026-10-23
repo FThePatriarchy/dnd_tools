@@ -1,0 +1,55 @@
+name: Greater Restoration
+source: XPHB
+level: 5
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: diamond dust worth 100+ GP, which the spell consumes
+  m_consumed: true
+  m_cost_gp: 100.0
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices:
+- id: kind
+  when: on_cast
+  options:
+  - exhaustion
+  - charmed
+  - petrified
+  - curse
+  - max_hp
+  - str
+  - dex
+  - con
+  - int
+  - wis
+  - cha
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - restore:
+      kind: $kind
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Cursed-item attunement needs an item model; one creature condition/curse, Exhaustion level, ability reduction
+  or HP-maximum reduction can be restored.

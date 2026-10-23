@@ -1,0 +1,176 @@
+name: Summon Celestial
+source: XPHB
+level: 5
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 90
+components:
+  v: true
+  s: true
+  m: a reliquary worth 500+ GP
+  m_consumed: false
+  m_cost_gp: 500.0
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: form
+  options:
+  - avenger
+  - defender
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        avenger:
+          name: Celestial Spirit
+          source: XPHB
+          max_hp: 40
+          ac: 16
+          abilities:
+            str: 16
+            dex: 14
+            con: 16
+            int: 10
+            wis: 14
+            cha: 16
+          speed: 30
+          movement_modes:
+            walk: 30
+            fly: 40
+          creature_type: celestial
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Radiant Bow (Avenger Only)
+            kind: ranged
+            to_hit: spell_attack
+            reach_ft: 0
+            effects:
+            - damage:
+                dice: 2d6
+                bonus: 7
+                type: radiant
+                slot_bonus: true
+            range_ft: 600
+          resistances: &id001
+          - radiant
+          immunities: []
+          condition_immunities: &id002
+          - charmed
+          - frightened
+          features: {}
+          actions:
+          - name: Healing Touch
+            cost: action
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: single
+                filter:
+                - creature
+                affects: any
+              attack: null
+              save: null
+              on_hit: []
+              on_fail: []
+              on_success: []
+              apply:
+              - heal:
+                  dice: 2d8
+                  bonus: summon_slot
+              limit: null
+            resource: Healing Touch
+          limited_uses:
+            Healing Touch: 1
+        defender:
+          name: Celestial Spirit
+          source: XPHB
+          max_hp: 40
+          ac: 18
+          abilities:
+            str: 16
+            dex: 14
+            con: 16
+            int: 10
+            wis: 14
+            cha: 16
+          speed: 30
+          movement_modes:
+            walk: 30
+            fly: 40
+          creature_type: celestial
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Radiant Mace (Defender Only)
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d10
+                bonus: 8
+                type: radiant
+                slot_bonus: true
+            on_hit_self:
+            - temp_hp:
+                dice: 1d10
+          resistances: *id001
+          immunities: []
+          condition_immunities: *id002
+          features: {}
+          actions:
+          - name: Healing Touch
+            cost: action
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: single
+                filter:
+                - creature
+                affects: any
+              attack: null
+              save: null
+              on_hit: []
+              on_fail: []
+              on_success: []
+              apply:
+              - heal:
+                  dice: 2d8
+                  bonus: summon_slot
+              limit: null
+            resource: Healing Touch
+          limited_uses:
+            Healing Touch: 1
+      base_slot: 5
+      per_slot:
+        ac: 1
+        max_hp: 10
+        damage_bonus: 1
+      attack_count_divisor: 2
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Unoccupied placement, ranges, languages, senses and movement need geometry/environment. Summoned creatures are
+  real targetable combatants immediately after the caster. The printed parent stat blocks, not contradictory generated
+  versions, determine statistics.

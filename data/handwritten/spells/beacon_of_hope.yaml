@@ -1,0 +1,52 @@
+name: Beacon of Hope
+source: XPHB
+level: 3
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: all
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - advantage:
+      'on': saves
+      scope: wis
+      against: null
+  - status:
+      id: maximize_healing
+      data: {}
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Death saving throw Advantage requires a death-save clock, absent from this knockout-based arena; healing maximization
+  and Wisdom save Advantage execute.

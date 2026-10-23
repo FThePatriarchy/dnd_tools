@@ -1,0 +1,26 @@
+name: Water Walk
+source: XPHB
+level: 3
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: a piece of cork
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: true
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Liquid-surface traversal, submerged ascent and hot-surface consequences require terrain/altitude/movement.

@@ -1,0 +1,81 @@
+name: Dispel Evil and Good
+source: XPHB
+level: 5
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: powdered silver and iron
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: function
+  options:
+  - break
+  - dismiss
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - ward:
+      types: &id001
+      - celestial
+      - elemental
+      - fey
+      - fiend
+      - undead
+      attack_disadvantage: true
+  limit: null
+- id: function
+  event: action_command
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+    eligible_if: $function == break or target.creature_type in [celestial, elemental, fey, fiend, undead]
+  attack: null
+  save:
+    ability: cha
+    on_success: negate
+    if: $function == dismiss
+  on_hit: []
+  on_fail:
+  - remove_from_combat:
+      until: spell_ends
+      returns: 'false'
+    if: target.has_status(off_home_plane)
+  - end_spell: true
+  on_success:
+  - end_spell: true
+  apply:
+  - restore:
+      kind: charmed
+      source_types: *id001
+  - restore:
+      kind: frightened
+      source_types: *id001
+  - end_spell: true
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Possession and home-plane identity require external state. Dismissal requires off_home_plane; Fey/Undead destination
+  geometry is not modeled. Break Enchantment requires a source of an eligible type; fixtures select eligible enchantments.

@@ -1,0 +1,27 @@
+name: Fog Cloud
+source: XPHB
+level: 1
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Heavy obscurement, wind dispersal and the slot-scaled fog radius require lighting/positions; this is not blanket
+  Blinded.

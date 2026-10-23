@@ -1,0 +1,24 @@
+name: Misty Step
+source: XPHB
+level: 2
+school: conjuration
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Teleportation and visible destination selection require positions/vision; no grid-free effect is invented.

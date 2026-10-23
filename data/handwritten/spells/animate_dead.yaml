@@ -1,0 +1,140 @@
+name: Animate Dead
+source: XPHB
+level: 3
+school: necromancy
+casting_time: minute
+reaction_trigger: null
+range:
+  type: point
+  feet: 10
+components:
+  v: true
+  s: true
+  m: a drop of blood, a piece of flesh, and a pinch of bone dust
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices:
+- id: form
+  options:
+  - skeleton
+  - zombie
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        skeleton:
+          name: Skeleton
+          source: XMM
+          ac: 14
+          max_hp: 13
+          abilities:
+            str: 10
+            dex: 16
+            con: 15
+            int: 6
+            wis: 8
+            cha: 5
+          speed: 30
+          movement_modes:
+            walk: 30
+          creature_type: undead
+          proficiency_bonus: 2
+          resistances: []
+          immunities:
+          - poison
+          vulnerabilities:
+          - bludgeoning
+          condition_immunities:
+          - exhaustion
+          - poisoned
+          attacks:
+          - name: Shortsword
+            kind: melee
+            to_hit: 5
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d6
+                bonus: 3
+                type: piercing
+          - name: Shortbow
+            kind: ranged
+            to_hit: 5
+            reach_ft: 0
+            effects:
+            - damage:
+                dice: 1d6
+                bonus: 3
+                type: piercing
+          size: M
+        zombie:
+          name: Zombie
+          source: XMM
+          ac: 8
+          max_hp: 15
+          abilities:
+            str: 13
+            dex: 6
+            con: 16
+            int: 3
+            wis: 6
+            cha: 5
+          speed: 20
+          movement_modes:
+            walk: 20
+          creature_type: undead
+          proficiency_bonus: 2
+          resistances: []
+          immunities:
+          - poison
+          vulnerabilities: []
+          condition_immunities:
+          - exhaustion
+          - poisoned
+          attacks:
+          - name: Slam
+            kind: melee
+            to_hit: 3
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 1
+                type: bludgeoning
+          features:
+            undead_fortitude: 5
+          size: M
+      base_slot: 3
+      per_slot:
+        ac: 0
+        max_hp: 0
+        damage_bonus: 0
+      fixed_attacks: 1
+      count: 1
+      count_per_slot: 2
+      persistent: true
+      command_cost: bonus_action
+      control_hours: 24
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Caller supplies distinct eligible Small/Medium Humanoid corpses or bones; no corpse inventory is invented. Reasserting
+  control over four existing Undead requires explicit existing-corpse/control identities. Created bodies persist;
+  one Bonus Action issues a continuing attack order, and loss of control occurs at 24 hours.
+casting_time_n: 1

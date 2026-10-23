@@ -1,0 +1,42 @@
+name: Death Ward
+source: XPHB
+level: 4
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - death_ward:
+      floor: 1
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Nondamaging instant death requires an explicit death event; the arena uses knockout rather than death saves. Zero-HP
+  damage prevention executes.

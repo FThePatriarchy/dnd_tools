@@ -975,8 +975,8 @@ def test_step2_fix11_systematic_numeric_mutation_scan(sources):
                 seen_allowlist.add(key); allowed += 1
     assert seen_allowlist == STEP2_NUMERIC_ALLOWLIST.keys(), 'Stale numeric exceptions'
     print(f'Numeric scan: 70 sheets, {len(fields)} fields, {rejected + allowed} mutations, {rejected} rejected, {allowed} allow-listed')
-    assert len(fields) == 1722
-    assert rejected == 2014
+    assert len(fields) == 1760
+    assert rejected == 2052
     assert allowed == 0
 
 

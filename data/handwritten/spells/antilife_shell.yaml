@@ -1,0 +1,26 @@
+name: Antilife Shell
+source: XPHB
+level: 5
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- The barrier prevents eligible living creatures crossing/reaching through its moving boundary; forced contact and
+  spell/ranged reach require positions. It is not damage immunity or unconditional incapacitation.

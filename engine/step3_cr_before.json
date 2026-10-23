@@ -1,0 +1,134 @@
+{
+  "mage": {
+    "runs": 500,
+    "seed": 1,
+    "wins": 470,
+    "draws": 0,
+    "win_rate": 0.94,
+    "mean_rounds": 1.766,
+    "mean_party_hp": 95.37,
+    "mean_resources_spent": {
+      "action_surge": 1.876,
+      "second_wind": 0.978,
+      "slot_1": 0.986,
+      "slot_2": 0.882,
+      "slot_3": 0.09
+    }
+  },
+  "priest": {
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.516,
+    "mean_resources_spent": {
+      "action_surge": 0.914,
+      "slot_1": 0.098,
+      "slot_2": 0.766
+    }
+  },
+  "mage_apprentice": {
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1.014,
+    "mean_party_hp": 171.348,
+    "mean_resources_spent": {
+      "action_surge": 1.18,
+      "slot_1": 0.032,
+      "slot_2": 0.958,
+      "slot_3": 0.148
+    }
+  },
+  "cultist_fanatic": {
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 171.038,
+    "mean_resources_spent": {
+      "action_surge": 1.016,
+      "slot_1": 0.12,
+      "slot_2": 0.892
+    }
+  },
+  "imp": {
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 171.984,
+    "mean_resources_spent": {
+      "action_surge": 0.402,
+      "slot_1": 0.57
+    }
+  },
+  "quasit": {
+    "runs": 500,
+    "seed": 1,
+    "wins": 500,
+    "draws": 0,
+    "win_rate": 1.0,
+    "mean_rounds": 1,
+    "mean_party_hp": 173.116,
+    "mean_resources_spent": {
+      "action_surge": 0.558,
+      "slot_1": 0.596
+    }
+  },
+  "stone_golem": {
+    "runs": 500,
+    "seed": 1,
+    "wins": 438,
+    "draws": 0,
+    "win_rate": 0.876,
+    "mean_rounds": 5.254,
+    "mean_party_hp": 92.448,
+    "mean_resources_spent": {
+      "action_surge": 2.0,
+      "second_wind": 0.294,
+      "slot_1": 4.65,
+      "slot_2": 0.098,
+      "slot_3": 1.358
+    }
+  },
+  "aboleth": {
+    "runs": 500,
+    "seed": 1,
+    "wins": 29,
+    "draws": 0,
+    "win_rate": 0.058,
+    "mean_rounds": 4.582,
+    "mean_party_hp": 5.49,
+    "mean_resources_spent": {
+      "action_surge": 1.4,
+      "second_wind": 0.58,
+      "slot_1": 1.982,
+      "slot_2": 0.008,
+      "slot_3": 0.604
+    }
+  },
+  "adult_red_dragon": {
+    "runs": 500,
+    "seed": 1,
+    "wins": 0,
+    "draws": 0,
+    "win_rate": 0.0,
+    "mean_rounds": 1.014,
+    "mean_party_hp": 0,
+    "mean_resources_spent": {
+      "action_surge": 0.306,
+      "second_wind": 0.09,
+      "slot_1": 0.036,
+      "slot_3": 0.144
+    }
+  }
+}

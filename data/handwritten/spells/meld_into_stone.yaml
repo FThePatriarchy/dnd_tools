@@ -1,0 +1,27 @@
+name: Meld into Stone
+source: XPHB
+level: 3
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: false
+ritual: true
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Stone volume, merging/exit, external perception, partial destruction (6d6 Force), complete destruction (50 Force),
+  expulsion and Prone require a targetable terrain object/geometry. No such stone object exists in a no-grid arena;
+  granting general invulnerability or removal would be false.

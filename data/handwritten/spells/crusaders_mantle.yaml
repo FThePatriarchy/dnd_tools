@@ -1,0 +1,64 @@
+name: Crusader's Mantle
+source: XPHB
+level: 3
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: aura
+  event: while_in_area
+  target:
+    select: area
+    shape: emanation
+    size_ft: 30
+    affects: ally
+    filter:
+    - creature
+    include_caster: true
+    origin: caster
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - status:
+      id: crusaders_mantle
+      data: {}
+  limit: null
+- id: main
+  event: on_attack_hit(attacker, defender)
+  target:
+    select: ref
+    ref: trigger.defender
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: radiant
+  limit: null
+  if: attacker.has_status_from(crusaders_mantle, caster) and attack.weapon
+scaling: null
+ends_on: []
+unsupported:
+- Emanation proximity, lighting and difficult terrain require positions/lighting; legal hit riders execute using
+  the no-grid range convention.

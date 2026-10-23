@@ -1,0 +1,55 @@
+name: Cordon of Arrows
+source: XPHB
+level: 2
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: four or more arrows or bolts
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_creature_enters_aura(target) or end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: sphere
+    size_ft: 30
+    affects: enemy
+    filter:
+    - creature
+    exclude: caster
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 2d4
+      bonus: 0
+      type: piercing
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+  max_uses: 4
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: main
+      uses_add: 2
+ends_on: []
+unsupported:
+- Ammunition inventory, planting and movement entry require positions; four projectiles plus upcast ammunition are
+  consumed even on a successful save. Default exempt group is the caster's allies.

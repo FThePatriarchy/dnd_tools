@@ -1,0 +1,292 @@
+name: Find Familiar
+source: XPHB
+level: 1
+school: conjuration
+casting_time: hour
+reaction_trigger: null
+range:
+  type: point
+  feet: 10
+components:
+  v: true
+  s: true
+  m: burning incense worth 10+ GP, which the spell consumes
+  m_consumed: true
+  m_cost_gp: 10.0
+duration:
+  type: instant
+concentration: false
+ritual: true
+choices:
+- id: form
+  options:
+  - bat
+  - cat
+  - frog
+  - hawk
+  - lizard
+  - octopus
+  - owl
+  - rat
+  - raven
+  - spider
+  - weasel
+  when: on_cast
+- id: type
+  options:
+  - celestial
+  - fey
+  - fiend
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        bat:
+          name: Bat
+          source: XMM
+          max_hp: 1
+          ac: 12
+          abilities:
+            str: 2
+            dex: 15
+            con: 8
+            int: 2
+            wis: 12
+            cha: 4
+          speed: 5
+          movement_modes:
+            walk: 5
+            fly: 30
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+        cat:
+          name: Cat
+          source: XMM
+          max_hp: 2
+          ac: 12
+          abilities:
+            str: 3
+            dex: 15
+            con: 10
+            int: 3
+            wis: 12
+            cha: 7
+          speed: 40
+          movement_modes:
+            walk: 40
+            climb: 40
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+        frog:
+          name: Frog
+          source: XMM
+          max_hp: 1
+          ac: 11
+          abilities:
+            str: 1
+            dex: 13
+            con: 8
+            int: 1
+            wis: 8
+            cha: 3
+          speed: 20
+          movement_modes:
+            walk: 20
+            swim: 20
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+        hawk:
+          name: Hawk
+          source: XMM
+          max_hp: 1
+          ac: 13
+          abilities:
+            str: 5
+            dex: 16
+            con: 8
+            int: 2
+            wis: 14
+            cha: 6
+          speed: 10
+          movement_modes:
+            walk: 10
+            fly: 60
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+        lizard:
+          name: Lizard
+          source: XMM
+          max_hp: 2
+          ac: 10
+          abilities:
+            str: 2
+            dex: 11
+            con: 10
+            int: 1
+            wis: 8
+            cha: 3
+          speed: 20
+          movement_modes:
+            walk: 20
+            climb: 20
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+        octopus:
+          name: Octopus
+          source: XMM
+          max_hp: 3
+          ac: 12
+          abilities:
+            str: 4
+            dex: 15
+            con: 11
+            int: 3
+            wis: 10
+            cha: 4
+          speed: 5
+          movement_modes:
+            walk: 5
+            swim: 30
+          creature_type: beast
+          size: S
+          proficiency_bonus: 2
+          attacks: []
+        owl:
+          name: Owl
+          source: XMM
+          max_hp: 1
+          ac: 11
+          abilities:
+            str: 3
+            dex: 13
+            con: 8
+            int: 2
+            wis: 12
+            cha: 7
+          speed: 5
+          movement_modes:
+            walk: 5
+            fly: 60
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+        rat:
+          name: Rat
+          source: XMM
+          max_hp: 1
+          ac: 10
+          abilities:
+            str: 2
+            dex: 11
+            con: 9
+            int: 2
+            wis: 10
+            cha: 4
+          speed: 20
+          movement_modes:
+            walk: 20
+            climb: 20
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+        raven:
+          name: Raven
+          source: XMM
+          max_hp: 2
+          ac: 12
+          abilities:
+            str: 2
+            dex: 14
+            con: 10
+            int: 5
+            wis: 13
+            cha: 6
+          speed: 10
+          movement_modes:
+            walk: 10
+            fly: 50
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+        spider:
+          name: Spider
+          source: XMM
+          max_hp: 1
+          ac: 12
+          abilities:
+            str: 2
+            dex: 14
+            con: 8
+            int: 1
+            wis: 10
+            cha: 2
+          speed: 20
+          movement_modes:
+            walk: 20
+            climb: 20
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+        weasel:
+          name: Weasel
+          source: XMM
+          max_hp: 1
+          ac: 13
+          abilities:
+            str: 3
+            dex: 16
+            con: 8
+            int: 2
+            wis: 12
+            cha: 3
+          speed: 30
+          movement_modes:
+            walk: 30
+            climb: 30
+          creature_type: beast
+          size: T
+          proficiency_bonus: 2
+          attacks: []
+      base_slot: 1
+      per_slot:
+        ac: 0
+        max_hp: 0
+        damage_bonus: 0
+      fixed_attacks: 1
+      persistent: true
+      familiar: true
+      creature_type_choice: $type
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Per task convention familiar acts after caster rather than its printed independent initiative. It cannot attack;
+  Help executes. Touch-spell delivery range/reaction, remote senses, pocket-dimension placement, carried inventory
+  and other CR-0 Beast forms need additional explicit choices/environment.
+casting_time_n: 1
+recast_ends_previous: true

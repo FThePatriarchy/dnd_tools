@@ -1117,3 +1117,492 @@ Gore consequences respect target size. Full-suite verification:
 C:/Users/xgxxg/anaconda3/python -m pytest tests -q
 501 passed in 242.38s (0:04:02)
 ```
+
+## Step 3: spells
+
+### Final inventory
+
+**239 required / 239 loaded / 0 remaining files**: 219 new translations and the
+20 byte-identical human-reviewed goldens. All 391 XPHB spells are classified:
+**188 combat / 113 partial / 90 out_of_scope**. The 17 mandatory monster
+references all load. The source is the 2024 XPHB spell text; embedded creature
+statistics use its referenced XPHB blocks or explicitly named XMM creatures,
+not legacy spell rules. Conjure Animals is the 2024 intangible damaging pack,
+not a fabricated set of animal stat blocks.
+
+One combat spell is deliberately **load-only: Revivify**. This is an explicit
+impossibility in the current knockout-only model, not an omitted file disguised
+as a translation: no Dead state, death timestamp, old-age cause or missing-body
+state exists. Healing an unconscious 0-HP creature would violate its source.
+Spare the Dying records Stable, but there is likewise no death-save clock.
+Purely spatial partials have explicit unsupported entries and no fake buffs,
+removal or guaranteed environmental damage.
+
+| Level | Combat | Partial | Out of scope | Required | Loaded | Remaining |
+|---|---:|---:|---:|---:|---:|---:|
+| 0 | 20 | 6 | 8 | 29 | 29 | 0 |
+| 1 | 34 | 17 | 13 | 53 | 53 | 0 |
+| 2 | 29 | 18 | 16 | 47 | 47 | 0 |
+| 3 | 24 | 20 | 8 | 44 | 44 | 0 |
+| 4 | 20 | 13 | 8 | 33 | 33 | 0 |
+| 5 | 18 | 15 | 15 | 33 | 33 | 0 |
+| 6 | 16 | 10 | 8 | 0 | 0 | 0 |
+| 7 | 9 | 6 | 6 | 0 | 0 | 0 |
+| 8 | 7 | 6 | 5 | 0 | 0 | 0 |
+| 9 | 11 | 2 | 3 | 0 | 0 | 0 |
+
+Required includes five mandatory utility exceptions. Levels 6?9 are classified,
+not translated. No scope entry was downgraded to hide unfinished implementation.
+
+### Resume repairs, batching and format
+
+The interrupted range investigation is resolved: all self-centered cones,
+lines, cubes, spheres and emanations use `range: {type: self}` and carry their
+shape/size on the target, matching unchanged Spirit Guardians. This includes
+Burning Hands, Thunderwave, Lightning Bolt, Arms of Hadar, Word of Radiance,
+Thunderclap, Color Spray, Conjure Barrage, Aura of Vitality and Detect Magic.
+The independent gate now checks range **type**, not just whether its number
+appears somewhere in the text; it also checks duration units and casting time.
+
+The resumed inventory progressed through focused passing checkpoints of
+118, 139, 159, 179, 199, 217, 226, 233 and 239 files. The last two small batches
+separated preparation wards from creature forms to keep failures local.
+Existing golden files were never rewritten. FORMAT's original text and checkout CRLF prefix are
+preserved; additions remain in its append-only `## Step 3 additions` section.
+
+New shared mechanics (with their requiring spells listed in FORMAT) cover:
+
+- Long uninterrupted `prepare` casting, target-all and recipient choices;
+  source-typed defenses, restoration, healing maximization and stabilization.
+- Delayed/flat damage, leeching and damage budgets; recipient commands;
+  weapon-only riders, save/concentration modifiers and reaction retaliation.
+- Charm ending rules, control, source-typed wards, Sanctuary, Confusion/Crown
+  behavior, Sleep progression, counted Contagion saves and resisted removal.
+- Aid HP maxima, Hit Dice, Goodberry stock, Death Ward, Warding Bond, Resistance,
+  Circle of Power, Mirror Image and Blink. Gaseous Form supports target-local
+  Magic-action dismissal and zero-HP ending.
+- Weapon-bound attacks/enchantments, post-hit smites, Lightning Arrow packet
+  replacement, independent save-based splash (never critical-doubled), exact
+  Staggering Smite expiry, and a non-upcasting Divine Smite fiend/undead bonus.
+- Triggered Explosive Rune preparation, slot-dependent curse durations,
+  distinct duplicate-die Chromatic Orb leaps, targetable Bigby's Hand, and
+  Polymorph's retained HP/type, form temporary HP and stat restoration.
+- All required summon spells embed targetable combatant stat blocks. They act
+  immediately after the caster per the task convention. AC/HP/damage/attack
+  counts scale from the printed blocks. Fixed XMM creatures retain their own
+  attack bonus/PB. Animate Dead/Objects have real multi-creature counts and
+  command costs; persistent bodies, familiar Help, steed flight, construct
+  reactions, spirit auras/actions, Dragon breath and shared resistance execute.
+
+### Automated validation and mutation results
+
+`engine/step3_validation.json` is the reproducible per-spell audit. The audit
+CLI now exits 0; a regression asserts all 239 required names are installed.
+
+| Check | Final result |
+|---|---:|
+| Strictly loaded spells | 239 |
+| New spell files numerically audited | 219 |
+| New-spell numeric fields | 2015 |
+| Numeric mutations rejected | 2276 / 2276 |
+| Survivors / justified mutation allow-list | 0 / 0 |
+
+Every loaded spell passes source damage-type, condition, saving-throw and
+spell-attack tag coverage: a tag is executable or explicitly accounted for in
+`unsupported`. Tags are not substituted for the printed mechanics. In particular,
+Animated Object's printed Force Slam supersedes obsolete physical-damage tags.
+Numeric evidence is role-specific: base dice versus later damage, initial versus
+recurring phases, slot tiers, area dimensions, range, duration, components and
+referenced stat-block fields. Zero bonuses and unused fixed-stat scaling are
+checked format identities, not unchecked arbitrary numbers. Every numeric/dice
+component mutation is rejected; no surviving mutant is excused.
+
+- **457 full-cast arena configurations**, including max slot 5 and cantrip
+  character levels 1/5/11/17, assert every top-level effect block fires. Chosen
+  control/rider states, exact expiry and exceptional mechanics have focused tests.
+- **88 embedded-form/slot configurations** exercise real combatants, their
+  actions and passive/turn-triggered blocks. Familiars cannot attack and Help;
+  summons remain targetable and obey control/lifetime rules.
+- **302 direct-damage phase configurations** compare seeded per-target means
+  against independent XPHB dice arithmetic, hit/critical and fail/success branches.
+  Delayed phases and conditional modes are isolated from unrelated same-type
+  damage. Full casting/action economy is tested separately, not replaced by
+  isolated-block tests.
+- The direct check uses **581,195 seeded effect resolutions**. Tolerance remains
+  exactly `max(0.18, 2.5% of expectation)`. Sample sizes use an a-priori Bernstein
+  bound (failure bound <= .001 when reducing N), capped at the historical 4,000;
+  the separately modeled capped exploding-die process retains 4,000. No
+  tolerance or expected value was tuned to make a failing observation pass.
+- All **66 attacking summon form/slot configurations**, plus the original
+  **20 referenced-block checks**, use exact balanced strata: all 20 natural
+  attack results, each paired with low/high damage faces. This checks actual
+  resolution and critical dice with exact linear means, without spending
+  80,000 random trials testing already-covered uniform dice. Twelve weapon-spell
+  configurations use the same method; their tolerance is `1e-10`. Additional
+  source-exact checks cover Bestow Curse damage and Alter Self natural weapons.
+
+Performance improvements also cache read-only source evidence/inventory and
+share deterministic scaled specs. The hot condition path avoids rebuilding
+irrelevant defense/ward lists when there are no effects; unenchanted weapons
+are not unnecessarily deep-copied. No baseline trial count, assertion or old
+statistical tolerance was loosened.
+
+### Monster wiring and reproducibility
+
+All 70 XMM sheets pass `engine.monster_import --check`. All newly available
+`unsupported_spells` were moved into source-owned spell lists, preserving uses,
+slot levels, costs, component exemptions, recharges and legendary resources.
+No loaded spell remains in an unsupported-spell list. Wiring is idempotent;
+monster HP, AC, abilities and ordinary attacks were not retuned.
+
+The XMM numeric scan rejects **2,052 / 2,052** mutations of **1,760** fields,
+with no exceptions (historically 2,014 / 1,722). The added fields are actual
+spell levels/uses. The only pre-existing reproducibility changes remain the
+previously documented enemy Command wiring, not the additional spell files:
+
+| Standard day, 1,000 seed-1 runs | Before wiring | After wiring | Command-disabled control |
+|---|---:|---:|---:|
+| Nova survived | 128 | 127 | 128 |
+| Conservative survived | 163 | 162 | 163 |
+
+Nova cleared counts remain `{2:8, 3:97, 5:449, 6:319, 7:127}`; conservative
+counts remain `{1:1, 2:47, 3:203, 4:1, 5:397, 6:189, 7:162}`. The isolated
+control and historical distributions are in `engine/step3_day_baselines.json`.
+No strategy assertion was relaxed. The catalog-count assertion necessarily
+changes to 239; the 20 golden byte hashes remain fixed.
+
+#### CR sanity: before versus after wiring
+
+Fighter 5 / Fighter 5 / Cleric 5 / Cleric 5 versus one monster, **500 runs,
+seed 1**. Final measurements reproduce the earlier wired-subset rows exactly:
+additional files do not retune monsters whose spell lists were already complete.
+Artifacts: `engine/step3_cr_before.json`, `engine/step3_cr_after.json`.
+
+| Monster | Printed CR | Party wins before -> after | Mean rounds before -> after | Mean party HP before -> after |
+|---|---:|---:|---:|---:|
+| Mage | 6 | 470/500 -> 461/500 | 1.766 -> 1.808 | 95.370 -> 88.472 |
+| Priest | 2 | 500/500 -> 500/500 | 1.000 -> 1.000 | 173.516 -> 173.516 |
+| Mage Apprentice | 2 | 500/500 -> 500/500 | 1.014 -> 1.022 | 171.348 -> 165.094 |
+| Cultist Fanatic | 2 | 500/500 -> 500/500 | 1.000 -> 1.000 | 171.038 -> 171.038 |
+| Imp | 1 | 500/500 -> 500/500 | 1.000 -> 1.000 | 171.984 -> 171.984 |
+| Quasit | 1 | 500/500 -> 500/500 | 1.000 -> 1.000 | 173.116 -> 173.116 |
+| Stone Golem | 10 | 438/500 -> 308/500 | 5.254 -> 6.344 | 92.448 -> 63.204 |
+| Aboleth | 10 | 29/500 -> 29/500 | 4.582 -> 4.582 | 5.490 -> 5.490 |
+| Adult Red Dragon | 17 | 0/500 -> 0/500 | 1.014 -> 1.022 | 0.000 -> 0.000 |
+| Druid | N/A | Not present in the handwritten catalog | N/A | N/A |
+
+Mage now has its real Cone of Cold; Apprentice has Ice Knife/Thunderwave;
+Stone Golem has recharging bonus-action Slow; Adult Red Dragon has legendary
+Commanding Presence. Unchanged rows are measured, not assumed unchanged.
+These are policy/build sanity measurements, not reassigned challenge ratings.
+
+### Least-confident translations and explicit model boundaries
+
+- **Revivify:** load-only impossibility explained above. Stable and Death Ward's
+  ordinary damage interception are implemented; the arena has no nondamaging
+  instant-death event or death-save clock.
+- **Polymorph / inventory-dependent weapons:** three reviewed Beast forms are
+  embedded (Wolf, Brown Bear, Riding Horse); other Beast sheets require an
+  explicit reviewed form. Weapon spells bind the selected/default first eligible
+  weapon, not every attack. Exact item eligibility/transfers, mixed-size Animate
+  Objects selections and corpse provenance require external inventory choices.
+- **Free-form commands/illusions:** Suggestion implements the explicitly allowed
+  cease-fighting suggestion; arbitrary safe instructions, Phantasmal Force content,
+  and hostile Planar Binding interpretations need a DM. No prose is executed as
+  mechanics. Geometry/senses-dependent Fear movement/line-of-sight saves,
+  Compulsion movement saves and illusion-only effects are unsupported explicitly.
+- **Glyph of Warding:** Explosive Rune waits for an external trigger and is
+  one-shot. Spell Glyph storage needs prepared-spell/object/trigger state; no
+  unearned stored slot or instant long casting is fabricated.
+- **Hallow, Magic Circle, Meld into Stone, barriers and other spatial-only
+  partials:** wards/eligible nonspatial effects execute where declared; terrain,
+  overlap, reversed entry boundaries, possession, stone destruction and destination
+  mishaps require missing object/grid/planar state. Meld does not grant general
+  invulnerability or guaranteed Force damage.
+- **Summons:** exact reach, aura membership, mounted movement, shared senses,
+  Life Bond proximity and teleport placement use the no-grid boundary. Familiar
+  initiative deliberately follows the task's caster-initiative convention rather
+  than its printed independent roll. Phantom Steed's dismount fade is spatial.
+  Summon Elemental/Aberration generated versions conflict with their printed
+  parents; the parent blocks control statistics.
+- **Source discrepancies:** Ice Storm uses printed base 2d10 and increment 1d10,
+  not the conflicting base in its higher-slot tag; Animated Object uses Force.
+  Source tags remain cross-checked, but cannot override the actual paragraph.
+
+### Verification and runtime
+
+Final stable-tree full-suite verification (captured in `engine/step3_pytest.log`):
+
+```text
+C:/Users/xgxxg/anaconda3/python -m pytest tests -q
+1887 passed in 418.92s (0:06:58)
+```
+
+The historical 98-file subset took **723.86s (12:03), 1,153 tests**. The final
+239-file catalog takes **418.92s (06:58), 1,887 tests**: **42.1% less wall time**
+with 734 additional cases. No tolerance or pre-existing assertion was loosened.
+Earlier completed full runs passed 1,885 cases in 496.66s and 1,887 in 420.37s;
+the final run also includes the corrected flat-retaliation Bernoulli oracle.
+Superseded interrupted development runs are not represented as passing gates.
+
+Final separate checks:
+
+```text
+python -m engine.step3_report
+239/239 required/catalog spells loaded; 0 missing; 2276 numeric mutants; 0 failures
+
+python -m engine.monster_import --check
+70 XMM sheets checked: no source drift
+```
+
+Golden SHA-256 checks preserve all 20 files byte-for-byte. FORMAT retains its
+original text and checkout CRLF prefix; only the Step 3 section was appended.
+A semantic YAML diff confirms the eight changed monster sheets contain only
+spell wiring/resource/omission-note changes. Wiring is idempotent and no loaded
+spell remains in `unsupported_spells`. `git diff --check` reports no whitespace
+errors. No pip, network access or commits were used.
+
+## Step 3 fix round
+
+This section supersedes the Step 3 completion counts and the accepted hostile
+area friendly-fire boundary above. The original twenty golden spell files and
+all pre-existing FORMAT text remain unchanged. No network, pip or commits.
+
+### Review corrections and regression/mutation gates
+
+Each numbered test below is in `tests/test_engine_step3_fixes.py`. Its exact
+behavioral oracle runs normally, then runs against an in-memory regression;
+`pytest.raises(AssertionError)` must catch that oracle failing. Method mutants
+are compiled from inspected source in an isolated namespace, and monkeypatch
+contexts restore all methods/data. No production or fixture file is mutated by
+these checks.
+
+| Finding | Root correction | Regression (`test_step3_` prefix omitted) / killed regression |
+|---|---|---|
+| 1 | Corrected seven scope decisions/reasons; added all six newly required level zero through five translations. Modify Memory grants fighting-target save Advantage, Charmed and charm-dependent Incapacitated, and ends on damage/another targeting spell. Magic Aura Mask changes magical type checks and wards without changing actual type. Rain can douse burning creatures. | `fix1_scope_additions_and_combat_mechanics`: old exclusion, missing translation and automatic fighting-target success. |
+| 2 | Successful magical half-damage-save negation is separate from Evasion's failed-save reduction. | `fix2_circle_protects_only_successful_magical_saves`: exact magic fail/success damage eight/zero, mundane fail/success two/one; old conflation fails. |
+| 3 | Aid's applied HP bonus is reconciled from active, strongest overlapping effects, not mutated per cast. Changes adjust both maximum and current HP, including duration expiry, and update zero-HP unconscious state. | `fix3_aid_overlap_duration_and_rescue`: duplicate/stronger/reappearing Aid, injured expiry and zero-HP rescue; three independent stacking/eligibility/expiry mutants fail. |
+| 4 | Persistent riders declare a source-specific `requires_condition`; active-effect selection rechecks actual condition immunity/suppression rather than a cast-time predicate. | `fix4_control_depends_on_its_own_active_charm`: immune Suggestion/Crown/Pattern, Calm suppression/resumption, charm removal and unrelated charm; deleting the dependency fails. |
+| 5 | Polymorph snapshots and replaces combat statistics with form/default statistics, including saves, extra attacks, vulnerabilities, features, resources and routines; reversion restores the snapshot. Wolf/Bear use the existing reviewed Step 2 traits/riders/Multiattack. | `fix5_polymorph_replaces_statistics_and_executes_beast_traits`: original-stat leakage, removed Pack Tactics, removed Multiattack and removed Wolf Prone rider each fail. |
+| 6 | Ongoing spells track affected recipients explicitly, including ownership of self spells with no stored effects. Dispel uses these recipients, current area memberships and summoned bodies, not guessed self-effect records. | `fix6_dispel_tracks_ongoing_self_spell_ownership`: Aura of Vitality ends automatically at level three, unrelated targets do not end it; removing owner tracking or using effect records fails. |
+| 7 | Numeric enumeration includes every numeric scalar and every string containing a digit: CR/fractions, numeric strings, embedded dice, expressions, source references, materials and annotation prose. CR is checked directly against local XMM. Source references/expressions/materials have independent semantic expectations; numeric omission notes have clause-local source/model evidence. | `fix7_all_numeric_leaves_and_fraction_source_values`: an independent test leaf walk checks every loaded spell and synthetic mixed strings; an independent production stack walk rejects coverage gaps. Dropping CR from the iterator or trusting the translated CR fails. |
+| 8 | Mirror interception performs attack-activity cleanup before returning. | `fix8_mirror_interception_ends_invisibility`: a duplicate intercepts exactly once and the invisible attacker's spell ends; deleting cleanup fails. |
+| 9 | Removed the vacuous casting check from the HP/reversion test. The new test begins with an eligible caster on its own turn and isolates the anatomy gate from replaced spell statistics by supplying all other casting prerequisites. | `fix9_polymorph_casting_gate_is_not_vacuous`: before/after casting is legal; transformed casting neither starts nor spends resources; disabling `Combat.turn_rules` fails. |
+| 10 | Default freely placed hostile areas count only eligible enemies, capped by the size heuristic. They do not fill unused capacity with allies/the caster. A bound origin or a self-origin emanation still follows its declared geometry/target exclusions. | `fix10_default_hostile_area_never_fills_with_allies`: real Mage Fireballs versus one/two PCs, allied spill-over with custom count/indices, and emanation include/exclude; restoring the fill rule fails. |
+
+The additional `test_step3_fix5_original_passive_traits_suspend_and_restore`
+checks that original passive trait subscriptions stop in Beast form and resume
+on reversion; removing that dispatch gate is also killed. Brown Bear's missing
+Prone rider is mutated separately. The charm oracle also verifies that Calm
+suppression restores the ability to attack the former charmer. Mask's actual
+creature-type exclusion is checked even when a previous mask is active.
+
+### Corrected inventory and boundaries
+
+Across all 391 local XPHB spells: **190 combat, 118 partial, 83 out of scope**.
+Modify Memory and Nystul's Magic Aura are combat; Create or Destroy Water,
+Speak with Plants, Stone Shape, Arcane Lock and Planar Ally are partial.
+Planar Ally is level six, so only its classification/reason changes here.
+
+| Spell level | Required / loaded |
+|---|---:|
+| 0 | 29 / 29 |
+| 1 | 54 / 54 |
+| 2 | 49 / 49 |
+| 3 | 45 / 45 |
+| 4 | 34 / 34 |
+| 5 | 34 / 34 |
+| Total | **245 / 245** |
+
+There are 225 non-golden translations. The independent audit now visits
+**2,082 numeric leaves**, generates **2,359 mutants**, rejects **2,359**, and
+reports zero survivors, zero missing spells and zero source failures. Numeric
+prose is visited too; it is not silently exempted. Every fraction component and
+every embedded numeric token receives its own increment mutation. Coverage is
+checked independently of both `numeric_fields()` and `mutants()`.
+
+New partial boundaries are explicit: fog-volume destruction does not dispel a
+fog-producing spell; container quantities and object flames need environment
+state. Speak with Plants' terrain changes need actual plants and a movement
+map. Stone Shape and Arcane Lock need stone/door/access geometry; their loading
+does not grant blanket incapacitation or invulnerability. Aura False Aura,
+daily permanence, and Modify Memory's narrated/older memories need object,
+calendar or social adjudication. These limits are not used to exclude the
+spells from completeness.
+
+**Default hostile-area placement:** with no grid, the caster chooses placement.
+For a freely placed hostile area the count is `min(size heuristic, eligible
+enemies)`; no spare count is filled with friendlies. A self-origin emanation
+still obeys `include_caster` and the spell's own exclusions; a known bound origin
+remains geometrically required. A caller-supplied `area(shape, size, eligible)`
+can explicitly model spill-over by returning a count or indices into the full
+eligible list. No callback API or statistical tolerance was loosened.
+
+### Re-run CR rows
+
+Same Fighter 5 / Fighter 5 / Cleric 5 / Cleric 5 party, **500 runs, seed one**.
+`engine/step3_fix_cr.json` records every summary/resource field. The previous
+post-wiring artifact is preserved in `engine/step3_cr_after.json` for comparison.
+
+| Monster (printed CR) | Previous party wins -> fixed | Previous draws -> fixed | Mean rounds previous -> fixed | Mean party HP previous -> fixed |
+|---|---:|---:|---:|---:|
+| Mage (6) | 461/500 -> 456/500 | 24 -> 0 | 1.808 -> 1.858 | 88.472 -> 88.718 |
+| Priest (2) | 500/500 -> 500/500 | 0 -> 0 | 1.000 -> 1.000 | 173.516 -> 173.516 |
+| Stone Golem (10) | 308/500 -> 308/500 | 0 -> 0 | 6.344 -> 6.344 | 63.204 -> 63.204 |
+
+The Mage's old self-Fireball draws disappear; preventing suicide is not an
+assumption that the party's win rate must increase. Priest/Golem were measured,
+not assumed unchanged. These remain build sanity checks, not CR reassignment.
+
+### Final stable-tree verification
+
+```text
+C:/Users/xgxxg/anaconda3/python -m pytest tests -q
+1916 passed in 475.38s (0:07:55)
+
+C:/Users/xgxxg/anaconda3/python -m engine.step3_report
+245/245 required/catalog spells loaded; 0 missing; 2359 numeric mutants; 0 failures
+
+C:/Users/xgxxg/anaconda3/python -m engine.monster_import --check
+70 XMM sheets checked: no source drift
+```
+
+Full-suite output is captured in `engine/step3_fix_pytest.log`. It includes all
+eleven numbered fix-round regression tests and their in-memory mutation kills.
+The three CR rows were repeated on the final code and every summary/resource
+field was asserted equal to `engine/step3_fix_cr.json`. All twenty original
+golden SHA-256 hashes match; none has a Git diff. The checkout-filtered HEAD
+FORMAT prefix is preserved, with only appended sections. `git diff --check`
+passes. Existing statistical tolerances are unchanged. Earlier development
+runs, including a run that overlapped edits, are not claimed as passing gates.
+
+## Step 3 fix round 2
+
+All A-F findings are fixed through shared state/resolution mechanisms.
+`tests/test_engine_step3_fix2.py` contains six `test_step3_fix2_A_...` through
+`test_step3_fix2_F_...` regressions with exact assertions and **19 rejected
+in-memory regression variants** (A: 3, B: 1, C: 2, D: 2, E: 2, F: 9).
+Mutation checks compile or monkeypatch methods/data in memory, never on disk.
+
+### Mechanisms and exact regression coverage
+
+- **A:** one original-stat snapshot plus an ordered stack of transformations.
+  Reconciliation handles starts, suppression, resumption and either ending order.
+  Eligibility uses original CR/level; each form retains its remaining temporary
+  HP. Tests cover Wolf temporary HP 11 -> 8, Horse speed 60/temporary HP 13,
+  original speed 30/three attacks, trait restoration, overflow damage, and spell
+  and concentration ending on depletion. Ending a suppressed form changes none
+  of the effective form's statistics.
+- **B:** effective control/charm effects derive `team` over retained base
+  allegiance; no one-way team mutation. Both Dominate spells cover suppression,
+  resumption, actual attack destinations, removal and foreign-source isolation.
+  Calm Emotions is exercised as a real spell.
+- **C:** `max_hp` is `base_max_hp + spell_hp_bonus`. Public maximum reductions
+  update the base; Greater Restoration restores only the base. Recomputed active
+  bonuses adjust current HP once. Exact Aid/drain/restoration/expiry maxima are
+  **105 -> 95 -> 105 -> 100**. Tests also cover restoration after Aid ends and
+  stronger-bonus suppression/resumption without changing the base.
+- **D:** generic primitive `participants` metadata supplements recipient
+  registration. Warding Bond explicitly registers both endpoints. Dispel on
+  either ends it; an unrelated creature does not. Tests assert 5/5 shared damage
+  before ending, 0/10 afterward, and complete source/participant cleanup.
+- **E:** skipping a conditional save executes its explicit `apply`, or otherwise
+  its application (`on_fail`) effects without rolling. Both Enlarge/Reduce modes
+  cover willing caster, willing other recipient, unwilling failure/success,
+  exact sizes, Strength roll flags, weapon damage **6/4/5**, and restoration.
+  Dispel Evil and Good's distinct no-save application branch is also executed.
+- **F:** persistent `requires_condition` checks an effective condition from the
+  **same spell instance**, not merely the same caster. The shared query gates
+  persistent effect visibility, recurring instantaneous applications and complete
+  block save/resolution paths. Surviving riders resume, including ones registered
+  while dormant. Temporary action prohibitions mask unspent budgets instead of
+  spending them; cure/suppression restores unspent actions, never spent actions.
+  Tests exercise real Feign Death suppression, removal/resumption, foreign-source
+  poison/restraint/grapples, recurring damage, and action-budget restoration.
+
+### E audit: all 245 spells
+
+Exactly two blocks use `save.if`:
+
+| Spell/block | Skipped-save behavior |
+|---|---|
+| Enlarge/Reduce / main | Empty `apply`: execute application effects from `on_fail`, without a save. |
+| Dispel Evil and Good / function | Preserve explicit Break Enchantment `apply`; do not substitute dismissal effects. |
+
+Also inventoried the other conditional save modifiers: two `auto_fail_if`
+(Blight, Otiluke's Resilient Sphere), two `auto_success_if` (Crown of Madness,
+Sleep), six `advantage_if`, and one `disadvantage_if` (Shatter). They already
+route through failure/success branches rather than the skipped-save application
+path. No other E-pattern defect was found. The regression independently asserts
+the two-block skipped-save inventory and executes both behaviors.
+
+### F audit: all 245 spells, including embedded forms
+
+Reviewed local XPHB condition passages (70 of these spells contain condition
+markup), spell declarations and nested summon/transform forms. The complete
+persistent rider inventory is now **10 declarations across nine spells**:
+
+| Spell | Dependent rider / condition | Outcome |
+|---|---|---|
+| Contagion | Chosen-ability save disadvantage / Poisoned | Converted application-only predicate. |
+| Stinking Cloud | Action/Bonus Action prohibition / Poisoned | Converted application-only predicate. |
+| Ensnaring Strike | Recurring vine damage / Restrained | Added missing recurring dependency. |
+| Bigby's Hand | Crush resolution / Grappled | Added block dependency; selection checks exact instance too. |
+| Conjure Elemental | Hold save/damage / Restrained | Converted caster predicate to block dependency; catch checks exact instance. |
+| Suggestion | Pacification / Charmed | Retained and audited existing dependency. |
+| Crown of Madness | Forced melee / Charmed | Retained and audited existing dependency. |
+| Hypnotic Pattern | Incapacitated and speed 0 / Charmed | Retained and audited both dependencies. |
+| Modify Memory | Incapacitated / Charmed | Retained and audited existing dependency. |
+
+Dominate Beast/Person control is intrinsic to its Charmed effect and continuously
+derived by B, not a separately latched rider. Native condition rules remain live
+condition queries. Fear/Compulsion's unimplemented spatial commands remain their
+existing explicit boundaries, not fabricated riders.
+
+A recursive declaration audit asserts this full inventory and all remaining
+`has_condition...` predicates. Bigby's selection and Elemental's catch reference
+`spell`, not `caster`. The only other predicate is Summon Undead's Putrid Spirit
+paralysis **application** prerequisite: it must not become an ongoing requirement
+that paralysis end when poison ends. Independent duration/area effects such as
+Feign Death's defenses, Haste lethargy's speed and Silence/Jallarzi restrictions
+are not riders of their adjacent conditions. No other persistent condition-rider
+defects were found.
+
+All six edited YAML effect lists match their authoring recipes. The isolated
+Ensnaring Strike damage-mean fixture now supplies its own source's Restrained
+condition, as the existing Bigby/Elemental fixtures already do. No expected
+damage or statistical tolerance was loosened. The old Polymorph mutation check
+follows the moved stat-copy loop while retaining its exact behavioral assertions.
+
+### Verification gates
+
+Each fix received a complete passing suite before the next fix's code changed.
+Outputs: `engine/step3_fix2_{A..F}_pytest.log`. Temporary directories were placed
+inside the workspace using `--basetemp=.pytest_tmp_fix2_X`.
+
+| Gate | Full suite |
+|---|---|
+| A | 1917 passed in 502.49s |
+| B | 1918 passed in 531.11s |
+| C | 1919 passed in 526.60s |
+| D | 1920 passed in 603.66s |
+| E | 1921 passed in 530.52s |
+| F | 1922 passed in 577.03s |
+
+```text
+C:/Users/xgxxg/anaconda3/python -m pytest tests -q --basetemp=.pytest_tmp_fix2_F
+1922 passed in 577.03s (0:09:37)
+
+C:/Users/xgxxg/anaconda3/python -m engine.step3_report
+245/245 required/catalog spells loaded; 0 missing; 2359 numeric mutants; 0 failures
+
+C:/Users/xgxxg/anaconda3/python -m engine.monster_import --check
+70 XMM sheets checked: no source drift
+```
+
+The final targeted regression/completion set also passed: 203 tests. The full
+suite verifies all twenty golden SHA-256 hashes. No golden spell was edited.
+FORMAT's pre-round byte prefix was asserted intact when appending contract notes.
+Existing workspace changes were preserved; no pip, network, commits or tolerance
+changes were used. CR simulations were not rerun: preceding CR artifacts/results
+are preserved and are not represented as new measurements.

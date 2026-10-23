@@ -1,0 +1,48 @@
+name: Otiluke's Resilient Sphere
+source: XPHB
+level: 4
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: a glass sphere
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+    max_size: L
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+    auto_fail_if: target.willing
+  on_hit: []
+  on_fail:
+  - status:
+      id: isolated
+      data: {}
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Sphere rolling, object pickup and Disintegrate targeting the sphere need positions/objects. Cross-boundary targeting
+  and damage are blocked, but enclosed creatures may act on themselves; they are not removed/incapacitated.

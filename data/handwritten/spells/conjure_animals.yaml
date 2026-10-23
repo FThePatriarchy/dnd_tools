@@ -1,0 +1,55 @@
+name: Conjure Animals
+source: XPHB
+level: 3
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: sphere
+    size_ft: 10
+    affects: chosen
+    filter:
+    - creature
+    - visible
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 3d10
+      bonus: 0
+      type: slashing
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+scaling:
+  upcast:
+    per_slot_above: 3
+    changes:
+    - block: main
+      dice_add: 1d10
+ends_on: []
+unsupported:
+- Intangible pack placement/movement and conditional Strength-save advantage near the pack need a grid; end-turn
+  damage executes. This is not a creature summon in XPHB.

@@ -1,0 +1,101 @@
+name: Hunger of Hadar
+source: XPHB
+level: 3
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 150
+components:
+  v: true
+  s: true
+  m: a pickled tentacle
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: upgrade
+  options:
+  - cold
+  - acid
+  when: on_cast
+effects:
+- id: dark
+  event: while_in_area
+  target:
+    select: area
+    shape: sphere
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - apply_condition:
+      condition: blinded
+  limit: null
+- id: cold
+  event: start_of_turn(target)
+  target:
+    select: area
+    shape: sphere
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: cold
+  limit: null
+- id: acid
+  event: end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: sphere
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: acid
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 3
+    changes:
+    - block: cold
+      dice_add: 1d6
+      if: $upgrade == cold
+    - block: acid
+      dice_add: 1d6
+      if: $upgrade == acid
+ends_on: []
+unsupported:
+- Absolute Darkness, sounds, difficult terrain and fully-within membership require sensory/position adjudication;
+  Blindness and correctly timed Cold/Acid damage execute.

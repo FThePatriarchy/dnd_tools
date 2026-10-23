@@ -1,0 +1,65 @@
+name: Heroism
+source: XPHB
+level: 1
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - defense:
+      condition_immunity:
+      - frightened
+  limit: null
+- id: bravery
+  event: start_of_turn(target)
+  target:
+    select: ref
+    ref: main
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - temp_hp:
+      amount: spell_mod
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: main
+      target_n_add: 1
+ends_on: []
+unsupported: []

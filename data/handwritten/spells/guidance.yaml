@@ -1,0 +1,65 @@
+name: Guidance
+source: XPHB
+level: 0
+school: divination
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices:
+- id: skill
+  when: on_cast
+  options:
+  - acrobatics
+  - animal_handling
+  - arcana
+  - athletics
+  - deception
+  - history
+  - insight
+  - intimidation
+  - investigation
+  - medicine
+  - nature
+  - perception
+  - performance
+  - persuasion
+  - religion
+  - sleight_of_hand
+  - stealth
+  - survival
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - modify:
+      stat: ability_check
+      op: add
+      value: 1d4
+      scope: $skill
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

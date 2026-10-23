@@ -25,6 +25,10 @@ def mean(value: str) -> float:
     return n * (sides + 1) / 2 + bonus
 
 
+def base_mean(value):
+    return mean(value["dice"]) if "dice" in value else value.get("amount", 0)
+
+
 def add(value: str, increment: str, count: int) -> str:
     n, sides, bonus = parts(value)
     dn, ds, db = parts(increment)

@@ -1,0 +1,69 @@
+name: Witch Bolt
+source: XPHB
+level: 1
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a twig struck by lightning
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  source_ref: entries.0
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack:
+    type: ranged_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 2d12
+      bonus: 0
+      type: lightning
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+- id: sustain
+  source_ref: entries.1
+  event: bonus_action_command
+  target:
+    select: ref
+    ref: main
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 1d12
+      bonus: 0
+      type: lightning
+  limit: null
+  if: turn.index > spell.cast_turn
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: main
+      dice_add: 1d12
+ends_on: []
+unsupported:
+- End on separation or Total Cover requires range/cover adjudication.

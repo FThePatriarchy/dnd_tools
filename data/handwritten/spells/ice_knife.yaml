@@ -1,0 +1,72 @@
+name: Ice Knife
+source: XPHB
+level: 1
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: false
+  s: true
+  m: a drop of water or a piece of ice
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: knife
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack:
+    type: ranged_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 1d10
+      bonus: 0
+      type: piercing
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+- id: explosion
+  event: on_cast
+  target:
+    select: area
+    shape: sphere
+    size_ft: 5
+    affects: all
+    filter:
+    - creature
+    origin: knife
+  attack: null
+  save:
+    ability: dex
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: cold
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: explosion
+      dice_add: 1d6
+ends_on: []
+unsupported:
+- Adjacent creatures are selected by the area heuristic around the knife target, not precise positions.

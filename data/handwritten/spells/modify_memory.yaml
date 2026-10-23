@@ -1,0 +1,54 @@
+name: Modify Memory
+source: XPHB
+level: 5
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+    eligible_if: target != caster
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+    advantage_if: target.team != caster.team
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: charmed
+      ends_on_damage: any
+      ends_spell: true
+      ends_on_spell_targeted: true
+  - apply_condition:
+      condition: incapacitated
+    requires_condition: charmed
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Memory content, hearing/language, descriptions and the longer higher-slot recall windows require social/time adjudication.
+  Combat Charmed, dependent Incapacitated and ending on damage or another spell targeting execute.

@@ -1,0 +1,53 @@
+name: Suggestion
+source: XPHB
+level: 2
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: false
+  m: a drop of honey
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: charmed
+      ends_on_damage: caster_allies
+  - pacify: {}
+    requires_condition: charmed
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Hearing/language and arbitrary achievable natural-language instructions need adjudication. The executable suggestion
+  is the explicitly permitted cease-fighting order; no damaging order or invented attack control is used.

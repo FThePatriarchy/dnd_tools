@@ -1,0 +1,61 @@
+name: Nystul's Magic Aura
+source: XPHB
+level: 2
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a small square of silk
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 24
+concentration: false
+ritual: false
+choices:
+- id: type
+  options:
+  - aberration
+  - beast
+  - celestial
+  - construct
+  - dragon
+  - elemental
+  - fey
+  - fiend
+  - giant
+  - humanoid
+  - monstrosity
+  - ooze
+  - plant
+  - undead
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    affects: any
+    eligible_if: target.actual_creature_type != $type
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - type_mask:
+      type: $type
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Mask affects spell and magical-effect type checks, not actual creature type or mundane attacks. False Aura needs
+  an object/magic-detection model; repeated daily permanence requires a calendar.

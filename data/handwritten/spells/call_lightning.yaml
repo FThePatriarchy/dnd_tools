@@ -1,0 +1,57 @@
+name: Call Lightning
+source: XPHB
+level: 3
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast or action_command
+  target:
+    select: area
+    shape: sphere
+    size_ft: 5
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 3d10
+      bonus: 0
+      type: lightning
+  on_success: []
+  apply: []
+  limit: null
+  source_ref: entries.1
+scaling:
+  upcast:
+    per_slot_above: 3
+    changes:
+    - block: main
+      dice_add: 1d10
+ends_on: []
+unsupported:
+- Exact placement, surfaces, height, entry/movement, line-of-sight, lighting and environmental eligibility require
+  a grid. Recurring commands/end-turn damage execute where declared.
+- The outdoor-storm conditional extra 1d10 Lightning damage requires an externally supplied weather state; normal-cloud
+  bolts execute.

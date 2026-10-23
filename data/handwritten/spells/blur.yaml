@@ -1,0 +1,41 @@
+name: Blur
+source: XPHB
+level: 2
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - disadvantage:
+      'on': attack_rolls
+      scope: all
+      against: target
+      recipient: any_attacker
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Blindsight and Truesight exceptions require sense-specific visibility adjudication.

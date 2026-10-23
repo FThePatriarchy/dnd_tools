@@ -15,11 +15,20 @@ def executable_tags(value):
             for item in obj: walk(item)
         elif isinstance(obj, dict):
             if "damage" in obj: damage.add(obj["damage"]["type"])
+            for key in ("weapon_enchantment", "curse_damage"):
+                if key in obj:
+                    for field in ("type", "extra_type"):
+                        if field in obj[key]: damage.add(obj[key][field])
+            if "repeat_save" in obj: saves.add(obj["repeat_save"]["ability"])
             if "apply_condition" in obj:
                 c = obj["apply_condition"]
                 conditions.add(c["condition"])
                 if "upgrade_on_failure" in c: conditions.add(c["upgrade_on_failure"])
+            if obj.get("turn_rules", {}).get("on_turn_condition"):
+                conditions.add(obj["turn_rules"]["on_turn_condition"])
             if obj.get("save"): saves.add(obj["save"]["ability"])
+            if obj.get("sanctuary"): saves.add(obj["sanctuary"]["ability"])
+            if obj.get("modify", {}).get("stat") == "concentration_save": saves.add("con")
             for item in obj.values(): walk(item)
     walk(value)
     for choice in value.get("choices", []):

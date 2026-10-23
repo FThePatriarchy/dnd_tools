@@ -1,0 +1,210 @@
+name: Find Steed
+source: XPHB
+level: 2
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices:
+- id: form
+  options:
+  - celestial
+  - fey
+  - fiend
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - summon:
+      choice: $form
+      forms:
+        celestial:
+          name: Otherworldly Steed
+          source: XPHB
+          max_hp: 25
+          ac: 12
+          abilities:
+            str: 18
+            dex: 12
+            con: 14
+            int: 6
+            wis: 12
+            cha: 8
+          speed: 60
+          movement_modes:
+            walk: 60
+          creature_type: celestial
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Otherworldly Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 2
+                type: radiant
+                slot_bonus: true
+          resistances: []
+          immunities: []
+          condition_immunities: []
+          features: {}
+          actions:
+          - name: Healing Touch
+            cost: bonus_action
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: single
+                filter:
+                - creature
+                affects: any
+              attack: null
+              save: null
+              on_hit: []
+              on_fail: []
+              on_success: []
+              apply:
+              - heal:
+                  dice: 2d8
+                  bonus: summon_slot
+              limit: null
+            resource: Healing Touch
+          limited_uses:
+            Healing Touch: 1
+        fey:
+          name: Otherworldly Steed
+          source: XPHB
+          max_hp: 25
+          ac: 12
+          abilities:
+            str: 18
+            dex: 12
+            con: 14
+            int: 6
+            wis: 12
+            cha: 8
+          speed: 60
+          movement_modes:
+            walk: 60
+          creature_type: fey
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Otherworldly Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 2
+                type: psychic
+                slot_bonus: true
+          resistances: []
+          immunities: []
+          condition_immunities: []
+          features: {}
+        fiend:
+          name: Otherworldly Steed
+          source: XPHB
+          max_hp: 25
+          ac: 12
+          abilities:
+            str: 18
+            dex: 12
+            con: 14
+            int: 6
+            wis: 12
+            cha: 8
+          speed: 60
+          movement_modes:
+            walk: 60
+          creature_type: fiend
+          size: L
+          proficiency_bonus: caster
+          attacks:
+          - name: Otherworldly Slam
+            kind: melee
+            to_hit: spell_attack
+            reach_ft: 5
+            effects:
+            - damage:
+                dice: 1d8
+                bonus: 2
+                type: necrotic
+                slot_bonus: true
+          resistances: []
+          immunities: []
+          condition_immunities: []
+          features: {}
+          actions:
+          - name: Fell Glare
+            cost: bonus_action
+            effects:
+            - id: main
+              event: on_cast
+              target:
+                select: single
+                filter:
+                - creature
+                affects: any
+              attack: null
+              save:
+                ability: wis
+                on_success: negate
+              on_hit: []
+              on_fail:
+              - apply_condition:
+                  condition: frightened
+                until: end_of_turn(caster.next_turn)
+              on_success: []
+              apply: []
+              limit: null
+            resource: Fell Glare
+          limited_uses:
+            Fell Glare: 1
+      base_slot: 2
+      per_slot:
+        ac: 1
+        max_hp: 10
+        damage_bonus: 1
+      fixed_attacks: 1
+      persistent: true
+      mount: true
+      fly_slot: 4
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Unoccupied placement, ranges, languages, senses and movement need geometry/environment.
+  Summoned creatures are real targetable combatants immediately after the caster.
+  The printed parent stat blocks, not contradictory generated versions, determine
+  statistics.
+- Mounted movement and Life Bond's five-foot proximity need explicit mounted/proximity
+  state. When mounted, the controlled steed Dodges rather than attacks; independent
+  protection acts after caster. Fey teleport requires positions.
+recast_ends_previous: true

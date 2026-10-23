@@ -1,0 +1,56 @@
+name: Starry Wisp
+source: XPHB
+level: 0
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature_or_object
+    affects: any
+  attack:
+    type: ranged_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 1d8
+      bonus: 0
+      type: radiant
+  - status:
+      id: invisibility_suppressed
+      data: {}
+    until: end_of_turn(caster.next_turn)
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  cantrip:
+    at:
+    - 5
+    - 11
+    - 17
+    effect:
+      block: main
+      dice_add: 1d8
+ends_on: []
+unsupported:
+- Dim Light emission needs a lighting/vision model.

@@ -1,0 +1,54 @@
+name: Protection from Evil and Good
+source: XPHB
+level: 1
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a flask of Holy Water worth 25+ GP, which the spell consumes
+  m_consumed: true
+  m_cost_gp: 25.0
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - ward:
+      types:
+      - aberration
+      - celestial
+      - elemental
+      - fey
+      - fiend
+      - undead
+      conditions:
+      - charmed
+      - frightened
+      attack_disadvantage: true
+      existing_saves_advantage: true
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Possession requires a possession state; source-typed attack disadvantage, new Charmed/Frightened immunity and
+  existing-condition repeat-save Advantage execute.

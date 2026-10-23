@@ -1,0 +1,26 @@
+name: Rope Trick
+source: XPHB
+level: 2
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a segment of rope
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Climbing the rope, portal entry/exit, extradimensional capacity, crossing and barrier targeting require positions/objects;
+  no automatic removal is invented.

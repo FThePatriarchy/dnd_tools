@@ -1,0 +1,81 @@
+name: Jallarzi's Storm of Radiance
+source: XPHB
+level: 5
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: a pinch of phosphorus
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: storm
+  event: while_in_area
+  target:
+    select: area
+    shape: cylinder
+    size_ft: 10
+    affects: all
+    filter: &id001
+    - creature
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - apply_condition:
+      condition: blinded
+  - apply_condition:
+      condition: deafened
+  - status:
+      id: verbal_components_blocked
+      data: {}
+  limit: null
+- id: damage
+  event: on_cast or on_creature_enters_aura(target) or end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: cylinder
+    size_ft: 10
+    affects: all
+    filter: *id001
+  attack: null
+  save:
+    ability: con
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 2d10
+      bonus: 0
+      type: radiant
+  - damage:
+      dice: 2d10
+      bonus: 0
+      type: thunder
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+scaling:
+  upcast:
+    per_slot_above: 5
+    changes:
+    - block: damage
+      dice_add: 1d10
+ends_on: []
+unsupported:
+- Cylinder height, chosen-point visibility, positioning and entry events require a grid; area membership uses the
+  existing heuristic. Blindness, deafness and the Verbal-component prohibition apply while in the area without a
+  save.

@@ -103,11 +103,23 @@ def parse_multiattack(text, names):
 
 @lru_cache(maxsize=1)
 def golden_metadata():
-    return {name: (spec["level"], spec["casting_time"]) for name, spec in load_spells().items()}
+    # Import checks repeatedly need only metadata; invalidate when files change.
+    paths = sorted((ROOT / "spells").glob("*.yaml"))
+    signature = tuple((str(p), p.stat().st_mtime_ns, p.stat().st_size) for p in paths)
+    return dict(_catalog_metadata(signature))
+
+
+from functools import lru_cache
+
+
+@lru_cache(maxsize=1)
+def _catalog_metadata(signature):
+    return tuple((name, (s["level"], s["casting_time"])) for name, s in load_spells().items())
 
 
 def parse_monster(raw: dict) -> dict:
     if raw["source"] != "XMM": raise ValueError("only XMM (2025) is accepted")
+    metadata = golden_metadata() if raw.get("spellcasting") else {}
     cr = raw["cr"]
     if isinstance(cr, dict): cr = cr["cr"]
     pb = raw.get("pb", max(2, 2 + (max(1, int(Fraction(cr))) - 1) // 4))
@@ -177,15 +189,22 @@ def parse_monster(raw: dict) -> dict:
             if dc: result["spell_dc"] = int(dc[1])
             if hit: result["spell_attack_bonus"] = int(hit[1])
             groups = [("will", sc.get("will", []))] + list(sc.get("daily", {}).items())
+            groups += [("recharge " + k, values) for k, values in sc.get("recharge", {}).items()]
             for frequency, entries in groups:
                 for text in entries:
                     name = re.search(r"\{@spell ([^|}]+)", text)[1]
-                    if name not in golden_metadata(): continue
+                    if name not in metadata: continue
                     result.setdefault("spells", []).append(name)
                     level = re.search(r"level (\d+) version", text)
-                    result.setdefault("spell_levels", {})[name] = int(level[1]) if level else golden_metadata()[name][0]
+                    result.setdefault("spell_levels", {})[name] = int(level[1]) if level else metadata[name][0]
                     result.setdefault("spell_costs", {})[name] = {"bonus": "bonus_action"}.get(sc.get("displayAs", "action"), sc.get("displayAs", "action"))
-                    if frequency != "will":
+                    if "requiring no spell components" in header:
+                        result.setdefault("spell_components", {})[name] = {"v": False, "s": False, "m": False}
+                    elif "requiring no Material components" in header:
+                        result.setdefault("spell_components", {})[name] = {"m": False}
+                    if frequency.startswith("recharge "):
+                        result.setdefault("spell_recharge", {})[name] = int(frequency.split()[1])
+                    elif frequency != "will":
                         resource = name if frequency.endswith("e") or len(entries) == 1 else clean_name(sc["name"])
                         result.setdefault("limited_uses", {})[resource] = int(frequency.rstrip("e"))
                         result.setdefault("spell_resources", {})[name] = resource
@@ -213,7 +232,7 @@ def parse_monster(raw: dict) -> dict:
             attack = re.search(r"makes one (.+?) attack", text)
             spell = re.search(r"\{@spell ([^|}]+)", text)
             if attack: option["attacks"] = [attack[1]]
-            elif spell and spell[1] in golden_metadata(): option["spell"] = spell[1]
+            elif spell and spell[1] in metadata: option["spell"] = spell[1]
             else: continue
             result["legendary"]["options"].append(option)
     return result
@@ -382,6 +401,8 @@ def check_sheet(sheet, raw=None):
                     compare([p for p in block["on_fail"] if "damage" in p], [p for p in ab.get("on_fail", []) if "damage" in p], path + ".damage")
     for key, count in base.get("limited_uses", {}).items(): compare(count, sheet.get("limited_uses", {}).get(key), "limited_uses." + key)
     for key, value in base.get("features", {}).items(): compare(value, sheet.get("features", {}).get(key), "features." + key)
+    for key, value in base.get("spell_recharge", {}).items(): compare(value, sheet.get("spell_recharge", {}).get(key), "spell_recharge." + key)
+    for key, value in base.get("spell_components", {}).items(): compare(value, sheet.get("spell_components", {}).get(key), "spell_components." + key)
     for name in base.get("spells", []):
         if name not in sheet.get("spells", []): errors.append(f"spells.{name}: missing golden spell")
         compare(base["spell_levels"][name], sheet.get("spell_levels", {}).get(name, golden_metadata()[name][0]), "spell_levels." + name)

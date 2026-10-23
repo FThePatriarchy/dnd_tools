@@ -1,0 +1,55 @@
+name: Conjure Woodland Beings
+source: XPHB
+level: 4
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: emanation
+    size_ft: 10
+    affects: chosen
+    filter:
+    - creature
+    - visible
+    origin: caster
+  attack: null
+  save:
+    ability: wis
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 5d8
+      bonus: 0
+      type: force
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+scaling:
+  upcast:
+    per_slot_above: 4
+    changes:
+    - block: main
+      dice_add: 1d8
+ends_on: []
+unsupported:
+- Moving emanation entry and bonus-action Disengage require movement; end-turn damage executes. XPHB creates intangible
+  spirits, not allied creature stat blocks.

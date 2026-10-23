@@ -1,0 +1,61 @@
+name: Tasha's Hideous Laughter
+source: XPHB
+level: 1
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: true
+  m: a tart and a feather
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: prone
+  - apply_condition:
+      condition: incapacitated
+      repeat_save:
+        ability: wis
+        timing: end_of_turn
+        on_success: end
+      repeat_on_damage: true
+      damage_save_advantage: true
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: main
+      target_n_add: 1
+ends_on: []
+unsupported: []

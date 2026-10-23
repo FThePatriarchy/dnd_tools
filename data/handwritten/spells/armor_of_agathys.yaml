@@ -1,0 +1,63 @@
+name: Armor of Agathys
+source: XPHB
+level: 1
+school: abjuration
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a shard of blue glass
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - temp_hp:
+      amount: 5
+  - status:
+      id: agathys
+      data: {}
+  limit: null
+- id: frost
+  event: on_attack_hit(any, caster)
+  target:
+    select: ref
+    ref: trigger.attacker
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      amount: 5
+      type: cold
+  limit: null
+  if: attack.melee
+scaling:
+  upcast:
+    per_slot_above: 1
+    changes:
+    - block: main
+      value_add: 5
+    - block: frost
+      value_add: 5
+ends_on: []
+unsupported: []

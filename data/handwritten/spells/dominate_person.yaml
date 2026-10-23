@@ -1,0 +1,72 @@
+name: Dominate Person
+source: XPHB
+level: 5
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 1
+    distinct: true
+    up_to: true
+    min: 1
+    filter:
+    - creature
+    - visible
+    affects: any
+    eligible_if: target.creature_type == humanoid
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+    advantage_if: target.team != caster.team
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: charmed
+      control: true
+      repeat_on_damage: true
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  upcast:
+    per_slot_above: 5
+    changes:
+    - slot_min: 6
+      slot_max: 6
+      duration:
+        type: minutes
+        n: 10
+    - slot_min: 7
+      slot_max: 7
+      duration:
+        type: hours
+        n: 1
+    - slot_min: 8
+      slot_max: null
+      duration:
+        type: hours
+        n: 8
+ends_on: []
+unsupported:
+- Noncombat orders, planar telepathy and commanded reactions requiring both actors' reactions need external command
+  adjudication. The executable order is to attack the caster's enemies on the target's own turn.

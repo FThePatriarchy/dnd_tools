@@ -1,0 +1,26 @@
+name: Jump
+source: XPHB
+level: 1
+school: transmutation
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a grasshopper's hind leg
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Once-per-turn jumping and its movement expenditure require positions; no attack or unrestricted action bonus is
+  invented.

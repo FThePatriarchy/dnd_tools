@@ -1,0 +1,57 @@
+name: Shillelagh
+source: XPHB
+level: 0
+school: transmutation
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: mistletoe
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: false
+ritual: false
+choices:
+- id: type
+  options:
+  - force
+  - bludgeoning
+  when: on_cast
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: self
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - weapon_enchantment:
+      names:
+      - club
+      - quarterstaff
+      spell_ability: true
+      dice: 1d8
+      type: $type
+      cantrip_dice:
+      - level: 5
+        dice: 1d10
+      - level: 11
+        dice: 1d12
+      - level: 17
+        dice: 2d6
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Letting go of the chosen Club/Quarterstaff needs inventory state; only named eligible weapons are changed, never
+  other attacks.
+recast_ends_previous: true

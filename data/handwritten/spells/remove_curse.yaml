@@ -1,0 +1,41 @@
+name: Remove Curse
+source: XPHB
+level: 3
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - restore:
+      kind: curse
+      all: true
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Cursed-item attunement requires an item/inventory model; creature spell curses can end.

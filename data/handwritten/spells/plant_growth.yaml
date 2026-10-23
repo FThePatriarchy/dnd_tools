@@ -1,0 +1,26 @@
+name: Plant Growth
+source: XPHB
+level: 3
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 150
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Existing vegetation and changed movement costs require terrain. The alternative long casting enriches crops rather
+  than inflicting combat damage.

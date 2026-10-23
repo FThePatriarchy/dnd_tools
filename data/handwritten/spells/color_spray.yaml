@@ -1,0 +1,45 @@
+name: Color Spray
+source: XPHB
+level: 1
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a pinch of colorful sand
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: cone
+    size_ft: 15
+    affects: all
+    filter:
+    - creature
+    origin: caster
+  attack: null
+  save:
+    ability: con
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: blinded
+    until: end_of_turn(caster.next_turn)
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

@@ -1,0 +1,66 @@
+name: Banishing Smite
+source: XPHB
+level: 5
+school: conjuration
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 5d10
+      bonus: 0
+      type: force
+  limit: null
+- id: banish
+  event: on_cast
+  target:
+    select: ref
+    ref: main
+  attack: null
+  save:
+    ability: cha
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: incapacitated
+  - remove_from_combat:
+      until: spell_ends
+      returns: 'true'
+  on_success: []
+  apply: []
+  limit: null
+  if: target.hp <= 50
+  after_damage: true
+scaling: null
+ends_on: []
+unsupported:
+- Space of return needs positions. The post-hit cast occurs after the triggering weapon's
+  damage; the bonus damage is resolved before the 50-HP check.
+casting_trigger: weapon_hit

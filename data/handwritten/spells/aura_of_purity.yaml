@@ -1,0 +1,55 @@
+name: Aura of Purity
+source: XPHB
+level: 4
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: while_in_area
+  target:
+    select: area
+    shape: emanation
+    size_ft: 30
+    affects: ally
+    filter:
+    - creature
+    origin: caster
+    include_caster: true
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - defense:
+      resistance:
+      - poison
+  - defense:
+      save_conditions:
+      - blinded
+      - charmed
+      - deafened
+      - frightened
+      - paralyzed
+      - poisoned
+      - stunned
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Emanation membership uses the no-grid heuristic; movement is not simulated.

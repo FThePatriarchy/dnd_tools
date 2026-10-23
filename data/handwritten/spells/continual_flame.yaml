@@ -1,0 +1,24 @@
+name: Continual Flame
+source: XPHB
+level: 2
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: ruby dust worth 50+ GP, which the spell consumes
+  m_consumed: true
+  m_cost_gp: 50.0
+duration:
+  type: until_dispelled
+concentration: false
+ritual: false
+choices: []
+effects: []
+scaling: null
+ends_on: []
+unsupported:
+- Permanent heatless object illumination and opaque coverings require an object/lighting model.

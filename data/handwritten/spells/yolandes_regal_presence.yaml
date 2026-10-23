@@ -1,0 +1,52 @@
+name: Yolande's Regal Presence
+source: XPHB
+level: 5
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a miniature tiara
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: emanation
+    size_ft: 10
+    affects: chosen
+    filter:
+    - creature
+    - visible
+    origin: caster
+  attack: null
+  save:
+    ability: wis
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 4d6
+      bonus: 0
+      type: psychic
+  - apply_condition:
+      condition: prone
+      persistent: true
+  on_success: []
+  apply: []
+  limit: once_per_turn_per_target
+scaling: null
+ends_on: []
+unsupported:
+- Moving emanation entry and the optional push require positions; end-turn saves, damage and persistent Prone execute.

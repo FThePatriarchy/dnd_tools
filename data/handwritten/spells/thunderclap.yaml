@@ -1,0 +1,54 @@
+name: Thunderclap
+source: XPHB
+level: 0
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: false
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: emanation
+    size_ft: 5
+    affects: all
+    filter:
+    - creature
+    origin: caster
+  attack: null
+  save:
+    ability: con
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: thunder
+  on_success: []
+  apply: []
+  limit: null
+scaling:
+  cantrip:
+    at:
+    - 5
+    - 11
+    - 17
+    effect:
+      block: main
+      dice_add: 1d6
+ends_on: []
+unsupported: []

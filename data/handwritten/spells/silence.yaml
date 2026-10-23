@@ -1,0 +1,51 @@
+name: Silence
+source: XPHB
+level: 2
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 10
+concentration: true
+ritual: true
+choices: []
+effects:
+- id: main
+  event: while_in_area
+  target:
+    select: area
+    shape: sphere
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - apply_condition:
+      condition: deafened
+  - defense:
+      immunity:
+      - thunder
+  - status:
+      id: verbal_components_blocked
+      data: {}
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Lighting, hearing/sound propagation, spatial overlap dispelling, opaque coverings and object targeting require
+  sensory/position adjudication; no blanket Blinded is invented for magical Darkness.

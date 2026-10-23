@@ -80,6 +80,7 @@ def cleanup_encounter(combat):
         actor.extra_actions.clear()
         actor.action_grants.clear()
         actor.surge_actions = 0
+        actor.blocked_economy.clear()
         actor.action = actor.bonus_action = actor.reaction = 1
         actor.slot_cast_turn = None
         actor.turns_taken = 0

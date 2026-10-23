@@ -1,0 +1,64 @@
+name: Glyph of Warding
+source: XPHB
+level: 3
+school: abjuration
+casting_time: hour
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: powdered diamond worth 200+ GP, which the spell consumes
+  m_consumed: true
+  m_cost_gp: 200.0
+duration:
+  type: until_dispelled
+concentration: false
+ritual: false
+choices:
+- id: type
+  options:
+  - acid
+  - cold
+  - fire
+  - lightning
+  - thunder
+  when: on_cast
+effects:
+- id: main
+  event: glyph_triggered
+  target:
+    select: area
+    shape: sphere
+    size_ft: 20
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 5d8
+      bonus: 0
+      type: $type
+  on_success: []
+  apply: []
+  limit: null
+  end_after_resolution: true
+scaling:
+  upcast:
+    per_slot_above: 3
+    changes:
+    - block: main
+      dice_add: 1d8
+ends_on: []
+unsupported:
+- Explosive Rune waits for an external glyph_triggered event, never explodes during
+  preparation. Placement, movement breakage, perception, passwords and Spell Glyph's
+  prepared-spell storage require object/trigger/prepared-list state; no free spell
+  slot or instant cast is invented.
+casting_time_n: 1

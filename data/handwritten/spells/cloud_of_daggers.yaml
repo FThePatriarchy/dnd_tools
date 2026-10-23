@@ -1,0 +1,52 @@
+name: Cloud of Daggers
+source: XPHB
+level: 2
+school: conjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a sliver of glass
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast or on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)
+  target:
+    select: area
+    shape: cube
+    size_ft: 5
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - damage:
+      dice: 4d4
+      bonus: 0
+      type: slashing
+  limit: once_per_turn_per_target
+scaling:
+  upcast:
+    per_slot_above: 2
+    changes:
+    - block: main
+      dice_add: 2d4
+ends_on: []
+unsupported:
+- Area relocation, entry/movement triggers and precise area geometry need a grid; creation and end-turn effects
+  execute.

@@ -82,7 +82,7 @@ class MonsterMechanics:
                     if trait.get("trigger") not in {"enemy_turn_start", "creature_turn_start"}: continue
                     if trait["trigger"] == "enemy_turn_start" and source.team == actor.team: continue
                     if trait["cost"] != "free" and source.has_condition("incapacitated"): continue
-                    if trait["cost"] == "reaction" and not source.reaction: continue
+                    if trait["cost"] == "reaction" and (not source.reaction or self.turn_rules(source).get("no_reactions")): continue
                     marker = {"Stench": "stench_immune", "Unnerving Gaze": "gaze_immune"}.get(trait["name"], "")
                     if actor.has_status_from(marker, source): continue
                     probe = self.monster_instance(source, trait["name"], trait["effects"], trait.get("duration"))
@@ -115,12 +115,13 @@ class MonsterMechanics:
         context = self._monster_attack
         if drain and context and context[0] is source and context[1] in drain["attacks"]:
             amount = sum(typed.values()) if drain["type"] == "all" else typed.get(drain["type"], 0)
-            target.max_hp = max(0, target.max_hp - amount)
+            if not target.has_status("max_hp_protected"): target.max_hp = max(0, target.max_hp - amount)
             target.hp = min(target.hp, target.max_hp)
             if drain["heal"]: self.heal(source, amount)
             self.feature_log(source, "Life Drain", amount=amount)
 
     def monster_reaction(self, attacker, defender, attack, melee):
+        if self.turn_rules(defender).get("no_reactions"): return False
         parry = defender.features.get("parry")
         if parry and defender.reaction and not defender.has_condition("incapacitated") and melee and attack["natural"] != 20 and attack["total"] < self.armor_class(defender) + parry and self.policy_for(defender).reaction(self, defender, {"name": "Parry"}, {"attack": attack}):
             defender.reaction -= 1
@@ -192,6 +193,7 @@ class MonsterMechanics:
             return self.weapon_attack(actor, target, attack)
         # A routine/legendary action grants just this option, not a whole turn.
         old = actor.action, actor.bonus_action, actor.reaction, self.current
+        actor.blocked_economy.clear()
         actor.action = actor.bonus_action = actor.reaction = 1
         self.current = actor
         try:

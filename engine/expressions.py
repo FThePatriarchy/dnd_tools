@@ -13,14 +13,15 @@ EVENTS = {
     "while_in_area": 0, "on_aura_moves_onto_creature": 1,
     "on_creature_enters_aura": 1, "end_of_turn_in_aura": 1,
     "on_spell_targeted": 2, "on_attack_provisional_hit": 2,
+    "on_falling": 1, "glyph_triggered": 0,
 }
-METHODS = {"has_status", "has_status_from", "has_condition", "has_condition_from", "visible_to", "has_any_component"}
+METHODS = {"has_status", "has_status_from", "has_condition", "has_condition_from", "visible_to", "has_any_component", "immune_to"}
 ATTRS = {
-    "size",
-    "has_status_from", "has_condition", "has_condition_from", "alignment", "creature_type", "hp", "max_hp", "next_turn", "index",
+    "size", "temp_hp", "team", "willing", "immune_to",
+    "has_status_from", "has_condition", "has_condition_from", "alignment", "creature_type", "actual_creature_type", "hp", "max_hp", "next_turn", "this_turn", "index",
     "cast_turn", "elapsed_minutes", "caster", "spell", "target",
     "target_dropped_to_zero", "drop_turn", "has_status", "visible_to",
-    "has_any_component", "advantage", "critical", "total", "natural",
+    "has_any_component", "advantage", "critical", "total", "natural", "weapon", "melee",
 }
 TOKEN = re.compile(r'\s*(?:(\d+(?:\.\d+)?)|(\$?[A-Za-z_][A-Za-z_0-9]*)|("[^"\\]*"|\x27[^\x27\\]*\x27)|(==|!=|>=|<=|[<>()\[\],.]))')
 
@@ -138,6 +139,9 @@ def evaluate(source: str, context: dict):
             return [visit(x) for x in args[0]]
         if kind == "attr":
             obj = visit(args[0])
+            if args[1] == "actual_creature_type": return getattr(obj, "creature_type", None)
+            if args[1] == "creature_type" and context.get("_magical") and hasattr(obj, "magical_type"):
+                return obj.magical_type
             if isinstance(obj, dict):
                 return obj.get(args[1])
             return getattr(obj, args[1], None) if obj is not None else None
@@ -152,6 +156,8 @@ def evaluate(source: str, context: dict):
                 return obj is not None and obj.has_status(values[0])
             if method in {"has_status_from", "has_condition_from"}:
                 return obj is not None and getattr(obj, method)(*values)
+            if method == "immune_to":
+                return obj is not None and obj.immune_to(values[0])
             if method == "has_condition":
                 return obj is not None and obj.has_condition(values[0])
             if method == "visible_to":

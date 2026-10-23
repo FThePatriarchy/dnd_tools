@@ -1,0 +1,70 @@
+name: Slow
+source: XPHB
+level: 3
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: a drop of molasses
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 6
+    distinct: true
+    up_to: true
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save:
+    ability: wis
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - modify:
+      stat: speed
+      op: mul
+      value: 0.5
+      scope: all
+  - modify:
+      stat: ac
+      op: add
+      value: -2
+      scope: all
+  - modify:
+      stat: save
+      op: add
+      value: -2
+      scope: dex
+  - turn_rules:
+      no_reactions: true
+      action_or_bonus: true
+      attack_limit: 1
+      somatic_failure_percent: 25
+      repeat_save:
+        ability: wis
+        timing: end_of_turn
+        on_success: end
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Selection inside the source's Cube and speed/movement need a grid; six-target cap, saves and action restrictions
+  execute.
