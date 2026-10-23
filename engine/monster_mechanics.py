@@ -117,13 +117,14 @@ class MonsterMechanics:
             amount = sum(typed.values()) if drain["type"] == "all" else typed.get(drain["type"], 0)
             if not target.has_status("max_hp_protected"): target.max_hp = max(0, target.max_hp - amount)
             target.hp = min(target.hp, target.max_hp)
+            if self.death_rules and target.team == "party" and target.max_hp == 0: self.kill(target)
             if drain["heal"]: self.heal(source, amount)
             self.feature_log(source, "Life Drain", amount=amount)
 
     def monster_reaction(self, attacker, defender, attack, melee):
         if self.turn_rules(defender).get("no_reactions"): return False
         parry = defender.features.get("parry")
-        if parry and defender.reaction and not defender.has_condition("incapacitated") and melee and attack["natural"] != 20 and attack["total"] < self.armor_class(defender) + parry and self.policy_for(defender).reaction(self, defender, {"name": "Parry"}, {"attack": attack}):
+        if parry and defender.reaction and not defender.has_condition("incapacitated") and melee and attack["natural"] != 20 and not attack.get("critical") and attack["total"] < self.armor_class(defender) + parry and self.policy_for(defender).reaction(self, defender, {"name": "Parry"}, {"attack": attack}):
             defender.reaction -= 1
             self.record("reaction", actor=defender.id, name="Parry")
             return True
@@ -188,8 +189,9 @@ class MonsterMechanics:
         attack = next((a for a in actor.attacks if a["name"] == name), None)
         if attack:
             enemies = self.enemies(actor)
+            enemies = self.reachable(actor, enemies, attack)
             if not enemies: return False
-            target = targets[0] if targets else min(enemies, key=lambda c: (c.hp, c.id))
+            target = targets[0] if targets else (self.monster_target(actor,enemies) or min(enemies, key=lambda c: (c.hp, c.id)))
             return self.weapon_attack(actor, target, attack)
         # A routine/legendary action grants just this option, not a whole turn.
         old = actor.action, actor.bonus_action, actor.reaction, self.current

@@ -1,0 +1,332 @@
+name: fighter
+source: XPHB
+subclass: champion
+hit_die: d10
+saves:
+- str
+- con
+subclass_level: 3
+asi_levels:
+- 4
+- 6
+- 8
+levels:
+  1:
+    proficiency_bonus: 2
+    hit_die: d10
+    features:
+    - Fighting Style
+    - Second Wind
+    - Weapon Mastery
+    resources:
+      second_wind:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 3
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  2:
+    proficiency_bonus: 2
+    hit_die: d10
+    features:
+    - Action Surge
+    - Tactical Mind
+    resources:
+      second_wind:
+        max: 2
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+    weapon_masteries: 3
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  3:
+    proficiency_bonus: 2
+    hit_die: d10
+    features:
+    - Fighter Subclass
+    - Champion
+    - Improved Critical
+    - Remarkable Athlete
+    resources:
+      second_wind:
+        max: 2
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+    weapon_masteries: 3
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  4:
+    proficiency_bonus: 2
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      second_wind:
+        max: 3
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  5:
+    proficiency_bonus: 3
+    hit_die: d10
+    features:
+    - Extra Attack
+    - Tactical Shift
+    resources:
+      second_wind:
+        max: 3
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  6:
+    proficiency_bonus: 3
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      second_wind:
+        max: 3
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  7:
+    proficiency_bonus: 3
+    hit_die: d10
+    features:
+    - Subclass Feature
+    - Additional Fighting Style
+    resources:
+      second_wind:
+        max: 3
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  8:
+    proficiency_bonus: 3
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      second_wind:
+        max: 3
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  9:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Indomitable
+    - Tactical Master
+    resources:
+      second_wind:
+        max: 3
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  10:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Subclass Feature
+    - Heroic Warrior
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 5
+    cantrips: 0
+    prepared: 0
+    slots: {}
+features:
+- name: Fighting Style
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Second Wind
+  level: 1
+  origin: class
+  actions:
+  - name: Second Wind
+    cost: bonus_action
+    resource: second_wind
+    effects:
+    - id: second_wind
+      event: on_cast
+      target:
+        select: self
+      attack: null
+      save: null
+      on_hit: []
+      on_fail: []
+      on_success: []
+      apply:
+      - heal:
+          dice: 1d10
+          bonus: class_level
+      limit: null
+- name: Weapon Mastery
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Action Surge
+  level: 2
+  origin: class
+  actions:
+  - name: Action Surge
+    cost: free
+    resource: action_surge
+    effects: []
+    grants_action: true
+- name: Tactical Mind
+  level: 2
+  origin: class
+  mechanics:
+    tactical_mind: true
+- name: Fighter Subclass
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 4
+  origin: class
+  mechanics:
+    builder: true
+- name: Extra Attack
+  level: 5
+  origin: class
+  mechanics:
+    builder: true
+- name: Tactical Shift
+  level: 5
+  origin: class
+  unsupported: Movement and opportunity attacks require a grid.
+- name: Ability Score Improvement
+  level: 6
+  origin: class
+  mechanics:
+    builder: true
+- name: Subclass Feature
+  level: 7
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 8
+  origin: class
+  mechanics:
+    builder: true
+- name: Indomitable
+  level: 9
+  origin: class
+  mechanics:
+    progression: true
+- name: Tactical Master
+  level: 9
+  origin: class
+  mechanics:
+    tactical_master: true
+  unsupported: Push displacement and Slow movement need a grid; Sap executes and Slow's
+    speed modifier is stored.
+- name: Subclass Feature
+  level: 10
+  origin: class
+  mechanics:
+    builder: true
+- name: Champion
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Improved Critical
+  level: 3
+  origin: subclass
+  mechanics:
+    improved_critical: 19
+- name: Remarkable Athlete
+  level: 3
+  origin: subclass
+  mechanics:
+    initiative_advantage: true
+    remarkable_athlete: true
+  unsupported: Post-critical movement needs a grid.
+- name: Additional Fighting Style
+  level: 7
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Heroic Warrior
+  level: 10
+  origin: subclass
+  mechanics:
+    heroic_warrior: true

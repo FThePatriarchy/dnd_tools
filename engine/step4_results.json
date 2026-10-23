@@ -1,0 +1,828 @@
+[
+  {
+    "level": 3,
+    "name": "Level 3 class party \u2014 six encounters, two short rests",
+    "runs": 1000,
+    "seed": 1,
+    "strategy": "nova",
+    "monster_strategy": "default",
+    "survived": 0,
+    "survival_probability": 0.0,
+    "encounters_cleared_distribution": {
+      "1": 6,
+      "2": 716,
+      "3": 276,
+      "4": 2
+    },
+    "encounters": [
+      {
+        "index": 1,
+        "reached": 1000,
+        "mean_start_hp_percent": 100.0,
+        "mean_slots_start": {
+          "1": 8.0,
+          "2": 4.0
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 2.0,
+          "hit_dice": 12.0,
+          "second_wind": 2.0
+        },
+        "mean_downs": 0.229,
+        "mean_rounds": 2.353
+      },
+      {
+        "index": 2,
+        "reached": 1000,
+        "mean_start_hp_percent": 95.2516129032258,
+        "mean_slots_start": {
+          "1": 6.949,
+          "2": 0.437
+        },
+        "mean_resources_start": {
+          "action_surge": 0.001,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 1.316,
+          "hit_dice": 12.0,
+          "second_wind": 2.0
+        },
+        "mean_downs": 2.168,
+        "mean_rounds": 4.425
+      },
+      {
+        "index": 3,
+        "reached": 994,
+        "mean_start_hp_percent": 93.65331775599836,
+        "mean_slots_start": {
+          "1": 1.1378269617706238,
+          "2": 0.8279678068410463
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.17303822937625754,
+          "channel_divinity": 1.0774647887323943,
+          "hit_dice": 10.017102615694165,
+          "second_wind": 1.9989939637826961
+        },
+        "mean_downs": 4.217303822937626,
+        "mean_rounds": 5.392354124748491
+      },
+      {
+        "index": 4,
+        "reached": 278,
+        "mean_start_hp_percent": 57.28320569350971,
+        "mean_slots_start": {
+          "1": 0.11870503597122302,
+          "2": 0.014388489208633094
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 0.0035971223021582736,
+          "channel_divinity": 0.0,
+          "hit_dice": 9.913669064748202,
+          "second_wind": 1.8525179856115108
+        },
+        "mean_downs": 2.5323741007194243,
+        "mean_rounds": 4.712230215827338
+      },
+      {
+        "index": 5,
+        "reached": 2,
+        "mean_start_hp_percent": 30.107526881720432,
+        "mean_slots_start": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.0,
+          "hit_dice": 8.0,
+          "second_wind": 2.0
+        },
+        "mean_downs": 1,
+        "mean_rounds": 2
+      },
+      {
+        "index": 6,
+        "reached": 0,
+        "mean_start_hp_percent": null,
+        "mean_slots_start": {},
+        "mean_resources_start": {},
+        "mean_downs": null,
+        "mean_rounds": null
+      }
+    ]
+  },
+  {
+    "level": 3,
+    "name": "Level 3 class party \u2014 six encounters, two short rests",
+    "runs": 1000,
+    "seed": 1,
+    "strategy": "conservative",
+    "monster_strategy": "default",
+    "survived": 0,
+    "survival_probability": 0.0,
+    "encounters_cleared_distribution": {
+      "1": 27,
+      "2": 592,
+      "3": 340,
+      "4": 39,
+      "5": 2
+    },
+    "encounters": [
+      {
+        "index": 1,
+        "reached": 1000,
+        "mean_start_hp_percent": 100.0,
+        "mean_slots_start": {
+          "1": 8.0,
+          "2": 4.0
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 2.0,
+          "hit_dice": 12.0,
+          "second_wind": 2.0
+        },
+        "mean_downs": 1.489,
+        "mean_rounds": 3.835
+      },
+      {
+        "index": 2,
+        "reached": 1000,
+        "mean_start_hp_percent": 86.63548387096775,
+        "mean_slots_start": {
+          "1": 5.549,
+          "2": 3.82
+        },
+        "mean_resources_start": {
+          "action_surge": 0.393,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 0.816,
+          "hit_dice": 12.0,
+          "second_wind": 2.0
+        },
+        "mean_downs": 3.394,
+        "mean_rounds": 5.056
+      },
+      {
+        "index": 3,
+        "reached": 973,
+        "mean_start_hp_percent": 92.37807910353744,
+        "mean_slots_start": {
+          "1": 3.090441932168551,
+          "2": 2.7841726618705036
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.13771839671120248,
+          "channel_divinity": 0.9835560123329907,
+          "hit_dice": 9.751284686536485,
+          "second_wind": 1.9917780061664954
+        },
+        "mean_downs": 4.271325796505653,
+        "mean_rounds": 5.226104830421377
+      },
+      {
+        "index": 4,
+        "reached": 381,
+        "mean_start_hp_percent": 63.632771709987864,
+        "mean_slots_start": {
+          "1": 0.984251968503937,
+          "2": 1.6876640419947506
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 0.013123359580052493,
+          "channel_divinity": 0.0,
+          "hit_dice": 9.485564304461942,
+          "second_wind": 1.8713910761154855
+        },
+        "mean_downs": 2.8766404199475066,
+        "mean_rounds": 5.816272965879265
+      },
+      {
+        "index": 5,
+        "reached": 41,
+        "mean_start_hp_percent": 40.57172829792814,
+        "mean_slots_start": {
+          "1": 0.14634146341463414,
+          "2": 0.7560975609756098
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.36585365853658536,
+          "hit_dice": 7.682926829268292,
+          "second_wind": 1.7317073170731707
+        },
+        "mean_downs": 1.7804878048780488,
+        "mean_rounds": 3.926829268292683
+      },
+      {
+        "index": 6,
+        "reached": 2,
+        "mean_start_hp_percent": 37.63440860215054,
+        "mean_slots_start": {
+          "1": 0.0,
+          "2": 0.0
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.0,
+          "hit_dice": 6.0,
+          "second_wind": 2.0
+        },
+        "mean_downs": 1.5,
+        "mean_rounds": 3
+      }
+    ]
+  },
+  {
+    "level": 5,
+    "name": "Level 5 class party \u2014 six encounters, two short rests",
+    "runs": 1000,
+    "seed": 1,
+    "strategy": "nova",
+    "monster_strategy": "default",
+    "survived": 1,
+    "survival_probability": 0.001,
+    "encounters_cleared_distribution": {
+      "1": 271,
+      "3": 571,
+      "4": 99,
+      "5": 58,
+      "6": 1
+    },
+    "encounters": [
+      {
+        "index": 1,
+        "reached": 1000,
+        "mean_start_hp_percent": 100.0,
+        "mean_slots_start": {
+          "1": 8.0,
+          "2": 6.0,
+          "3": 4.0
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 2.0,
+          "hit_dice": 20.0,
+          "second_wind": 3.0
+        },
+        "mean_downs": 0.475,
+        "mean_rounds": 2.567
+      },
+      {
+        "index": 2,
+        "reached": 1000,
+        "mean_start_hp_percent": 96.4421768707483,
+        "mean_slots_start": {
+          "1": 7.987,
+          "2": 4.833,
+          "3": 0.407
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 1.119,
+          "hit_dice": 20.0,
+          "second_wind": 3.0
+        },
+        "mean_downs": 2.768,
+        "mean_rounds": 8.285
+      },
+      {
+        "index": 3,
+        "reached": 729,
+        "mean_start_hp_percent": 99.77604210408442,
+        "mean_slots_start": {
+          "1": 2.0534979423868314,
+          "2": 0.024691358024691357,
+          "3": 1.0013717421124828
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 1.326474622770919,
+          "hit_dice": 16.967078189300413,
+          "second_wind": 3.0
+        },
+        "mean_downs": 1.0905349794238683,
+        "mean_rounds": 2.960219478737997
+      },
+      {
+        "index": 4,
+        "reached": 729,
+        "mean_start_hp_percent": 86.21259203269786,
+        "mean_slots_start": {
+          "1": 0.813443072702332,
+          "2": 0.010973936899862825,
+          "3": 0.04663923182441701
+        },
+        "mean_resources_start": {
+          "action_surge": 0.012345679012345678,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.11934156378600823,
+          "hit_dice": 16.967078189300413,
+          "second_wind": 2.993141289437586
+        },
+        "mean_downs": 3.373113854595336,
+        "mean_rounds": 2.740740740740741
+      },
+      {
+        "index": 5,
+        "reached": 158,
+        "mean_start_hp_percent": 58.787565659175065,
+        "mean_slots_start": {
+          "1": 0.43037974683544306,
+          "2": 0.0,
+          "3": 0.006329113924050633
+        },
+        "mean_resources_start": {
+          "action_surge": 0.8860759493670886,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.4936708860759494,
+          "hit_dice": 9.386075949367088,
+          "second_wind": 2.569620253164557
+        },
+        "mean_downs": 2.0316455696202533,
+        "mean_rounds": 3.689873417721519
+      },
+      {
+        "index": 6,
+        "reached": 59,
+        "mean_start_hp_percent": 47.84964833390983,
+        "mean_slots_start": {
+          "1": 0.06779661016949153,
+          "2": 0.0,
+          "3": 0.0
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.0,
+          "hit_dice": 6.508474576271187,
+          "second_wind": 2.7966101694915255
+        },
+        "mean_downs": 2.0677966101694913,
+        "mean_rounds": 2.9491525423728815
+      }
+    ]
+  },
+  {
+    "level": 5,
+    "name": "Level 5 class party \u2014 six encounters, two short rests",
+    "runs": 1000,
+    "seed": 1,
+    "strategy": "conservative",
+    "monster_strategy": "default",
+    "survived": 47,
+    "survival_probability": 0.047,
+    "encounters_cleared_distribution": {
+      "1": 42,
+      "2": 2,
+      "3": 587,
+      "4": 141,
+      "5": 181,
+      "6": 47
+    },
+    "encounters": [
+      {
+        "index": 1,
+        "reached": 1000,
+        "mean_start_hp_percent": 100.0,
+        "mean_slots_start": {
+          "1": 8.0,
+          "2": 6.0,
+          "3": 4.0
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 2.0,
+          "hit_dice": 20.0,
+          "second_wind": 3.0
+        },
+        "mean_downs": 1.669,
+        "mean_rounds": 3.267
+      },
+      {
+        "index": 2,
+        "reached": 1000,
+        "mean_start_hp_percent": 87.49319727891157,
+        "mean_slots_start": {
+          "1": 6.67,
+          "2": 5.999,
+          "3": 3.224
+        },
+        "mean_resources_start": {
+          "action_surge": 0.412,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 0.72,
+          "hit_dice": 20.0,
+          "second_wind": 3.0
+        },
+        "mean_downs": 3.393,
+        "mean_rounds": 4.709
+      },
+      {
+        "index": 3,
+        "reached": 958,
+        "mean_start_hp_percent": 96.53686109099172,
+        "mean_slots_start": {
+          "1": 4.509394572025053,
+          "2": 5.151356993736952,
+          "3": 3.3580375782881
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.08663883089770355,
+          "channel_divinity": 1.0427974947807934,
+          "hit_dice": 15.446764091858038,
+          "second_wind": 3.0
+        },
+        "mean_downs": 1.5031315240083507,
+        "mean_rounds": 2.989561586638831
+      },
+      {
+        "index": 4,
+        "reached": 956,
+        "mean_start_hp_percent": 86.12629152079242,
+        "mean_slots_start": {
+          "1": 3.4518828451882846,
+          "2": 4.7301255230125525,
+          "3": 2.4320083682008367
+        },
+        "mean_resources_start": {
+          "action_surge": 0.21652719665271966,
+          "arcane_recovery": 0.08682008368200837,
+          "channel_divinity": 0.17364016736401675,
+          "hit_dice": 15.446652719665272,
+          "second_wind": 2.99581589958159
+        },
+        "mean_downs": 3.4707112970711296,
+        "mean_rounds": 2.6328451882845187
+      },
+      {
+        "index": 5,
+        "reached": 369,
+        "mean_start_hp_percent": 66.66666666666667,
+        "mean_slots_start": {
+          "1": 3.200542005420054,
+          "2": 4.073170731707317,
+          "3": 1.962059620596206
+        },
+        "mean_resources_start": {
+          "action_surge": 0.926829268292683,
+          "arcane_recovery": 0.03523035230352303,
+          "channel_divinity": 0.6883468834688347,
+          "hit_dice": 8.775067750677508,
+          "second_wind": 2.745257452574526
+        },
+        "mean_downs": 2.0569105691056913,
+        "mean_rounds": 3.341463414634146
+      },
+      {
+        "index": 6,
+        "reached": 228,
+        "mean_start_hp_percent": 73.5171261487051,
+        "mean_slots_start": {
+          "1": 2.337719298245614,
+          "2": 2.6052631578947367,
+          "3": 0.9473684210526315
+        },
+        "mean_resources_start": {
+          "action_surge": 0.013157894736842105,
+          "arcane_recovery": 0.008771929824561403,
+          "channel_divinity": 0.02631578947368421,
+          "hit_dice": 7.078947368421052,
+          "second_wind": 2.9078947368421053
+        },
+        "mean_downs": 3.425438596491228,
+        "mean_rounds": 3.68859649122807
+      }
+    ]
+  },
+  {
+    "level": 10,
+    "name": "Level 10 class party \u2014 six encounters, two short rests",
+    "runs": 1000,
+    "seed": 1,
+    "strategy": "nova",
+    "monster_strategy": "default",
+    "survived": 0,
+    "survival_probability": 0.0,
+    "encounters_cleared_distribution": {
+      "2": 60,
+      "3": 465,
+      "4": 422,
+      "5": 53
+    },
+    "encounters": [
+      {
+        "index": 1,
+        "reached": 1000,
+        "mean_start_hp_percent": 100.0,
+        "mean_slots_start": {
+          "1": 8.0,
+          "2": 6.0,
+          "3": 6.0,
+          "4": 6.0,
+          "5": 4.0
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 3.0,
+          "divine_intervention": 1.0,
+          "hit_dice": 40.0,
+          "indomitable": 1.0,
+          "second_wind": 4.0
+        },
+        "mean_downs": 1.45,
+        "mean_rounds": 4.223
+      },
+      {
+        "index": 2,
+        "reached": 1000,
+        "mean_start_hp_percent": 91.63404255319149,
+        "mean_slots_start": {
+          "1": 8.0,
+          "2": 5.972,
+          "3": 5.188,
+          "4": 1.904,
+          "5": 0.004
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 0.55,
+          "divine_intervention": 1.0,
+          "hit_dice": 40.0,
+          "indomitable": 1.0,
+          "second_wind": 4.0
+        },
+        "mean_downs": 1.981,
+        "mean_rounds": 4.834
+      },
+      {
+        "index": 3,
+        "reached": 1000,
+        "mean_start_hp_percent": 99.91808510638297,
+        "mean_slots_start": {
+          "1": 7.722,
+          "2": 4.146,
+          "3": 0.915,
+          "4": 0.01,
+          "5": 1.0
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 1.026,
+          "divine_intervention": 1.0,
+          "hit_dice": 31.713,
+          "indomitable": 0.609,
+          "second_wind": 4.0
+        },
+        "mean_downs": 4.066,
+        "mean_rounds": 8.202
+      },
+      {
+        "index": 4,
+        "reached": 940,
+        "mean_start_hp_percent": 84.47122548551343,
+        "mean_slots_start": {
+          "1": 2.304255319148936,
+          "2": 0.26276595744680853,
+          "3": 0.015957446808510637,
+          "4": 0.0,
+          "5": 0.007446808510638298
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.0,
+          "divine_intervention": 0.5787234042553191,
+          "hit_dice": 31.78191489361702,
+          "indomitable": 0.6127659574468085,
+          "second_wind": 3.9170212765957446
+        },
+        "mean_downs": 3.452127659574468,
+        "mean_rounds": 6.1553191489361705
+      },
+      {
+        "index": 5,
+        "reached": 475,
+        "mean_start_hp_percent": 59.85270841210208,
+        "mean_slots_start": {
+          "1": 0.44,
+          "2": 0.042105263157894736,
+          "3": 0.00631578947368421,
+          "4": 0.0,
+          "5": 0.002105263157894737
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.6484210526315789,
+          "divine_intervention": 0.05052631578947368,
+          "hit_dice": 26.67157894736842,
+          "indomitable": 0.6189473684210526,
+          "second_wind": 3.903157894736842
+        },
+        "mean_downs": 2.856842105263158,
+        "mean_rounds": 5.564210526315789
+      },
+      {
+        "index": 6,
+        "reached": 53,
+        "mean_start_hp_percent": 31.288004101064136,
+        "mean_slots_start": {
+          "1": 0.07547169811320754,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.0,
+          "divine_intervention": 0.0,
+          "hit_dice": 25.830188679245282,
+          "indomitable": 0.05660377358490566,
+          "second_wind": 3.056603773584906
+        },
+        "mean_downs": 1.5660377358490567,
+        "mean_rounds": 1.6981132075471699
+      }
+    ]
+  },
+  {
+    "level": 10,
+    "name": "Level 10 class party \u2014 six encounters, two short rests",
+    "runs": 1000,
+    "seed": 1,
+    "strategy": "conservative",
+    "monster_strategy": "default",
+    "survived": 6,
+    "survival_probability": 0.006,
+    "encounters_cleared_distribution": {
+      "0": 3,
+      "1": 11,
+      "2": 91,
+      "3": 336,
+      "4": 401,
+      "5": 152,
+      "6": 6
+    },
+    "encounters": [
+      {
+        "index": 1,
+        "reached": 1000,
+        "mean_start_hp_percent": 100.0,
+        "mean_slots_start": {
+          "1": 8.0,
+          "2": 6.0,
+          "3": 6.0,
+          "4": 6.0,
+          "5": 4.0
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 3.0,
+          "divine_intervention": 1.0,
+          "hit_dice": 40.0,
+          "indomitable": 1.0,
+          "second_wind": 4.0
+        },
+        "mean_downs": 4.181,
+        "mean_rounds": 5.56
+      },
+      {
+        "index": 2,
+        "reached": 997,
+        "mean_start_hp_percent": 73.70515802727331,
+        "mean_slots_start": {
+          "1": 4.359077231695085,
+          "2": 5.852557673019057,
+          "3": 5.664994984954864,
+          "4": 4.348044132397192,
+          "5": 3.9267803410230693
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 1.0,
+          "channel_divinity": 0.11634904714142427,
+          "divine_intervention": 1.0,
+          "hit_dice": 40.0,
+          "indomitable": 1.0,
+          "second_wind": 3.9969909729187565
+        },
+        "mean_downs": 4.37913741223671,
+        "mean_rounds": 6.147442326980943
+      },
+      {
+        "index": 3,
+        "reached": 986,
+        "mean_start_hp_percent": 94.26222433213931,
+        "mean_slots_start": {
+          "1": 1.793103448275862,
+          "2": 3.550709939148073,
+          "3": 4.670385395537525,
+          "4": 3.896551724137931,
+          "5": 3.768762677484787
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.018255578093306288,
+          "channel_divinity": 0.9827586206896551,
+          "divine_intervention": 0.9989858012170385,
+          "hit_dice": 28.684584178498987,
+          "indomitable": 0.5547667342799188,
+          "second_wind": 3.9787018255578093
+        },
+        "mean_downs": 4.152129817444219,
+        "mean_rounds": 7.484787018255578
+      },
+      {
+        "index": 4,
+        "reached": 895,
+        "mean_start_hp_percent": 83.05617676434889,
+        "mean_slots_start": {
+          "1": 0.506145251396648,
+          "2": 2.3497206703910614,
+          "3": 2.8860335195530724,
+          "4": 1.4391061452513967,
+          "5": 2.0558659217877095
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 0.0011173184357541898,
+          "channel_divinity": 0.0,
+          "divine_intervention": 0.7575418994413408,
+          "hit_dice": 28.56983240223464,
+          "indomitable": 0.5575418994413408,
+          "second_wind": 3.9072625698324024
+        },
+        "mean_downs": 3.207821229050279,
+        "mean_rounds": 5.95195530726257
+      },
+      {
+        "index": 5,
+        "reached": 559,
+        "mean_start_hp_percent": 66.55238010349139,
+        "mean_slots_start": {
+          "1": 0.24150268336314848,
+          "2": 1.6225402504472273,
+          "3": 2.012522361359571,
+          "4": 0.18783542039355994,
+          "5": 0.6833631484794276
+        },
+        "mean_resources_start": {
+          "action_surge": 1.0,
+          "arcane_recovery": 0.0017889087656529517,
+          "channel_divinity": 0.7227191413237924,
+          "divine_intervention": 0.2182468694096601,
+          "hit_dice": 24.84973166368515,
+          "indomitable": 0.5599284436493739,
+          "second_wind": 3.9391771019677995
+        },
+        "mean_downs": 2.919499105545617,
+        "mean_rounds": 5.719141323792487
+      },
+      {
+        "index": 6,
+        "reached": 158,
+        "mean_start_hp_percent": 52.637452662702124,
+        "mean_slots_start": {
+          "1": 0.15822784810126583,
+          "2": 1.0632911392405062,
+          "3": 1.1265822784810127,
+          "4": 0.0189873417721519,
+          "5": 0.16455696202531644
+        },
+        "mean_resources_start": {
+          "action_surge": 0.0,
+          "arcane_recovery": 0.0,
+          "channel_divinity": 0.006329113924050633,
+          "divine_intervention": 0.03164556962025317,
+          "hit_dice": 24.037974683544302,
+          "indomitable": 0.10759493670886076,
+          "second_wind": 3.6455696202531644
+        },
+        "mean_downs": 2.3544303797468356,
+        "mean_rounds": 2.930379746835443
+      }
+    ]
+  }
+]

@@ -1,7 +1,7 @@
 """Materialize embedded spell stat blocks as independent, targetable combatants."""
 from copy import deepcopy
 
-from .state import Combatant, Effect
+from .state import Combatant, Effect, compare_deadline
 
 
 def materialize(combat, instance, declaration):
@@ -78,7 +78,7 @@ def take_summoned_turns(combat, caster):
             else: allowed = False
         if rules.get("control_hours"):
             parent = combat.instances.get(spirit.summoned_source)
-            if parent and combat.time_rounds - parent.cast_round >= rules["control_hours"] * 600:
+            if parent and compare_deadline(combat.time_rounds, parent.cast_round + rules["control_hours"] * 600) >= 0:
                 spirit.team = "uncontrolled"; allowed = False
         if rules.get("object_only"): continue
         if allowed and rules.get("familiar"):

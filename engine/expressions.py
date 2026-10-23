@@ -17,7 +17,7 @@ EVENTS = {
 }
 METHODS = {"has_status", "has_status_from", "has_condition", "has_condition_from", "visible_to", "has_any_component", "immune_to"}
 ATTRS = {
-    "size", "temp_hp", "team", "willing", "immune_to",
+    "size", "temp_hp", "team", "willing", "immune_to", "bloodied",
     "has_status_from", "has_condition", "has_condition_from", "alignment", "creature_type", "actual_creature_type", "hp", "max_hp", "next_turn", "this_turn", "index",
     "cast_turn", "elapsed_minutes", "caster", "spell", "target",
     "target_dropped_to_zero", "drop_turn", "has_status", "visible_to",

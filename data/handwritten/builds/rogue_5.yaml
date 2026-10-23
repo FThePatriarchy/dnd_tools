@@ -1,0 +1,25 @@
+class: rogue
+level: 5
+subclass: assassin
+abilities:
+  str: 8
+  dex: 15
+  con: 14
+  int: 12
+  wis: 13
+  cha: 10
+equipment: studded_rapier
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      dex: 2
+  weapon_masteries:
+  - rapier
+  - shortbow
+  expertise:
+  - stealth
+  - sleight of hand
+  cunning_strike:
+  - poison
+  - trip

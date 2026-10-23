@@ -1,0 +1,73 @@
+class: wizard
+level: 10
+subclass: evoker
+abilities:
+  str: 8
+  dex: 14
+  con: 13
+  int: 15
+  wis: 12
+  cha: 10
+equipment: unarmored_staff
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      int: 2
+    8:
+      int: 2
+  weapon_masteries: []
+  cantrips:
+  - Fire Bolt
+  - Ray of Frost
+  - Toll the Dead
+  - Shocking Grasp
+  - Acid Splash
+  prepared_spells:
+  - Fireball
+  - Shield
+  - Mage Armor
+  - Magic Missile
+  - Counterspell
+  - Scorching Ray
+  - Thunderwave
+  - Mirror Image
+  - Misty Step
+  - Haste
+  - Web
+  - Cone of Cold
+  - Ice Storm
+  - Wall of Fire
+  - Fire Shield
+  spellbook:
+  - Shield
+  - Mage Armor
+  - Magic Missile
+  - Thunderwave
+  - Sleep
+  - Chromatic Orb
+  - Burning Hands
+  - Charm Person
+  - Scorching Ray
+  - Mirror Image
+  - Darkness
+  - Gust of Wind
+  - Misty Step
+  - Web
+  - Fireball
+  - Counterspell
+  - Lightning Bolt
+  - Haste
+  - Slow
+  - Ice Storm
+  - Wall of Fire
+  - Fire Shield
+  - Alter Self
+  - Animate Dead
+  - Cone of Cold
+  - Animate Objects
+  - Bigby's Hand
+  - Arcane Lock
+  - Banishment
+  expertise:
+  - arcana

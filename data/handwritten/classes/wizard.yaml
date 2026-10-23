@@ -1,0 +1,262 @@
+name: wizard
+source: XPHB
+subclass: evoker
+hit_die: d6
+saves:
+- int
+- wis
+subclass_level: 3
+asi_levels:
+- 4
+- 8
+levels:
+  1:
+    proficiency_bonus: 2
+    hit_die: d6
+    features:
+    - Arcane Recovery
+    - Ritual Adept
+    - Spellcasting
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 4
+    slots:
+      1: 2
+  2:
+    proficiency_bonus: 2
+    hit_die: d6
+    features:
+    - Scholar
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 5
+    slots:
+      1: 3
+  3:
+    proficiency_bonus: 2
+    hit_die: d6
+    features:
+    - Wizard Subclass
+    - Evoker
+    - Evocation Savant
+    - Potent Cantrip
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 6
+    slots:
+      1: 4
+      2: 2
+  4:
+    proficiency_bonus: 2
+    hit_die: d6
+    features:
+    - Ability Score Improvement
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 7
+    slots:
+      1: 4
+      2: 3
+  5:
+    proficiency_bonus: 3
+    hit_die: d6
+    features:
+    - Memorize Spell
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 9
+    slots:
+      1: 4
+      2: 3
+      3: 2
+  6:
+    proficiency_bonus: 3
+    hit_die: d6
+    features:
+    - Subclass Feature
+    - Sculpt Spells
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 10
+    slots:
+      1: 4
+      2: 3
+      3: 3
+  7:
+    proficiency_bonus: 3
+    hit_die: d6
+    features: []
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 11
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 1
+  8:
+    proficiency_bonus: 3
+    hit_die: d6
+    features:
+    - Ability Score Improvement
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 12
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 2
+  9:
+    proficiency_bonus: 4
+    hit_die: d6
+    features: []
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 14
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 1
+  10:
+    proficiency_bonus: 4
+    hit_die: d6
+    features:
+    - Subclass Feature
+    - Empowered Evocation
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 15
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+features:
+- name: Arcane Recovery
+  level: 1
+  origin: class
+  mechanics:
+    arcane_recovery: true
+- name: Ritual Adept
+  level: 1
+  origin: class
+  unsupported: Language/ritual exploration outside combat and scripted rests.
+- name: Spellcasting
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Scholar
+  level: 2
+  origin: class
+  mechanics:
+    builder: true
+- name: Wizard Subclass
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 4
+  origin: class
+  mechanics:
+    builder: true
+- name: Memorize Spell
+  level: 5
+  origin: class
+  mechanics:
+    memorize_spell: true
+- name: Subclass Feature
+  level: 6
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 8
+  origin: class
+  mechanics:
+    builder: true
+- name: Subclass Feature
+  level: 10
+  origin: class
+  mechanics:
+    builder: true
+- name: Evoker
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Evocation Savant
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Potent Cantrip
+  level: 3
+  origin: subclass
+  mechanics:
+    potent_cantrip: true
+- name: Sculpt Spells
+  level: 6
+  origin: subclass
+  mechanics:
+    sculpt_spells: true
+- name: Empowered Evocation
+  level: 10
+  origin: subclass
+  mechanics:
+    empowered_evocation: true

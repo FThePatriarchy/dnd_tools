@@ -3,6 +3,15 @@ from dataclasses import dataclass, field
 from copy import deepcopy
 
 
+def compare_deadline(now, deadline):
+    """Round-clock ordering, treating accumulated sub-nanosecond drift as equal.
+
+    Expiry uses >= 0; an inclusive eligibility window uses <= 0.
+    """
+    delta = now - deadline
+    return 0 if abs(delta) <= 1e-9 else (1 if delta > 0 else -1)
+
+
 @dataclass(eq=False)
 class Effect:
     kind: str
@@ -60,10 +69,24 @@ class Combatant:
     hit_dice: int = 0
     max_hit_dice: int = 0
     downs: int = 0
+    dead: bool = False
+    deaths: int = 0
+    dead_at: float | None = None
+    death_successes: int = 0
+    death_failures: int = 0
+    stable_wake_at: float | None = None
+    last_long_rest_end: float | None = None
+    position: str = "back"
+    engagement_tags: list[str] = field(default_factory=list)
     spells: list[str] = field(default_factory=list)
+    prepared_spells: list[str] = field(default_factory=list)
+    spellbook: list[str] = field(default_factory=list)
     innate_spells: dict[str, int] = field(default_factory=dict)
     attacks: list[dict] = field(default_factory=list)
     features: dict = field(default_factory=dict)
+    skill_proficiencies: list[str] = field(default_factory=list)
+    expertise: list[str] = field(default_factory=list)
+    cunning_strike: list[str] = field(default_factory=list)
     size: str = "M"
     routines: list[list[str]] = field(default_factory=list)
     replacements: list[str] = field(default_factory=list)
@@ -126,10 +149,14 @@ class Combatant:
 
     @property
     def alive(self):
-        return self.hp > 0 and self.exhaustion_level < 6 and not self.removed and not self.permanently_removed
+        return self.hp > 0 and not self.dead and self.exhaustion_level < 6 and not self.removed and not self.permanently_removed
 
     def mod(self, ability: str) -> int:
         return (self.abilities[ability] - 10) // 2
+
+    @property
+    def bloodied(self):
+        return self.hp * 2 <= self.max_hp
 
     def immune_to(self, condition):
         return condition in self.condition_immunities or any(e.kind == "defense" and condition in e.data.get("condition_immunity", []) for e in self.active_effects)
@@ -263,6 +290,10 @@ class SpellInstance:
     damage_total: int = 0
     limits_count: dict = field(default_factory=dict)
     maintained_turn: int = 0
+
+    @property
+    def magical(self):
+        return "level" in self.spec or self.spec.get("magical", False)
 
     @property
     def target(self):

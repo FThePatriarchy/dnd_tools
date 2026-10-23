@@ -1,0 +1,436 @@
+name: cleric
+source: XPHB
+subclass: life
+hit_die: d8
+saves:
+- wis
+- cha
+subclass_level: 3
+asi_levels:
+- 4
+- 8
+levels:
+  1:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Divine Order
+    - Protector
+    - Spellcasting
+    - Thaumaturge
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 4
+    slots:
+      1: 2
+  2:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Channel Divinity
+    - Divine Spark
+    - Turn Undead
+    resources:
+      channel_divinity:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 5
+    slots:
+      1: 3
+  3:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Cleric Subclass
+    - Life Domain
+    - Disciple of Life
+    - Life Domain Spells
+    - Preserve Life
+    resources:
+      channel_divinity:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 6
+    slots:
+      1: 4
+      2: 2
+  4:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources:
+      channel_divinity:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 7
+    slots:
+      1: 4
+      2: 3
+  5:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Sear Undead
+    resources:
+      channel_divinity:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 9
+    slots:
+      1: 4
+      2: 3
+      3: 2
+  6:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Blessed Healer
+    resources:
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 10
+    slots:
+      1: 4
+      2: 3
+      3: 3
+  7:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Blessed Strikes
+    - Divine Strike
+    - Potent Spellcasting
+    resources:
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 11
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 1
+  8:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources:
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 12
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 2
+  9:
+    proficiency_bonus: 4
+    hit_die: d8
+    features: []
+    resources:
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 14
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 1
+  10:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Divine Intervention
+    resources:
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+      divine_intervention:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 15
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+features:
+- name: Divine Order
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Protector
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Spellcasting
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Thaumaturge
+  level: 1
+  origin: class
+  mechanics:
+    thaumaturge: true
+- name: Channel Divinity
+  level: 2
+  origin: class
+  mechanics:
+    builder: true
+- name: Divine Spark
+  level: 2
+  origin: class
+  actions:
+  - name: Divine Spark (Heal)
+    cost: action
+    resource: channel_divinity
+    effects:
+    - id: spark_heal
+      event: on_cast
+      target: &id001
+        select: single
+        filter:
+        - creature
+        - visible
+        affects: any
+        eligible_if: target != caster
+        within_ft: 30
+      attack: null
+      save: null
+      on_hit: []
+      on_fail: []
+      on_success: []
+      apply:
+      - heal:
+          dice: spark_dice
+          bonus: spell_mod
+      limit: null
+    magical: true
+  - name: Divine Spark (Radiant)
+    cost: action
+    resource: channel_divinity
+    effects:
+    - id: spark_damage
+      event: on_cast
+      target: *id001
+      attack: null
+      save:
+        ability: con
+        on_success: half
+      on_hit: []
+      on_fail:
+      - damage:
+          dice: spark_dice
+          bonus: spell_mod
+          type: radiant
+      on_success: []
+      apply: []
+      limit: null
+    magical: true
+  - name: Divine Spark (Necrotic)
+    cost: action
+    resource: channel_divinity
+    effects:
+    - id: spark_damage
+      event: on_cast
+      target:
+        select: single
+        filter:
+        - creature
+        - visible
+        affects: any
+        eligible_if: target != caster
+        within_ft: 30
+      attack: null
+      save:
+        ability: con
+        on_success: half
+      on_hit: []
+      on_fail:
+      - damage:
+          dice: spark_dice
+          bonus: spell_mod
+          type: necrotic
+      on_success: []
+      apply: []
+      limit: null
+    magical: true
+- name: Turn Undead
+  level: 2
+  origin: class
+  actions:
+  - name: Turn Undead
+    cost: action
+    resource: channel_divinity
+    effects:
+    - id: turn_undead
+      event: on_cast
+      target:
+        select: n_targets
+        n: all
+        distinct: true
+        up_to: true
+        filter:
+        - creature
+        affects: enemy
+        within_ft: 30
+        eligible_if: target.creature_type == undead
+      attack: null
+      save:
+        ability: wis
+        on_success: negate
+      on_hit: []
+      on_fail:
+      - apply_condition:
+          condition: frightened
+          ends_on_damage: any
+          linked: true
+      - apply_condition:
+          condition: incapacitated
+          ends_on_damage: any
+          linked: true
+      on_success: []
+      apply: []
+      limit: null
+    magical: true
+    duration:
+      type: minutes
+      n: 1
+  unsupported: Fleeing movement is not simulated; chosen visible/in-range undead are
+    assumed in reach under the shared no-grid convention.
+- name: Cleric Subclass
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 4
+  origin: class
+  mechanics:
+    builder: true
+- name: Sear Undead
+  level: 5
+  origin: class
+  mechanics:
+    sear_undead: true
+- name: Subclass Feature
+  level: 6
+  origin: class
+  mechanics:
+    builder: true
+- name: Blessed Strikes
+  level: 7
+  origin: class
+  mechanics:
+    builder: true
+- name: Divine Strike
+  level: 7
+  origin: class
+  mechanics:
+    divine_strike: 1d8
+- name: Potent Spellcasting
+  level: 7
+  origin: class
+  mechanics:
+    potent_spellcasting: true
+- name: Ability Score Improvement
+  level: 8
+  origin: class
+  mechanics:
+    builder: true
+- name: Divine Intervention
+  level: 10
+  origin: class
+  mechanics:
+    builder: true
+- name: Life Domain
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Disciple of Life
+  level: 3
+  origin: subclass
+  mechanics:
+    disciple_of_life: true
+- name: Life Domain Spells
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Preserve Life
+  level: 3
+  origin: subclass
+  actions:
+  - name: Preserve Life
+    cost: action
+    resource: channel_divinity
+    effects:
+    - id: preserve_life
+      event: on_cast
+      target:
+        select: n_targets
+        n: all
+        distinct: true
+        up_to: true
+        filter:
+        - creature
+        affects: any
+        within_ft: 30
+        eligible_if: target.bloodied
+      attack: null
+      save: null
+      on_hit: []
+      on_fail: []
+      on_success: []
+      apply:
+      - heal_pool:
+          amount: life_pool
+          cap: half
+      limit: null
+    magical: true
+- name: Blessed Healer
+  level: 6
+  origin: subclass
+  mechanics:
+    blessed_healer: true

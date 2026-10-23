@@ -11,7 +11,11 @@ def effect_block(identifier, *, target=None, save=None, apply=None, on_fail=None
 def validate_sheet(data, path, *, summoned=False):
     v = Validator(path)
     v.obj(data, "$", "name source max_hp ac abilities speed creature_type proficiency_bonus",
-          "hp_formula cr level save_proficiencies save_bonuses resistances immunities vulnerabilities condition_immunities spell_ability spell_dc spell_attack_bonus spell_slots spells innate_spells limited_uses hit_dice attacks multiattack extra_attack actions traits alignment initiative_bonus unsupported unsupported_spells features movement_modes size routines replacements legendary spell_resources spell_levels spell_costs spell_recharge spell_components")
+          "hp_formula cr level save_proficiencies save_bonuses resistances immunities vulnerabilities condition_immunities spell_ability spell_dc spell_attack_bonus spell_slots spells innate_spells limited_uses hit_dice attacks multiattack extra_attack actions traits alignment initiative_bonus unsupported unsupported_spells features movement_modes size routines replacements legendary spell_resources spell_levels spell_costs spell_recharge spell_components skill_proficiencies expertise cunning_strike prepared_spells spellbook position engagement_tags")
+    if "position" in data: v.enum(data["position"], {"front", "back"}, "position")
+    if "engagement_tags" in data:
+        v.sequence(data["engagement_tags"], "engagement_tags")
+        for tag in data["engagement_tags"]: v.enum(tag, {"reach", "flying", "teleport"}, "engagement_tags")
     for k in ("name", "creature_type", "source"): v.text(data[k], k)
     v.enum(data["source"], {"XMM", "XPHB"}, "source")
     for k in ("max_hp", "ac", "proficiency_bonus"):
@@ -66,6 +70,15 @@ def validate_sheet(data, path, *, summoned=False):
         spells = load_spells()
         v.sequence(data["spells"], "spells")
         for name in data["spells"]: v.check(name in spells, "spells", f"unknown spell {name}")
+    for key in ("prepared_spells", "spellbook"):
+        if key not in data: continue
+        from .loader import load_spells
+        catalog = load_spells()
+        v.sequence(data[key], key)
+        v.check(len(data[key]) == len(set(data[key])), key, "duplicate spell")
+        for name in data[key]: v.check(name in catalog and catalog[name]["level"] > 0, key, "requires an existing leveled spell")
+    v.check(set(data.get("prepared_spells", [])) <= set(data.get("spells", [])), "prepared_spells", "prepared spell missing from spells")
+    if "spellbook" in data: v.check(set(data.get("prepared_spells", [])) <= set(data["spellbook"]), "spellbook", "prepared spell missing from spellbook")
     for name in data.get("innate_spells", {}):
         v.check(name in data.get("spells", []) and name in data.get("limited_uses", {}), "innate_spells", "innate spell requires prepared spell and matching limited-use counter")
     attacks = data.get("attacks", [])
@@ -73,7 +86,10 @@ def validate_sheet(data, path, *, summoned=False):
     v.check(len({a.get('name') for a in attacks}) == len(attacks), "attacks", "duplicate attack name")
     for i, a in enumerate(attacks):
         p = f"attacks[{i}]"
-        v.obj(a, p, "name kind to_hit effects", "reach_ft range_ft ability mastery recharge resource riders advantage_if on_hit_self")
+        v.obj(a, p, "name kind to_hit effects", "reach_ft range_ft ability mastery recharge resource riders advantage_if on_hit_self properties")
+        if "properties" in a:
+            v.sequence(a["properties"], p + ".properties")
+            for prop in a["properties"]: v.enum(prop, {"finesse", "two_handed", "versatile", "light"}, p + ".properties")
         v.text(a["name"], p + ".name")
         v.enum(a["kind"], {"melee", "ranged"}, p + ".kind")
         if summoned and a["to_hit"] == "spell_attack": pass
@@ -81,7 +97,7 @@ def validate_sheet(data, path, *, summoned=False):
         if "reach_ft" in a: v.number(a["reach_ft"], p + ".reach_ft", 0)
         if "range_ft" in a: v.number(a["range_ft"], p + ".range_ft", 0)
         if "ability" in a: v.enum(a["ability"], ABILITIES, p + ".ability")
-        if "mastery" in a: v.enum(a["mastery"], {"graze", "vex", "sap"}, p + ".mastery")
+        if "mastery" in a: v.enum(a["mastery"], {"graze", "vex", "sap", "slow", "push", "topple"}, p + ".mastery")
         v.primitives(a["effects"], p + ".effects")
         if "on_hit_self" in a: v.primitives(a["on_hit_self"], p + ".on_hit_self")
         if "riders" in a: v.blocks(a["riders"], p + ".riders")
@@ -97,7 +113,7 @@ def validate_sheet(data, path, *, summoned=False):
         v.sequence(data.get(k, []), k)
         for i, a in enumerate(data.get(k, [])):
             p = f"{k}[{i}]"
-            v.obj(a, p, "name cost effects", "resource recharge grants_action restricted_to duration passive trigger")
+            v.obj(a, p, "name cost effects", "resource recharge grants_action restricted_to duration passive trigger magical")
             v.text(a["name"], p + ".name")
             v.enum(a["cost"], {"action", "bonus_action", "reaction", "free"}, p + ".cost")
             if "resource" in a: v.check(a["resource"] in data.get("limited_uses", {}), p + ".resource", "counter not defined")
@@ -112,6 +128,7 @@ def validate_sheet(data, path, *, summoned=False):
                 for x in a["restricted_to"]: v.enum(x, {"hide", "disengage", "attack"}, p)
             if "duration" in a: v.duration(a["duration"], p + ".duration")
             if "passive" in a: v.boolean(a["passive"], p + ".passive")
+            if "magical" in a: v.boolean(a["magical"], p + ".magical")
             if "trigger" in a: v.enum(a["trigger"], {"enemy_turn_start", "creature_turn_start", "own_turn_start"}, p + ".trigger")
             v.blocks(a["effects"], p + ".effects")
     if "unsupported" in data:
@@ -151,9 +168,11 @@ def validate_sheet(data, path, *, summoned=False):
             for key, present in components.items(): v.boolean(present, "spell_components." + name + "." + key)
     if "features" in data:
         f = data["features"]
-        v.obj(f, "features", "", "pack_tactics magic_resistance sunlight_sensitivity bloodied_frenzy evasion parry regeneration undead_fortitude life_drain redirect_attack authority_aura grapple_damage rampage")
+        from .classes import CLASS_FLAGS
+        v.obj(f, "features", "", set("pack_tactics magic_resistance sunlight_sensitivity bloodied_frenzy evasion parry regeneration undead_fortitude life_drain redirect_attack authority_aura grapple_damage rampage great_weapon_fighting no_sleep concentration_while_asleep".split()) | CLASS_FLAGS)
         for key, value in f.items():
-            if key in {"parry", "undead_fortitude"}: v.number(value, "features." + key, 1, True)
+            if key in {"parry", "undead_fortitude", "improved_critical"}: v.number(value, "features." + key, 1, True)
+            elif key in {"sneak_attack", "divine_strike"}: v.dice(value, "features." + key)
             elif key == "regeneration":
                 v.obj(value, "features.regeneration", "amount blocked_by at_zero")
                 v.number(value["amount"], "features.regeneration.amount", 1, True)
@@ -195,3 +214,10 @@ def validate_sheet(data, path, *, summoned=False):
     if "movement_modes" in data:
         v.obj(data["movement_modes"], "movement_modes", "", "walk fly climb swim burrow")
         for key, value in data["movement_modes"].items(): v.number(value, "movement_modes." + key, 0)
+    from .class_mechanics import SKILLS
+    for key in ("skill_proficiencies", "expertise", "cunning_strike"):
+        if key not in data: continue
+        v.sequence(data[key], key)
+        v.check(len(data[key]) == len(set(data[key])), key, "duplicate choice")
+        for x in data[key]: v.enum(x, {"poison", "trip", "withdraw"} if key == "cunning_strike" else SKILLS, key)
+    v.check(set(data.get("expertise", [])) <= set(data.get("skill_proficiencies", [])), "expertise", "Expertise requires proficiency")

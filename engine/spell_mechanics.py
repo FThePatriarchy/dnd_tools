@@ -144,7 +144,7 @@ class SpellMechanics:
                 self.heal(target, sum(dice.roll(self.rng, "1" + target.hit_die if target.hit_die.startswith("d") else target.hit_die) for _ in range(count)) + instance.caster.spell_mod)
         elif key == "extinguish": self.extinguish(target, method="doused")
         elif key == "stabilize":
-            if target.hp == 0 and not target.permanently_removed: target.statuses["stable"] = {}
+            if target.hp == 0 and not target.permanently_removed: self.stabilize(target)
         elif key == "restore":
             kind = value["kind"]
             if kind.startswith("$"): kind = instance.choices[kind[1:]]

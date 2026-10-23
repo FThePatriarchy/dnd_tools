@@ -1,0 +1,10 @@
+name: Level 10 class party — six encounters, two short rests
+steps:
+  - encounter: [gladiator x3]
+  - encounter: [chain_devil, barbed_devil]
+  - rest: short
+  - encounter: [wight x4, wraith x2]
+  - encounter: [bone_devil, barbed_devil]
+  - rest: short
+  - encounter: [stone_golem, gladiator]
+  - encounter: [young_red_dragon, hell_hound x2]

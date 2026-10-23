@@ -14,6 +14,7 @@ DAMAGE_TYPES = {"acid", "bludgeoning", "cold", "fire", "force", "lightning", "ne
 TOP = "name source level school casting_time reaction_trigger range components duration concentration ritual choices effects scaling ends_on unsupported".split()
 BLOCK = "id event target attack save on_hit on_fail on_success apply limit".split()
 PRIMITIVES = {
+    "heal_pool": ("amount cap", ""),
     "damage": ("type", "dice amount bonus explode_max wounded_dice delay leech half end_after_total leap_on_duplicate slot_bonus add_caster_mod"), "heal": ("", "dice bonus amount"),
     "temp_hp": ("", "dice amount"),
     "type_mask": ("type", ""), "extinguish": ("", ""),
@@ -109,7 +110,7 @@ class Validator:
                     chain.insert(0, current[2]); current = current[1]
                 domain = "binding" if root[1] in self.ids else {"caster": "creature", "target": "creature", "attacker": "creature", "defender": "creature", "affected": "creature"}.get(root[1], root[1])
                 attributes = {
-                    "creature": {k: "scalar" for k in ("alignment", "creature_type", "actual_creature_type", "size", "hp", "max_hp", "team", "willing", "next_turn", "this_turn", "has_status", "has_status_from", "has_condition", "has_condition_from", "visible_to", "immune_to")},
+                    "creature": {k: "scalar" for k in ("alignment", "creature_type", "actual_creature_type", "size", "hp", "max_hp", "team", "willing", "next_turn", "this_turn", "has_status", "has_status_from", "has_condition", "has_condition_from", "visible_to", "immune_to", "bloodied")},
                     "binding": {"target": "creature", "target_dropped_to_zero": "scalar", "drop_turn": "scalar"},
                     "spell": {"elapsed_minutes": "scalar", "cast_turn": "scalar"},
                     "trigger": {"caster": "creature", "spell": "pending_spell"},
@@ -234,6 +235,9 @@ class Validator:
                 self.check(dtype in DAMAGE_TYPES or (isinstance(dtype, str) and dtype.startswith("$") and dtype[1:] in self.choices), q + ".type", "unknown damage type")
                 if "explode_max" in value: self.enum(value["explode_max"], {"spell_mod"}, q + ".explode_max")
                 if "wounded_dice" in value: self.dice(value["wounded_dice"], q + ".wounded_dice")
+            elif key == "heal_pool":
+                self.number(value["amount"], q + ".amount", 0, True)
+                self.enum(value["cap"], {"half"}, q + ".cap")
             elif key in {"temp_hp", "heal"}:
                 self.check(("dice" in value) != ("amount" in value), q, "requires exactly one of dice/amount")
                 if "amount" in value and value["amount"] != "spell_mod": self.number(value["amount"], q + ".amount", 0)

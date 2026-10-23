@@ -1,0 +1,10 @@
+name: Level 3 class party — six encounters, two short rests
+steps:
+  - encounter: [goblin_warrior x6]
+  - encounter: [ogre, cultist_fanatic]
+  - rest: short
+  - encounter: [ghoul x3, skeleton x4]
+  - encounter: [bandit_captain, bandit x6]
+  - rest: short
+  - encounter: [bugbear_stalker, bugbear_warrior]
+  - encounter: [ogre x2]

@@ -1,0 +1,32 @@
+class: wizard
+level: 1
+subclass: evoker
+abilities:
+  str: 8
+  dex: 14
+  con: 13
+  int: 15
+  wis: 12
+  cha: 10
+equipment: unarmored_staff
+choices:
+  ability_method: standard_array
+  asis: {}
+  weapon_masteries: []
+  cantrips:
+  - Fire Bolt
+  - Ray of Frost
+  - Toll the Dead
+  prepared_spells:
+  - Shield
+  - Mage Armor
+  - Magic Missile
+  - Thunderwave
+  spellbook:
+  - Shield
+  - Mage Armor
+  - Magic Missile
+  - Thunderwave
+  - Sleep
+  - Chromatic Orb
+  expertise: []

@@ -360,3 +360,19 @@ def test_step1_fix1_humanoid_heal_skips_downed_beast_without_spending(spells, fa
     if fallback:
         assert healer.limited_uses["any_rescue"] == 0
         assert healer.resources_spent["any_rescue"] == 1
+
+
+# These tests lock the accepted pre-realism day contract and exact seeded counts.
+# New-default rules are tested independently in test_day_realism.py.
+from engine.day import run_day as _legacy_run_day, simulate_day as _legacy_simulate_day
+from engine.day_options import DayOptions
+
+
+def run_day(*args, **kwargs):
+    kwargs.setdefault("options", DayOptions.legacy())
+    return _legacy_run_day(*args, **kwargs)
+
+
+def simulate_day(*args, **kwargs):
+    kwargs.setdefault("options", DayOptions.legacy())
+    return _legacy_simulate_day(*args, **kwargs)

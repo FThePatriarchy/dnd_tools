@@ -30,10 +30,10 @@ class WeaponSpells:
                 result["effects"].append({"damage": {"dice": v["extra_dice"], "bonus": 0, "type": typ}})
         return result
 
-    def weapon_spell(self, instance, target, value):
+    def spell_weapon_attack(self, instance, value):
         actor = instance.caster
         attacks = [a for a in actor.attacks if not value.get("kind") or a["kind"] == value["kind"]]
-        if not attacks: return False
+        if not attacks: return None
         a = deepcopy(attacks[0])
         if value.get("spell_ability"):
             ability = a.get("ability", "str" if a["kind"] == "melee" else "dex")
@@ -48,5 +48,14 @@ class WeaponSpells:
         if n:
             dn, ds, flat = dice.parts(value["upgrade_dice"])
             a["effects"].append({"damage": {"dice": f"{n * dn}d{ds}", "bonus": 0, "type": "radiant"}})
-        for _ in range(value["count"]): self.weapon_attack(actor, target, a)
+        return a
+
+    def weapon_spell(self, instance, target, value):
+        actor=instance.caster
+        a=self.spell_weapon_attack(instance,value)
+        if a is None: return False
+        for _ in range(value["count"]):
+            if not self.weapon_attack(actor,target,a) and instance.spec["level"]==0 and actor.features.get("potent_cantrip"):
+                damage=[{**p,"damage":{**p["damage"],"half":True}} for p in self.enchanted_attack(actor,a)["effects"] if "damage" in p]
+                self.execute(instance,target,damage,self.context(instance,target),"main")
         return True

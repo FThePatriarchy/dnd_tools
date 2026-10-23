@@ -43,7 +43,8 @@ def simulate(party=("fighter5", "cleric5"), monsters=("ogre",), runs=1000, seed=
             if not name.replace("_", "").isalnum(): raise ValueError(f"invalid sheet name: {name}")
             result.append(load_sheet(ROOT / folder / (name + ".yaml")))
         return result
-    party_sheets = sheets("characters", party)
+    from .builder import load_character
+    party_sheets = [load_character(name) for name in party]
     monster_sheets = sheets("monsters", expand_monsters(monsters))
     spells = load_spells()
     seed_rng = random.Random(seed)

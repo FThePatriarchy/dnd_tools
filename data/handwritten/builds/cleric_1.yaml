@@ -1,0 +1,27 @@
+class: cleric
+level: 1
+subclass: life
+abilities:
+  str: 13
+  dex: 10
+  con: 14
+  int: 12
+  wis: 15
+  cha: 8
+equipment: chain_shield
+choices:
+  ability_method: standard_array
+  asis: {}
+  weapon_masteries: []
+  cantrips:
+  - Sacred Flame
+  - Toll the Dead
+  - Guidance
+  prepared_spells:
+  - Healing Word
+  - Guiding Bolt
+  - Shield of Faith
+  - Bless
+  expertise: []
+  divine_order: protector
+  blessed_strikes: potent_spellcasting

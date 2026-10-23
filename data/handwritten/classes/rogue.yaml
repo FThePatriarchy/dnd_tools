@@ -1,0 +1,299 @@
+name: rogue
+source: XPHB
+subclass: assassin
+hit_die: d8
+saves:
+- dex
+- int
+subclass_level: 3
+asi_levels:
+- 4
+- 8
+- 10
+levels:
+  1:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Expertise
+    - Sneak Attack
+    - Thieves' Cant
+    - Weapon Mastery
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 1d6
+  2:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Cunning Action
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 1d6
+  3:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Rogue Subclass
+    - Steady Aim
+    - Assassin
+    - Assassin's Tools
+    - Assassinate
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 2d6
+  4:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 2d6
+  5:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Cunning Strike
+    - 'Poison (Cost: 1d6)'
+    - 'Trip (Cost: 1d6)'
+    - Uncanny Dodge
+    - 'Withdraw (Cost: 1d6)'
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 3d6
+  6:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Expertise
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 3d6
+  7:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Evasion
+    - Reliable Talent
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 4d6
+  8:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 4d6
+  9:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Infiltration Expertise
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 5d6
+  10:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 5d6
+features:
+- name: Expertise
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Sneak Attack
+  level: 1
+  origin: class
+  mechanics:
+    sneak_attack: sneak_dice
+- name: Thieves' Cant
+  level: 1
+  origin: class
+  unsupported: Language/ritual exploration outside combat and scripted rests.
+- name: Weapon Mastery
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Cunning Action
+  level: 2
+  origin: class
+  actions:
+  - name: Cunning Action
+    cost: bonus_action
+    effects:
+    - id: cunning_action
+      event: on_cast
+      target:
+        select: self
+      attack: null
+      save: null
+      on_hit: []
+      on_fail: []
+      on_success: []
+      apply:
+      - status:
+          id: disengaged
+          data: {}
+        until: end_of_turn(caster.this_turn)
+      limit: null
+  unsupported: Disengage bookkeeping executes; Dash movement and Hide concealment
+    require a grid/adjudication, and give no invented advantage.
+- name: Rogue Subclass
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+- name: Steady Aim
+  level: 3
+  origin: class
+  actions:
+  - name: Steady Aim
+    cost: bonus_action
+    effects:
+    - id: steady_aim
+      event: on_cast
+      target:
+        select: self
+      attack: null
+      save: null
+      on_hit: []
+      on_fail: []
+      on_success: []
+      apply:
+      - advantage:
+          'on': attack_rolls
+          scope: all
+          against: null
+          uses: 1
+        until: end_of_turn(caster.this_turn)
+      - modify:
+          stat: speed
+          op: set
+          value: 0
+          scope: all
+        until: end_of_turn(caster.this_turn)
+      limit: null
+- name: Ability Score Improvement
+  level: 4
+  origin: class
+  mechanics:
+    builder: true
+- name: Cunning Strike
+  level: 5
+  origin: class
+  mechanics:
+    builder: true
+- name: 'Poison (Cost: 1d6)'
+  level: 5
+  origin: class
+  mechanics:
+    builder: true
+- name: 'Trip (Cost: 1d6)'
+  level: 5
+  origin: class
+  mechanics:
+    builder: true
+- name: Uncanny Dodge
+  level: 5
+  origin: class
+  mechanics:
+    uncanny_dodge: true
+- name: 'Withdraw (Cost: 1d6)'
+  level: 5
+  origin: class
+  mechanics:
+    builder: true
+  unsupported: Movement and opportunity attacks require a grid; only expenditure/permission
+    bookkeeping executes.
+- name: Expertise
+  level: 6
+  origin: class
+  mechanics:
+    builder: true
+- name: Evasion
+  level: 7
+  origin: class
+  mechanics:
+    evasion: true
+- name: Reliable Talent
+  level: 7
+  origin: class
+  mechanics:
+    reliable_talent: true
+- name: Ability Score Improvement
+  level: 8
+  origin: class
+  mechanics:
+    builder: true
+- name: Subclass Feature
+  level: 9
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 10
+  origin: class
+  mechanics:
+    builder: true
+- name: Assassin
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Assassin's Tools
+  level: 3
+  origin: subclass
+  mechanics:
+    poisoners_kit: true
+- name: Assassinate
+  level: 3
+  origin: subclass
+  mechanics:
+    initiative_advantage: true
+    assassinate: true
+- name: Infiltration Expertise
+  level: 9
+  origin: subclass
+  mechanics:
+    roving_aim: true
+  unsupported: Mimicry is social/exploration only; Roving Aim executes.

@@ -1,0 +1,28 @@
+{
+  "classes": {
+    "fighter": {
+      "numeric_fields": 120,
+      "mutants": 121
+    },
+    "rogue": {
+      "numeric_fields": 106,
+      "mutants": 122
+    },
+    "wizard": {
+      "numeric_fields": 159,
+      "mutants": 159
+    },
+    "cleric": {
+      "numeric_fields": 172,
+      "mutants": 173
+    }
+  },
+  "numeric_fields": 557,
+  "mutants": 575,
+  "survivors": [],
+  "allow_list": {
+    "proficiency_bonus": "Universal 2024 PB = 2 + floor((level-1)/4); omitted from raw class tables.",
+    "zero": "Absent spellcasting/mastery/resource recovery is zero, not a printed grant.",
+    "single_use": "Once/next/one in source prose denotes one (including Arcane Recovery)."
+  }
+}

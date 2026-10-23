@@ -120,3 +120,28 @@ Python APIs in `engine.day`:
   `reached` gives that denominator. Never-reached entries have null scalar
   means and empty resource maps. JSON object keys (including slot levels and
   cleared counts) are strings. Every trial/encounter/rest uses seeded RNGs.
+
+## Step 4: generated characters (additions)
+
+The fixed-sheet contract above remains compatible. `CLASS_FORMAT.md` describes
+the new progression/build format and overrides the historical statement that
+no class progression exists. Channel Divinity effects now execute on generated
+Clerics; the fixed `cleric5` intentionally retains its original unsupported note.
+
+Optional generated-sheet lists: `skill_proficiencies`, `expertise` (must be
+proficient), `cunning_strike` (`poison|trip|withdraw`), `prepared_spells` (subset
+of `spells`), and `spellbook` (leveled specs, containing prepared Wizard spells).
+Unknown fields/choices and unrecognized feature hooks remain errors. Weapon
+`properties` permits only finesse/two_handed/versatile/light. Slow, Push and
+Topple extend the existing enumerated mastery vocabulary.
+
+`heal_pool: {amount: integer, cap: half}` is the only new effect primitive,
+needed for Preserve Life's finite healing budget. It follows the same healing
+eligibility, HP caps/prevention and source-instance resolution as normal heals.
+Generated Wizard short rests add Arcane Recovery and optional Memorize Spell;
+ordinary slot recovery still occurs only on a long rest. Rest callback logs can
+be collected with `take_rest(..., log=trace)`; daily resource totals persist.
+
+Example: `python -m engine.day --party fighter_5 rogue_5 wizard_5 cleric_5
+--day classes_level_5 --runs 1000 --seed 1 --strategy nova`. Both modes accept
+the same builds, without changing or replacing `fighter5`/`cleric5`.

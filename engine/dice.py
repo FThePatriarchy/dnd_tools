@@ -38,9 +38,32 @@ def add(value: str, increment: str, count: int) -> str:
     return f"{n + dn * count}d{sides}" + (f"{total:+d}" if total else "")
 
 
+class D20(int):
+    """An int-compatible result retaining the individual dice for legal rerolls."""
+    def __new__(cls, values, advantage=False):
+        result = int.__new__(cls, max(values) if advantage else min(values))
+        result.values = tuple(values)
+        result.advantage = advantage
+        return result
+
+    def replace(self, rng, index):
+        if type(index) is not int or not 0 <= index < len(self.values):
+            raise ValueError("reroll must choose one original die")
+        values = list(self.values)
+        values[index] = rng.randint(1, 20)
+        return D20(values, self.advantage)
+
+    def __reduce__(self):
+        return D20, (self.values, self.advantage)
+
+
+def reroll(rng, natural, index=0):
+    return natural.replace(rng, index) if isinstance(natural, D20) else d20(rng)
+
+
 def d20(rng: random.Random, advantage: bool = False, disadvantage: bool = False) -> int:
     first = rng.randint(1, 20)
     if advantage == disadvantage:
-        return first
+        return D20([first])
     second = rng.randint(1, 20)
-    return max(first, second) if advantage else min(first, second)
+    return D20([first, second], advantage)

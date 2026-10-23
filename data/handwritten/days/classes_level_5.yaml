@@ -1,0 +1,10 @@
+name: Level 5 class party — six encounters, two short rests
+steps:
+  - encounter: [guard_captain, bandit x4]
+  - encounter: [troll]
+  - rest: short
+  - encounter: [ghast x4]
+  - encounter: [mage]
+  - rest: short
+  - encounter: [hill_giant, ogre]
+  - encounter: [young_white_dragon]
