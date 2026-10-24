@@ -229,7 +229,7 @@ def day_monsters(day):
     return {name: load_sheet(ROOT / "monsters" / (name + ".yaml")) for name in sorted(names)}
 
 
-def _run_legacy_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max_rounds=100, monster_sheets=None, area=None):
+def _run_legacy_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max_rounds=100, monster_sheets=None, area=None, target_cap=None):
     """Mutates the supplied party in place; end snapshots precede cleanup/healing."""
     validate_day(day)
     if not party or len({c.id for c in party}) != len(party) or any(c.team != "party" for c in party):
@@ -248,6 +248,7 @@ def _run_legacy_day(party, day, spells, seed=1, *, policy=None, monster_policy=N
         names = encounter_names(step["encounter"])
         enemies = [Combatant.from_sheet(monsters[name], f"enemy_{i}", "enemy") for i, name in enumerate(names)]
         combat = Combat(party + enemies, spells, seed=rng.getrandbits(64), policy=policy, area=area, monster_policy=monster_policy or Policy())
+        combat.target_cap = target_cap
         combat.record_log = False
         combat.encounters_remaining = remaining  # includes this encounter, even across a long rest
         combat.slots_at_start = {c.id: c.spell_slots.copy() for c in party}
@@ -272,12 +273,12 @@ def _run_legacy_day(party, day, spells, seed=1, *, policy=None, monster_policy=N
     return DayResult(True, cleared, results)
 
 
-def run_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max_rounds=100, monster_sheets=None, options=None, area=None):
+def run_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max_rounds=100, monster_sheets=None, options=None, area=None, target_cap=None):
     """New defaults; use DayOptions.legacy() for the exact prior day model."""
     opts = day_options(day.get("options") if options is None else options)
     if opts == DayOptions.legacy():
         return _run_legacy_day(party, day, spells, seed, policy=policy, monster_policy=monster_policy,
-                               max_rounds=max_rounds, monster_sheets=monster_sheets, area=area)
+                               max_rounds=max_rounds, monster_sheets=monster_sheets, area=area, target_cap=target_cap)
     validate_day(day)
     if not party or len({c.id for c in party}) != len(party) or any(c.team != "party" for c in party):
         raise ValueError("day needs a nonempty party with unique ids and team='party'")
@@ -286,6 +287,7 @@ def run_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max
     monsters = day_monsters(day) if monster_sheets is None else monster_sheets
     rng = random.Random(seed)
     combat = Combat(party[:], spells, seed=rng.getrandbits(64), policy=policy, area=area, monster_policy=monster_policy or Policy())
+    combat.target_cap = target_cap
     combat.record_log = False
     combat.day_options = opts
     combat.death_rules = opts.death

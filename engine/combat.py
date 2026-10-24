@@ -31,6 +31,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         self.policy = policy or Policy()
         self.monster_policy = monster_policy
         self.area = area or area_heuristic
+        self.target_cap = None
         self.instances: dict[int, SpellInstance] = {}
         self.next_instance = 1
         self.turn_index = 0
@@ -722,7 +723,9 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             if frame.get("who") is not None and block["event"] not in {"start_of_turn(caster)", "end_of_turn(caster)"}: return [frame["who"]] if frame["who"] in members else []
             return members
         n = len(eligible) if target.get("n") == "all" else target.get("n", 1)
-        selected = list(explicit) if explicit is not None else self.policy_for(instance.caster).targets(self, instance, block, eligible, n)
+        # Optional what-if hook: may lower an n_targets count (e.g. no-grid grab estimates).
+        if kind == "n_targets" and self.target_cap is not None: n = min(n, self.target_cap(instance, block, n, eligible))
+        selected =list(explicit) if explicit is not None else self.policy_for(instance.caster).targets(self, instance, block, eligible, n)
         if len(selected) > n or (target.get("distinct", True) and len({c.id for c in selected}) != len(selected)):
             raise ValueError(f"invalid selection count/distinctness for {block['id']}")
         minimum = target.get("min", 0) if target.get("up_to") else n

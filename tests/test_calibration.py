@@ -34,6 +34,32 @@ def test_custom_rule_opts_in_to_ally_avoidance_and_caster():
     assert seen and all(c is mage for c in seen)  # may be consulted more than once per cast
 
 
+def _grab_setup(name, action):
+    from engine.state import SpellInstance
+    monster = Combatant.from_sheet(load_sheet(ROOT / f"monsters/{name}.yaml"), "m", "enemy")
+    pcs = [Combatant.from_sheet(load_sheet(ROOT / "characters/fighter5.yaml"), f"pc{i}", "party") for i in range(4)]
+    b = Combat([monster, *pcs], spell_specs(), seed=1, policy=NoReactions())
+    block = next(a for a in monster.actions if a["name"] == action)["effects"][0]
+    probe = SpellInstance(0, {"name": action}, monster, 0, b.turn_index, b.time_rounds)
+    return b, block, probe
+
+
+def test_grab_rules_cap_only_grabs():
+    from engine.calibration import GRAB_RULES, is_grab
+    half, one = GRAB_RULES["grab_half"][0], GRAB_RULES["grab_one"][0]
+    b, engulf, probe = _grab_setup("gelatinous_cube", "Engulf")
+    assert is_grab(engulf)
+    assert is_grab(_grab_setup("water_elemental", "Whelm")[1])
+    assert len(b.select_targets(probe, engulf, {})) == 4  # engine default: printed count
+    b.target_cap = half
+    assert len(b.select_targets(probe, engulf, {})) == 2
+    b.target_cap = one
+    assert len(b.select_targets(probe, engulf, {})) == 1
+    # Non-grab n_targets blocks keep their count.
+    plain = {**engulf, "on_fail": [{"damage": {"dice": "1d6", "bonus": 0, "type": "acid"}}]}
+    assert not is_grab(plain) and len(b.select_targets(probe, plain, {})) == 4
+
+
 def test_compositions_fit_budget():
     xp = {"goblin": 50, "ogre": 450, "dragon": 5000}
     for name, count, total in compositions(budget(3, "moderate"), xp):
