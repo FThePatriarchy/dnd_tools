@@ -113,7 +113,9 @@ class ClassMechanics:
         if option == "trip" and target.size not in {"T", "S", "M", "L"}: return
         condition = {"condition": "poisoned" if option == "poison" else "prone"}
         if option == "poison": condition["repeat_save"] = {"ability": "con", "timing": "end_of_turn", "on_success": "end"}
-        block = effect_block("cunning_strike", target={"select": "single", "filter": ["creature"], "affects": "enemy"}, save={"ability": "con" if option == "poison" else "dex", "dc": 8 + actor.mod("dex") + actor.proficiency_bonus, "on_success": "negate"}, on_fail=[{"apply_condition": condition}])
+        # The rider follows the creature just hit, even if the hit's damage changed
+        # its allegiance (a dominated ally breaking free on its repeat save).
+        block = effect_block("cunning_strike", target={"select": "single", "filter": ["creature"], "affects": "any"}, save={"ability": "con" if option == "poison" else "dex", "dc": 8 + actor.mod("dex") + actor.proficiency_bonus, "on_success": "negate"}, on_fail=[{"apply_condition": condition}])
         inst = self.monster_instance(actor, "Cunning Strike", [block], {"type": "minutes", "n": 1} if option == "poison" else {"type": "special"})
         self.resolve_block(inst, block, "on_cast", {}, [target])
 

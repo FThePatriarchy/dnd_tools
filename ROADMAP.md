@@ -37,7 +37,10 @@ Fix the modelling distortions the sweep exposed, comparing options side by side 
   - Whelm already prints 2, so `grab_half` changes nothing for it. `grab_one` takes water elemental ×2 at L5 High from 41% to 1% TPK. Water elemental ×5 (an Over probe) stays at 88% under every rule.
   - Best whole-sweep combination: `party_spread` + `grab_half` (3 wipe outliers, 24% spread, vs 6 and 33% for the old defaults). Adopted as the engine defaults on 2026-10-24. The rerun baseline reproduces the what-if results exactly. `grab_one` remains available if four-cube "Low" fights should stop wiping at all; gelatinous cube ×4 at L5 Low is still 35% TPK.
 - Decide fight-to-extermination vs. morale/fleeing.
-- Fix the Cunning Strike crash and explain the aboleth result.
+- ~~Fix the Cunning Strike crash and explain the aboleth result.~~ Done 2026-10-24.
+  - **Crash:** the rogue hit a dominated ally, which was a legal enemy while charmed. The Sneak Attack damage let the ally make its repeat save, so it broke free and its team flipped back mid-attack. Cunning Strike then re-checked `affects: enemy` against a creature that was now an ally. Cunning Strike now follows the creature that was hit. The sweep has no engine errors left.
+  - **Aboleth ×3 (L10 Over):** 97 of 100 fights end with every conscious PC dominated (`party_unavailable`). That is a loss, but not a TPK, because those PCs still have HP. Most killing blows on downed PCs come from Psychic Drain, a legendary action that drains a creature the aboleth has charmed. That includes dominated PCs already at 0 HP. Tentacle attacks on downed PCs come next, once no free PC is left. This is rules-legal behaviour, not an engine bug.
+- Count losses where every remaining PC is dominated or otherwise unavailable as defeats in the calibration metrics. TPK alone misses them; the aboleth fights show 0% wins but only 3% TPK.
 - Adaptive run counts: run more where an estimate is uncertain or near a threshold that matters, fewer where the answer is 0% or 100%.
 
 **Done when** no single monster type dominates its budget slot, the remaining outliers are understood and justified by the rules, and the median curve is monotone at every level.

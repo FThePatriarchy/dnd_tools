@@ -2610,20 +2610,18 @@
    "grab": "grab_half",
    "xp": 17700,
    "budget": 18600.0,
-   "runs": 99,
-   "failed_runs": 1,
-   "errors": {
-    "ValueError: illegal target selection for cunning_strike": 14799178230035213023
-   },
+   "runs": 100,
+   "failed_runs": 0,
+   "errors": {},
    "win": 0.0,
-   "tpk": 0.020202020202020204,
-   "down": 0.9696969696969697,
-   "death": 0.9595959595959596,
-   "downs": 2.6464646464646466,
-   "deaths": 1.9595959595959596,
-   "hp_lost": 0.6614389509126352,
-   "slots_spent": 0.18956228956228954,
-   "rounds": 2.8181818181818183
+   "tpk": 0.03,
+   "down": 0.97,
+   "death": 0.96,
+   "downs": 2.68,
+   "deaths": 1.99,
+   "hp_lost": 0.6648245614035088,
+   "slots_spent": 0.19066666666666665,
+   "rounds": 2.84
   },
   {
    "level": 10,

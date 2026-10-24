@@ -162,6 +162,28 @@ def test_cunning_strike_cost_and_effect(spells,monkeypatch,option,condition):
         combat.end_turn(t); assert not t.has_condition("poisoned")
 
 
+def test_cunning_strike_follows_hit_target_whose_control_ends_on_damage(spells,monkeypatch):
+    # A dominated ally is a legal attack target; Sneak Attack damage lets it break
+    # free (team reverts) before Cunning Strike resolves. The rider still applies
+    # to the creature that was hit instead of failing target selection.
+    from engine.state import Effect
+    r=actor("rogue"); r.cunning_strike=["trip"]; t=Combatant("ally",team="party",max_hp=500)
+    t.effects.append(Effect("control",{"control_team":"enemy"},0,"control"))
+    combat=Combat([r,t],spells); combat.begin_turn(r)
+    assert t.team=="enemy" and t in combat.enemies(r)
+    monkeypatch.setattr(combat.policy,"cunning_strike",lambda *a: "trip")
+    monkeypatch.setattr(dice,"d20",lambda *a,**k: 10)
+    monkeypatch.setattr(combat.rng,"randint",lambda a,b: 1)
+    damage=combat.damage
+    def damage_then_break_free(target,*a,**k):
+        result=damage(target,*a,**k)
+        if target is t: t.effects=[e for e in t.effects if e.kind!="control"]
+        return result
+    monkeypatch.setattr(combat,"damage",damage_then_break_free)
+    combat.weapon_attack(r,t,r.attacks[0])
+    assert t.team=="party" and t.has_condition("prone")
+
+
 def test_expertise_reliable_talent(spells,monkeypatch):
     r=actor("rogue",7); r.skill_proficiencies=["stealth"]; r.expertise=["stealth"]
     combat=Combat([r],spells); monkeypatch.setattr(dice,"d20",lambda *a,**k: 1)

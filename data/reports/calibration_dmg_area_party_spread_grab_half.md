@@ -29,7 +29,7 @@ Grab rule: `grab_half` — A grab reaches at most half the target group, rounded
 | 10 | low | 6 | 100% [100%-100%] | 11% [1%-30%] | 0% [0%-1%] | 0% [0%-0%] | 14% [8%-18%] | 21% [14%-28%] | 2.6 [1.7-3.3] |
 | 10 | moderate | 6 | 83% [21%-100%] | 58% [16%-95%] | 18% [0%-80%] | 17% [0%-79%] | 42% [18%-86%] | 29% [19%-38%] | 5.0 [2.9-10.7] |
 | 10 | high | 6 | 92% [74%-100%] | 74% [11%-100%] | 13% [1%-32%] | 8% [0%-26%] | 41% [24%-60%] | 38% [18%-54%] | 5.8 [3.2-9.4] |
-| 10 | over | 6 | 11% [0%-46%] | 99% [97%-100%] | 89% [59%-100%] | 73% [2%-100%] | 90% [66%-100%] | 29% [10%-55%] | 5.1 [2.1-8.5] |
+| 10 | over | 6 | 11% [0%-46%] | 99% [97%-100%] | 90% [59%-100%] | 73% [3%-100%] | 90% [66%-100%] | 29% [10%-55%] | 5.1 [2.1-8.5] |
 
 ## Per composition
 
@@ -153,11 +153,5 @@ Grab rule: `grab_half` — A grab reaches at most half the target group, rounded
 | 10 | over | young_white_dragon x8 | 18400 / 18600 | 0% | 100% | 100% | 100% | 100% | 13% | 2.3 |
 | 10 | over | chain_devil x4 | 15600 / 18600 | 4% | 100% | 97% | 96% | 98% | 38% | 8.5 |
 | 10 | over | young_green_dragon x4 | 15600 / 18600 | 46% | 99% | 59% | 54% | 80% | 37% | 6.7 |
-| 10 | over | aboleth x3 | 17700 / 18600 | 0% | 97% | 96% | 2% | 66% | 19% | 2.8 |
+| 10 | over | aboleth x3 | 17700 / 18600 | 0% | 97% | 96% | 3% | 66% | 19% | 2.8 |
 | 10 | over | adult_red_dragon x1 | 18000 / 18600 | 15% | 98% | 85% | 85% | 96% | 55% | 8.1 |
-
-## Engine errors (runs excluded from the numbers above)
-
-| Level | Difficulty | Encounter | Failed runs | Error | First failing seed |
-| ---: | --- | --- | ---: | --- | ---: |
-| 10 | over | aboleth x3 | 1 | ValueError: illegal target selection for cunning_strike | 14799178230035213023 |
