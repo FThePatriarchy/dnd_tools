@@ -1,0 +1,69 @@
+# Roadmap
+
+## Goals
+
+1. **Sample parties and opponents** for each level.
+2. **Build comparison (min-maxing)** at a given level.
+3. **Encounter building** for a specific party.
+4. **Adventuring-day building** — encounters plus short and long rests.
+
+## Guiding principle: every answer is relative
+
+Party strength varies a lot (an optimized party can be roughly twice as strong as a casual one), opponents vary in shape (one solo boss vs. a swarm), and "best build" depends on role, party and opponent. The tool therefore never reports a universal number such as "this encounter is Hard" or "this build is best". Every answer is stated against a named party and a named set of opponents, and those variables are inputs, not obstacles.
+
+The simulation is the source of truth. Expected-value maths (hit chance × damage) is used only where it is cheap and safe: AI move scoring inside the simulation, quick screening before a full run, and exact single-roll damage distributions.
+
+## Current state (2026-10-23)
+
+- Combat engine with 245 XPHB spells, 70 XMM monsters, Fighter/Rogue/Wizard/Cleric levels 1–10, 20 preset builds, adventuring-day mode with 2024 rests.
+- DMG 2024 budget sweep: `python -m engine.calibration --runs 100 --write` → `data/reports/calibration_dmg.md`. Run it under a Python with pyyaml (currently `C:\Python312`).
+- Sweep findings:
+  - On a typical encounter, difficulty climbs Low → Moderate → High as the DMG describes from level 3 up. Level 1 is too lethal: someone dies in about 1 in 10 Low fights.
+  - A few multi-target monster abilities produce near-certain wipes at any budget: Engulf (gelatinous cube, water elemental), caster area spells (mage, priest), breath weapons in groups, Petrifying Gaze.
+  - Aboleth ×3 has an inconsistent result: deaths in 96% of runs, 0% wins, 2% TPK.
+  - Engine crash: Cunning Strike can target an illegal creature. The seed is in the report.
+
+## Phase 1 — Trustworthy benchmark
+
+Fix the modelling distortions the sweep exposed, comparing options side by side before changing any default.
+
+- ~~Add an area-rule option to the sweep and compare the current DMG table with tighter rules.~~ Done 2026-10-24: `--area` and `--compare`, report in `data/reports/calibration_area_compare.md`. Findings:
+  - Area rules fix the big single-caster and breath outliers: mage ×4 at L10 Moderate drops from 86% TPK to 12%, young red dragon at L5 Over from 64% to 28%, basilisks from 57% to 19% under `party_spread`.
+  - Tighter rules that apply to both sides make swarms deadlier, because the party's own Fireball and Spirit Guardians shrink too. `party_spread` (only monster areas tightened) avoids this. It has the lowest spread and the fewest wipe outliers, so it is the leading candidate default. Not adopted yet.
+  - The remaining outliers don't respond to any area rule: Engulf/Whelm (gelatinous cube, water elemental use `n_targets`, not areas), fire elemental burning, and stacked Spirit Guardians (priest ×5) or large swarms. These are the next levers.
+- Cap multi-target grabs such as Engulf and Whelm to a positional estimate instead of "everyone".
+- Decide fight-to-extermination vs. morale/fleeing.
+- Fix the Cunning Strike crash and explain the aboleth result.
+- Adaptive run counts: run more where an estimate is uncertain or near a threshold that matters, fewer where the answer is 0% or 100%.
+
+**Done when** no single monster type dominates its budget slot, the remaining outliers are understood and justified by the rules, and the median curve is monotone at every level.
+
+## Phase 2 — Benchmark set and party rating
+
+- Freeze a benchmark set of encounters for each level covering opponent types: melee brutes, ranged attackers, casters, swarms, solo legendaries, control monsters.
+- **Party rating** = the XP budget at which wipe chance reaches a set threshold (for example 5%), found by search over encounter budget. Report it overall and per opponent type.
+- Treat AI skill (default / nova / conservative, plus future strategies) as a setting, so build strength and play strength can be separated.
+
+**Done when** any party gets a rating in minutes, and the ratings are stable across seeds.
+
+## Phase 3 — Sample parties and opponents (Goal 1)
+
+- Party presets per level: casual, standard (today's builds) and optimized, each with its measured rating.
+- Encounter templates: solo boss, boss plus minions, elite pack, swarm. The user can also give a shape directly (for example, "1 boss, 6 goons"). A generator fills the template from the budget and the monster catalogue.
+
+## Phase 4 — Encounter and day finder (Goals 3 and 4)
+
+- **Encounter:** the user gives a party, a template and a target risk (for example, "wipe under 2%, someone goes down about half the time"). Search one setting, such as goon count or monster CR, until the simulated result hits the target. The answer then reflects that party's actual strength, not the DMG table.
+- **Day:** the user gives a day template (number of encounters, where the rests go) and an end-of-day target (for example, "nobody dies, party ends with 10–20% of slots and hit dice"). Search one difficulty scale factor applied across the day.
+
+## Phase 5 — Build comparison (Goal 2)
+
+- **Build value** = the change in party outcomes (wipe chance, someone going down, resources spent) when the build replaces a reference member, measured across the benchmark set. This values healers and controllers by their effect on the party, not by their damage per round.
+- Report the result as a grid: build × opponent type × party composition.
+- Search: limit the build space to a few decision points (subclass, feats, spell picks), screen with a quick expected-damage score, and run the full simulation only on the finalists.
+
+## Later
+
+- More classes (Paladin, Warlock, Barbarian, Bard) and levels 11–20, each checked against the calibration report.
+- A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.
+- Repo housekeeping: commit `readme.md` and fix its usage example; ignore the 5etools zip and `raw_data/`; archive the old `spellsim/` + `ai_extractors/` pipeline.

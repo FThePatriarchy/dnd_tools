@@ -737,11 +737,13 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         hostile = bool(block["on_fail"] or block["on_hit"] or any(
             k in p for p in block["apply"] for k in ("damage", "apply_condition", "turn_rules", "remove_from_combat")))
         fixed_emanation = target.get("origin", "caster") == "caster" and target["shape"] == "emanation"
-        if self.area is area_heuristic and hostile and not fixed_emanation:
+        # Custom heuristics opt in to the default's ally avoidance and caster context.
+        if (self.area is area_heuristic or getattr(self.area, "avoids_allies", False)) and hostile and not fixed_emanation:
             # Freely placed hostile areas do not fill spare capacity with allies.
             eligible = [c for c in eligible if c.team != instance.caster.team or
                         c in instance.bindings.get(target.get("origin"), Binding()).targets]
-        count = self.area(target["shape"], target["size_ft"], len(eligible))
+        context = {"caster": instance.caster} if getattr(self.area, "wants_caster", False) else {}
+        count = self.area(target["shape"], target["size_ft"], len(eligible), **context)
         if isinstance(count, int):
             if not 0 <= count <= len(eligible): raise ValueError("area heuristic returned invalid count")
             # Policy determines placement/order; it does not change legal allegiance.

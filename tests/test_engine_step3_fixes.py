@@ -286,7 +286,7 @@ def test_step3_fix10_default_hostile_area_never_fills_with_allies(monkeypatch):
         assert b.area_members(inst,block,b.eligible(inst,block))==[d]
     oracle()
     mutation_fails(monkeypatch,Combat,'area_members',
-        'if self.area is area_heuristic and hostile and not fixed_emanation:',
+        'if (self.area is area_heuristic or getattr(self.area, "avoids_allies", False)) and hostile and not fixed_emanation:',
         'if False:',oracle)
 
 
