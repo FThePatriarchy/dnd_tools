@@ -79,6 +79,15 @@ def test_grab_rules_cap_only_grabs():
     assert not is_grab(plain) and len(b.select_targets(probe, plain, {})) == 4
 
 
+def test_defeat_counts_dominated_losses_not_draws():
+    from engine.calibration import DEFEATS, run_cell, fmt_metric
+    assert DEFEATS == {"tpk", "party_unavailable"}
+    # Aboleths win mostly by dominating every PC still standing: a defeat, rarely a TPK.
+    cell = run_cell((10, "over", "aboleth", 3, 17700, 3, 1, "party_spread", "grab_half"))
+    assert cell["runs"] == 3 and cell["defeat"] >= cell["tpk"] and cell["win"] + cell["defeat"] <= 1
+    assert fmt_metric({"tpk": 0.5}, "defeat") == "-" and fmt_metric(cell, "rounds") != "-"
+
+
 def test_compositions_fit_budget():
     xp = {"goblin": 50, "ogre": 450, "dragon": 5000}
     for name, count, total in compositions(budget(3, "moderate"), xp):

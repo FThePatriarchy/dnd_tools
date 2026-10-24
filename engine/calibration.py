@@ -180,6 +180,7 @@ def run_cell(task):
         rows.append({
             "win": enc.cleared,
             "tpk": result.failure_reason == "tpk",
+            "defeat": result.failure_reason in DEFEATS,
             "down": enc.downs > 0,
             "death": enc.deaths > 0,
             "downs": enc.downs,
@@ -207,11 +208,22 @@ def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data"
         return list(pool.map(run_cell, tasks))
 
 
+# Defeat: the fight ends with the party beaten, either all at 0 HP (tpk) or with
+# every PC still standing dominated or otherwise out of the fight
+# (party_unavailable). Round-limit draws and wins with a PC death are not defeats.
+DEFEATS = frozenset({"tpk", "party_unavailable"})
+
 METRICS = (("win", "Win"), ("down", "Any down"), ("death", "Any death"), ("tpk", "TPK"),
-           ("hp_lost", "HP lost"), ("slots_spent", "Slots spent"), ("rounds", "Rounds"))
+           ("defeat", "Defeat"), ("hp_lost", "HP lost"), ("slots_spent", "Slots spent"), ("rounds", "Rounds"))
 
 
-def pct(value): return f"{value:.0%}"
+def pct(value): return "-" if value is None else f"{value:.0%}"
+
+
+def fmt_metric(c, key):
+    """Sweeps written before a metric existed show '-' for it."""
+    value = c.get(key)
+    return "-" if value is None else f"{value:.1f}" if key == "rounds" else pct(value)
 
 
 def markdown(cells, runs, seed, area="dmg", grab="data"):
@@ -226,6 +238,8 @@ def markdown(cells, runs, seed, area="dmg", grab="data"):
            f"'Over' is {OVER_FACTOR}x High, a probe beyond the DMG categories.", "",
            f"Area rule: `{area}` — {AREA_RULES[area][1]}", "",
            f"Grab rule: `{grab}` — {GRAB_RULES[grab][1]}", "",
+           "TPK: every PC at 0 HP. Defeat: the party loses, either by TPK or with every PC still "
+           "standing dominated or otherwise out of the fight.", "",
            "## Summary (mean across compositions, [min-max] in brackets)", "",
            "| Level | Difficulty | Groups | " + " | ".join(label for _, label in METRICS) + " |",
            "| ---: | --- | ---: | " + " | ".join("---:" for _ in METRICS) + " |"]
@@ -243,7 +257,7 @@ def markdown(cells, runs, seed, area="dmg", grab="data"):
             "| Level | Difficulty | Encounter | XP / budget | " + " | ".join(label for _, label in METRICS) + " |",
             "| ---: | --- | --- | ---: | " + " | ".join("---:" for _ in METRICS) + " |"]
     for c in sorted(cells, key=lambda c: (c["level"], DIFFICULTIES.index(c["difficulty"]), c["xp"] / c["count"])):
-        vals = [f"{c[k]:.1f}" if k == "rounds" else pct(c[k]) for k, _ in METRICS]
+        vals = [fmt_metric(c, k) for k, _ in METRICS]
         out.append(f"| {c['level']} | {c['difficulty']} | {c['monster']} x{c['count']} | "
                    f"{c['xp']:.0f} / {c['budget']:.0f} | " + " | ".join(vals) + " |")
     if failed:
@@ -373,7 +387,7 @@ def compare_grab():
         for v, data in loaded.items():
             c = data["cells"].get(k)
             if c is None: continue
-            vals = [f"{c[m]:.1f}" if m == "rounds" else pct(c[m]) for m, _ in METRICS]
+            vals = [fmt_metric(c, m) for m, _ in METRICS]
             out.append(f"| {label(v)} | " + " | ".join(vals) + " |")
         out.append("")
     out += ["## Whole-sweep shape checks", "",
