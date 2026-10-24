@@ -3,6 +3,7 @@
  "seed": 1,
  "area": "party_spread",
  "grab": "grab_half",
+ "morale": "none",
  "monsters": null,
  "cells": [
   {
@@ -12,6 +13,7 @@
    "count": 8,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 200,
    "budget": 200,
    "runs": 100,
@@ -26,7 +28,8 @@
    "deaths": 1.24,
    "hp_lost": 0.5589999999999999,
    "slots_spent": 0.945,
-   "rounds": 6.49
+   "rounds": 6.49,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -35,6 +38,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 200,
    "budget": 200,
    "runs": 100,
@@ -49,7 +53,8 @@
    "deaths": 0.05,
    "hp_lost": 0.106,
    "slots_spent": 0.725,
-   "rounds": 1.85
+   "rounds": 1.85,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -58,6 +63,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 200,
    "budget": 200,
    "runs": 100,
@@ -72,7 +78,8 @@
    "deaths": 0.26,
    "hp_lost": 0.14125,
    "slots_spent": 0.585,
-   "rounds": 1.67
+   "rounds": 1.67,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -81,6 +88,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 200,
    "budget": 200,
    "runs": 100,
@@ -95,7 +103,8 @@
    "deaths": 0.0,
    "hp_lost": 0.065,
    "slots_spent": 0.3475,
-   "rounds": 1.11
+   "rounds": 1.11,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -104,6 +113,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 200,
    "budget": 200,
    "runs": 100,
@@ -118,7 +128,8 @@
    "deaths": 0.0,
    "hp_lost": 0.052,
    "slots_spent": 0.4775,
-   "rounds": 1.24
+   "rounds": 1.24,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -127,6 +138,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 200,
    "budget": 200,
    "runs": 100,
@@ -141,7 +153,8 @@
    "deaths": 0.01,
    "hp_lost": 0.052500000000000005,
    "slots_spent": 0.465,
-   "rounds": 1.22
+   "rounds": 1.22,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -150,6 +163,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 300,
    "budget": 300,
    "runs": 100,
@@ -164,7 +178,8 @@
    "deaths": 0.34,
    "hp_lost": 0.28075,
    "slots_spent": 0.9325,
-   "rounds": 3.42
+   "rounds": 3.42,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -173,6 +188,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 300,
    "budget": 300,
    "runs": 100,
@@ -187,7 +203,8 @@
    "deaths": 0.82,
    "hp_lost": 0.4355,
    "slots_spent": 0.89,
-   "rounds": 3.59
+   "rounds": 3.59,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -196,6 +213,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 300,
    "budget": 300,
    "runs": 100,
@@ -210,7 +228,8 @@
    "deaths": 0.59,
    "hp_lost": 0.3635,
    "slots_spent": 0.9625,
-   "rounds": 5.42
+   "rounds": 5.42,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -219,6 +238,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 300,
    "budget": 300,
    "runs": 100,
@@ -233,7 +253,8 @@
    "deaths": 0.65,
    "hp_lost": 0.28575,
    "slots_spent": 0.7025,
-   "rounds": 2.42
+   "rounds": 2.42,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -242,6 +263,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 300,
    "budget": 300,
    "runs": 100,
@@ -256,7 +278,8 @@
    "deaths": 0.27,
    "hp_lost": 0.23349999999999999,
    "slots_spent": 0.835,
-   "rounds": 2.69
+   "rounds": 2.69,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -265,6 +288,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 300,
    "budget": 300,
    "runs": 100,
@@ -279,7 +303,8 @@
    "deaths": 0.39,
    "hp_lost": 0.27425,
    "slots_spent": 0.9225,
-   "rounds": 3.54
+   "rounds": 3.54,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -288,6 +313,7 @@
    "count": 8,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 400,
    "budget": 400,
    "runs": 100,
@@ -302,7 +328,8 @@
    "deaths": 1.29,
    "hp_lost": 0.56825,
    "slots_spent": 0.9325,
-   "rounds": 4.91
+   "rounds": 4.91,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -311,6 +338,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 400,
    "budget": 400,
    "runs": 100,
@@ -325,7 +353,8 @@
    "deaths": 0.71,
    "hp_lost": 0.44125,
    "slots_spent": 0.975,
-   "rounds": 6.09
+   "rounds": 6.09,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -334,6 +363,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 400,
    "budget": 400,
    "runs": 100,
@@ -348,7 +378,8 @@
    "deaths": 1.38,
    "hp_lost": 0.56275,
    "slots_spent": 0.9025,
-   "rounds": 5.24
+   "rounds": 5.24,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -357,6 +388,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 400,
    "budget": 400,
    "runs": 100,
@@ -371,7 +403,8 @@
    "deaths": 0.05,
    "hp_lost": 0.121,
    "slots_spent": 0.77,
-   "rounds": 2.16
+   "rounds": 2.16,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -380,6 +413,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 400,
    "budget": 400,
    "runs": 100,
@@ -394,7 +428,8 @@
    "deaths": 0.37,
    "hp_lost": 0.1825,
    "slots_spent": 0.76,
-   "rounds": 2.44
+   "rounds": 2.44,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -403,6 +438,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 400,
    "budget": 400,
    "runs": 100,
@@ -417,7 +453,8 @@
    "deaths": 0.36,
    "hp_lost": 0.18375,
    "slots_spent": 0.8075,
-   "rounds": 2.61
+   "rounds": 2.61,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -426,6 +463,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 600,
    "budget": 600.0,
    "runs": 100,
@@ -440,7 +478,8 @@
    "deaths": 3.23,
    "hp_lost": 0.8905,
    "slots_spent": 0.96,
-   "rounds": 10.44
+   "rounds": 10.44,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -449,6 +488,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 600,
    "budget": 600.0,
    "runs": 100,
@@ -463,7 +503,8 @@
    "deaths": 0.96,
    "hp_lost": 0.447,
    "slots_spent": 0.8225,
-   "rounds": 3.23
+   "rounds": 3.23,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -472,6 +513,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 600,
    "budget": 600.0,
    "runs": 100,
@@ -486,7 +528,8 @@
    "deaths": 1.74,
    "hp_lost": 0.55375,
    "slots_spent": 0.82,
-   "rounds": 4.03
+   "rounds": 4.03,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -495,6 +538,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 600,
    "budget": 600.0,
    "runs": 100,
@@ -509,7 +553,8 @@
    "deaths": 1.57,
    "hp_lost": 0.5015000000000001,
    "slots_spent": 0.9275,
-   "rounds": 4.82
+   "rounds": 4.82,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -518,6 +563,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 450,
    "budget": 600.0,
    "runs": 100,
@@ -532,7 +578,8 @@
    "deaths": 0.23,
    "hp_lost": 0.17300000000000001,
    "slots_spent": 0.7175,
-   "rounds": 2.11
+   "rounds": 2.11,
+   "fled": 0.0
   },
   {
    "level": 1,
@@ -541,6 +588,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 450,
    "budget": 600.0,
    "runs": 100,
@@ -555,7 +603,8 @@
    "deaths": 0.15,
    "hp_lost": 0.10775,
    "slots_spent": 0.805,
-   "rounds": 1.82
+   "rounds": 1.82,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -564,6 +613,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 600,
    "budget": 600,
    "runs": 100,
@@ -578,7 +628,8 @@
    "deaths": 0.0,
    "hp_lost": 0.06927083333333334,
    "slots_spent": 0.8275,
-   "rounds": 4.46
+   "rounds": 4.46,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -587,6 +638,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 600,
    "budget": 600,
    "runs": 100,
@@ -601,7 +653,8 @@
    "deaths": 0.0,
    "hp_lost": 0.07479166666666667,
    "slots_spent": 0.31666666666666665,
-   "rounds": 2.01
+   "rounds": 2.01,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -610,6 +663,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 600,
    "budget": 600,
    "runs": 100,
@@ -624,7 +678,8 @@
    "deaths": 0.0,
    "hp_lost": 0.08989583333333334,
    "slots_spent": 0.4008333333333333,
-   "rounds": 2.46
+   "rounds": 2.46,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -633,6 +688,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 600,
    "budget": 600,
    "runs": 100,
@@ -647,7 +703,8 @@
    "deaths": 0.15,
    "hp_lost": 0.15229166666666666,
    "slots_spent": 0.44916666666666666,
-   "rounds": 3.17
+   "rounds": 3.17,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -656,6 +713,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 450,
    "budget": 600,
    "runs": 100,
@@ -670,7 +728,8 @@
    "deaths": 0.0,
    "hp_lost": 0.04666666666666667,
    "slots_spent": 0.22166666666666665,
-   "rounds": 1.34
+   "rounds": 1.34,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -679,6 +738,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 450,
    "budget": 600,
    "runs": 100,
@@ -693,7 +753,8 @@
    "deaths": 0.0,
    "hp_lost": 0.013125,
    "slots_spent": 0.28583333333333333,
-   "rounds": 1.23
+   "rounds": 1.23,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -702,6 +763,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 800,
    "budget": 900,
    "runs": 100,
@@ -716,7 +778,8 @@
    "deaths": 0.0,
    "hp_lost": 0.10697916666666667,
    "slots_spent": 0.4125,
-   "rounds": 2.52
+   "rounds": 2.52,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -725,6 +788,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 800,
    "budget": 900,
    "runs": 100,
@@ -739,7 +803,8 @@
    "deaths": 0.0,
    "hp_lost": 0.08833333333333333,
    "slots_spent": 0.5175,
-   "rounds": 3.18
+   "rounds": 3.18,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -748,6 +813,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 900,
    "budget": 900,
    "runs": 100,
@@ -762,7 +828,8 @@
    "deaths": 0.0,
    "hp_lost": 0.09052083333333333,
    "slots_spent": 0.5891666666666666,
-   "rounds": 3.57
+   "rounds": 3.57,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -771,6 +838,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 900,
    "budget": 900,
    "runs": 100,
@@ -785,7 +853,8 @@
    "deaths": 0.0,
    "hp_lost": 0.0971875,
    "slots_spent": 0.5349999999999999,
-   "rounds": 3.29
+   "rounds": 3.29,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -794,6 +863,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 700,
    "budget": 900,
    "runs": 100,
@@ -808,7 +878,8 @@
    "deaths": 0.0,
    "hp_lost": 0.06572916666666667,
    "slots_spent": 0.43333333333333335,
-   "rounds": 2.24
+   "rounds": 2.24,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -817,6 +888,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 700,
    "budget": 900,
    "runs": 100,
@@ -831,7 +903,8 @@
    "deaths": 0.0,
    "hp_lost": 0.08375,
    "slots_spent": 0.42,
-   "rounds": 2.4
+   "rounds": 2.4,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -840,6 +913,7 @@
    "count": 8,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1600,
    "budget": 1600,
    "runs": 100,
@@ -854,7 +928,8 @@
    "deaths": 1.73,
    "hp_lost": 0.6455208333333333,
    "slots_spent": 0.7741666666666667,
-   "rounds": 5.36
+   "rounds": 5.36,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -863,6 +938,7 @@
    "count": 8,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1600,
    "budget": 1600,
    "runs": 100,
@@ -877,7 +953,8 @@
    "deaths": 2.03,
    "hp_lost": 0.67625,
    "slots_spent": 0.7883333333333333,
-   "rounds": 6.9
+   "rounds": 6.9,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -886,6 +963,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1350,
    "budget": 1600,
    "runs": 100,
@@ -900,7 +978,8 @@
    "deaths": 0.01,
    "hp_lost": 0.1103125,
    "slots_spent": 0.86,
-   "rounds": 5.29
+   "rounds": 5.29,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -909,6 +988,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1350,
    "budget": 1600,
    "runs": 100,
@@ -923,7 +1003,8 @@
    "deaths": 0.05,
    "hp_lost": 0.16427083333333334,
    "slots_spent": 0.7825,
-   "rounds": 4.98
+   "rounds": 4.98,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -932,6 +1013,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1400,
    "budget": 1600,
    "runs": 100,
@@ -946,7 +1028,8 @@
    "deaths": 0.27,
    "hp_lost": 0.22583333333333333,
    "slots_spent": 0.7291666666666666,
-   "rounds": 4.49
+   "rounds": 4.49,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -955,6 +1038,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1400,
    "budget": 1600,
    "runs": 100,
@@ -969,7 +1053,8 @@
    "deaths": 0.1,
    "hp_lost": 0.18364583333333334,
    "slots_spent": 0.7841666666666667,
-   "rounds": 5.06
+   "rounds": 5.06,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -978,6 +1063,7 @@
    "count": 5,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2250,
    "budget": 2400.0,
    "runs": 100,
@@ -992,7 +1078,8 @@
    "deaths": 2.69,
    "hp_lost": 0.8225,
    "slots_spent": 0.9708333333333333,
-   "rounds": 11.82
+   "rounds": 11.82,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -1001,6 +1088,7 @@
    "count": 5,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2250,
    "budget": 2400.0,
    "runs": 100,
@@ -1015,7 +1103,8 @@
    "deaths": 4.0,
    "hp_lost": 1.0,
    "slots_spent": 0.7633333333333333,
-   "rounds": 4.81
+   "rounds": 4.81,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -1024,6 +1113,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2100,
    "budget": 2400.0,
    "runs": 100,
@@ -1038,7 +1128,8 @@
    "deaths": 0.92,
    "hp_lost": 0.46697916666666667,
    "slots_spent": 0.9716666666666667,
-   "rounds": 7.24
+   "rounds": 7.24,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -1047,6 +1138,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1800,
    "budget": 2400.0,
    "runs": 100,
@@ -1061,7 +1153,8 @@
    "deaths": 0.01,
    "hp_lost": 0.1153125,
    "slots_spent": 0.7433333333333334,
-   "rounds": 3.91
+   "rounds": 3.91,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -1070,6 +1163,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1800,
    "budget": 2400.0,
    "runs": 100,
@@ -1084,7 +1178,8 @@
    "deaths": 0.35,
    "hp_lost": 0.24583333333333335,
    "slots_spent": 0.7866666666666666,
-   "rounds": 5.0
+   "rounds": 5.0,
+   "fled": 0.0
   },
   {
    "level": 3,
@@ -1093,6 +1188,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2300,
    "budget": 2400.0,
    "runs": 100,
@@ -1107,7 +1203,8 @@
    "deaths": 1.31,
    "hp_lost": 0.5714583333333333,
    "slots_spent": 0.7741666666666667,
-   "rounds": 5.73
+   "rounds": 5.73,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1116,6 +1213,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1800,
    "budget": 2000,
    "runs": 100,
@@ -1130,7 +1228,8 @@
    "deaths": 0.0,
    "hp_lost": 0.11157894736842106,
    "slots_spent": 0.39166666666666666,
-   "rounds": 2.56
+   "rounds": 2.56,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1139,6 +1238,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1800,
    "budget": 2000,
    "runs": 100,
@@ -1153,7 +1253,8 @@
    "deaths": 1.9,
    "hp_lost": 0.654342105263158,
    "slots_spent": 0.27555555555555555,
-   "rounds": 4.62
+   "rounds": 4.62,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1162,6 +1263,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1800,
    "budget": 2000,
    "runs": 100,
@@ -1176,7 +1278,8 @@
    "deaths": 0.0,
    "hp_lost": 0.09289473684210527,
    "slots_spent": 0.3738888888888889,
-   "rounds": 2.47
+   "rounds": 2.47,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1185,6 +1288,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1800,
    "budget": 2000,
    "runs": 100,
@@ -1199,7 +1303,8 @@
    "deaths": 0.0,
    "hp_lost": 0.09019736842105262,
    "slots_spent": 0.32722222222222225,
-   "rounds": 2.41
+   "rounds": 2.41,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1208,6 +1313,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1800,
    "budget": 2000,
    "runs": 100,
@@ -1222,7 +1328,8 @@
    "deaths": 0.0,
    "hp_lost": 0.060657894736842105,
    "slots_spent": 0.2738888888888889,
-   "rounds": 1.9
+   "rounds": 1.9,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1231,6 +1338,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 1800,
    "budget": 2000,
    "runs": 100,
@@ -1245,7 +1353,8 @@
    "deaths": 0.08,
    "hp_lost": 0.09973684210526317,
    "slots_spent": 0.2033333333333333,
-   "rounds": 2.08
+   "rounds": 2.08,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1254,6 +1363,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2700,
    "budget": 3000,
    "runs": 100,
@@ -1268,7 +1378,8 @@
    "deaths": 0.0,
    "hp_lost": 0.13717105263157894,
    "slots_spent": 0.5733333333333334,
-   "rounds": 3.82
+   "rounds": 3.82,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1277,6 +1388,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2700,
    "budget": 3000,
    "runs": 100,
@@ -1291,7 +1403,8 @@
    "deaths": 0.0,
    "hp_lost": 0.2130921052631579,
    "slots_spent": 0.5344444444444445,
-   "rounds": 4.33
+   "rounds": 4.33,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1300,6 +1413,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2800,
    "budget": 3000,
    "runs": 100,
@@ -1314,7 +1428,8 @@
    "deaths": 0.09,
    "hp_lost": 0.21013157894736842,
    "slots_spent": 0.5061111111111111,
-   "rounds": 4.68
+   "rounds": 4.68,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1323,6 +1438,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2800,
    "budget": 3000,
    "runs": 100,
@@ -1337,7 +1453,8 @@
    "deaths": 0.0,
    "hp_lost": 0.10717105263157894,
    "slots_spent": 0.5188888888888888,
-   "rounds": 3.69
+   "rounds": 3.69,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1346,6 +1463,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2800,
    "budget": 3000,
    "runs": 100,
@@ -1360,7 +1478,8 @@
    "deaths": 0.0,
    "hp_lost": 0.16506578947368422,
    "slots_spent": 0.38666666666666666,
-   "rounds": 3.56
+   "rounds": 3.56,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1369,6 +1488,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2900,
    "budget": 3000,
    "runs": 100,
@@ -1383,7 +1503,8 @@
    "deaths": 0.0,
    "hp_lost": 0.12006578947368421,
    "slots_spent": 0.3611111111111111,
-   "rounds": 2.81
+   "rounds": 2.81,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1392,6 +1513,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 4200,
    "budget": 4400,
    "runs": 100,
@@ -1406,7 +1528,8 @@
    "deaths": 0.77,
    "hp_lost": 0.3402631578947368,
    "slots_spent": 0.43777777777777777,
-   "rounds": 6.48
+   "rounds": 6.48,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1415,6 +1538,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 4200,
    "budget": 4400,
    "runs": 100,
@@ -1429,7 +1553,8 @@
    "deaths": 0.56,
    "hp_lost": 0.3517105263157895,
    "slots_spent": 0.7238888888888889,
-   "rounds": 5.9
+   "rounds": 5.9,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1438,6 +1563,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 4200,
    "budget": 4400,
    "runs": 100,
@@ -1452,7 +1578,8 @@
    "deaths": 0.85,
    "hp_lost": 0.4544736842105263,
    "slots_spent": 0.6744444444444444,
-   "rounds": 7.09
+   "rounds": 7.09,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1461,6 +1588,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 3600,
    "budget": 4400,
    "runs": 100,
@@ -1475,7 +1603,8 @@
    "deaths": 3.75,
    "hp_lost": 0.9634868421052631,
    "slots_spent": 0.7544444444444445,
-   "rounds": 10.99
+   "rounds": 10.99,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1484,6 +1613,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 3600,
    "budget": 4400,
    "runs": 100,
@@ -1498,7 +1628,8 @@
    "deaths": 1.87,
    "hp_lost": 0.6857894736842105,
    "slots_spent": 0.51,
-   "rounds": 6.19
+   "rounds": 6.19,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1507,6 +1638,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 3900,
    "budget": 4400,
    "runs": 100,
@@ -1521,7 +1653,8 @@
    "deaths": 0.01,
    "hp_lost": 0.2623026315789474,
    "slots_spent": 0.3838888888888889,
-   "rounds": 2.93
+   "rounds": 2.93,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1530,6 +1663,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 6600,
    "budget": 6600.0,
    "runs": 100,
@@ -1544,7 +1678,8 @@
    "deaths": 3.36,
    "hp_lost": 0.9030921052631579,
    "slots_spent": 0.5072222222222222,
-   "rounds": 5.54
+   "rounds": 5.54,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1553,6 +1688,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5400,
    "budget": 6600.0,
    "runs": 100,
@@ -1567,7 +1703,8 @@
    "deaths": 0.59,
    "hp_lost": 0.38355263157894737,
    "slots_spent": 0.705,
-   "rounds": 6.52
+   "rounds": 6.52,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1576,6 +1713,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5400,
    "budget": 6600.0,
    "runs": 100,
@@ -1590,7 +1728,8 @@
    "deaths": 0.45,
    "hp_lost": 0.37032894736842104,
    "slots_spent": 0.5516666666666666,
-   "rounds": 4.82
+   "rounds": 4.82,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1599,6 +1738,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5400,
    "budget": 6600.0,
    "runs": 100,
@@ -1613,7 +1753,8 @@
    "deaths": 1.01,
    "hp_lost": 0.4033552631578947,
    "slots_spent": 0.38166666666666665,
-   "rounds": 4.54
+   "rounds": 4.54,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1622,6 +1763,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5000,
    "budget": 6600.0,
    "runs": 100,
@@ -1636,7 +1778,8 @@
    "deaths": 0.02,
    "hp_lost": 0.17644736842105263,
    "slots_spent": 0.42,
-   "rounds": 3.29
+   "rounds": 3.29,
+   "fled": 0.0
   },
   {
    "level": 5,
@@ -1645,6 +1788,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5900,
    "budget": 6600.0,
    "runs": 100,
@@ -1659,7 +1803,8 @@
    "deaths": 1.62,
    "hp_lost": 0.6,
    "slots_spent": 0.6494444444444445,
-   "rounds": 6.33
+   "rounds": 6.33,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1668,6 +1813,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2700,
    "budget": 3000,
    "runs": 100,
@@ -1682,7 +1828,8 @@
    "deaths": 0.0,
    "hp_lost": 0.10846511627906977,
    "slots_spent": 0.39590909090909093,
-   "rounds": 3.31
+   "rounds": 3.31,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1691,6 +1838,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2700,
    "budget": 3000,
    "runs": 100,
@@ -1705,7 +1853,8 @@
    "deaths": 0.0,
    "hp_lost": 0.1592093023255814,
    "slots_spent": 0.3245454545454546,
-   "rounds": 2.98
+   "rounds": 2.98,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1714,6 +1863,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2800,
    "budget": 3000,
    "runs": 100,
@@ -1728,7 +1878,8 @@
    "deaths": 0.0,
    "hp_lost": 0.12497674418604653,
    "slots_spent": 0.33590909090909093,
-   "rounds": 3.76
+   "rounds": 3.76,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1737,6 +1888,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2800,
    "budget": 3000,
    "runs": 100,
@@ -1751,7 +1903,8 @@
    "deaths": 0.0,
    "hp_lost": 0.07223255813953489,
    "slots_spent": 0.3290909090909091,
-   "rounds": 3.31
+   "rounds": 3.31,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1760,6 +1913,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2800,
    "budget": 3000,
    "runs": 100,
@@ -1774,7 +1928,8 @@
    "deaths": 0.0,
    "hp_lost": 0.13809302325581396,
    "slots_spent": 0.24681818181818183,
-   "rounds": 3.06
+   "rounds": 3.06,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1783,6 +1938,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 2900,
    "budget": 3000,
    "runs": 100,
@@ -1797,7 +1953,8 @@
    "deaths": 0.0,
    "hp_lost": 0.1058139534883721,
    "slots_spent": 0.24409090909090908,
-   "rounds": 2.28
+   "rounds": 2.28,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1806,6 +1963,7 @@
    "count": 7,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 4900,
    "budget": 5200,
    "runs": 100,
@@ -1820,7 +1978,8 @@
    "deaths": 0.5,
    "hp_lost": 0.23986046511627906,
    "slots_spent": 0.37681818181818183,
-   "rounds": 6.95
+   "rounds": 6.95,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1829,6 +1988,7 @@
    "count": 7,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 4900,
    "budget": 5200,
    "runs": 100,
@@ -1843,7 +2003,8 @@
    "deaths": 0.05,
    "hp_lost": 0.19190697674418605,
    "slots_spent": 0.42727272727272725,
-   "rounds": 4.38
+   "rounds": 4.38,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1852,6 +2013,7 @@
    "count": 7,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 4900,
    "budget": 5200,
    "runs": 100,
@@ -1866,7 +2028,8 @@
    "deaths": 0.36,
    "hp_lost": 0.3566046511627907,
    "slots_spent": 0.45,
-   "rounds": 4.52
+   "rounds": 4.52,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1875,6 +2038,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 4600,
    "budget": 5200,
    "runs": 100,
@@ -1889,7 +2053,8 @@
    "deaths": 0.0,
    "hp_lost": 0.21530232558139534,
    "slots_spent": 0.49227272727272725,
-   "rounds": 5.66
+   "rounds": 5.66,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1898,6 +2063,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 3900,
    "budget": 5200,
    "runs": 100,
@@ -1912,7 +2078,8 @@
    "deaths": 0.0,
    "hp_lost": 0.20186046511627906,
    "slots_spent": 0.5104545454545455,
-   "rounds": 6.23
+   "rounds": 6.23,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1921,6 +2088,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5000,
    "budget": 5200,
    "runs": 100,
@@ -1935,7 +2103,8 @@
    "deaths": 0.0,
    "hp_lost": 0.1312093023255814,
    "slots_spent": 0.28045454545454546,
-   "rounds": 2.66
+   "rounds": 2.66,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1944,6 +2113,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 6600,
    "budget": 6800,
    "runs": 100,
@@ -1958,7 +2128,8 @@
    "deaths": 0.2,
    "hp_lost": 0.23144186046511628,
    "slots_spent": 0.5095454545454545,
-   "rounds": 5.4
+   "rounds": 5.4,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1967,6 +2138,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5400,
    "budget": 6800,
    "runs": 100,
@@ -1981,7 +2153,8 @@
    "deaths": 0.0,
    "hp_lost": 0.084,
    "slots_spent": 0.47954545454545455,
-   "rounds": 4.8
+   "rounds": 4.8,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -1990,6 +2163,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5400,
    "budget": 6800,
    "runs": 100,
@@ -2004,7 +2178,8 @@
    "deaths": 0.0,
    "hp_lost": 0.19348837209302325,
    "slots_spent": 0.4018181818181818,
-   "rounds": 3.72
+   "rounds": 3.72,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -2013,6 +2188,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5400,
    "budget": 6800,
    "runs": 100,
@@ -2027,7 +2203,8 @@
    "deaths": 0.12,
    "hp_lost": 0.24553488372093024,
    "slots_spent": 0.31136363636363634,
-   "rounds": 4.0
+   "rounds": 4.0,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -2036,6 +2213,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5800,
    "budget": 6800,
    "runs": 100,
@@ -2050,7 +2228,8 @@
    "deaths": 0.02,
    "hp_lost": 0.17893023255813953,
    "slots_spent": 0.41045454545454546,
-   "rounds": 4.0
+   "rounds": 4.0,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -2059,6 +2238,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5900,
    "budget": 6800,
    "runs": 100,
@@ -2073,7 +2253,8 @@
    "deaths": 0.05,
    "hp_lost": 0.2914418604651163,
    "slots_spent": 0.4440909090909091,
-   "rounds": 4.65
+   "rounds": 4.65,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -2082,6 +2263,7 @@
    "count": 5,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 9000,
    "budget": 10200.0,
    "runs": 100,
@@ -2096,7 +2278,8 @@
    "deaths": 2.0,
    "hp_lost": 0.6759069767441861,
    "slots_spent": 0.5804545454545454,
-   "rounds": 8.31
+   "rounds": 8.31,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -2105,6 +2288,7 @@
    "count": 5,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 9000,
    "budget": 10200.0,
    "runs": 100,
@@ -2119,7 +2303,8 @@
    "deaths": 0.93,
    "hp_lost": 0.4122790697674419,
    "slots_spent": 0.6186363636363637,
-   "rounds": 6.79
+   "rounds": 6.79,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -2128,6 +2313,7 @@
    "count": 5,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 9000,
    "budget": 10200.0,
    "runs": 100,
@@ -2142,7 +2328,8 @@
    "deaths": 4.22,
    "hp_lost": 1.0,
    "slots_spent": 0.21227272727272728,
-   "rounds": 3.37
+   "rounds": 3.37,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -2151,6 +2338,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 9200,
    "budget": 10200.0,
    "runs": 100,
@@ -2165,7 +2353,8 @@
    "deaths": 0.15,
    "hp_lost": 0.19311627906976744,
    "slots_spent": 0.525,
-   "rounds": 5.31
+   "rounds": 5.31,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -2174,6 +2363,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 7800,
    "budget": 10200.0,
    "runs": 100,
@@ -2188,7 +2378,8 @@
    "deaths": 1.59,
    "hp_lost": 0.6042325581395349,
    "slots_spent": 0.8059090909090909,
-   "rounds": 11.29
+   "rounds": 11.29,
+   "fled": 0.0
   },
   {
    "level": 7,
@@ -2197,6 +2388,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 10000,
    "budget": 10200.0,
    "runs": 100,
@@ -2211,7 +2403,8 @@
    "deaths": 0.1,
    "hp_lost": 0.2210232558139535,
    "slots_spent": 0.4831818181818182,
-   "rounds": 4.92
+   "rounds": 4.92,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2220,6 +2413,7 @@
    "count": 5,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5500,
    "budget": 6400,
    "runs": 100,
@@ -2234,7 +2428,8 @@
    "deaths": 0.0,
    "hp_lost": 0.1832456140350877,
    "slots_spent": 0.22766666666666663,
-   "rounds": 3.04
+   "rounds": 3.04,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2243,6 +2438,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5400,
    "budget": 6400,
    "runs": 100,
@@ -2257,7 +2453,8 @@
    "deaths": 0.0,
    "hp_lost": 0.1386842105263158,
    "slots_spent": 0.2823333333333334,
-   "rounds": 3.28
+   "rounds": 3.28,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2266,6 +2463,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5400,
    "budget": 6400,
    "runs": 100,
@@ -2280,7 +2478,8 @@
    "deaths": 0.0,
    "hp_lost": 0.1543859649122807,
    "slots_spent": 0.2273333333333333,
-   "rounds": 2.75
+   "rounds": 2.75,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2289,6 +2488,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5400,
    "budget": 6400,
    "runs": 100,
@@ -2303,7 +2503,8 @@
    "deaths": 0.01,
    "hp_lost": 0.10289473684210527,
    "slots_spent": 0.1613333333333333,
-   "rounds": 2.39
+   "rounds": 2.39,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2312,6 +2513,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5000,
    "budget": 6400,
    "runs": 100,
@@ -2326,7 +2528,8 @@
    "deaths": 0.0,
    "hp_lost": 0.07692982456140351,
    "slots_spent": 0.14099999999999996,
-   "rounds": 1.71
+   "rounds": 1.71,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2335,6 +2538,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 5900,
    "budget": 6400,
    "runs": 100,
@@ -2349,7 +2553,8 @@
    "deaths": 0.0,
    "hp_lost": 0.17923976608187134,
    "slots_spent": 0.19833333333333328,
-   "rounds": 2.52
+   "rounds": 2.52,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2358,6 +2563,7 @@
    "count": 8,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 8800,
    "budget": 9200,
    "runs": 100,
@@ -2372,7 +2578,8 @@
    "deaths": 0.31,
    "hp_lost": 0.3983918128654971,
    "slots_spent": 0.3516666666666667,
-   "rounds": 4.71
+   "rounds": 4.71,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2381,6 +2588,7 @@
    "count": 5,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 9000,
    "budget": 9200,
    "runs": 100,
@@ -2395,7 +2603,8 @@
    "deaths": 3.21,
    "hp_lost": 0.8590643274853801,
    "slots_spent": 0.38366666666666666,
-   "rounds": 10.69
+   "rounds": 10.69,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2404,6 +2613,7 @@
    "count": 5,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 9000,
    "budget": 9200,
    "runs": 100,
@@ -2418,7 +2628,8 @@
    "deaths": 0.1,
    "hp_lost": 0.23497076023391814,
    "slots_spent": 0.1893333333333333,
-   "rounds": 3.47
+   "rounds": 3.47,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2427,6 +2638,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 9200,
    "budget": 9200,
    "runs": 100,
@@ -2441,7 +2653,8 @@
    "deaths": 0.56,
    "hp_lost": 0.5229824561403509,
    "slots_spent": 0.2816666666666667,
-   "rounds": 4.39
+   "rounds": 4.39,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2450,6 +2663,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 8700,
    "budget": 9200,
    "runs": 100,
@@ -2464,7 +2678,8 @@
    "deaths": 0.0,
    "hp_lost": 0.18374269005847954,
    "slots_spent": 0.3016666666666667,
-   "rounds": 3.75
+   "rounds": 3.75,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2473,6 +2688,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 7800,
    "budget": 9200,
    "runs": 100,
@@ -2487,7 +2703,8 @@
    "deaths": 0.0,
    "hp_lost": 0.2936549707602339,
    "slots_spent": 0.23399999999999999,
-   "rounds": 2.93
+   "rounds": 2.93,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2496,6 +2713,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 10800,
    "budget": 12400,
    "runs": 100,
@@ -2510,7 +2728,8 @@
    "deaths": 0.95,
    "hp_lost": 0.531608187134503,
    "slots_spent": 0.5426666666666666,
-   "rounds": 9.44
+   "rounds": 9.44,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2519,6 +2738,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 10800,
    "budget": 12400,
    "runs": 100,
@@ -2533,7 +2753,8 @@
    "deaths": 1.17,
    "hp_lost": 0.5965497076023392,
    "slots_spent": 0.44166666666666665,
-   "rounds": 6.79
+   "rounds": 6.79,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2542,6 +2763,7 @@
    "count": 6,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 10800,
    "budget": 12400,
    "runs": 100,
@@ -2556,7 +2778,8 @@
    "deaths": 0.11,
    "hp_lost": 0.24301169590643276,
    "slots_spent": 0.18166666666666662,
-   "rounds": 3.22
+   "rounds": 3.22,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2565,6 +2788,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 11600,
    "budget": 12400,
    "runs": 100,
@@ -2579,7 +2803,8 @@
    "deaths": 0.02,
    "hp_lost": 0.2845321637426901,
    "slots_spent": 0.4023333333333334,
-   "rounds": 5.39
+   "rounds": 5.39,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2588,6 +2813,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 11700,
    "budget": 12400,
    "runs": 100,
@@ -2602,7 +2828,8 @@
    "deaths": 0.27,
    "hp_lost": 0.4441812865497076,
    "slots_spent": 0.3473333333333334,
-   "rounds": 4.83
+   "rounds": 4.83,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2611,6 +2838,7 @@
    "count": 2,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 11800,
    "budget": 12400,
    "runs": 100,
@@ -2625,7 +2853,8 @@
    "deaths": 0.04,
    "hp_lost": 0.34292397660818713,
    "slots_spent": 0.38133333333333336,
-   "rounds": 5.32
+   "rounds": 5.32,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2634,6 +2863,7 @@
    "count": 8,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 18400,
    "budget": 18600.0,
    "runs": 100,
@@ -2648,7 +2878,8 @@
    "deaths": 4.06,
    "hp_lost": 1.0,
    "slots_spent": 0.09866666666666664,
-   "rounds": 2.1
+   "rounds": 2.1,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2657,6 +2888,7 @@
    "count": 8,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 18400,
    "budget": 18600.0,
    "runs": 100,
@@ -2671,7 +2903,8 @@
    "deaths": 4.05,
    "hp_lost": 1.0,
    "slots_spent": 0.13199999999999998,
-   "rounds": 2.26
+   "rounds": 2.26,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2680,6 +2913,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 15600,
    "budget": 18600.0,
    "runs": 100,
@@ -2694,7 +2928,8 @@
    "deaths": 3.91,
    "hp_lost": 0.9845029239766082,
    "slots_spent": 0.383,
-   "rounds": 8.46
+   "rounds": 8.46,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2703,6 +2938,7 @@
    "count": 4,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 15600,
    "budget": 18600.0,
    "runs": 100,
@@ -2717,7 +2953,8 @@
    "deaths": 2.28,
    "hp_lost": 0.7995614035087719,
    "slots_spent": 0.36733333333333335,
-   "rounds": 6.65
+   "rounds": 6.65,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2726,6 +2963,7 @@
    "count": 3,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 17700,
    "budget": 18600.0,
    "runs": 100,
@@ -2740,7 +2978,8 @@
    "deaths": 1.99,
    "hp_lost": 0.6648245614035088,
    "slots_spent": 0.19066666666666665,
-   "rounds": 2.84
+   "rounds": 2.84,
+   "fled": 0.0
   },
   {
    "level": 10,
@@ -2749,6 +2988,7 @@
    "count": 1,
    "area": "party_spread",
    "grab": "grab_half",
+   "morale": "none",
    "xp": 18000,
    "budget": 18600.0,
    "runs": 100,
@@ -2763,7 +3003,8 @@
    "deaths": 3.44,
    "hp_lost": 0.958187134502924,
    "slots_spent": 0.5536666666666666,
-   "rounds": 8.11
+   "rounds": 8.11,
+   "fled": 0.0
   }
  ]
 }

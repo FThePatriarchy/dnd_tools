@@ -2012,6 +2012,16 @@ mapping; Python callers can pass `options=DayOptions(...)` to `run_day` or
   draws. `--attack-downed` permits deliberate finishing attacks; the default
   avoids downed targets unless no conscious reachable target remains.
   `--no-engagement` restores universal access and the old low-HP default.
+- **Morale (optional, off by default):** `--morale dmg` (or `options: {morale: dmg}`
+  in a day file) applies the DMG optional morale rule. A monster checks the first
+  time it is at half its hit points or fewer, and every monster on a side checks
+  the first time that side is down to half its starting number. Each check is a
+  DC 10 Wisdom save, and a failure means the monster flees and leaves the
+  combat. `--morale rout` flees on every trigger with no save (an upper bound).
+  Creatures immune to the frightened condition never check; an incapacitated
+  creature checks once it can act. Checks run at the end of each turn. A fight
+  in which every remaining monster fled is a party win. Surprise and
+  leader-loss triggers are not modelled.
 - **Spending:** conservative compares forecast current-encounter party damage
   loss to HP divided by encounters remaining **before the next long rest**.
   An ally down or below 50% is an emergency; the final encounter before a long

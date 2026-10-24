@@ -54,10 +54,19 @@ GRAB_COMPARE_MD = REPORTS / "calibration_grab_compare.md"
 DEFAULT_AREA, DEFAULT_GRAB = "party_spread", "grab_half"
 
 
-def report_paths(area, grab="data"):
+MORALE_COMPARE_MD = REPORTS / "calibration_morale_compare.md"
+MORALE_RULES = {
+    "none": "Engine default: monsters fight to the last.",
+    "dmg": "Optional DMG morale: at half HP, and when the side is down to half its number, DC 10 Wisdom save or flee.",
+    "rout": "Upper bound: the same triggers, but the monster flees with no save.",
+}
+
+
+def report_paths(area, grab="data", morale="none"):
     """Named by rule, not by default: calibration_dmg is the DMG area table with printed grabs."""
     stem = ("calibration_dmg" + ("" if area == "dmg" else f"_area_{area}")
-            + ("" if grab == "data" else f"_grab_{grab.removeprefix('grab_')}"))
+            + ("" if grab == "data" else f"_grab_{grab.removeprefix('grab_')}")
+            + ("" if morale == "none" else f"_morale_{morale}"))
     return REPORTS / f"{stem}.json", REPORTS / f"{stem}.md"
 
 
@@ -146,9 +155,10 @@ def run_cell(task):
     from .loader import load_spells
     from .policy import Policy
     from .state import Combatant
-    level, difficulty, monster, count, xp_total, runs, seed, area, grab = task
+    level, difficulty, monster, count, xp_total, runs, seed, area, grab, *rest = task
+    morale = rest[0] if rest else "none"
     if _SPELLS is None: _SPELLS = load_spells()
-    opts = DayOptions()
+    opts = DayOptions(morale=morale)
     sheets = []
     for cls in CLASSES:
         sheet = load_character(f"{cls}_{level}", background=opts.backgrounds)
@@ -188,14 +198,15 @@ def run_cell(task):
             "hp_lost": 1 - end_hp / max_hp,
             "slots_spent": (1 - end_slots / max_slots) if max_slots else 0.0,
             "rounds": enc.rounds,
+            "fled": enc.fled / count,
         })
     agg = {k: mean(float(r[k]) for r in rows) for k in rows[0]} if rows else dict.fromkeys(k for k, _ in METRICS)
-    return {"level": level, "difficulty": difficulty, "monster": monster, "count": count, "area": area, "grab": grab,
+    return {"level": level, "difficulty": difficulty, "monster": monster, "count": count, "area": area, "grab": grab, "morale": morale,
             "xp": xp_total, "budget": budget(level, difficulty), "runs": len(rows),
             "failed_runs": runs - len(rows), "errors": errors, **agg}
 
 
-def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data", monsters=None):
+def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data", monsters=None, morale="none"):
     """monsters restricts which compositions run; each composition keeps its own seed."""
     xp = monster_xp()
     tasks = []
@@ -203,7 +214,7 @@ def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data"
         for difficulty in DIFFICULTIES:
             for monster, count, total in compositions(budget(level, difficulty), xp):
                 if monsters and monster not in monsters: continue
-                tasks.append((level, difficulty, monster, count, total, runs, seed, area, grab))
+                tasks.append((level, difficulty, monster, count, total, runs, seed, area, grab, morale))
     with ProcessPoolExecutor(max_workers=workers) as pool:
         return list(pool.map(run_cell, tasks))
 
@@ -214,7 +225,8 @@ def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data"
 DEFEATS = frozenset({"tpk", "party_unavailable"})
 
 METRICS = (("win", "Win"), ("down", "Any down"), ("death", "Any death"), ("tpk", "TPK"),
-           ("defeat", "Defeat"), ("hp_lost", "HP lost"), ("slots_spent", "Slots spent"), ("rounds", "Rounds"))
+           ("defeat", "Defeat"), ("hp_lost", "HP lost"), ("slots_spent", "Slots spent"), ("rounds", "Rounds"),
+           ("fled", "Fled"))
 
 
 def pct(value): return "-" if value is None else f"{value:.0%}"
@@ -226,7 +238,7 @@ def fmt_metric(c, key):
     return "-" if value is None else f"{value:.1f}" if key == "rounds" else pct(value)
 
 
-def markdown(cells, runs, seed, area="dmg", grab="data"):
+def markdown(cells, runs, seed, area="dmg", grab="data", morale="none"):
     failed = [c for c in cells if c["failed_runs"]]
     cells = [c for c in cells if c["runs"]]
     by = defaultdict(list)
@@ -238,6 +250,7 @@ def markdown(cells, runs, seed, area="dmg", grab="data"):
            f"'Over' is {OVER_FACTOR}x High, a probe beyond the DMG categories.", "",
            f"Area rule: `{area}` — {AREA_RULES[area][1]}", "",
            f"Grab rule: `{grab}` — {GRAB_RULES[grab][1]}", "",
+           f"Morale: `{morale}` — {MORALE_RULES[morale]} Fled is the share of monsters that fled.", "",
            "TPK: every PC at 0 HP. Defeat: the party loses, either by TPK or with every PC still "
            "standing dominated or otherwise out of the fight.", "",
            "## Summary (mean across compositions, [min-max] in brackets)", "",
@@ -408,6 +421,64 @@ def compare_grab():
     return "\n".join(out) + "\n"
 
 
+def compare_morale(area=DEFAULT_AREA, grab=DEFAULT_GRAB):
+    """Side-by-side report of the morale rules on the engine-default area and grab rules."""
+    key = lambda c: (c["level"], c["difficulty"], c["monster"], c["count"])
+    loaded = {}
+    for morale in MORALE_RULES:
+        path = report_paths(area, grab, morale)[0]
+        if path.exists():
+            data = json.loads(path.read_text(encoding="utf-8"))
+            loaded[morale] = {"runs": data["runs"], "cells": {key(c): c for c in data["cells"] if c["runs"]}}
+    if "none" not in loaded: raise SystemExit("run the baseline sweep with --write first")
+    rules = list(loaded)
+    base = loaded["none"]["cells"]
+    levels = sorted({k[0] for k in base})
+    def values(rule, level, difficulty, metric):
+        return [c.get(metric) for k, c in loaded[rule]["cells"].items() if k[:2] == (level, difficulty) and c.get(metric) is not None]
+    out = ["# Morale comparison", "",
+           f"Same DMG budget sweep, compositions and seeds, on the engine-default `{area}` areas and `{grab}` grabs. "
+           "Only the optional morale rule changes; the engine default is `none`. Runs per composition: "
+           + ", ".join(f"`{r}` {d['runs']}" for r, d in loaded.items()) + ".", "",
+           "A fleeing monster leaves the fight, and a fight in which every remaining monster fled counts as a win. "
+           "Creatures immune to the frightened condition never check.", "",
+           "| Rule | Meaning |", "| --- | --- |"]
+    out += [f"| `{r}` | {MORALE_RULES[r]} |" for r in rules]
+    head = "| Level | Difficulty | " + " | ".join(f"`{r}`" for r in rules) + " |"
+    sep = "| ---: | --- | " + " | ".join("---:" for _ in rules) + " |"
+    for metric, title, agg in (("defeat", "Median defeat chance", median), ("down", "Median chance someone goes down", median),
+                               ("death", "Median chance someone dies", median), ("hp_lost", "Mean party HP lost", mean),
+                               ("rounds", "Mean rounds", mean), ("fled", "Mean share of monsters that fled", mean)):
+        out += ["", f"## {title} (across the compositions in each slot)", "", head, sep]
+        for level in levels:
+            for difficulty in DIFFICULTIES:
+                row = []
+                for r in rules:
+                    v = values(r, level, difficulty, metric)
+                    row.append("-" if not v else f"{agg(v):.1f}" if metric == "rounds" else pct(agg(v)))
+                out.append(f"| {level} | {difficulty} | " + " | ".join(row) + " |")
+    out += ["", "## Shape checks", "",
+            "Same definitions as the other comparisons, using defeat (which includes TPK).", "",
+            "| Rule | Monotone levels | Defeat outliers | Spread |", "| --- | ---: | ---: | ---: |"]
+    for r in rules:
+        cells = {k: {**c, "tpk": c["defeat"]} for k, c in loaded[r]["cells"].items()}
+        monotone, outliers, spread = shape_checks(cells, levels)
+        out.append(f"| `{r}` | {monotone} / {len(levels)} | {outliers} | {pct(spread)} |")
+    if len(rules) > 1:
+        other = rules[1]
+        moved = sorted((k for k in base if k in loaded[other]["cells"]),
+                       key=lambda k: -abs(loaded[other]["cells"][k]["defeat"] - base[k]["defeat"]))[:15]
+        out += ["", f"## Largest defeat changes, `none` vs `{other}`", "",
+                "| Level | Difficulty | Encounter | " + " | ".join(f"`{r}` defeat" for r in rules) + " | "
+                + " | ".join(f"`{r}` fled" for r in rules[1:]) + " |",
+                "| ---: | --- | --- | " + " | ".join("---:" for _ in rules) + " | " + " | ".join("---:" for _ in rules[1:]) + " |"]
+        for k in moved:
+            d = [pct(loaded[r]["cells"][k]["defeat"]) if k in loaded[r]["cells"] else "-" for r in rules]
+            f = [pct(loaded[r]["cells"][k]["fled"]) if k in loaded[r]["cells"] else "-" for r in rules[1:]]
+            out.append(f"| {k[0]} | {k[1]} | {k[2]} x{k[3]} | " + " | ".join(d) + " | " + " | ".join(f) + " |")
+    return "\n".join(out) + "\n"
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--runs", type=int, default=200)
@@ -416,15 +487,22 @@ def main():
     parser.add_argument("--workers", type=int)
     parser.add_argument("--area", choices=list(AREA_RULES), default=DEFAULT_AREA, help="area-of-effect rule for this sweep only")
     parser.add_argument("--grab", choices=list(GRAB_RULES), default=DEFAULT_GRAB, help="multi-target grab cap for this sweep only")
+    parser.add_argument("--morale", choices=list(MORALE_RULES), default="none", help="optional morale rule for this sweep only")
     parser.add_argument("--monsters", nargs="+", help="run only compositions of these monsters")
     parser.add_argument("--write", action="store_true", help="write the sweep to data/reports/")
     parser.add_argument("--compare", action="store_true", help="write the side-by-side area-rule report from written sweeps")
     parser.add_argument("--compare-grab", action="store_true", help="write the side-by-side grab-cap report from written sweeps")
+    parser.add_argument("--compare-morale", action="store_true", help="write the side-by-side morale report from written sweeps")
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")  # reports contain non-ASCII; Windows consoles default to cp1252
     if args.compare:
         text = compare(list(AREA_RULES))
         COMPARE_MD.write_text(text, encoding="utf-8")
+        print(text)
+        return
+    if args.compare_morale:
+        text = compare_morale()
+        MORALE_COMPARE_MD.write_text(text, encoding="utf-8")
         print(text)
         return
     if args.compare_grab:
@@ -434,12 +512,14 @@ def main():
         return
     if args.monsters and args.grab == "data" and args.write:
         parser.error("--monsters with --write is for grab variants; a printed-grab (data) sweep must be complete")
-    cells = sweep(args.runs, args.seed, tuple(args.levels), args.workers, args.area, args.grab, args.monsters)
-    text = markdown(cells, args.runs, args.seed, args.area, args.grab)
+    if args.monsters and args.morale != "none" and args.write:
+        parser.error("--monsters with --write is only for grab variants")
+    cells = sweep(args.runs, args.seed, tuple(args.levels), args.workers, args.area, args.grab, args.monsters, args.morale)
+    text = markdown(cells, args.runs, args.seed, args.area, args.grab, args.morale)
     if args.write:
-        json_path, md_path = report_paths(args.area, args.grab)
+        json_path, md_path = report_paths(args.area, args.grab, args.morale)
         json_path.write_text(json.dumps({"runs": args.runs, "seed": args.seed, "area": args.area, "grab": args.grab,
-                                         "monsters": args.monsters, "cells": cells}, indent=1), encoding="utf-8")
+                                         "morale": args.morale, "monsters": args.monsters, "cells": cells}, indent=1), encoding="utf-8")
         md_path.write_text(text, encoding="utf-8")
     print(text)
 

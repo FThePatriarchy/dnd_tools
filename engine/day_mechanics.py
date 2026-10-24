@@ -62,6 +62,44 @@ class DayMechanics:
         if spec.get("concentration"): total *= .7
         return total, chosen
 
+    MORALE_DC = 10
+
+    def morale_checks(self):
+        """Optional DMG morale rule (DayOptions.morale; off by default).
+
+        A monster checks the first time it is at half its hit points or fewer,
+        and every monster on a side checks the first time that side is down to
+        half its starting number. "dmg": a DC 10 Wisdom save, fleeing on a
+        failure; "rout": flee without a save (an upper bound). A fleeing
+        creature leaves the combat. Creatures immune to the frightened
+        condition never check, and an incapacitated one checks once it can act.
+        Checks run at the end of each turn, after that turn's damage.
+        """
+        options = getattr(self, "day_options", None)
+        mode = options.morale if options else "none"
+        start = getattr(self, "morale_start", None)
+        if mode == "none" or not start: return
+        monsters = [c for c in self.combatants if c.cr is not None and c.summoner_id is None and c.team != "party"]
+        standing = {}
+        for c in monsters:
+            if c.alive: standing[c.team] = standing.get(c.team, 0) + 1
+        for c in monsters:
+            if not c.alive or c.has_condition("incapacitated") or "frightened" in c.condition_immunities: continue
+            triggers = []
+            if c.hp * 2 <= c.max_hp and "morale_hurt" not in c.statuses: triggers.append("morale_hurt")
+            if standing.get(c.team, 0) * 2 <= start.get(c.team, 0) and "morale_group" not in c.statuses: triggers.append("morale_group")
+            for trigger in triggers:
+                c.statuses[trigger] = {}
+                if mode == "rout" or not self.saving_throw(c, "wis", self.MORALE_DC):
+                    self.flee(c, trigger)
+                    break
+
+    def flee(self, actor, reason):
+        actor.removed = True
+        actor.statuses["fled"] = {"reason": reason}
+        if actor.concentration is not None: self.end_spell(actor.concentration)
+        self.record("fled", actor=actor.id, reason=reason)
+
     def kill(self, actor):
         if actor.dead: return
         actor.dead = True

@@ -1,6 +1,8 @@
 """Explicit day-model switches; legacy() reproduces the pre-realism contract."""
 from dataclasses import dataclass, fields
 
+MORALE = ("none", "dmg", "rout")
+
 
 @dataclass(frozen=True)
 class DayOptions:
@@ -14,6 +16,7 @@ class DayOptions:
     screen: int = 2
     targeting: str = "threat"
     attack_downed: bool = False
+    morale: str = "none"  # optional DMG morale: "none" (fight to the last), "dmg", "rout"
 
     def __post_init__(self):
         for f in fields(self):
@@ -23,6 +26,7 @@ class DayOptions:
             raise ValueError("gap_minutes must be finite and nonnegative")
         if type(self.screen) is not int or self.screen < 0: raise ValueError("screen must be nonnegative integer")
         if self.targeting not in {"focus_low_hp", "threat", "random"}: raise ValueError("unknown targeting policy")
+        if self.morale not in MORALE: raise ValueError("unknown morale rule")
         if not self.engagement and self.targeting == "threat": object.__setattr__(self,"targeting","focus_low_hp")
 
     @classmethod

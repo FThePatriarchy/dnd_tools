@@ -1595,6 +1595,10 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         self.interrupt_rest("initiative")
         initiative = sorted((c for c in self.combatants if c.summoner_id is None), key=lambda c: (-(dice.d20(self.rng, advantage=c.has_condition("invisible") or c.features.get("initiative_advantage", False)) + c.mod("dex") + c.initiative_bonus), c.id))
         self.record("initiative", order=[c.id for c in initiative])
+        self.morale_start = {}
+        for c in self.combatants:
+            if c.cr is not None and c.summoner_id is None and c.team != "party" and c.alive:
+                self.morale_start[c.team] = self.morale_start.get(c.team, 0) + 1
         for round_number in range(1, max_rounds + 1):
             self.round = round_number
             for actor in initiative:
@@ -1603,6 +1607,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 self.end_turn(actor)
                 from .summoning import take_summoned_turns
                 take_summoned_turns(self, actor)
+                self.morale_checks()
                 teams = {c.team for c in self.combatants if c.alive or (self.death_rules and c.team == "party" and not c.dead and not c.removed and not c.permanently_removed) or (c.features.get("regeneration", {}).get("at_zero") and not c.has_status("regeneration_blocked") and not c.removed and not c.permanently_removed)}
                 if len(teams) <= 1:
                     return {"winner": next(iter(teams), None), "rounds": round_number, "hp": self.party_hp(), "resources": self.resources()}

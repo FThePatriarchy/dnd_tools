@@ -13,7 +13,7 @@ from .combat import Combat
 from .loader import ROOT, Validator, load_sheet, load_spells, read_yaml
 from .policy import Policy, STRATEGIES, strategy_policy
 from .state import Combatant, compare_deadline
-from .day_options import DayOptions, day_options
+from .day_options import MORALE, DayOptions, day_options
 
 
 MONSTERS = re.compile(r"([a-z][a-z0-9_]*)(?: x([1-9][0-9]*))?")
@@ -212,6 +212,7 @@ class EncounterResult:
     deaths: int = 0
     start_seconds: float = 0
     end_seconds: float = 0
+    fled: int = 0
 
 
 @dataclass(frozen=True)
@@ -359,8 +360,9 @@ def run_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max
             combat.settle_downed(party)
             if not opts.clock: cleanup_encounter(combat,preserve_death=opts.death)
         deaths = sum(c.deaths for c in party) - before_deaths
+        fled = sum(e.has_status("fled") for e in enemies)
         results.append(EncounterResult(len(results)+1, names, outcome["rounds"], won, start, end,
-                                       snapshot(party), sum(downs.values()), downs, deaths, start_time*6, end_time*6))
+                                       snapshot(party), sum(downs.values()), downs, deaths, start_time*6, end_time*6, fled))
         if not won:
             reason = "tpk" if tpk else "round_limit" if outcome["winner"] is None else "party_unavailable"
             return DayResult(False, cleared, results, reason, combat.time_rounds*6, snapshot(party))
@@ -468,6 +470,7 @@ def main():
     parser.add_argument("--screen", type=int)
     parser.add_argument("--targeting", choices=("focus_low_hp", "threat", "random"))
     parser.add_argument("--attack-downed", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--morale", choices=MORALE, help="optional DMG morale rule (default: none, fight to the last)")
     args = parser.parse_args()
     try:
         opts = asdict(DayOptions.legacy() if args.legacy else day_options(load_day(args.day).get("options")))

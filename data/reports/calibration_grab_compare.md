@@ -17,33 +17,33 @@ Same DMG budget sweep, compositions and seeds as the area-rule comparison. A gra
 
 ### Level 5 low: gelatinous_cube x4
 
-| Variant | Win | Any down | Any death | TPK | Defeat | HP lost | Slots spent | Rounds |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `dmg` + `data` | 10% | 98% | 96% | 90% | - | 97% | 13% | 3.6 |
-| `dmg` + `grab_half` | 65% | 80% | 52% | 35% | - | 65% | 28% | 4.6 |
-| `dmg` + `grab_one` | 99% | 40% | 5% | 1% | - | 19% | 26% | 3.2 |
-| `party_spread` + `data` | 10% | 98% | 96% | 90% | - | 97% | 13% | 3.6 |
-| `party_spread` + `grab_half` | 65% | 80% | 52% | 35% | 35% | 65% | 28% | 4.6 |
+| Variant | Win | Any down | Any death | TPK | Defeat | HP lost | Slots spent | Rounds | Fled |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `dmg` + `data` | 10% | 98% | 96% | 90% | - | 97% | 13% | 3.6 | - |
+| `dmg` + `grab_half` | 65% | 80% | 52% | 35% | - | 65% | 28% | 4.6 | - |
+| `dmg` + `grab_one` | 99% | 40% | 5% | 1% | - | 19% | 26% | 3.2 | - |
+| `party_spread` + `data` | 10% | 98% | 96% | 90% | - | 97% | 13% | 3.6 | - |
+| `party_spread` + `grab_half` | 65% | 80% | 52% | 35% | 35% | 65% | 28% | 4.6 | 0% |
 
 ### Level 5 high: water_elemental x2
 
-| Variant | Win | Any down | Any death | TPK | Defeat | HP lost | Slots spent | Rounds |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `dmg` + `data` | 59% | 91% | 44% | 41% | - | 69% | 51% | 6.1 |
-| `dmg` + `grab_half` | 59% | 91% | 44% | 41% | - | 69% | 51% | 6.2 |
-| `dmg` + `grab_one` | 99% | 56% | 3% | 1% | - | 24% | 53% | 4.8 |
-| `party_spread` + `data` | 59% | 91% | 44% | 41% | - | 69% | 51% | 6.1 |
-| `party_spread` + `grab_half` | 59% | 91% | 44% | 41% | 41% | 69% | 51% | 6.2 |
+| Variant | Win | Any down | Any death | TPK | Defeat | HP lost | Slots spent | Rounds | Fled |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `dmg` + `data` | 59% | 91% | 44% | 41% | - | 69% | 51% | 6.1 | - |
+| `dmg` + `grab_half` | 59% | 91% | 44% | 41% | - | 69% | 51% | 6.2 | - |
+| `dmg` + `grab_one` | 99% | 56% | 3% | 1% | - | 24% | 53% | 4.8 | - |
+| `party_spread` + `data` | 59% | 91% | 44% | 41% | - | 69% | 51% | 6.1 | - |
+| `party_spread` + `grab_half` | 59% | 91% | 44% | 41% | 41% | 69% | 51% | 6.2 | 0% |
 
 ### Level 7 over: water_elemental x5
 
-| Variant | Win | Any down | Any death | TPK | Defeat | HP lost | Slots spent | Rounds |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `dmg` + `data` | 0% | 100% | 100% | 100% | - | 100% | 21% | 3.3 |
-| `dmg` + `grab_half` | 0% | 100% | 100% | 100% | - | 100% | 21% | 3.4 |
-| `dmg` + `grab_one` | 12% | 100% | 93% | 88% | - | 94% | 42% | 7.0 |
-| `party_spread` + `data` | 0% | 100% | 100% | 100% | - | 100% | 21% | 3.3 |
-| `party_spread` + `grab_half` | 0% | 100% | 100% | 100% | 100% | 100% | 21% | 3.4 |
+| Variant | Win | Any down | Any death | TPK | Defeat | HP lost | Slots spent | Rounds | Fled |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `dmg` + `data` | 0% | 100% | 100% | 100% | - | 100% | 21% | 3.3 | - |
+| `dmg` + `grab_half` | 0% | 100% | 100% | 100% | - | 100% | 21% | 3.4 | - |
+| `dmg` + `grab_one` | 12% | 100% | 93% | 88% | - | 94% | 42% | 7.0 | - |
+| `party_spread` + `data` | 0% | 100% | 100% | 100% | - | 100% | 21% | 3.3 | - |
+| `party_spread` + `grab_half` | 0% | 100% | 100% | 100% | 100% | 100% | 21% | 3.4 | 0% |
 
 ## Whole-sweep shape checks
 
