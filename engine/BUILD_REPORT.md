@@ -114,10 +114,21 @@ Monster/class omissions are recorded in their sheets:
 
 ## Rules approximations and policy choices
 
-- Default AoE coverage follows the DMG "Targets in Areas of Effect" table:
-  `min(eligible_count, max(1, ceil(size_ft / k)))` with k = 10 for cones,
-  30 for lines and 5 for every other shape. A replacement receives **only** shape, size and eligible count and
-  returns a count or eligible-list indices. Policy orders placement. An area
+- Default AoE coverage (since 2026-10-24) starts from the DMG "Targets in Areas of
+  Effect" table, `max(1, ceil(size_ft / k))` with k = 10 for cones, 30 for lines
+  and 5 for every other shape. The party's areas use that count. Everyone else's
+  areas use half of it, rounded up and at least one, because players spread out
+  against monster areas. Either is capped by the eligible creatures. The pure DMG
+  rule remains available as `policy.dmg_area_heuristic`. A replacement receives
+  shape, size and eligible count (plus `caster=` if it sets `wants_caster`;
+  `avoids_allies` opts in to the default's ally avoidance) and returns a count
+  or eligible-list indices.
+- Multi-target grabs (`n_targets` actions whose failure grapples, restrains or
+  engulfs: Engulf, Whelm) reach at most half the eligible group, rounded up, by
+  default (`policy.grab_cap`; `Combat(target_cap=policy.printed_grab_count)`
+  restores the printed count). Both defaults come from the DMG budget
+  calibration: `data/reports/calibration_area_compare.md` and
+  `calibration_grab_compare.md`. Policy orders placement. An area
   does not gain an allegiance exemption: legal allies/caster can be included
   when the heuristic fills the area. Spirit Guardians' designated exemptions
   are selected and frozen at cast time. Identical persistent-area declarations

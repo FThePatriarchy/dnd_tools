@@ -16,8 +16,9 @@ The simulation is the source of truth. Expected-value maths (hit chance × damag
 ## Current state (2026-10-23)
 
 - Combat engine with 245 XPHB spells, 70 XMM monsters, Fighter/Rogue/Wizard/Cleric levels 1–10, 20 preset builds, adventuring-day mode with 2024 rests.
-- DMG 2024 budget sweep: `python -m engine.calibration --runs 100 --write` → `data/reports/calibration_dmg.md`. Run it under a Python with pyyaml (currently `C:\Python312`).
-- Sweep findings:
+- DMG 2024 budget sweep: `python -m engine.calibration --runs 100 --write` runs the engine defaults → `data/reports/calibration_dmg_area_party_spread_grab_half.md` (the baseline). Run it under a Python with pyyaml (currently `C:\Python312`).
+- Engine no-grid defaults since 2026-10-24: monster areas hit half the DMG-table count (`party_spread`), and multi-target grabs reach at most half the group (`grab_half`). The old rules are `policy.dmg_area_heuristic` and `policy.printed_grab_count`.
+- First-sweep findings (2026-10-23, old defaults; `data/reports/calibration_dmg.md`):
   - On a typical encounter, difficulty climbs Low → Moderate → High as the DMG describes from level 3 up. Level 1 is too lethal: someone dies in about 1 in 10 Low fights.
   - A few multi-target monster abilities produce near-certain wipes at any budget: Engulf (gelatinous cube, water elemental), caster area spells (mage, priest), breath weapons in groups, Petrifying Gaze.
   - Aboleth ×3 has an inconsistent result: deaths in 96% of runs, 0% wins, 2% TPK.
@@ -29,12 +30,12 @@ Fix the modelling distortions the sweep exposed, comparing options side by side 
 
 - ~~Add an area-rule option to the sweep and compare the current DMG table with tighter rules.~~ Done 2026-10-24: `--area` and `--compare`, report in `data/reports/calibration_area_compare.md`. Findings:
   - Area rules fix the big single-caster and breath outliers: mage ×4 at L10 Moderate drops from 86% TPK to 12%, young red dragon at L5 Over from 64% to 28%, basilisks from 57% to 19% under `party_spread`.
-  - Tighter rules that apply to both sides make swarms deadlier, because the party's own Fireball and Spirit Guardians shrink too. `party_spread` (only monster areas tightened) avoids this. It has the lowest spread and the fewest wipe outliers, so it is the leading candidate default. Not adopted yet.
+  - Tighter rules that apply to both sides make swarms deadlier, because the party's own Fireball and Spirit Guardians shrink too. `party_spread` (only monster areas tightened) avoids this. It has the lowest spread and the fewest wipe outliers, so it was adopted as the engine default on 2026-10-24.
   - The remaining outliers don't respond to any area rule: Engulf/Whelm (gelatinous cube, water elemental use `n_targets`, not areas), fire elemental burning, and stacked Spirit Guardians (priest ×5) or large swarms. These are the next levers.
 - ~~Cap multi-target grabs such as Engulf and Whelm to a positional estimate instead of "everyone".~~ What-if done 2026-10-24: `--grab` and `--compare-grab`, report in `data/reports/calibration_grab_compare.md`. Only Engulf (up to 4) and Whelm (up to 2) are multi-target grabs. Findings:
   - Gelatinous cube ×4 at L5 Low: TPK 90% by default, 35% with `grab_half` (2 per use), 1% with `grab_one`. Even two per use leaves a "Low" fight wiping a third of the time, because four cubes together can still swallow the whole party every round.
   - Whelm already prints 2, so `grab_half` changes nothing for it. `grab_one` takes water elemental ×2 at L5 High from 41% to 1% TPK. Water elemental ×5 (an Over probe) stays at 88% under every rule.
-  - Best whole-sweep combination: `party_spread` + `grab_half` (3 wipe outliers, 24% spread, vs 6 and 33% for the current defaults). Not adopted yet. The choice between `grab_half` and `grab_one` is a modelling decision still open.
+  - Best whole-sweep combination: `party_spread` + `grab_half` (3 wipe outliers, 24% spread, vs 6 and 33% for the old defaults). Adopted as the engine defaults on 2026-10-24. The rerun baseline reproduces the what-if results exactly. `grab_one` remains available if four-cube "Low" fights should stop wiping at all; gelatinous cube ×4 at L5 Low is still 35% TPK.
 - Decide fight-to-extermination vs. morale/fleeing.
 - Fix the Cunning Strike crash and explain the aboleth result.
 - Adaptive run counts: run more where an estimate is uncertain or near a threshold that matters, fewer where the answer is 0% or 100%.

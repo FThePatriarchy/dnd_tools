@@ -1,4 +1,4 @@
-"""Replace Policy or area_heuristic without changing spell resolution."""
+"""Replace Policy, area_heuristic or grab_cap without changing spell resolution."""
 import math
 
 from .dice import mean
@@ -8,15 +8,60 @@ from .state import SpellInstance
 FEET_PER_TARGET = {"cone": 10, "line": 30}  # every other shape: 5
 
 
-def area_heuristic(shape: str, size_ft: float, eligible: int) -> int:
+def _dmg_count(shape, size_ft):
+    return max(1, math.ceil(size_ft / FEET_PER_TARGET.get(shape, 5)))
+
+
+def dmg_area_heuristic(shape: str, size_ft: float, eligible: int, caster=None) -> int:
     """No-grid AoE rule from the DMG "Targets in Areas of Effect" table.
 
     Cone size/10, line length/30, sphere/cylinder/emanation radius/5 and cube
-    size/5, rounded up, at least one, capped by the eligible creatures.
+    size/5, rounded up, at least one, capped by the eligible creatures. This
+    was the default until 2026-10-24; pass it as ``area`` to restore it.
     Returns a count; a custom heuristic may instead return indices into the
     eligible list. Placement and ordering remain policy decisions.
     """
-    return min(eligible, max(1, math.ceil(size_ft / FEET_PER_TARGET.get(shape, 5))))
+    return min(eligible, _dmg_count(shape, size_ft))
+
+
+def area_heuristic(shape: str, size_ft: float, eligible: int, caster=None) -> int:
+    """Default no-grid AoE rule: the DMG table for the party's areas, and half
+    that count (rounded up, at least one) for everyone else's, because players
+    spread out against monster areas. Chosen from the DMG budget calibration
+    (data/reports/calibration_area_compare.md). Without a caster (for example
+    Aura of Authority) the DMG count applies.
+    """
+    count = _dmg_count(shape, size_ft)
+    if caster is not None and caster.team != "party": count = max(1, math.ceil(count / 2))
+    return min(eligible, count)
+
+
+# Custom heuristics opt in to these: the default's ally avoidance for freely
+# placed hostile areas, and receiving the caster.
+area_heuristic.wants_caster = True
+dmg_area_heuristic.avoids_allies = True
+
+
+def is_grab(block) -> bool:
+    """A multi-target grab: its failure (or hit) grapples, restrains or engulfs."""
+    effects = block.get("on_fail", []) + block.get("on_hit", [])
+    return any(p.get("apply_condition", {}).get("condition") in {"grappled", "restrained"} or
+               p.get("status", {}).get("id") == "engulfed" for p in effects)
+
+
+def grab_cap(instance, block, n: int, eligible) -> int:
+    """Default cap on n_targets counts: a multi-target grab (Engulf, Whelm)
+    reaches at most half the eligible group, rounded up, because without a
+    grid it would otherwise take its full printed capacity every use. Chosen
+    from the DMG budget calibration (data/reports/calibration_grab_compare.md).
+    Other n_targets actions keep their printed count.
+    """
+    return min(n, max(1, math.ceil(len(eligible) / 2))) if is_grab(block) else n
+
+
+def printed_grab_count(instance, block, n: int, eligible) -> int:
+    """Pass as ``target_cap`` to restore printed grab counts (the pre-2026-10-24 default)."""
+    return n
 
 
 class Policy:

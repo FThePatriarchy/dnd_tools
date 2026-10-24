@@ -1,13 +1,13 @@
 # Area-rule comparison
 
-Same DMG budget sweep, same compositions and seeds; only the no-grid area-of-effect target count changes. Engine default is `dmg`. Runs per composition: `dmg` 100, `half` 100, `half_group` 100, `party_spread` 100, `single` 100.
+Same DMG budget sweep, same compositions and seeds; only the no-grid area-of-effect target count changes; multi-target grabs keep their printed count (`data`) throughout. Engine default is `party_spread` (it was `dmg` until 2026-10-24). Runs per composition: `dmg` 100, `half` 100, `half_group` 100, `party_spread` 100, `single` 100.
 
 | Rule | Meaning |
 | --- | --- |
-| `dmg` | Engine default: DMG table, cone size/10, line length/30, other shapes size/5. |
+| `dmg` | DMG table, cone size/10, line length/30, other shapes size/5 (engine default until 2026-10-24). |
 | `half` | DMG count halved, rounded up. |
 | `half_group` | DMG count, but never more than half the target group (rounded up). |
-| `party_spread` | Monster areas use the halved count (the party spreads out); party areas keep the DMG count. |
+| `party_spread` | Monster areas use the halved count (the party spreads out); party areas keep the DMG count (engine default). |
 | `single` | Lower bound: every area hits one creature. |
 
 ## Median TPK chance (across the compositions in each slot)

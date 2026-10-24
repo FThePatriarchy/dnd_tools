@@ -6,7 +6,7 @@ import random
 from . import dice
 from .expressions import evaluate, parse
 from .loader import scaled_spell
-from .policy import Policy, area_heuristic
+from .policy import Policy, area_heuristic, grab_cap
 from .state import Combatant, Effect, Binding, SpellInstance, compare_deadline
 
 INSTANT_PRIMITIVES = {"damage", "heal", "heal_pool", "temp_hp", "hit_dice_heal", "restore", "remove_condition", "spend_reaction", "stabilize", "dispel", "end_spell", "end_concentration", "maintain_spell"}
@@ -22,7 +22,7 @@ from .day_mechanics import DayMechanics
 
 
 class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, DayMechanics):
-    def __init__(self, combatants: list[Combatant], spells: dict, seed=1, policy=None, area=None, monster_policy=None):
+    def __init__(self, combatants: list[Combatant], spells: dict, seed=1, policy=None, area=None, monster_policy=None, target_cap=None):
         if len({c.id for c in combatants}) != len(combatants):
             raise ValueError("combatant ids must be unique")
         self.combatants = combatants
@@ -31,7 +31,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         self.policy = policy or Policy()
         self.monster_policy = monster_policy
         self.area = area or area_heuristic
-        self.target_cap = None
+        self.target_cap = target_cap or grab_cap
         self.instances: dict[int, SpellInstance] = {}
         self.next_instance = 1
         self.turn_index = 0
@@ -723,7 +723,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             if frame.get("who") is not None and block["event"] not in {"start_of_turn(caster)", "end_of_turn(caster)"}: return [frame["who"]] if frame["who"] in members else []
             return members
         n = len(eligible) if target.get("n") == "all" else target.get("n", 1)
-        # Optional what-if hook: may lower an n_targets count (e.g. no-grid grab estimates).
+        # May lower an n_targets count; the default caps no-grid multi-target grabs.
         if kind == "n_targets" and self.target_cap is not None: n = min(n, self.target_cap(instance, block, n, eligible))
         selected =list(explicit) if explicit is not None else self.policy_for(instance.caster).targets(self, instance, block, eligible, n)
         if len(selected) > n or (target.get("distinct", True) and len({c.id for c in selected}) != len(selected)):

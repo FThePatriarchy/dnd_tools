@@ -5,14 +5,17 @@ Cleric, Rogue, Wizard) fights single encounters sized to the 2024 DMG XP
 budgets (Low / Moderate / High, plus an over-budget probe). Encounters are
 homogeneous groups of one monster type whose total XP lands between 75% and
 100% of the budget. Each encounter runs from full resources with the current
-default DayOptions; no modelling defaults are changed here.
+default DayOptions.
 
-    python -m engine.calibration --runs 200 --write
-    python -m engine.calibration --area half_group --write   # one area-rule variant
-    python -m engine.calibration --compare                    # side-by-side report
+    python -m engine.calibration --runs 200 --write          # baseline: engine defaults
+    python -m engine.calibration --area dmg --grab data --write   # pre-2026-10-24 defaults
+    python -m engine.calibration --compare                    # side-by-side area-rule report
+    python -m engine.calibration --compare-grab               # side-by-side grab-cap report
 
---area swaps the no-grid area-of-effect rule for the sweep only; the engine
-default (the DMG "Targets in Areas of Effect" table) is unchanged.
+--area and --grab swap the no-grid area-of-effect rule and the multi-target
+grab cap for one sweep. Their defaults are the engine defaults
+(party_spread and grab_half); every rule name always means the same rule,
+so report file names stay comparable across default changes.
 """
 import argparse
 from collections import defaultdict
@@ -24,7 +27,7 @@ from statistics import mean
 import sys
 
 from .loader import ROOT, load_sheet
-from .policy import FEET_PER_TARGET
+from .policy import FEET_PER_TARGET, dmg_area_heuristic, is_grab, printed_grab_count
 
 LEVELS = (1, 3, 5, 7, 10)
 CLASSES = ("fighter", "cleric", "rogue", "wizard")
@@ -47,18 +50,19 @@ MIN_FILL, MAX_COUNT, PER_CELL = 0.75, 8, 6
 
 REPORTS = ROOT.parent / "reports"
 COMPARE_MD = REPORTS / "calibration_area_compare.md"
-
-
 GRAB_COMPARE_MD = REPORTS / "calibration_grab_compare.md"
+DEFAULT_AREA, DEFAULT_GRAB = "party_spread", "grab_half"
 
 
 def report_paths(area, grab="data"):
-    stem = "calibration_dmg" + ("" if area == "dmg" else f"_area_{area}") + ("" if grab == "data" else f"_grab_{grab}")
+    """Named by rule, not by default: calibration_dmg is the DMG area table with printed grabs."""
+    stem = ("calibration_dmg" + ("" if area == "dmg" else f"_area_{area}")
+            + ("" if grab == "data" else f"_grab_{grab.removeprefix('grab_')}"))
     return REPORTS / f"{stem}.json", REPORTS / f"{stem}.md"
 
 
 # Area-rule variants. Each returns a target count like engine.policy.area_heuristic
-# and opts in to its ally avoidance, so only the count differs from the default.
+# and opts in to its ally avoidance, so only the count differs between rules.
 def _dmg_count(shape, size_ft):
     return max(1, math.ceil(size_ft / FEET_PER_TARGET.get(shape, 5)))
 
@@ -71,47 +75,34 @@ def _half_group(shape, size_ft, eligible, caster=None):
     return min(eligible, _dmg_count(shape, size_ft), max(1, math.ceil(eligible / 2)))
 
 
-def _party_spread(shape, size_ft, eligible, caster=None):
-    if caster is not None and caster.team != "party": return _half(shape, size_ft, eligible)
-    return min(eligible, _dmg_count(shape, size_ft))
-
-
 def _single(shape, size_ft, eligible, caster=None):
     return min(eligible, 1)
 
 
-for _rule in (_half, _half_group, _party_spread, _single):
+for _rule in (_half, _half_group, _single):
     _rule.avoids_allies = True
     _rule.wants_caster = True
 
+# None means the engine default (engine.policy.area_heuristic / grab_cap).
 AREA_RULES = {
-    "dmg": (None, "Engine default: DMG table, cone size/10, line length/30, other shapes size/5."),
+    "dmg": (dmg_area_heuristic, "DMG table, cone size/10, line length/30, other shapes size/5 (engine default until 2026-10-24)."),
     "half": (_half, "DMG count halved, rounded up."),
     "half_group": (_half_group, "DMG count, but never more than half the target group (rounded up)."),
-    "party_spread": (_party_spread, "Monster areas use the halved count (the party spreads out); party areas keep the DMG count."),
+    "party_spread": (None, "Monster areas use the halved count (the party spreads out); party areas keep the DMG count (engine default)."),
     "single": (_single, "Lower bound: every area hits one creature."),
 }
 
 
 # Grab-cap variants for multi-target grabs (Engulf, Whelm): n_targets blocks whose
-# failure grapples, restrains or engulfs. Other n_targets blocks keep their count.
-def is_grab(block):
-    effects = block.get("on_fail", []) + block.get("on_hit", [])
-    return any(p.get("apply_condition", {}).get("condition") in {"grappled", "restrained"} or
-               p.get("status", {}).get("id") == "engulfed" for p in effects)
-
-
-def _grab_half(instance, block, n, eligible):
-    return min(n, max(1, math.ceil(len(eligible) / 2))) if is_grab(block) else n
-
-
+# failure grapples, restrains or engulfs (engine.policy.is_grab). Other n_targets
+# blocks keep their count.
 def _grab_one(instance, block, n, eligible):
     return min(n, 1) if is_grab(block) else n
 
 
 GRAB_RULES = {
-    "data": (None, "Engine default: the printed count (Engulf up to 4, Whelm up to 2)."),
-    "grab_half": (_grab_half, "A grab reaches at most half the target group, rounded up (2 of a party of 4)."),
+    "data": (printed_grab_count, "The printed count: Engulf up to 4, Whelm up to 2 (engine default until 2026-10-24)."),
+    "grab_half": (None, "A grab reaches at most half the target group, rounded up: 2 of a party of 4 (engine default)."),
     "grab_one": (_grab_one, "Lower bound: a grab reaches one creature per use."),
 }
 
@@ -287,7 +278,8 @@ def compare(rules):
     runs = {r: d["runs"] for r, d in loaded.items()}
     out = ["# Area-rule comparison", "",
            "Same DMG budget sweep, same compositions and seeds; only the no-grid area-of-effect "
-           "target count changes. Engine default is `dmg`. Runs per composition: "
+           "target count changes; multi-target grabs keep their printed count (`data`) throughout. "
+           "Engine default is `party_spread` (it was `dmg` until 2026-10-24). Runs per composition: "
            + ", ".join(f"`{r}` {n}" for r, n in runs.items()) + ".", "",
            "| Rule | Meaning |", "| --- | --- |"]
     out += [f"| `{r}` | {AREA_RULES[r][1]} |" for r in rules]
@@ -408,8 +400,8 @@ def main():
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--levels", type=int, nargs="+", default=list(LEVELS))
     parser.add_argument("--workers", type=int)
-    parser.add_argument("--area", choices=list(AREA_RULES), default="dmg", help="area-of-effect rule for this sweep only")
-    parser.add_argument("--grab", choices=list(GRAB_RULES), default="data", help="multi-target grab cap for this sweep only")
+    parser.add_argument("--area", choices=list(AREA_RULES), default=DEFAULT_AREA, help="area-of-effect rule for this sweep only")
+    parser.add_argument("--grab", choices=list(GRAB_RULES), default=DEFAULT_GRAB, help="multi-target grab cap for this sweep only")
     parser.add_argument("--monsters", nargs="+", help="run only compositions of these monsters")
     parser.add_argument("--write", action="store_true", help="write the sweep to data/reports/")
     parser.add_argument("--compare", action="store_true", help="write the side-by-side area-rule report from written sweeps")
@@ -427,7 +419,7 @@ def main():
         print(text)
         return
     if args.monsters and args.grab == "data" and args.write:
-        parser.error("--monsters with --write is for grab variants; a default-grab sweep must be complete")
+        parser.error("--monsters with --write is for grab variants; a printed-grab (data) sweep must be complete")
     cells = sweep(args.runs, args.seed, tuple(args.levels), args.workers, args.area, args.grab, args.monsters)
     text = markdown(cells, args.runs, args.seed, args.area, args.grab)
     if args.write:

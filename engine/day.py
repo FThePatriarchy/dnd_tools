@@ -247,8 +247,7 @@ def _run_legacy_day(party, day, spells, seed=1, *, policy=None, monster_policy=N
             continue
         names = encounter_names(step["encounter"])
         enemies = [Combatant.from_sheet(monsters[name], f"enemy_{i}", "enemy") for i, name in enumerate(names)]
-        combat = Combat(party + enemies, spells, seed=rng.getrandbits(64), policy=policy, area=area, monster_policy=monster_policy or Policy())
-        combat.target_cap = target_cap
+        combat = Combat(party + enemies, spells, seed=rng.getrandbits(64), policy=policy, area=area, monster_policy=monster_policy or Policy(), target_cap=target_cap)
         combat.record_log = False
         combat.encounters_remaining = remaining  # includes this encounter, even across a long rest
         combat.slots_at_start = {c.id: c.spell_slots.copy() for c in party}
@@ -286,8 +285,7 @@ def run_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max
     policy = policy or Policy()
     monsters = day_monsters(day) if monster_sheets is None else monster_sheets
     rng = random.Random(seed)
-    combat = Combat(party[:], spells, seed=rng.getrandbits(64), policy=policy, area=area, monster_policy=monster_policy or Policy())
-    combat.target_cap = target_cap
+    combat = Combat(party[:], spells, seed=rng.getrandbits(64), policy=policy, area=area, monster_policy=monster_policy or Policy(), target_cap=target_cap)
     combat.record_log = False
     combat.day_options = opts
     combat.death_rules = opts.death

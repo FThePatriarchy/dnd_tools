@@ -4,14 +4,14 @@ Same DMG budget sweep, compositions and seeds as the area-rule comparison. A gra
 
 | Grab rule | Meaning |
 | --- | --- |
-| `data` | Engine default: the printed count (Engulf up to 4, Whelm up to 2). |
-| `grab_half` | A grab reaches at most half the target group, rounded up (2 of a party of 4). |
+| `data` | The printed count: Engulf up to 4, Whelm up to 2 (engine default until 2026-10-24). |
+| `grab_half` | A grab reaches at most half the target group, rounded up: 2 of a party of 4 (engine default). |
 | `grab_one` | Lower bound: a grab reaches one creature per use. |
 
 | Area rule | Meaning |
 | --- | --- |
-| `dmg` | Engine default: DMG table, cone size/10, line length/30, other shapes size/5. |
-| `party_spread` | Monster areas use the halved count (the party spreads out); party areas keep the DMG count. |
+| `dmg` | DMG table, cone size/10, line length/30, other shapes size/5 (engine default until 2026-10-24). |
+| `party_spread` | Monster areas use the halved count (the party spreads out); party areas keep the DMG count (engine default). |
 
 ## Encounters with a grab action
 

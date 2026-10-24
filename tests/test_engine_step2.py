@@ -10,7 +10,7 @@ from engine import Combat, Combatant, load_sheet, load_spells, ValidationError
 from engine.loader import ROOT
 from engine.monster_import import STEP2, ORIGINAL, RAW, slug, source_monsters, parse_monster, check_sheet
 from engine.monster_validation import source_tag_gaps, source_attack_dpr, sheet_attack_dpr
-from engine.policy import Policy
+from engine.policy import Policy, dmg_area_heuristic, printed_grab_count
 from engine.sheets import validate_sheet, effect_block
 from engine.step2 import condition, damage
 
@@ -32,7 +32,10 @@ def encounter(name, spells, seed=1, policy=None, ally=False):
                          save_bonuses=dict.fromkeys(('str','dex','con','int','wis','cha'), -100)) for i in range(4)]
     actors = [actor] + targets
     if ally: actors += [Combatant('ally', team='enemy', attacks=[{'name':'club','kind':'melee','to_hit':2,'effects':[damage('1d4','bludgeoning')]}])]
-    return Combat(actors, spells, seed=seed, policy=policy), actor, targets
+    # Printed-mechanics oracles: pin the DMG area table and printed grab counts.
+    # The no-grid defaults (party_spread areas, grab_cap) are covered in test_calibration.py.
+    return Combat(actors, spells, seed=seed, policy=policy, area=dmg_area_heuristic,
+                  target_cap=printed_grab_count), actor, targets
 
 
 @pytest.mark.parametrize('name', ORIGINAL + STEP2)
