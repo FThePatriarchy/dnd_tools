@@ -1,0 +1,27 @@
+class: rogue
+level: 5
+subclass: assassin
+abilities:
+  str: 10
+  dex: 14
+  con: 12
+  int: 13
+  wis: 8
+  cha: 15
+equipment: studded_shortbow
+choices:
+  ability_method: standard_array
+  background:
+    dex: 1
+    con: 1
+    cha: 1
+  asis:
+    4:
+      dex: 1
+      cha: 1
+  weapon_masteries:
+  - shortbow
+  - rapier
+  cunning_strike:
+  - trip
+  - withdraw

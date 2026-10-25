@@ -32,12 +32,15 @@ class DayMechanics:
                 legal = [c for c in self.eligible(probe, block) if c.team == actor.team and c.alive]
                 if block["target"]["select"] == "self": legal = [actor] if actor in legal else []
                 armor = next((p["base_ac"] for p in block["apply"] if "base_ac" in p), None)
+                n = block["target"].get("n", 1)
                 if armor:
                     legal = [c for c in legal if not (armor.get("unarmored_only") and c.features.get("armored"))]
                     legal.sort(key=lambda c: -(armor["base"] + c.mod(armor.get("ability") or "dex") - self.armor_class(c)))
-                    targets = legal[:block["target"].get("n", 1)]
+                n = len(legal) if n == "all" else n  # as select_targets does
+                if armor:
+                    targets = legal[:n]
                 else:
-                    targets = self.policy_for(actor).targets(self, probe, block, legal, block["target"].get("n", 1))
+                    targets = self.policy_for(actor).targets(self, probe, block, legal, n)
                 chosen = list(dict.fromkeys([*chosen, *targets]))
             for target in targets:
                 if any(i.active and i.spec["name"] == spec["name"] and any(e.source == i.id for e in target.effects) for i in self.instances.values()): continue

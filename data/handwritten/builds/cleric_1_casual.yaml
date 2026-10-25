@@ -1,0 +1,29 @@
+class: cleric
+level: 1
+subclass: life
+abilities:
+  str: 15
+  dex: 10
+  con: 13
+  int: 8
+  wis: 14
+  cha: 12
+equipment: chain_shield
+choices:
+  ability_method: standard_array
+  background:
+    wis: 1
+    con: 1
+    str: 1
+  asis: {}
+  divine_order: protector
+  blessed_strikes: divine_strike
+  cantrips:
+  - Sacred Flame
+  - Guidance
+  - Light
+  prepared_spells:
+  - Cure Wounds
+  - Healing Word
+  - Sanctuary
+  - Protection from Evil and Good

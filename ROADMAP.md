@@ -88,8 +88,26 @@ Fix the modelling distortions the sweep exposed, comparing options side by side 
 
 ## Phase 3 — Sample parties and opponents (Goal 1)
 
-- Party presets per level: casual, standard (today's builds) and optimized, each with its measured rating.
-- Encounter templates: solo boss, boss plus minions, elite pack, swarm. The user can also give a shape directly (for example, "1 boss, 6 goons"). A generator fills the template from the budget and the monster catalogue.
+- ~~Party presets per level: casual, standard and optimized, each with its measured rating.~~ Done 2026-10-25: `python -m engine.presets --write` generates `{class}_{level}_casual` and `_optimized` builds from explicit rules in `engine/presets.py`; standard is the existing `{class}_{level}`. A test checks the committed files still match the rules.
+  - **Casual:** standard array with the primary at 14 and a flavour stat at 15, a +1/+1/+1 background, ASIs split primary/flavour, sword and shield or a shortbow, thematic spells, and no reaction spells.
+  - **Optimized:** point buy 15/15/14, +2 primary / +1 Con, ASIs to the primary, then greatsword with Great Weapon Fighting, and combat-first spells (Shield, Sleep, Web, Fireball, Spirit Guardians).
+  - **Ratings** (× DMG High, `data/reports/rating_preset_L*_{casual,optimized}.md`):
+
+    | Level | Casual | Standard | Optimized |
+    | ---: | ---: | ---: | ---: |
+    | 1 | 0.70× | 0.75× | 0.81× |
+    | 3 | 0.59× | 0.72× | 0.81× |
+    | 5 | 0.60× | 0.80× | 0.84× |
+    | 7 | 0.61× | 0.75× | 0.77× |
+    | 10 | 0.59× | 0.73× | 0.76× |
+
+  - Optimized is only 3–12% above standard, and about 1.2–1.4× casual, far from the "twice as strong" a real min-maxer reaches. Standard already uses combat-first spell priorities, and the big optimizer levers (feats like Great Weapon Master, Sharpshooter, War Caster, Alert; species; multiclassing) are outside the builder's scope. Widening the gap means adding feats to the builder.
+  - Building the casual cleric exposed an engine crash: pre-combat buff planning did not resolve `n: all` targets (Beacon of Hope). Fixed in `day_mechanics.py`.
+- ~~Encounter templates.~~ Done 2026-10-25: `python -m engine.templates` (`engine/templates.py`). Templates are `solo`, `boss_minions`, `elite_pack`, `swarm` and `mixed`, or a custom `--shape "1 boss, 6 goons"` (roles boss/elite/minion; goon and mook mean minion).
+  - **Fill:** roles get XP in the ratio boss 6 : elite 3 : minion 1, each role uses one monster type from the three nearest XP tiers, and the encounter must land at 75–100% of the budget. The budget is a DMG slot (`--difficulty`) or `--xp`.
+  - **Choice:** a seeded choice among the best fills gives variety.
+  - **Simulate:** `--simulate --profile casual|standard|optimized` runs each suggestion against a preset party and prints its defeat, down and death chances.
+  - The gelatinous cube is excluded by default (calibration outlier); pass `--exclude` with no names to allow it.
 
 ## Phase 4 — Encounter and day finder (Goals 3 and 4)
 

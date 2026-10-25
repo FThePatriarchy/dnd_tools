@@ -1,0 +1,20 @@
+class: rogue
+level: 3
+subclass: assassin
+abilities:
+  str: 8
+  dex: 15
+  con: 15
+  int: 8
+  wis: 14
+  cha: 10
+equipment: studded_rapier
+choices:
+  ability_method: point_buy
+  background:
+    dex: 2
+    con: 1
+  asis: {}
+  weapon_masteries:
+  - rapier
+  - shortbow

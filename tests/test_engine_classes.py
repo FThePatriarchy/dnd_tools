@@ -325,10 +325,13 @@ def test_every_preset_builder_math(path):
     assert sheet["hit_dice"]=={"die":f"d{faces}","count":level}
     assert sheet["proficiency_bonus"]==2+(level-1)//4
     armor,shield,weapons=EQUIPMENT[spec["equipment"]]
-    assert sheet["ac"]=={"none":10+mod("dex"),"chain":16,"studded":12+mod("dex"),"scale":14+min(2,mod("dex"))}[armor]+2*shield+int(name=="fighter")
+    styles=spec["choices"].get("fighting_style",[]) if name=="fighter" else []
+    assert sheet["ac"]=={"none":10+mod("dex"),"chain":16,"studded":12+mod("dex"),"scale":14+min(2,mod("dex"))}[armor]+2*shield+int("defense" in styles and armor!="none")
     for attack in sheet["attacks"]:
-        assert attack["to_hit"]==sheet["proficiency_bonus"]+mod(attack["ability"])
-        assert attack["effects"][0]["damage"]["bonus"]==mod(attack["ability"])
+        archery=2 if "archery" in styles and attack["kind"]=="ranged" else 0
+        dueling=2 if "dueling" in styles and attack["kind"]=="melee" and shield and "two_handed" not in attack["properties"] else 0
+        assert attack["to_hit"]==sheet["proficiency_bonus"]+mod(attack["ability"])+archery
+        assert attack["effects"][0]["damage"]["bonus"]==mod(attack["ability"])+dueling
     if name in {"wizard","cleric"}:
         ability="int" if name=="wizard" else "wis"
         assert sheet["spell_dc"]==8+sheet["proficiency_bonus"]+mod(ability)

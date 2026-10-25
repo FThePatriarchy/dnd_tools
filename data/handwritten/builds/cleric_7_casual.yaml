@@ -1,0 +1,40 @@
+class: cleric
+level: 7
+subclass: life
+abilities:
+  str: 15
+  dex: 10
+  con: 13
+  int: 8
+  wis: 14
+  cha: 12
+equipment: chain_shield
+choices:
+  ability_method: standard_array
+  background:
+    wis: 1
+    con: 1
+    str: 1
+  asis:
+    4:
+      wis: 1
+      str: 1
+  divine_order: protector
+  blessed_strikes: divine_strike
+  cantrips:
+  - Sacred Flame
+  - Guidance
+  - Light
+  - Thaumaturgy
+  prepared_spells:
+  - Healing Word
+  - Sanctuary
+  - Protection from Evil and Good
+  - Detect Magic
+  - Command
+  - Warding Bond
+  - Beacon of Hope
+  - Spiritual Weapon
+  - Spirit Guardians
+  - Guiding Bolt
+  - Hold Person
