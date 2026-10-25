@@ -21,13 +21,13 @@ so report file names stay comparable across default changes.
 import argparse
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import asdict, dataclass
+from dataclasses import asdict
 import json
 import math
-import random
 from statistics import mean
 import sys
 
+from .encounters import DEFEATS, TRACKED, Adaptive, half_widths, needs_more, run_encounter, wilson  # noqa: F401 (re-exported)
 from .loader import ROOT, load_sheet
 from .policy import FEET_PER_TARGET, dmg_area_heuristic, is_grab, printed_grab_count
 
@@ -71,55 +71,6 @@ def report_paths(area, grab="data", morale="none", adaptive=False):
             + ("" if morale == "none" else f"_morale_{morale}")
             + ("_adaptive" if adaptive else ""))
     return REPORTS / f"{stem}.json", REPORTS / f"{stem}.md"
-
-
-# Adaptive sampling. Each composition runs in batches until every tracked yes/no
-# metric's 95% Wilson interval is within +/- precision, and the defeat interval no
-# longer straddles a decision threshold (the 50% wipe-outlier line by default),
-# or max_runs is reached. Clear-cut 0% or 100% results stop at min_runs. Run seeds
-# are drawn in the same order as a fixed sweep, so the first N adaptive runs of a
-# composition are exactly a fixed N-run sweep's runs.
-TRACKED = ("defeat", "down", "death")
-Z95 = 1.959964
-
-
-@dataclass(frozen=True)
-class Adaptive:
-    min_runs: int = 50
-    max_runs: int = 800
-    batch: int = 50
-    precision: float = 0.05
-    thresholds: tuple = (0.5,)
-
-    def __post_init__(self):
-        if not 1 <= self.min_runs <= self.max_runs or self.batch < 1 or not 0 < self.precision < 1:
-            raise ValueError("need 1 <= min_runs <= max_runs, batch >= 1 and 0 < precision < 1")
-
-
-def wilson(p, n, z=Z95):
-    """95% Wilson score interval for a proportion p observed over n runs."""
-    if n == 0: return 0.0, 1.0
-    centre = (p + z * z / (2 * n)) / (1 + z * z / n)
-    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / (1 + z * z / n)
-    return max(0.0, centre - half), min(1.0, centre + half)
-
-
-def half_widths(rows):
-    n = len(rows)
-    result = {}
-    for m in TRACKED:
-        lo, hi = wilson(sum(r[m] for r in rows) / n if n else 0.0, n)
-        result[m] = (hi - lo) / 2
-    return result
-
-
-def needs_more(rows, attempted, spec):
-    if attempted >= spec.max_runs: return False
-    if attempted < spec.min_runs: return True
-    if not rows: return False  # every run failed; more runs will not help
-    if any(h > spec.precision for h in half_widths(rows).values()): return True
-    lo, hi = wilson(sum(r["defeat"] for r in rows) / len(rows), len(rows))
-    return any(lo < t < hi for t in spec.thresholds)
 
 
 # Area-rule variants. Each returns a target count like engine.policy.area_heuristic
@@ -195,80 +146,14 @@ def compositions(total, xp):
     return [(name, count, count * each) for each, name, count in options]
 
 
-_SPELLS = None
-
-
 def run_cell(task):
-    """One composition, many runs. Returns per-run metrics aggregated.
-
-    runs is a fixed count or an Adaptive spec."""
-    global _SPELLS
-    from .builder import load_character
-    from .day import run_day
-    from .day_options import DayOptions
-    from .loader import load_spells
-    from .policy import Policy
-    from .state import Combatant
+    """One composition, many runs (a fixed count or an Adaptive spec), aggregated."""
     level, difficulty, monster, count, xp_total, runs, seed, area, grab, *rest = task
     morale = rest[0] if rest else "none"
-    if _SPELLS is None: _SPELLS = load_spells()
-    opts = DayOptions(morale=morale)
-    sheets = []
-    for cls in CLASSES:
-        sheet = load_character(f"{cls}_{level}", background=opts.backgrounds)
-        if "position" not in sheet:
-            sheet["position"] = "front" if sheet["ac"] >= 16 and any(a["kind"] == "melee" for a in sheet.get("attacks", [])) else "back"
-        sheets.append(sheet)
-    day = {"name": "calibration", "steps": [{"encounter": [f"{monster} x{count}"]}]}
-    monsters = {monster: load_sheet(ROOT / "monsters" / (monster + ".yaml"))}
-    rng = random.Random(seed)
-    rows = []
-    errors = {}
-    spec = runs if isinstance(runs, Adaptive) else None
-
-    def one_run():
-        party = [Combatant.from_sheet(s, f"party_{i}", "party") for i, s in enumerate(sheets)]
-        base_hp = {c.id: c.max_hp for c in party}
-        max_hp = sum(base_hp.values())
-        max_slots = sum(sum(c.max_spell_slots.values()) for c in party)
-        run_seed = rng.getrandbits(64)
-        try:
-            result = run_day(party, day, _SPELLS, run_seed, policy=Policy(), monster_policy=Policy(),
-                             monster_sheets=monsters, options=opts, area=AREA_RULES[area][0],
-                             target_cap=GRAB_RULES[grab][0])
-        except Exception as exc:  # engine bugs are reported, not averaged in
-            errors.setdefault(f"{type(exc).__name__}: {exc}", run_seed)
-            return
-        enc = result.encounters[0]
-        # Aid-style max HP increases are clamped so a buffed party cannot show negative loss.
-        end_hp = sum(0 if c["dead"] else min(c["hp"], base_hp[i]) for i, c in enc.end.items())
-        end_slots = sum(sum(c["slots"].values()) for c in enc.end.values())
-        rows.append({
-            "win": enc.cleared,
-            "tpk": result.failure_reason == "tpk",
-            "defeat": result.failure_reason in DEFEATS,
-            "down": enc.downs > 0,
-            "death": enc.deaths > 0,
-            "downs": enc.downs,
-            "deaths": enc.deaths,
-            "hp_lost": 1 - end_hp / max_hp,
-            "slots_spent": (1 - end_slots / max_slots) if max_slots else 0.0,
-            "rounds": enc.rounds,
-            "fled": enc.fled / count,
-        })
-
-    attempted, target = 0, (spec.min_runs if spec else runs)
-    while True:
-        while attempted < target:
-            attempted += 1
-            one_run()
-        if spec is None or not needs_more(rows, attempted, spec): break
-        target = min(spec.max_runs, attempted + spec.batch)
-    agg = {k: mean(float(r[k]) for r in rows) for k in rows[0]} if rows else dict.fromkeys(k for k, _ in METRICS)
-    return {"level": level, "difficulty": difficulty, "monster": monster, "count": count, "area": area, "grab": grab, "morale": morale,
-            "xp": xp_total, "budget": budget(level, difficulty), "runs": len(rows),
-            "failed_runs": attempted - len(rows), "errors": errors,
-            "ci": half_widths(rows) if rows else dict.fromkeys(TRACKED), **agg}
+    result = run_encounter([f"{cls}_{level}" for cls in CLASSES], [f"{monster} x{count}"], runs, seed,
+                           area=AREA_RULES[area][0], target_cap=GRAB_RULES[grab][0], morale=morale)
+    return {"level": level, "difficulty": difficulty, "monster": monster, "count": count, "area": area, "grab": grab,
+            "morale": morale, "xp": xp_total, "budget": budget(level, difficulty), **result}
 
 
 def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data", monsters=None, morale="none"):
@@ -283,11 +168,6 @@ def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data"
     with ProcessPoolExecutor(max_workers=workers) as pool:
         return list(pool.map(run_cell, tasks))
 
-
-# Defeat: the fight ends with the party beaten, either all at 0 HP (tpk) or with
-# every PC still standing dominated or otherwise out of the fight
-# (party_unavailable). Round-limit draws and wins with a PC death are not defeats.
-DEFEATS = frozenset({"tpk", "party_unavailable"})
 
 METRICS = (("win", "Win"), ("down", "Any down"), ("death", "Any death"), ("tpk", "TPK"),
            ("defeat", "Defeat"), ("hp_lost", "HP lost"), ("slots_spent", "Slots spent"), ("rounds", "Rounds"),
