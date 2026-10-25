@@ -88,6 +88,40 @@ def test_defeat_counts_dominated_losses_not_draws():
     assert fmt_metric({"tpk": 0.5}, "defeat") == "-" and fmt_metric(cell, "rounds") != "-"
 
 
+def test_wilson_interval():
+    from engine.calibration import wilson
+    lo, hi = wilson(0.5, 100)
+    assert abs(lo - 0.4038) < 1e-3 and abs(hi - 0.5962) < 1e-3
+    lo, hi = wilson(0.0, 50)
+    assert lo == 0.0 and abs(hi - 0.0713) < 1e-3
+    assert wilson(0.3, 0) == (0.0, 1.0)
+
+
+def test_adaptive_stopping_rule():
+    import pytest
+    from engine.calibration import Adaptive, needs_more
+    rows = lambda n, defeats=0, downs=0: [{"defeat": i < defeats, "down": i < downs, "death": False} for i in range(n)]
+    spec = Adaptive(min_runs=50, max_runs=400, batch=50, precision=0.05, thresholds=(0.5,))
+    assert needs_more(rows(10), 10, spec)                       # below the minimum
+    assert not needs_more(rows(50), 50, spec)                   # clear-cut 0%: stop at the minimum
+    assert needs_more(rows(50, downs=25), 50, spec)             # 50% is uncertain at n=50
+    assert not needs_more(rows(400, downs=200), 400, spec)      # maximum reached
+    loose = Adaptive(min_runs=50, max_runs=400, batch=50, precision=0.5, thresholds=(0.5,))
+    assert needs_more(rows(100, defeats=52), 100, loose)        # precise enough, but straddles 50%
+    assert not needs_more(rows(100, defeats=52), 100, Adaptive(50, 400, 50, 0.5, ()))
+    assert not needs_more([], 50, spec)                         # every run failed
+    with pytest.raises(ValueError): Adaptive(min_runs=100, max_runs=50)
+
+
+def test_adaptive_runs_are_a_prefix_of_fixed_runs():
+    from engine.calibration import Adaptive, run_cell
+    fixed = run_cell((1, "low", "goblin_boss", 1, 200, 30, 1, "party_spread", "grab_half"))
+    adaptive = run_cell((1, "low", "goblin_boss", 1, 200, Adaptive(30, 30, 10, 0.5, ()), 1, "party_spread", "grab_half"))
+    keys = ("win", "defeat", "down", "death", "hp_lost", "rounds", "runs")
+    assert {k: fixed[k] for k in keys} == {k: adaptive[k] for k in keys}
+    assert set(fixed["ci"]) == {"defeat", "down", "death"}
+
+
 def test_compositions_fit_budget():
     xp = {"goblin": 50, "ogre": 450, "dragon": 5000}
     for name, count, total in compositions(budget(3, "moderate"), xp):

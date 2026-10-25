@@ -11,6 +11,7 @@ default DayOptions.
     python -m engine.calibration --area dmg --grab data --write   # pre-2026-10-24 defaults
     python -m engine.calibration --compare                    # side-by-side area-rule report
     python -m engine.calibration --compare-grab               # side-by-side grab-cap report
+    python -m engine.calibration --adaptive --write           # adaptive run counts (*_adaptive reports)
 
 --area and --grab swap the no-grid area-of-effect rule and the multi-target
 grab cap for one sweep. Their defaults are the engine defaults
@@ -20,6 +21,7 @@ so report file names stay comparable across default changes.
 import argparse
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
+from dataclasses import asdict, dataclass
 import json
 import math
 import random
@@ -62,12 +64,62 @@ MORALE_RULES = {
 }
 
 
-def report_paths(area, grab="data", morale="none"):
+def report_paths(area, grab="data", morale="none", adaptive=False):
     """Named by rule, not by default: calibration_dmg is the DMG area table with printed grabs."""
     stem = ("calibration_dmg" + ("" if area == "dmg" else f"_area_{area}")
             + ("" if grab == "data" else f"_grab_{grab.removeprefix('grab_')}")
-            + ("" if morale == "none" else f"_morale_{morale}"))
+            + ("" if morale == "none" else f"_morale_{morale}")
+            + ("_adaptive" if adaptive else ""))
     return REPORTS / f"{stem}.json", REPORTS / f"{stem}.md"
+
+
+# Adaptive sampling. Each composition runs in batches until every tracked yes/no
+# metric's 95% Wilson interval is within +/- precision, and the defeat interval no
+# longer straddles a decision threshold (the 50% wipe-outlier line by default),
+# or max_runs is reached. Clear-cut 0% or 100% results stop at min_runs. Run seeds
+# are drawn in the same order as a fixed sweep, so the first N adaptive runs of a
+# composition are exactly a fixed N-run sweep's runs.
+TRACKED = ("defeat", "down", "death")
+Z95 = 1.959964
+
+
+@dataclass(frozen=True)
+class Adaptive:
+    min_runs: int = 50
+    max_runs: int = 800
+    batch: int = 50
+    precision: float = 0.05
+    thresholds: tuple = (0.5,)
+
+    def __post_init__(self):
+        if not 1 <= self.min_runs <= self.max_runs or self.batch < 1 or not 0 < self.precision < 1:
+            raise ValueError("need 1 <= min_runs <= max_runs, batch >= 1 and 0 < precision < 1")
+
+
+def wilson(p, n, z=Z95):
+    """95% Wilson score interval for a proportion p observed over n runs."""
+    if n == 0: return 0.0, 1.0
+    centre = (p + z * z / (2 * n)) / (1 + z * z / n)
+    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / (1 + z * z / n)
+    return max(0.0, centre - half), min(1.0, centre + half)
+
+
+def half_widths(rows):
+    n = len(rows)
+    result = {}
+    for m in TRACKED:
+        lo, hi = wilson(sum(r[m] for r in rows) / n if n else 0.0, n)
+        result[m] = (hi - lo) / 2
+    return result
+
+
+def needs_more(rows, attempted, spec):
+    if attempted >= spec.max_runs: return False
+    if attempted < spec.min_runs: return True
+    if not rows: return False  # every run failed; more runs will not help
+    if any(h > spec.precision for h in half_widths(rows).values()): return True
+    lo, hi = wilson(sum(r["defeat"] for r in rows) / len(rows), len(rows))
+    return any(lo < t < hi for t in spec.thresholds)
 
 
 # Area-rule variants. Each returns a target count like engine.policy.area_heuristic
@@ -147,7 +199,9 @@ _SPELLS = None
 
 
 def run_cell(task):
-    """One composition, many runs. Returns per-run metrics aggregated."""
+    """One composition, many runs. Returns per-run metrics aggregated.
+
+    runs is a fixed count or an Adaptive spec."""
     global _SPELLS
     from .builder import load_character
     from .day import run_day
@@ -170,7 +224,9 @@ def run_cell(task):
     rng = random.Random(seed)
     rows = []
     errors = {}
-    for _ in range(runs):
+    spec = runs if isinstance(runs, Adaptive) else None
+
+    def one_run():
         party = [Combatant.from_sheet(s, f"party_{i}", "party") for i, s in enumerate(sheets)]
         base_hp = {c.id: c.max_hp for c in party}
         max_hp = sum(base_hp.values())
@@ -182,7 +238,7 @@ def run_cell(task):
                              target_cap=GRAB_RULES[grab][0])
         except Exception as exc:  # engine bugs are reported, not averaged in
             errors.setdefault(f"{type(exc).__name__}: {exc}", run_seed)
-            continue
+            return
         enc = result.encounters[0]
         # Aid-style max HP increases are clamped so a buffed party cannot show negative loss.
         end_hp = sum(0 if c["dead"] else min(c["hp"], base_hp[i]) for i, c in enc.end.items())
@@ -200,10 +256,19 @@ def run_cell(task):
             "rounds": enc.rounds,
             "fled": enc.fled / count,
         })
+
+    attempted, target = 0, (spec.min_runs if spec else runs)
+    while True:
+        while attempted < target:
+            attempted += 1
+            one_run()
+        if spec is None or not needs_more(rows, attempted, spec): break
+        target = min(spec.max_runs, attempted + spec.batch)
     agg = {k: mean(float(r[k]) for r in rows) for k in rows[0]} if rows else dict.fromkeys(k for k, _ in METRICS)
     return {"level": level, "difficulty": difficulty, "monster": monster, "count": count, "area": area, "grab": grab, "morale": morale,
             "xp": xp_total, "budget": budget(level, difficulty), "runs": len(rows),
-            "failed_runs": runs - len(rows), "errors": errors, **agg}
+            "failed_runs": attempted - len(rows), "errors": errors,
+            "ci": half_widths(rows) if rows else dict.fromkeys(TRACKED), **agg}
 
 
 def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data", monsters=None, morale="none"):
@@ -238,6 +303,14 @@ def fmt_metric(c, key):
     return "-" if value is None else f"{value:.1f}" if key == "rounds" else pct(value)
 
 
+def sampling(runs, cells):
+    if not isinstance(runs, Adaptive): return f"{runs} runs per composition"
+    counts = [c["runs"] + c["failed_runs"] for c in cells]
+    return (f"adaptive runs per composition ({runs.min_runs}-{runs.max_runs} in batches of {runs.batch}, "
+            f"until defeat, any down and any death are within ±{runs.precision:.0%} at 95% confidence and the defeat "
+            f"interval excludes {', '.join(pct(t) for t in runs.thresholds)}; {sum(counts)} runs in total)")
+
+
 def markdown(cells, runs, seed, area="dmg", grab="data", morale="none"):
     failed = [c for c in cells if c["failed_runs"]]
     cells = [c for c in cells if c["runs"]]
@@ -245,7 +318,7 @@ def markdown(cells, runs, seed, area="dmg", grab="data", morale="none"):
     for c in cells: by[c["level"], c["difficulty"]].append(c)
     out = ["# DMG 2024 budget calibration", "",
            f"Party: {', '.join(CLASSES)} at each level; single encounter from full resources; "
-           f"default DayOptions; {runs} runs per composition, seed {seed}. "
+           f"default DayOptions; {sampling(runs, cells)}, seed {seed}. "
            f"Groups are one monster type, {MIN_FILL:.0%}-100% of budget, at most {MAX_COUNT} creatures. "
            f"'Over' is {OVER_FACTOR}x High, a probe beyond the DMG categories.", "",
            f"Area rule: `{area}` — {AREA_RULES[area][1]}", "",
@@ -266,13 +339,25 @@ def markdown(cells, runs, seed, area="dmg", grab="data", morale="none"):
                 fmt = (lambda v: f"{v:.1f}") if key == "rounds" else pct
                 row.append(f"{fmt(mean(values))} [{fmt(min(values))}-{fmt(max(values))}]")
             out.append("| " + " | ".join(row) + " |")
+    if isinstance(runs, Adaptive):
+        counts = sorted(c["runs"] for c in cells)
+        widest = max(cells, key=lambda c: max(c["ci"].values()))
+        out += ["", "## Sampling", "",
+                f"- Runs per composition: min {counts[0]}, median {median(counts):.0f}, max {counts[-1]}; "
+                f"{sum(n == runs.min_runs for n in counts)} stopped at the minimum and "
+                f"{sum(n >= runs.max_runs for n in counts)} reached the maximum.",
+                f"- Widest 95% half-width: ±{max(widest['ci'].values()):.1%} "
+                f"({widest['monster']} x{widest['count']}, level {widest['level']} {widest['difficulty']})."]
     out += ["", "## Per composition", "",
-            "| Level | Difficulty | Encounter | XP / budget | " + " | ".join(label for _, label in METRICS) + " |",
-            "| ---: | --- | --- | ---: | " + " | ".join("---:" for _ in METRICS) + " |"]
+            "Runs is the number of runs used; ± is the 95% half-width of the defeat estimate.", "",
+            "| Level | Difficulty | Encounter | XP / budget | Runs | ± | " + " | ".join(label for _, label in METRICS) + " |",
+            "| ---: | --- | --- | ---: | ---: | ---: | " + " | ".join("---:" for _ in METRICS) + " |"]
     for c in sorted(cells, key=lambda c: (c["level"], DIFFICULTIES.index(c["difficulty"]), c["xp"] / c["count"])):
         vals = [fmt_metric(c, k) for k, _ in METRICS]
+        ci = (c.get("ci") or {}).get("defeat")
         out.append(f"| {c['level']} | {c['difficulty']} | {c['monster']} x{c['count']} | "
-                   f"{c['xp']:.0f} / {c['budget']:.0f} | " + " | ".join(vals) + " |")
+                   f"{c['xp']:.0f} / {c['budget']:.0f} | {c['runs']} | {'-' if ci is None else f'{ci:.1%}'} | "
+                   + " | ".join(vals) + " |")
     if failed:
         out += ["", "## Engine errors (runs excluded from the numbers above)", "",
                 "| Level | Difficulty | Encounter | Failed runs | Error | First failing seed |",
@@ -481,7 +566,14 @@ def compare_morale(area=DEFAULT_AREA, grab=DEFAULT_GRAB):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--runs", type=int, default=200)
+    parser.add_argument("--runs", type=int, default=200, help="fixed runs per composition (ignored with --adaptive)")
+    parser.add_argument("--adaptive", action="store_true", help="adaptive runs per composition; writes *_adaptive reports")
+    parser.add_argument("--min-runs", type=int, default=Adaptive.min_runs)
+    parser.add_argument("--max-runs", type=int, default=Adaptive.max_runs)
+    parser.add_argument("--batch", type=int, default=Adaptive.batch)
+    parser.add_argument("--precision", type=float, default=Adaptive.precision, help="target 95%% half-width, e.g. 0.05")
+    parser.add_argument("--threshold", type=float, nargs="*", default=list(Adaptive.thresholds),
+                        help="defeat rates the interval must exclude before stopping")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--levels", type=int, nargs="+", default=list(LEVELS))
     parser.add_argument("--workers", type=int)
@@ -514,11 +606,14 @@ def main():
         parser.error("--monsters with --write is for grab variants; a printed-grab (data) sweep must be complete")
     if args.monsters and args.morale != "none" and args.write:
         parser.error("--monsters with --write is only for grab variants")
-    cells = sweep(args.runs, args.seed, tuple(args.levels), args.workers, args.area, args.grab, args.monsters, args.morale)
-    text = markdown(cells, args.runs, args.seed, args.area, args.grab, args.morale)
+    try:
+        runs = Adaptive(args.min_runs, args.max_runs, args.batch, args.precision, tuple(args.threshold)) if args.adaptive else args.runs
+    except ValueError as exc: parser.error(str(exc))
+    cells = sweep(runs, args.seed, tuple(args.levels), args.workers, args.area, args.grab, args.monsters, args.morale)
+    text = markdown(cells, runs, args.seed, args.area, args.grab, args.morale)
     if args.write:
-        json_path, md_path = report_paths(args.area, args.grab, args.morale)
-        json_path.write_text(json.dumps({"runs": args.runs, "seed": args.seed, "area": args.area, "grab": args.grab,
+        json_path, md_path = report_paths(args.area, args.grab, args.morale, args.adaptive)
+        json_path.write_text(json.dumps({"runs": asdict(runs) if args.adaptive else runs, "adaptive": args.adaptive, "seed": args.seed, "area": args.area, "grab": args.grab,
                                          "morale": args.morale, "monsters": args.monsters, "cells": cells}, indent=1), encoding="utf-8")
         md_path.write_text(text, encoding="utf-8")
     print(text)
