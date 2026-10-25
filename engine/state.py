@@ -139,6 +139,8 @@ class Combatant:
         self.base_max_hp = value - self.spell_hp_bonus
 
     def _get_team(self):
+        # Fast path: control overrides are rare, so skip building active_effects without one.
+        if not any("control_team" in e.data for e in self.effects): return self.__dict__["team"]
         active = self.active_effects
         return next((e.data["control_team"] for e in reversed(active)
                      if "control_team" in e.data and (e.kind == "control" or

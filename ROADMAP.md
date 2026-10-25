@@ -76,7 +76,13 @@ Fix the modelling distortions the sweep exposed, comparing options side by side 
   - The standard parties reach 5% defeat at about three-quarters of the DMG High budget at every level. Swarms are the weak spot at levels 1–5.
   - **Overall ratings are stable:** within 2.3% across seeds. Single types move more (up to about 0.1×, e.g. L1 brute 0.77× vs 0.66×), because a type rests on one interpolated crossing.
   - **Strategy barely matters for a single encounter:** at L5, nova 0.82× and conservative 0.82× vs default 0.80×, all within seed noise. The strategies trade resources across a day, which a one-encounter rating from full resources cannot show; a day-level rating would.
-  - **Speed:** level 7 is the slow case at 17–19 minutes, because large L7 fights cost about 2.4 s of CPU per run. Engine profiling is the fix; the rating method already keeps every core busy.
+  - **Speed:** level 7 was the slow case at 17–19 minutes, because large L7 fights cost up to 2.4 s of CPU per run. After the 2026-10-25 engine speed-ups below it takes 6.6 minutes.
+- **Engine speed-ups (2026-10-25), all with bit-identical results** (the full calibration baseline and the L7 rating reproduce exactly):
+  - Monster target ordering now computes each candidate's threat once and sorts. It used to re-run `monster_target` for every pick, which made area-membership refreshes quadratic.
+  - Scaled cantrips are cached per caster for read-only damage estimates. They used to be deep-copied on every call.
+  - `Combatant.team` skips building the active-effects list when no effect carries a domination override.
+  - `eligible()` reads per-block and per-caster facts once per call, not once per creature.
+  - Basilisk ×6 at L7: 2.57 → 0.94 s per run. The full calibration sweep takes 3.6 minutes (was about 20) and the test suite 7.6 (was 14.7).
 
 **Done when** any party gets a rating in minutes, and the ratings are stable across seeds.
 

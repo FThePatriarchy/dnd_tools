@@ -260,3 +260,13 @@ class DayMechanics:
             forecast = self.at_will_damage_rate(c, actor)
             return damage, forecast, c.id
         return max(candidates, key=threat)
+
+    def monster_order(self, actor, enemies):
+        """The order that repeated monster_target picks (removing each pick) would give,
+        computing each candidate's key once. Not for "random" targeting, which draws dice."""
+        options = self.day_options
+        tiers = (list(enemies), []) if options.attack_downed else ([c for c in enemies if c.hp > 0], [c for c in enemies if c.hp <= 0])
+        if options.targeting == "focus_low_hp":
+            return [c for tier in tiers for c in sorted(tier, key=lambda c: (c.hp, c.id))]
+        keys = {c.id: (self.damage_dealt.get(c.id, 0), self.at_will_damage_rate(c, actor), c.id) for c in enemies}
+        return [c for tier in tiers for c in sorted(tier, key=lambda c: keys[c.id], reverse=True)]

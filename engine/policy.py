@@ -213,12 +213,16 @@ class Policy:
         ordered = sorted(preferred or eligible, key=lambda x: (x.hp / max(1,x.max_hp) if beneficial else x.hp, x.id))
         if not beneficial and instance.caster.team != "party" and getattr(combat, "day_options", None):
             candidates = preferred or eligible
-            ordered = []
-            while candidates:
-                # EV probes never draw targeting randomness.
-                chosen = min(candidates,key=lambda c:c.id) if instance.id == 0 and combat.day_options.targeting == "random" else combat.monster_target(instance.caster, candidates)
-                ordered.append(chosen)
-                candidates = [c for c in candidates if c is not chosen]
+            if combat.day_options.targeting != "random":
+                ordered = combat.monster_order(instance.caster, candidates)
+            elif instance.id == 0:
+                ordered = sorted(candidates, key=lambda c: c.id)  # EV probes never draw targeting randomness.
+            else:
+                ordered = []
+                while candidates:
+                    chosen = combat.monster_target(instance.caster, candidates)
+                    ordered.append(chosen)
+                    candidates = [c for c in candidates if c is not chosen]
         if not ordered: return []
         if block["target"].get("distinct", True): return ordered[:n]
         return [ordered[0]] * n

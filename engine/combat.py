@@ -669,18 +669,24 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         caster = instance.caster
         binding = instance.bindings.get(block["id"], Binding())
         result = []
+        # Per-block and per-caster facts, read once (nothing changes during the loop).
+        caster_isolation = self.isolation(caster)
+        healing = any("heal" in p or "heal_pool" in p or "stabilize" in p or "max_hp" in p for p in block["apply"])
+        affects = target.get("affects", "any")
+        caster_team = caster.team if affects in {"enemy", "enemies", "ally"} else None
+        filters = target.get("filter", [])
+        harmful = bool(block["on_hit"] or block["on_fail"] or any(k in p for p in block["apply"] for k in ("damage", "apply_condition", "remove_from_combat")))
+        charmers = self.condition_sources(caster, "charmed") if harmful else ()
+        pacified = {self.instances[e.source].caster.team for e in caster.active_effects
+                    if e.kind == "pacify" and e.source in self.instances} if harmful else set()
         for creature in self.combatants:
             if creature.dead or creature.removed or creature.permanently_removed: continue
-            if self.isolation(caster) != self.isolation(creature) and instance.spec["name"] != "Dispel Magic": continue
-            healing = any("heal" in p or "heal_pool" in p or "stabilize" in p or "max_hp" in p for p in block["apply"])
+            if caster_isolation != self.isolation(creature) and instance.spec["name"] != "Dispel Magic": continue
             if not self.targetable(creature, caster) and not healing: continue
-            affects = target.get("affects", "any")
-            if affects in {"enemy", "enemies"} and creature.team == caster.team: continue
-            if affects == "ally" and creature.team != caster.team: continue
-            filters = target.get("filter", [])
-            harmful = bool(block["on_hit"] or block["on_fail"] or any(k in p for p in block["apply"] for k in ("damage", "apply_condition", "remove_from_combat")))
-            if harmful and creature in self.condition_sources(caster, "charmed"): continue
-            if harmful and any(e.kind == "pacify" and e.source in self.instances and creature.team == self.instances[e.source].caster.team for e in caster.active_effects): continue
+            if affects in {"enemy", "enemies"} and creature.team == caster_team: continue
+            if affects == "ally" and creature.team != caster_team: continue
+            if harmful and creature in charmers: continue
+            if harmful and pacified and creature.team in pacified: continue
             treated_type = creature.magical_type if instance.magical else creature.creature_type
             if "humanoid" in filters and treated_type != "humanoid": continue
             if "creature" in filters and creature.creature_type == "object": continue
@@ -1435,10 +1441,18 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         bonus = target.save_bonuses.get(ability, target.mod(ability) + (target.proficiency_bonus if ability in target.save_proficiencies else 0))
         return min(1, max(0, ((actor.spell_dc if dc is None else dc) - bonus - 1) / 20))
 
+    def cantrip_spec(self, actor, name):
+        """Scaled cantrip for read-only EV probes, cached per caster (scaling depends only on
+        the caster's level, features and components, which do not change in a combat)."""
+        cache = self.__dict__.setdefault("_cantrip_specs", {})
+        key = (actor.id, actor.name, actor.level, name)
+        if key not in cache: cache[key] = self.scale(actor, self.spells[name], 0)
+        return cache[key]
+
     def at_will_damage_rate(self, actor, target):
         # Explicit one-round horizon prevents recursion into encounter estimation.
         return max([self.expected_weapon_damage(actor, target)] + [
-            self.expected_spell_damage(actor, self.scale(actor, self.spells[name], 0), target, horizon=1)
+            self.expected_spell_damage(actor, self.cantrip_spec(actor, name), target, horizon=1)
             for name in actor.spells if self.spells[name]["level"] == 0])
 
     def expected_remaining_rounds(self, actor):
@@ -1452,9 +1466,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         names = actor.multiattack or ([actor.attacks[0]["name"]] * actor.extra_attack if actor.attacks else [])
         hits = sum(self.hit_probability(actor, target, next(a for a in actor.attacks if a["name"] == name)["to_hit"]) for name in names)
         for name in actor.spells:
-            spec = self.spells[name]
-            if spec["level"] != 0: continue
-            spec = self.scale(actor, spec, 0)
+            if self.spells[name]["level"] != 0: continue
+            spec = self.cantrip_spec(actor, name)
             hits = max(hits, sum(self.hit_probability(actor, target, actor.spell_attack_bonus) * b["target"].get("n", 1)
                                  for b in spec["effects"] if b["attack"] and "on_cast" in b["event"]))
         return hits
