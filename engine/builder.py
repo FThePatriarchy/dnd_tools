@@ -30,11 +30,11 @@ DEFAULT_ABILITIES = {
 SKILLS = {"fighter": ["athletics", "perception"], "rogue": ["stealth", "sleight of hand", "perception", "investigation"],
           "wizard": ["arcana", "history"], "cleric": ["religion", "insight"]}
 WEAPONS = {
-    "greatsword": ("2d6", "slashing", "melee", "graze", ["two_handed"]),
+    "greatsword": ("2d6", "slashing", "melee", "graze", ["two_handed", "heavy"]),
     "longsword": ("1d8", "slashing", "melee", "sap", ["versatile"]),
     "rapier": ("1d8", "piercing", "melee", "vex", ["finesse"]),
     "shortbow": ("1d6", "piercing", "ranged", "vex", ["two_handed"]),
-    "longbow": ("1d8", "piercing", "ranged", "slow", ["two_handed"]),
+    "longbow": ("1d8", "piercing", "ranged", "slow", ["two_handed", "heavy"]),
     "mace": ("1d6", "bludgeoning", "melee", "sap", []),
     "quarterstaff": ("1d6", "bludgeoning", "melee", "topple", ["versatile"]),
 }
@@ -50,6 +50,13 @@ EQUIPMENT = {
 }
 DEFAULT_EQUIPMENT = dict(zip(SUBCLASSES, ("chain_greatsword", "studded_rapier", "unarmored_staff", "chain_shield")))
 STYLES = {"defense", "archery", "dueling", "great_weapon_fighting"}
+# 2024 General feats taken in place of an ASI: the +1 ability options and prerequisite.
+FEATS = {
+    "great_weapon_master": {"abilities": {"str"}, "requires": ("str", 13)},
+    "sharpshooter": {"abilities": {"dex"}, "requires": ("dex", 13)},
+    "war_caster": {"abilities": {"int", "wis", "cha"}, "requires": "spellcasting"},
+}
+ORIGIN_FEATS = {"alert"}
 
 
 @lru_cache(None)
@@ -125,7 +132,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     subclass = c["subclass"] if subclass is None else subclass
     v.enum(subclass,{c["subclass"]},"subclass")
     choices=deepcopy(choices) if choices is not None else {}
-    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background")
+    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat")
     v.check(type(background) is bool,"background","expected boolean")
     abilities=deepcopy(abilities if abilities is not None else DEFAULT_ABILITIES[class_name])
     v.obj(abilities,"abilities",ABILITIES)
@@ -149,7 +156,22 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     asis=choices.get("asis",default_asis(class_name,level,abilities))
     v.check(isinstance(asis,dict) and all(type(k) is int for k in asis),"choices.asis","expected level mapping")
     v.check(set(asis)=={n for n in c["asi_levels"] if n<=level},"choices.asis","must choose each earned ASI exactly once")
-    for n,add in asis.items():
+    feats=[]
+    for n,add in sorted(asis.items()):
+        if isinstance(add,dict) and "feat" in add:
+            # A General feat in place of the ASI: its +1 goes to one of the feat's abilities.
+            v.obj(add,f"choices.asis.{n}","feat ability")
+            v.enum(add["feat"],FEATS,f"choices.asis.{n}.feat")
+            feat=FEATS[add["feat"]]
+            v.enum(add["ability"],feat["abilities"],f"choices.asis.{n}.ability")
+            v.check(add["feat"] not in feats,f"choices.asis.{n}.feat","feat already taken")
+            need=feat["requires"]
+            if need=="spellcasting": v.check(class_name in SPELL_LISTS,f"choices.asis.{n}.feat","requires the Spellcasting feature")
+            else: v.check(abilities[need[0]]>=need[1],f"choices.asis.{n}.feat",f"requires {need[0].title()} {need[1]}")
+            feats.append(add["feat"])
+            unboosted[add["ability"]] += 1
+            abilities[add["ability"]] = min(20, abilities[add["ability"]] + 1)
+            continue
         v.obj(add,f"choices.asis.{n}","",ABILITIES)
         for a,count in add.items(): v.number(count,f"choices.asis.{n}.{a}",1,True)
         v.check(sum(add.values())==2,f"choices.asis.{n}","ASI must add exactly two ability points")
@@ -203,6 +225,12 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         sheet["features"].update({k:substitute(x,level,row) for k,x in f.get("mechanics",{}).items() if k not in {"builder","progression"}})
         if "unsupported" in f: sheet["unsupported"].append(f["name"]+": "+f["unsupported"])
     if "great_weapon_fighting" in styles: sheet["features"]["great_weapon_fighting"]=True
+    for feat in feats: sheet["features"][feat]=True
+    origin=choices.get("origin_feat")
+    if origin is not None:
+        v.enum(origin,ORIGIN_FEATS,"choices.origin_feat")
+        sheet["features"][origin]=True
+        if origin=="alert": sheet["initiative_bonus"]=row["proficiency_bonus"]
     if class_name=="fighter" and level>=5: sheet["extra_attack"]=2
     for weapon in weapons:
         ds,dt,kind,mastery,properties=WEAPONS[weapon]

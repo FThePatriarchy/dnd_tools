@@ -24,9 +24,13 @@ def test_variants_start_with_standard_and_are_distinct(cls):
 
 def test_fighter_variants_cover_kits_and_styles():
     names = [v["name"] for v in variants("fighter", 5)]
-    assert names[0] == "standard" and len(names) == 6
+    kits = [n for n in names if not n.startswith("feat:")]
+    assert names[0] == "standard" and len(kits) == 6
     assert "sword and shield + dueling" in names and "archer + archery" in names
-    assert len(variants("fighter", 7)) == 3  # two styles from level 7: one combination per kit
+    # Sharpshooter is dropped: the standard fighter's 12 Dex misses its prerequisite
+    assert [n for n in names if n.startswith("feat:")] == ["feat: alert", "feat: great weapon master"]
+    level7 = [v["name"] for v in variants("fighter", 7)]
+    assert len([n for n in level7 if not n.startswith("feat:")]) == 3  # two styles from level 7: one combination per kit
 
 
 def test_screen_prefers_heavy_melee_fighter_to_archer():

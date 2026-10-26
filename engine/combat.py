@@ -246,6 +246,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             advantage = True
             self.feature_log(target, "Magic Resistance")
         disadvantage |= ability == "dex" and target.has_condition("restrained")
+        if concentration and target.features.get("war_caster"):
+            advantage = True  # War Caster: advantage on saves to maintain Concentration
         bonus = target.save_bonuses.get(ability, target.mod(ability) + (target.proficiency_bonus if ability in target.save_proficiencies else 0))
         natural = dice.d20(self.rng, advantage, disadvantage)
         bonus = self.modifier(target, "save", bonus, ability, consume=True)
@@ -1281,12 +1283,19 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         previous_context = self._monster_attack
         self._monster_attack = actor, attack["name"]
         cunning = None
+        landed = {"critical": False}
         def hit(critical, roll):
             nonlocal cunning
+            landed["critical"] = critical
             persistent = attack.get("riders") or any("damage" not in p for p in attack["effects"])
             instance = self.monster_instance(actor, attack["name"], attack.get("riders", [])) if persistent else SpellInstance(0, {"name": attack["name"]}, actor, 0, self.turn_index, self.time_rounds)
             frame = {"attacker": actor, "defender": target, "attack": roll, "critical": critical, "weapon_properties": attack.get("properties", [])}
             self.execute(instance, target, attack["effects"], self.context(instance, target, "on_attack_hit", frame, **frame), "weapon")
+            if (actor.features.get("great_weapon_master") and "heavy" in attack.get("properties", [])
+                    and self.current is actor and not actor.statuses.get("hew_attack")):
+                # Heavy Weapon Mastery: +PB damage on a hit with a Heavy weapon as part of the Attack action.
+                self.damage(target, actor.proficiency_bonus, attack["effects"][0]["damage"]["type"], actor)
+                self.feature_log(actor, "Great Weapon Master")
             cunning = self.class_hit(actor, target, attack, critical, roll)
             if attack.get("on_hit_self"): self.execute(instance, actor, attack["on_hit_self"], self.context(instance, actor), "self_hit")
             for block in attack.get("riders", []): self.resolve_block(instance, block, "on_cast", {}, [target])
@@ -1310,6 +1319,15 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if not success and attack.get("mastery") == "graze":
             self.damage(target, max(0, actor.mod(attack.get("ability", "str"))), attack["effects"][0]["damage"]["type"], actor)
         if extra in actor.effects: actor.effects.remove(extra)
+        if (success and actor.features.get("great_weapon_master") and attack.get("kind", "melee") == "melee"
+                and (landed["critical"] or (before_hp > 0 and target.hp == 0)) and self.current is actor
+                and actor.bonus_action >= 1 and not actor.statuses.get("hew_attack") and self.enemies(actor)):
+            # Hew: one more attack with the same weapon as a Bonus Action after a critical hit or a kill.
+            actor.bonus_action -= 1
+            self.feature_log(actor, "Hew")
+            actor.statuses["hew_attack"] = True
+            try: self.weapon_attack(actor, self.policy_for(actor).weapon_target(self, actor, self.enemies(actor)), attack)
+            finally: actor.statuses.pop("hew_attack", None)
         if success and actor.features.get("rampage") and actor.bonus_action and actor.limited_uses.get("Rampage") and before_hp <= target.max_hp / 2 and target.hp < before_hp and self.enemies(actor):
             actor.bonus_action -= 1
             actor.limited_uses["Rampage"] -= 1
@@ -1607,6 +1625,14 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
     def run(self, max_rounds=100):
         self.interrupt_rest("initiative")
         initiative = sorted((c for c in self.combatants if c.summoner_id is None), key=lambda c: (-(dice.d20(self.rng, advantage=c.has_condition("invisible") or c.features.get("initiative_advantage", False)) + c.mod("dex") + c.initiative_bonus), c.id))
+        for c in [c for c in initiative if c.features.get("alert")]:
+            # Alert's Initiative Swap: trade places with the slowest ally who has spell slots, if later.
+            i = initiative.index(c)
+            later = [a for a in initiative[i + 1:] if a.team == c.team and a is not c and sum(a.max_spell_slots.values())]
+            if later:
+                j = initiative.index(later[-1])
+                initiative[i], initiative[j] = initiative[j], initiative[i]
+                self.feature_log(c, "Alert", swapped_with=later[-1].id)
         self.record("initiative", order=[c.id for c in initiative])
         self.morale_start = {}
         for c in self.combatants:

@@ -32,8 +32,9 @@ allow-list, not silently asserted to have come from class prose.
 
 ## Scope
 
-Species, backgrounds, multiclassing, equipment purchases and feats other than
-Ability Score Improvement are outside scope. Fighting Style choices implement
+Species, backgrounds, multiclassing and equipment purchases are outside scope.
+Feats are limited to the four listed under "Feats" below (2026-10-26); any other
+feat is rejected. Fighting Style choices implement
 the referenced styles rather than general feat machinery. Ability input is
 pre-ASI; HP uses maximum hit die at first level and fixed average thereafter.
 No grid, concealment, movement or opportunity attacks are fabricated.
@@ -68,6 +69,24 @@ Styles, equipment, ASI and core formulas are reviewed builder rules; class
 records reference feats but do not contain their numeric text. They are not
 claimed as extracted class-file numbers.
 
+## Feats (2024 rules)
+
+A General feat replaces an earned ASI: `asis: {4: {feat: great_weapon_master,
+ability: str}}`. The feat's +1 goes to one of its listed abilities (capped at
+20), its prerequisite is checked against the scores at that level, and a feat
+cannot be taken twice. Alert is an Origin feat: `origin_feat: alert`, at any
+level. Each feat becomes a sheet feature flag.
+
+| Feat | +1 to | Prerequisite | Simulated | Not simulated (no grid) |
+|---|---|---|---|---|
+| Great Weapon Master | Str | Str 13 | +PB damage on a hit with a Heavy weapon (greatsword, longbow) made in the Attack action on the attacker's turn; Hew: after a critical hit or a kill with a melee weapon, one attack with the same weapon as a Bonus Action (once per Bonus Action) | — |
+| Sharpshooter | Dex | Dex 13 | the +1 only | ignoring half and three-quarters cover; no disadvantage in melee or at long range. Cover, range bands and melee adjacency are not modelled, so Sharpshooter is valued here as +1 Dex. |
+| War Caster | Int, Wis or Cha | Spellcasting | advantage on Constitution saves to maintain Concentration | Reactive Spell (no opportunity attacks); somatic components with full hands |
+| Alert (Origin) | — | — | +PB to initiative; Initiative Swap at initiative: trades places with the slowest ally with spell slots who would act later | — |
+
+The greatsword and longbow carry the 2024 `heavy` property; sheet attack
+properties accept `heavy`.
+
 ## Builder and build recipes
 
 `build(class_name, level, subclass, abilities, equipment, choices)` returns a
@@ -79,14 +98,15 @@ Subclass is dormant before level three. Only the four named subclasses exist.
 
 Choices: `ability_method`, `asis`, `fighting_style`, `weapon_masteries`,
 `skills`, `expertise`, `cunning_strike`, `cantrips`, `prepared_spells`,
-`spellbook`, `divine_order`, `blessed_strikes`.
+`spellbook`, `divine_order`, `blessed_strikes`, `background`, `origin_feat`.
 
 - Input abilities are pre-ASI. Default `standard_array` is a permutation of
   15,14,13,12,10,8. `point_buy` uses scores 8–15 and at most 27 points.
   Explicit `assigned` accepts externally assigned 3–20 scores for compatibility
   with fixed sheets, whose background bonuses cannot come from point buy alone.
-  Every earned ASI allocates exactly two points, maximum score 20. Other feats,
-  backgrounds and species are not implemented or silently added.
+  Every earned ASI allocates exactly two points, maximum score 20, or is replaced
+  by one of the supported General feats (see "Feats"). Other feats and species are
+  not implemented or silently added.
 - Equipment presets: `chain_greatsword`, `chain_sword_shield`, `leather_archer`,
   `studded_rapier`, `studded_shortbow`, `unarmored_staff`, `chain_shield`,
   `scale_shield`. Training is checked. AC: chain 16; studded 12 + Dex; scale

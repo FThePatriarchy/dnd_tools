@@ -67,6 +67,30 @@ def spell_profile(base, cls, level, profile):
     return r
 
 
+FEAT_OPTIONS = {  # (feat, +1 ability, changes to the standard recipe)
+    "fighter": [("great_weapon_master", "str", {}),
+                ("sharpshooter", "dex", {"equipment": "leather_archer", "fighting_style": ["archery"], "weapon_masteries": ["longbow"]})],
+    "rogue": [("sharpshooter", "dex", {"equipment": "studded_shortbow", "weapon_masteries": ["shortbow", "rapier"]})],
+    "cleric": [("war_caster", "wis", {})],
+    "wizard": [("war_caster", "int", {})],
+}
+
+
+def feat_variants(base, cls, level):
+    """The standard build with a General feat in place of its first ASI, plus Alert as an origin feat.
+    Illegal combinations (an unmet prerequisite) are dropped later by the builder check."""
+    out = [variant(base, "feat: alert", origin_feat="alert")]
+    asis = base["choices"].get("asis") or {}
+    if not asis: return out
+    first = min(asis)
+    for feat, ability, changes in FEAT_OPTIONS[cls]:
+        r = variant(base, f"feat: {feat.replace('_', ' ')}", **changes)
+        if "fighting_style" in changes and level >= 7: r["choices"]["fighting_style"] = changes["fighting_style"] + ["defense"]
+        r["choices"]["asis"] = {**deepcopy(asis), first: {"feat": feat, "ability": ability}}
+        out.append(r)
+    return out
+
+
 def variants(cls, level):
     """Recipes for a class's main decisions at standard abilities; the first is the standard build."""
     base = standard_recipe(cls, level)
@@ -100,6 +124,7 @@ def variants(cls, level):
         out += [spell_profile(base, cls, level, p) for p in ("optimized", "casual")]
     elif cls == "wizard":
         out += [spell_profile(base, cls, level, p) for p in ("optimized", "casual")]
+    out += feat_variants(base, cls, level)
     from .builder import build
     legal = []
     for r in out:

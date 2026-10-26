@@ -151,10 +151,16 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
   - The archer kit costs 13%: the standard fighter has only 12 Dex and light armour as an archer.
   - In the casual party the archer costs 27%, and sword and shield loses about a quarter of its solo rating. A build's value depends on the party.
 - **Wizard, level 5** (`compare_L5_wizard_variants.md`): the optimized spell list matches standard (+0%), and the casual list costs 18% (21–26% against most types). Spell choice is the biggest single lever found so far.
+- **Feats** (`compare_L5_{fighter,rogue,cleric,wizard}_feats.md`, `compare_L10_fighter_feats.md`): the builder now takes Great Weapon Master, Sharpshooter and War Caster in place of an ASI (with their +1), and Alert as the origin feat. See `data/handwritten/CLASS_FORMAT.md` for what each one simulates. In the standard party:
+  - Great Weapon Master: +4% at level 5 and +4% at level 10 (+14% against brutes). It is the only feat clearly above noise at both levels.
+  - Alert: +1% to +4% on every class. Most of its gain is against control, where acting before the controller matters.
+  - War Caster: +2% on the cleric (+13% against control, from holding concentration) and exactly +0% on the wizard.
+  - Sharpshooter: identical to the plain shortbow-first rogue. With no cover or long range modelled it is only +1 Dex, and 19 and 18 Dex give the same modifier.
+  - A feat replaces a +2 ASI, so where that +2 does not change a modifier (odd starting scores) the feat is free; with even scores it would cost a point of attack and damage.
 - **Not yet done:**
   - Searching ability-score and ASI choices.
   - The optimized and casual reference parties for every class.
-  - Feats, the lever the Phase 3 presets showed is missing.
+  - More feats (Lucky, Tough, Polearm Master, Resilient), and cover and range so Sharpshooter has something to remove.
 
 - **Build value** = the change in party outcomes (wipe chance, someone going down, resources spent) when the build replaces a reference member, measured across the benchmark set. This values healers and controllers by their effect on the party, not by their damage per round.
 - Report the result as a grid: build × opponent type × party composition.
