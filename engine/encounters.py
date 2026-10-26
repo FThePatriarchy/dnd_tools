@@ -5,6 +5,7 @@ one party against one encounter many times, either a fixed number of runs or
 adaptively (see Adaptive), and returns the aggregated outcome metrics.
 """
 from dataclasses import dataclass
+import json
 import math
 import random
 from statistics import mean
@@ -78,13 +79,19 @@ _SHEETS = {}
 
 
 def party_sheets(builds, options):
-    """Character sheets for build names, with a default front/back position."""
-    from .builder import load_character
+    """Character sheets for build names or in-memory recipes (the builds/*.yaml format,
+    optionally with a "name" label), with a default front/back position."""
+    from .builder import build, load_character
     sheets = []
     for name in builds:
-        cache_key = (name, options.backgrounds)
+        recipe = isinstance(name, dict)
+        cache_key = (json.dumps(name, sort_keys=True) if recipe else name, options.backgrounds)
         if cache_key not in _SHEETS:
-            sheet = load_character(name, background=options.backgrounds)
+            if recipe:
+                sheet = build(name["class"], name["level"], name["subclass"], name["abilities"], name["equipment"],
+                              name["choices"], background=options.backgrounds)
+            else:
+                sheet = load_character(name, background=options.backgrounds)
             if "position" not in sheet:
                 sheet["position"] = "front" if sheet["ac"] >= 16 and any(a["kind"] == "melee" for a in sheet.get("attacks", [])) else "back"
             _SHEETS[cache_key] = sheet

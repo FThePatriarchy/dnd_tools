@@ -1,0 +1,217 @@
+"""Build comparison: swap a build into a reference party and measure the change in rating.
+
+A candidate's value is the change in the party rating (engine.rating) when it
+replaces the reference party's member of the same class, overall and per
+opponent type, as a percentage. Every candidate is rated with the same seed
+and per-encounter batch seeds, so differences are measured on common random
+numbers. Changes under NOISE overall, or TYPE_NOISE for one opponent type,
+are marked as within noise (Phase 2 measured overall ratings agreeing within
+about 2.3% across seeds, and single types moving by up to ~0.1x).
+
+Candidates are build names, or --variants: recipes generated from a class's
+main decisions at standard ability scores, so only the decision changes. A
+cheap expected-damage x durability screen ranks generated variants, and the
+top --finalists (plus the standard build) are rated.
+
+    python -m engine.compare --level 5 --class fighter --variants --references standard casual
+    python -m engine.compare --level 5 --class wizard --candidates wizard_5 wizard_5_optimized wizard_5_casual
+"""
+import argparse
+from copy import deepcopy
+from dataclasses import asdict
+import json
+import sys
+
+import yaml
+
+from .benchmark import load_benchmark
+from .calibration import REPORTS
+from .loader import ROOT, load_sheet
+from .presets import ordered, party, recipe as preset_recipe
+from .rating import rate_party
+
+CLASSES = ("fighter", "cleric", "rogue", "wizard")
+NOISE = 0.03       # overall rating: Phase 2 seeds agreed within about 2.3%
+TYPE_NOISE = 0.10  # one opponent type: Phase 2 seeds moved single types by up to ~0.1x
+FIGHTER_KITS = (("greatsword", "chain_greatsword", "great_weapon_fighting", ["greatsword"]),
+                ("sword and shield", "chain_sword_shield", "dueling", ["longsword"]),
+                ("archer", "leather_archer", "archery", ["longbow"]))
+
+
+def standard_recipe(cls, level):
+    data = yaml.safe_load((ROOT / "builds" / f"{cls}_{level}.yaml").read_text(encoding="utf-8"))
+    return {"name": "standard", **data}
+
+
+def label(candidate):
+    return candidate["name"] if isinstance(candidate, dict) else candidate
+
+
+def variant(base, name, **changes):
+    r = deepcopy(base)
+    r["name"] = name
+    for key, value in changes.items():
+        if key == "equipment": r["equipment"] = value
+        else: r["choices"][key] = value
+    return r
+
+
+def spell_profile(base, cls, level, profile):
+    """The standard recipe with another preset profile's cantrip and spell choices."""
+    if profile == "standard": return deepcopy(base)
+    other = preset_recipe(cls, level, profile)["choices"]
+    r = deepcopy(base)
+    r["name"] = f"{profile} spells"
+    for key in ("cantrips", "prepared_spells", "spellbook"):
+        if key in other: r["choices"][key] = other[key]
+    return r
+
+
+def variants(cls, level):
+    """Recipes for a class's main decisions at standard abilities; the first is the standard build."""
+    base = standard_recipe(cls, level)
+    out = [base]
+    if cls == "fighter":
+        out = []
+        for kit, equipment, style, masteries in FIGHTER_KITS:
+            styles = [[style, "defense"]] if level >= 7 else [[style], ["defense"]]
+            for chosen in styles:
+                name = f"{kit} + {' + '.join(s.replace('_', ' ') for s in chosen)}"
+                out.append(variant(base, name, equipment=equipment, fighting_style=chosen, weapon_masteries=masteries))
+        standard = next(i for i, v in enumerate(out) if v["equipment"] == base["equipment"]
+                        and set(v["choices"]["fighting_style"]) == set(base["choices"]["fighting_style"]))
+        out.pop(standard)
+        out.insert(0, base)  # the standard build itself (same choices, its own style order)
+    elif cls == "rogue":
+        cunning = base["choices"].get("cunning_strike")
+        for equipment, masteries in (("studded_shortbow", ["shortbow", "rapier"]),):
+            out.append(variant(base, "shortbow first", equipment=equipment, weapon_masteries=masteries))
+        if cunning:
+            for pair in (["trip", "withdraw"], ["poison", "withdraw"]):
+                out.append(variant(base, f"cunning {' + '.join(pair)}", cunning_strike=pair))
+    elif cls == "cleric":
+        out.append(variant(base, "divine strike", blessed_strikes="divine_strike"))
+        thaum = variant(base, "thaumaturge", divine_order="thaumaturge", equipment="scale_shield")
+        from .builder import spell_options, _class
+        options = {n: s for n, s in spell_options("cleric", level).items() if s["level"] == 0}
+        count = _class("cleric")["levels"][level]["cantrips"] + 1
+        thaum["choices"]["cantrips"] = ordered("cleric", base["choices"]["cantrips"], options)[:count]
+        out.append(thaum)
+        out += [spell_profile(base, cls, level, p) for p in ("optimized", "casual")]
+    elif cls == "wizard":
+        out += [spell_profile(base, cls, level, p) for p in ("optimized", "casual")]
+    from .builder import build
+    legal = []
+    for r in out:
+        try: build(r["class"], r["level"], r["subclass"], r["abilities"], r["equipment"], r["choices"])
+        except Exception: continue
+        legal.append(r)
+    return legal
+
+
+def screen_score(candidate, level):
+    """Crude expected damage per round x effective HP against the level's benchmark brute."""
+    from . import Combat, Combatant
+    from .day_options import DayOptions
+    from .encounters import party_sheets
+    from .loader import load_spells
+    sheet = party_sheets([candidate], DayOptions())[0]
+    brute = load_benchmark(1)["levels"][level]["brute"][0].split(" x")[0]
+    pc = Combatant.from_sheet(sheet, "pc", "party")
+    foe = Combatant.from_sheet(load_sheet(ROOT / "monsters" / f"{brute}.yaml"), "foe", "enemy")
+    combat = Combat([pc, foe], load_spells(), seed=1)
+    offense = combat.at_will_damage_rate(pc, foe)
+    spells = [n for n in pc.spells if combat.spells[n]["level"] and combat.can_cast(pc, n)]
+    if spells:
+        best = max(combat.expected_spell_damage(pc, combat.scale(pc, combat.spells[n], combat.spells[n]["level"]), foe) for n in spells)
+        offense += best * sum(pc.spell_slots.values()) / 6  # slot spells spread over a six-encounter day
+    to_hit = max((a["to_hit"] for a in foe.attacks), default=5)
+    durability = pc.max_hp / max(0.05, combat.hit_probability(foe, pc, to_hit))
+    return offense * durability
+
+
+def compare(level, cls, candidates, references=("standard",), *, seed=1, strategy="default", workers=None):
+    """{reference: {"base": PartyRating, "rows": [(label, PartyRating)]}} for each reference profile."""
+    results = {}
+    for ref in references:
+        base_party = party(level, ref)
+        slot = CLASSES.index(cls)
+        base = rate_party(base_party, seed=seed, strategy=strategy, workers=workers)
+        rows = []
+        for candidate in candidates:
+            if candidate == base_party[slot]:
+                rows.append((label(candidate), base)); continue
+            trial = list(base_party); trial[slot] = candidate
+            rows.append((label(candidate), rate_party(trial, seed=seed, strategy=strategy, workers=workers)))
+        results[ref] = {"base": base, "member": base_party[slot], "rows": rows}
+    return results
+
+
+def delta(new, old):
+    return new / old - 1
+
+
+def fmt_delta(d, noise=NOISE):
+    return f"{d:+.0%}" + ("" if abs(d) >= noise else " ≈")
+
+
+def markdown(level, cls, results, screened=None):
+    out = [f"# Build comparison: {cls}, level {level}", "",
+           "Each row swaps the candidate into the reference party in place of its "
+           f"{cls} and re-rates the party against benchmark v1 (5% defeat threshold, same seeds). "
+           f"Values are the change in rating; ≈ marks changes within noise: under {NOISE:.0%} overall and "
+           f"under {TYPE_NOISE:.0%} for a single opponent type, whose rating rests on one interpolated crossing.", ""]
+    if screened:
+        out += ["## Screen", "", "Expected damage × effective HP against the level's benchmark brute; the top variants were rated.", "",
+                "| Variant | Screen score | Rated |", "| --- | ---: | --- |"]
+        out += [f"| {name} | {score:,.0f} | {'yes' if rated else 'no'} |" for name, score, rated in screened]
+        out.append("")
+    for ref, data in results.items():
+        base = data["base"]
+        kinds = list(base.types)
+        out += [f"## Reference party: {ref} ({', '.join(label(b) for b in party(level, ref))})", "",
+                f"Base rating {base.xp:,.0f} XP ({base.multiple(base.xp):.2f}× High).", "",
+                "| Candidate | Overall | " + " | ".join(kinds) + " |", "| --- | ---: | " + " | ".join("---:" for _ in kinds) + " |"]
+        for name, r in sorted(data["rows"], key=lambda row: -row[1].xp):
+            cells = [fmt_delta(delta(r.types[k].xp, base.types[k].xp), TYPE_NOISE) + ("†" if r.types[k].censored or base.types[k].censored else "")
+                     for k in kinds]
+            out.append(f"| {name} | {fmt_delta(delta(r.xp, base.xp))} ({r.multiple(r.xp):.2f}×) | " + " | ".join(cells) + " |")
+        out += ["", "† a rating at the edge of its benchmark ladder (a bound), so the change is a bound too.", ""]
+    return "\n".join(out)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--level", type=int, required=True)
+    parser.add_argument("--class", dest="cls", choices=CLASSES, required=True)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--candidates", nargs="+", help="build names of the same class")
+    group.add_argument("--variants", action="store_true", help="generate variants of the class's main decisions")
+    parser.add_argument("--finalists", type=int, default=4, help="variants rated after the screen (plus standard)")
+    parser.add_argument("--references", nargs="+", default=["standard"], choices=["casual", "standard", "optimized"])
+    parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument("--strategy", default="default")
+    parser.add_argument("--workers", type=int)
+    parser.add_argument("--write", metavar="NAME", help="write data/reports/compare_<NAME>.md")
+    args = parser.parse_args()
+    sys.stdout.reconfigure(encoding="utf-8")
+    screened = None
+    if args.variants:
+        found = variants(args.cls, args.level)
+        scores = [(v, screen_score(v, args.level)) for v in found]
+        ranked = sorted(scores[1:], key=lambda vs: -vs[1])[:max(0, args.finalists)]
+        candidates = [found[0]] + [v for v, _ in ranked]
+        screened = [(v["name"], s, v in candidates) for v, s in sorted(scores, key=lambda vs: -vs[1])]
+    else:
+        candidates = args.candidates
+    results = compare(args.level, args.cls, candidates, args.references, seed=args.seed, strategy=args.strategy, workers=args.workers)
+    text = markdown(args.level, args.cls, results, screened)
+    if args.write:
+        (REPORTS / f"compare_{args.write}.md").write_text(text, encoding="utf-8")
+        data = {ref: {"base": asdict(d["base"]), "rows": [[name, asdict(r)] for name, r in d["rows"]]} for ref, d in results.items()}
+        (REPORTS / f"compare_{args.write}.json").write_text(json.dumps({"level": args.level, "class": args.cls, "screen": screened,
+                                                                        "results": data}, indent=1, default=str), encoding="utf-8")
+    print(text)
+
+
+if __name__ == "__main__": main()

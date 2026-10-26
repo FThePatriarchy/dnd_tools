@@ -140,6 +140,22 @@ Fix the modelling distortions the sweep exposed, comparing options side by side 
 
 ## Phase 5 — Build comparison (Goal 2)
 
+Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
+
+- **Value:** a candidate's value is the change in the Phase 2 party rating when it replaces the reference party's member of its class, overall and per opponent type. Every candidate is rated with the same seed and per-encounter batch seeds (common random numbers). Changes under 3% overall, or under 10% for a single type, are marked as within noise, from the Phase 2 seed check.
+- **Grid:** candidate × opponent type × reference party (`--references casual standard optimized`).
+- **Candidates:** build names, or `--variants`, recipes of a class's main decisions at standard abilities. Fighter: kit × style. Rogue: kit and Cunning Strike pairs. Cleric: Blessed Strikes, Divine Order, spell profile. Wizard: spell profile. The shared runner now accepts in-memory recipes.
+- **Screen:** a crude expected damage × effective HP score against the level's benchmark brute picks `--finalists`. It ranks fighter kits sensibly but cannot separate spell profiles, so casters are effectively all rated.
+- **Fighter, level 5** (`data/reports/compare_L5_fighter_variants.md`):
+  - In the standard party, every melee choice (greatsword with GWF or Defense, sword and shield with Dueling or Defense) is within ±2% overall.
+  - The archer kit costs 13%: the standard fighter has only 12 Dex and light armour as an archer.
+  - In the casual party the archer costs 27%, and sword and shield loses about a quarter of its solo rating. A build's value depends on the party.
+- **Wizard, level 5** (`compare_L5_wizard_variants.md`): the optimized spell list matches standard (+0%), and the casual list costs 18% (21–26% against most types). Spell choice is the biggest single lever found so far.
+- **Not yet done:**
+  - Searching ability-score and ASI choices.
+  - The optimized and casual reference parties for every class.
+  - Feats, the lever the Phase 3 presets showed is missing.
+
 - **Build value** = the change in party outcomes (wipe chance, someone going down, resources spent) when the build replaces a reference member, measured across the benchmark set. This values healers and controllers by their effect on the party, not by their damage per round.
 - Report the result as a grid: build × opponent type × party composition.
 - Search: limit the build space to a few decision points (subclass, feats, spell picks), screen with a quick expected-damage score, and run the full simulation only on the finalists.

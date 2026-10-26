@@ -1,0 +1,1586 @@
+{
+ "level": 5,
+ "class": "wizard",
+ "screen": [
+  [
+   "standard",
+   385.0,
+   true
+  ],
+  [
+   "optimized spells",
+   385.0,
+   true
+  ],
+  [
+   "casual spells",
+   385.0,
+   true
+  ]
+ ],
+ "results": {
+  "standard": {
+   "base": {
+    "builds": [
+     "fighter_5",
+     "cleric_5",
+     "rogue_5",
+     "wizard_5"
+    ],
+    "level": 5,
+    "size": 4,
+    "threshold": 0.05,
+    "seed": 1,
+    "strategy": "default",
+    "morale": "none",
+    "benchmark": 1,
+    "types": {
+     "brute": {
+      "kind": "brute",
+      "xp": 3040.625,
+      "censored": "",
+      "steps": [
+       [
+        "owlbear x1",
+        700,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "owlbear x2",
+        1400,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "owlbear x3",
+        2100,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "owlbear x4",
+        2800,
+        0.013333333333333334,
+        150,
+        0.021821389994444593
+       ],
+       [
+        "owlbear x5",
+        3500,
+        0.12,
+        50,
+        0.09093608688667978
+       ]
+      ]
+     },
+     "ranged": {
+      "kind": "ranged",
+      "xp": 4005.5555555555557,
+      "censored": "",
+      "steps": [
+       [
+        "manticore x1",
+        700,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "manticore x2",
+        1400,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "manticore x3",
+        2100,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "manticore x4",
+        2800,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "manticore x5",
+        3500,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "manticore x6",
+        4200,
+        0.06923076923076923,
+        650,
+        0.019621202154243053
+       ]
+      ]
+     },
+     "caster": {
+      "kind": "caster",
+      "xp": 3724.468085106383,
+      "censored": "",
+      "steps": [
+       [
+        "cultist_fanatic x1",
+        450,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "cultist_fanatic x2",
+        900,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "cultist_fanatic x3",
+        1350,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "cultist_fanatic x4",
+        1800,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "cultist_fanatic x5",
+        2250,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "cultist_fanatic x6",
+        2700,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "cultist_fanatic x8",
+        3600,
+        0.006666666666666667,
+        150,
+        0.017807519422395543
+       ],
+       [
+        "cultist_fanatic x10",
+        4500,
+        0.32,
+        50,
+        0.12526040616462514
+       ]
+      ]
+     },
+     "swarm": {
+      "kind": "swarm",
+      "xp": 2511.1111111111113,
+      "censored": "",
+      "steps": [
+       [
+        "bugbear_warrior x1",
+        200,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "bugbear_warrior x2",
+        400,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "bugbear_warrior x3",
+        600,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "bugbear_warrior x4",
+        800,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "bugbear_warrior x5",
+        1000,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "bugbear_warrior x6",
+        1200,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "bugbear_warrior x8",
+        1600,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "bugbear_warrior x10",
+        2000,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "bugbear_warrior x12",
+        2400,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "bugbear_warrior x16",
+        3200,
+        0.36,
+        50,
+        0.12860116830790125
+       ]
+      ]
+     },
+     "control": {
+      "kind": "control",
+      "xp": 3175.0,
+      "censored": "",
+      "steps": [
+       [
+        "basilisk x1",
+        700,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "basilisk x2",
+        1400,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "basilisk x3",
+        2100,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "basilisk x4",
+        2800,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "basilisk x5",
+        3500,
+        0.09333333333333334,
+        150,
+        0.04707603227816833
+       ]
+      ]
+     },
+     "solo": {
+      "kind": "solo",
+      "xp": 5187.5,
+      "censored": "",
+      "steps": [
+       [
+        "owlbear x1",
+        700,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "troll x1",
+        1800,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_white_dragon x1",
+        2300,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_black_dragon x1",
+        2900,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_green_dragon x1",
+        3900,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_blue_dragon x1",
+        5000,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_red_dragon x1",
+        5900,
+        0.24,
+        50,
+        0.11557646267317383
+       ]
+      ]
+     }
+    },
+    "xp": 3511.90647123237,
+    "runs": 5950
+   },
+   "rows": [
+    [
+     "standard",
+     {
+      "builds": [
+       "fighter_5",
+       "cleric_5",
+       "rogue_5",
+       {
+        "name": "standard",
+        "class": "wizard",
+        "level": 5,
+        "subclass": "evoker",
+        "abilities": {
+         "str": 8,
+         "dex": 14,
+         "con": 13,
+         "int": 15,
+         "wis": 12,
+         "cha": 10
+        },
+        "equipment": "unarmored_staff",
+        "choices": {
+         "ability_method": "standard_array",
+         "asis": {
+          "4": {
+           "int": 2
+          }
+         },
+         "weapon_masteries": [],
+         "cantrips": [
+          "Fire Bolt",
+          "Ray of Frost",
+          "Toll the Dead",
+          "Shocking Grasp"
+         ],
+         "prepared_spells": [
+          "Fireball",
+          "Shield",
+          "Mage Armor",
+          "Magic Missile",
+          "Counterspell",
+          "Scorching Ray",
+          "Thunderwave",
+          "Mirror Image",
+          "Misty Step"
+         ],
+         "spellbook": [
+          "Shield",
+          "Mage Armor",
+          "Magic Missile",
+          "Thunderwave",
+          "Sleep",
+          "Chromatic Orb",
+          "Burning Hands",
+          "Charm Person",
+          "Scorching Ray",
+          "Mirror Image",
+          "Darkness",
+          "Gust of Wind",
+          "Misty Step",
+          "Web",
+          "Fireball",
+          "Counterspell",
+          "Lightning Bolt"
+         ],
+         "expertise": [
+          "arcana"
+         ]
+        }
+       }
+      ],
+      "level": 5,
+      "size": 4,
+      "threshold": 0.05,
+      "seed": 1,
+      "strategy": "default",
+      "morale": "none",
+      "benchmark": 1,
+      "types": {
+       "brute": {
+        "kind": "brute",
+        "xp": 3040.625,
+        "censored": "",
+        "steps": [
+         [
+          "owlbear x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "owlbear x2",
+          1400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "owlbear x3",
+          2100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "owlbear x4",
+          2800,
+          0.013333333333333334,
+          150,
+          0.021821389994444593
+         ],
+         [
+          "owlbear x5",
+          3500,
+          0.12,
+          50,
+          0.09093608688667978
+         ]
+        ]
+       },
+       "ranged": {
+        "kind": "ranged",
+        "xp": 4005.5555555555557,
+        "censored": "",
+        "steps": [
+         [
+          "manticore x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x2",
+          1400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x3",
+          2100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x4",
+          2800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x5",
+          3500,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x6",
+          4200,
+          0.06923076923076923,
+          650,
+          0.019621202154243053
+         ]
+        ]
+       },
+       "caster": {
+        "kind": "caster",
+        "xp": 3724.468085106383,
+        "censored": "",
+        "steps": [
+         [
+          "cultist_fanatic x1",
+          450,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x2",
+          900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x3",
+          1350,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x4",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x5",
+          2250,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x6",
+          2700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x8",
+          3600,
+          0.006666666666666667,
+          150,
+          0.017807519422395543
+         ],
+         [
+          "cultist_fanatic x10",
+          4500,
+          0.32,
+          50,
+          0.12526040616462514
+         ]
+        ]
+       },
+       "swarm": {
+        "kind": "swarm",
+        "xp": 2511.1111111111113,
+        "censored": "",
+        "steps": [
+         [
+          "bugbear_warrior x1",
+          200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x2",
+          400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x3",
+          600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x4",
+          800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x5",
+          1000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x6",
+          1200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x8",
+          1600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x10",
+          2000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x12",
+          2400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x16",
+          3200,
+          0.36,
+          50,
+          0.12860116830790125
+         ]
+        ]
+       },
+       "control": {
+        "kind": "control",
+        "xp": 3175.0,
+        "censored": "",
+        "steps": [
+         [
+          "basilisk x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x2",
+          1400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x3",
+          2100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x4",
+          2800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x5",
+          3500,
+          0.09333333333333334,
+          150,
+          0.04707603227816833
+         ]
+        ]
+       },
+       "solo": {
+        "kind": "solo",
+        "xp": 5187.5,
+        "censored": "",
+        "steps": [
+         [
+          "owlbear x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "troll x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_white_dragon x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_black_dragon x1",
+          2900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_green_dragon x1",
+          3900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_blue_dragon x1",
+          5000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_red_dragon x1",
+          5900,
+          0.24,
+          50,
+          0.11557646267317383
+         ]
+        ]
+       }
+      },
+      "xp": 3511.90647123237,
+      "runs": 5900
+     }
+    ],
+    [
+     "optimized spells",
+     {
+      "builds": [
+       "fighter_5",
+       "cleric_5",
+       "rogue_5",
+       {
+        "name": "optimized spells",
+        "class": "wizard",
+        "level": 5,
+        "subclass": "evoker",
+        "abilities": {
+         "str": 8,
+         "dex": 14,
+         "con": 13,
+         "int": 15,
+         "wis": 12,
+         "cha": 10
+        },
+        "equipment": "unarmored_staff",
+        "choices": {
+         "ability_method": "standard_array",
+         "asis": {
+          "4": {
+           "int": 2
+          }
+         },
+         "weapon_masteries": [],
+         "cantrips": [
+          "Fire Bolt",
+          "Toll the Dead",
+          "Ray of Frost",
+          "Mind Sliver"
+         ],
+         "prepared_spells": [
+          "Shield",
+          "Sleep",
+          "Magic Missile",
+          "Mage Armor",
+          "Web",
+          "Hold Person",
+          "Misty Step",
+          "Hypnotic Pattern",
+          "Fireball"
+         ],
+         "spellbook": [
+          "Shield",
+          "Sleep",
+          "Magic Missile",
+          "Mage Armor",
+          "Thunderwave",
+          "Chromatic Orb",
+          "Burning Hands",
+          "Charm Person",
+          "Web",
+          "Hold Person",
+          "Scorching Ray",
+          "Continual Flame",
+          "Misty Step",
+          "Mirror Image",
+          "Hypnotic Pattern",
+          "Fireball",
+          "Lightning Bolt"
+         ],
+         "expertise": [
+          "arcana"
+         ]
+        }
+       }
+      ],
+      "level": 5,
+      "size": 4,
+      "threshold": 0.05,
+      "seed": 1,
+      "strategy": "default",
+      "morale": "none",
+      "benchmark": 1,
+      "types": {
+       "brute": {
+        "kind": "brute",
+        "xp": 3176.923076923077,
+        "censored": "",
+        "steps": [
+         [
+          "owlbear x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "owlbear x2",
+          1400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "owlbear x3",
+          2100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "owlbear x4",
+          2800,
+          0.02666666666666667,
+          300,
+          0.01907793673417272
+         ],
+         [
+          "owlbear x5",
+          3500,
+          0.07,
+          600,
+          0.02053362790534534
+         ]
+        ]
+       },
+       "ranged": {
+        "kind": "ranged",
+        "xp": 4245.794392523365,
+        "censored": "",
+        "steps": [
+         [
+          "manticore x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x2",
+          1400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x3",
+          2100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x4",
+          2800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x5",
+          3500,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x6",
+          4200,
+          0.02666666666666667,
+          300,
+          0.01907793673417272
+         ],
+         [
+          "manticore x8",
+          5600,
+          0.74,
+          50,
+          0.11840814974197178
+         ]
+        ]
+       },
+       "caster": {
+        "kind": "caster",
+        "xp": 3790.909090909091,
+        "censored": "",
+        "steps": [
+         [
+          "cultist_fanatic x1",
+          450,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x2",
+          900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x3",
+          1350,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x4",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x5",
+          2250,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x6",
+          2700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x8",
+          3600,
+          0.015,
+          200,
+          0.01902574568094227
+         ],
+         [
+          "cultist_fanatic x10",
+          4500,
+          0.18,
+          50,
+          0.10512930582673502
+         ]
+        ]
+       },
+       "swarm": {
+        "kind": "swarm",
+        "xp": 2470.2702702702704,
+        "censored": "",
+        "steps": [
+         [
+          "bugbear_warrior x1",
+          200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x2",
+          400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x3",
+          600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x4",
+          800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x5",
+          1000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x6",
+          1200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x8",
+          1600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x10",
+          2000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x12",
+          2400,
+          0.006666666666666667,
+          150,
+          0.017807519422395543
+         ],
+         [
+          "bugbear_warrior x16",
+          3200,
+          0.5,
+          50,
+          0.13355485781001583
+         ]
+        ]
+       },
+       "control": {
+        "kind": "control",
+        "xp": 2887.5,
+        "censored": "",
+        "steps": [
+         [
+          "basilisk x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x2",
+          1400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x3",
+          2100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x4",
+          2800,
+          0.02857142857142857,
+          350,
+          0.018097400955877946
+         ],
+         [
+          "basilisk x5",
+          3500,
+          0.2,
+          50,
+          0.10896678041123599
+         ]
+        ]
+       },
+       "solo": {
+        "kind": "solo",
+        "xp": 5281.25,
+        "censored": "",
+        "steps": [
+         [
+          "owlbear x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "troll x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_white_dragon x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_black_dragon x1",
+          2900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_green_dragon x1",
+          3900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_blue_dragon x1",
+          5000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_red_dragon x1",
+          5900,
+          0.16,
+          50,
+          0.10088397770671981
+         ]
+        ]
+       }
+      },
+      "xp": 3527.378281087659,
+      "runs": 6750
+     }
+    ],
+    [
+     "casual spells",
+     {
+      "builds": [
+       "fighter_5",
+       "cleric_5",
+       "rogue_5",
+       {
+        "name": "casual spells",
+        "class": "wizard",
+        "level": 5,
+        "subclass": "evoker",
+        "abilities": {
+         "str": 8,
+         "dex": 14,
+         "con": 13,
+         "int": 15,
+         "wis": 12,
+         "cha": 10
+        },
+        "equipment": "unarmored_staff",
+        "choices": {
+         "ability_method": "standard_array",
+         "asis": {
+          "4": {
+           "int": 2
+          }
+         },
+         "weapon_masteries": [],
+         "cantrips": [
+          "Fire Bolt",
+          "Shocking Grasp",
+          "Light",
+          "Prestidigitation"
+         ],
+         "prepared_spells": [
+          "Magic Missile",
+          "Burning Hands",
+          "Chromatic Orb",
+          "Charm Person",
+          "Thunderwave",
+          "Witch Bolt",
+          "Scorching Ray",
+          "Melf's Acid Arrow",
+          "Gust of Wind"
+         ],
+         "spellbook": [
+          "Magic Missile",
+          "Burning Hands",
+          "Chromatic Orb",
+          "Charm Person",
+          "Thunderwave",
+          "Witch Bolt",
+          "Mage Armor",
+          "Sleep",
+          "Scorching Ray",
+          "Melf's Acid Arrow",
+          "Gust of Wind",
+          "Darkness",
+          "Misty Step",
+          "Mirror Image",
+          "Lightning Bolt",
+          "Fireball",
+          "Continual Flame"
+         ],
+         "expertise": [
+          "arcana"
+         ]
+        }
+       }
+      ],
+      "level": 5,
+      "size": 4,
+      "threshold": 0.05,
+      "seed": 1,
+      "strategy": "default",
+      "morale": "none",
+      "benchmark": 1,
+      "types": {
+       "brute": {
+        "kind": "brute",
+        "xp": 2367.6470588235293,
+        "censored": "",
+        "steps": [
+         [
+          "owlbear x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "owlbear x2",
+          1400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "owlbear x3",
+          2100,
+          0.006666666666666667,
+          150,
+          0.017807519422395543
+         ],
+         [
+          "owlbear x4",
+          2800,
+          0.12,
+          100,
+          0.06406346545852173
+         ]
+        ]
+       },
+       "ranged": {
+        "kind": "ranged",
+        "xp": 2975.0,
+        "censored": "",
+        "steps": [
+         [
+          "manticore x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x2",
+          1400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x3",
+          2100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "manticore x4",
+          2800,
+          0.006666666666666667,
+          150,
+          0.017807519422395543
+         ],
+         [
+          "manticore x5",
+          3500,
+          0.18,
+          50,
+          0.10512930582673502
+         ]
+        ]
+       },
+       "caster": {
+        "kind": "caster",
+        "xp": 2960.5263157894738,
+        "censored": "",
+        "steps": [
+         [
+          "cultist_fanatic x1",
+          450,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x2",
+          900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x3",
+          1350,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x4",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x5",
+          2250,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "cultist_fanatic x6",
+          2700,
+          0.013333333333333334,
+          150,
+          0.021821389994444593
+         ],
+         [
+          "cultist_fanatic x8",
+          3600,
+          0.14,
+          50,
+          0.09617680217259669
+         ]
+        ]
+       },
+       "swarm": {
+        "kind": "swarm",
+        "xp": 2183.3333333333335,
+        "censored": "",
+        "steps": [
+         [
+          "bugbear_warrior x1",
+          200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x2",
+          400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x3",
+          600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x4",
+          800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x5",
+          1000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x6",
+          1200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x8",
+          1600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "bugbear_warrior x10",
+          2000,
+          0.013333333333333334,
+          150,
+          0.021821389994444593
+         ],
+         [
+          "bugbear_warrior x12",
+          2400,
+          0.09333333333333334,
+          150,
+          0.04707603227816833
+         ]
+        ]
+       },
+       "control": {
+        "kind": "control",
+        "xp": 2418.181818181818,
+        "censored": "",
+        "steps": [
+         [
+          "basilisk x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x2",
+          1400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x3",
+          2100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "basilisk x4",
+          2800,
+          0.11,
+          100,
+          0.06188550122571487
+         ]
+        ]
+       },
+       "solo": {
+        "kind": "solo",
+        "xp": 5321.428571428572,
+        "censored": "",
+        "steps": [
+         [
+          "owlbear x1",
+          700,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "troll x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_white_dragon x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_black_dragon x1",
+          2900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_green_dragon x1",
+          3900,
+          0.006666666666666667,
+          150,
+          0.017807519422395543
+         ],
+         [
+          "young_blue_dragon x1",
+          5000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_red_dragon x1",
+          5900,
+          0.14,
+          100,
+          0.06805422329186492
+         ]
+        ]
+       }
+      },
+      "xp": 2892.688587481055,
+      "runs": 5350
+     }
+    ]
+   ]
+  }
+ }
+}
