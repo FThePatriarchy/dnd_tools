@@ -1,6 +1,8 @@
 """Rationed strategy: daily slot budget, short-rest features and Hit Dice shares."""
 import math
 
+import pytest
+
 from engine import Combat, Combatant
 from engine.day import run_day
 from engine.day_options import DayOptions
@@ -86,6 +88,62 @@ def test_losing_when_the_forecast_costs_half_the_party(monkeypatch):
     assert not p.losing(combat, caster)
     monkeypatch.setattr(p, "at_will_fight", lambda c, a: (40, 100, 10, 20))
     assert p.losing(combat, caster)
+
+
+def control_block(condition, *, repeat=False, upgrade=None, control=False, select="single", dc=30):
+    data = {"condition": condition}
+    if repeat: data["repeat_save"] = {"ability": "con", "timing": "end_of_turn", "on_success": "end"}
+    if upgrade: data["upgrade_on_failure"] = upgrade
+    if control: data["control"] = True
+    target = {"select": select, "filter": ["creature"], "affects": "enemy"}
+    if select == "area": target.update(shape="emanation", size_ft=30)
+    return {"id": "main", "event": "on_cast", "target": target, "attack": None,
+            "save": {"ability": "con", "dc": dc, "on_success": "negate"}, "on_hit": [], "on_fail": [{"apply_condition": data}],
+            "on_success": [], "apply": []}
+
+
+def control_fight(block, *, recharge=None, allies=2):
+    pcs = [Combatant(f"pc{i}", team="party", max_hp=40) for i in range(allies)]
+    action = {"name": "Grip", "cost": "action", "effects": [block]}
+    if recharge: action["recharge"] = recharge
+    foe = Combatant("foe", team="enemy", max_hp=60, actions=[action])
+    combat = Combat([*pcs, foe], load_spells(), seed=1)
+    return combat, pcs, foe
+
+
+def test_control_share_counts_incapacitation_upgrades_and_domination():
+    p = RationedPolicy()
+    def share(block, **kw):
+        combat, pcs, foe = control_fight(block, **kw)
+        return p.control_share(combat, pcs[0], pcs, [foe], outgoing=10)   # 6-round horizon
+    assert share(control_block("restrained")) == 0                        # not incapacitating
+    paralyze = share(control_block("paralyzed"))                         # certain save failure, whole fight
+    assert paralyze == pytest.approx(min(p.MAX_CONTROL, 6 / 2))
+    assert share(control_block("paralyzed", repeat=True, dc=0)) < paralyze  # repeat saves shorten it
+    assert share(control_block("restrained", repeat=True, upgrade="petrified")) > 0
+    # 25% to dominate (DC 6 vs +0), counted double for 2 rounds: 1 lost turn per round over 2 PCs.
+    assert share(control_block("charmed", control=True, dc=6)) == pytest.approx(0.5)
+    assert share(control_block("paralyzed"), recharge=6) < paralyze       # a recharge ability is not always ready
+    single = share(control_block("paralyzed", repeat=True, dc=15), allies=4)
+    assert share(control_block("paralyzed", repeat=True, dc=15, select="area"), allies=4) > single
+
+
+def test_control_ignores_immune_allies_and_spent_recharges():
+    p = RationedPolicy()
+    combat, pcs, foe = control_fight(control_block("paralyzed"))
+    for pc in pcs: pc.condition_immunities = ["paralyzed"]
+    assert p.control_share(combat, pcs[0], pcs, [foe], outgoing=10) == 0
+    combat, pcs, foe = control_fight(control_block("paralyzed"), recharge=5)
+    foe.recharge_ready["Grip"] = False
+    assert p.control_share(combat, pcs[0], pcs, [foe], outgoing=10) == 0
+
+
+def test_heavy_control_counts_as_losing():
+    p = RationedPolicy()
+    combat, pcs, foe = control_fight(control_block("charmed", control=True), allies=2)
+    assert p.losing(combat, pcs[0])
+    combat, pcs, foe = control_fight(control_block("restrained"), allies=2)
+    assert not p.losing(combat, pcs[0])
 
 
 def test_healing_only_for_downed_or_badly_hurt():

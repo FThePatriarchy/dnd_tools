@@ -133,6 +133,10 @@ Fix the modelling distortions the sweep exposed, comparing options side by side 
 - ~~Release everything once the fight is being lost.~~ Done 2026-10-25. The release triggers when at most half the party can act, or when the at-will forecast costs half the party's HP: any spell, the highest slot, healing below half HP, and short-rest features. The forecast also stopped counting incapacitated allies, which had produced false "already won" refusals in basilisk fights.
   - **Results:** unspent slots on hopeless days drop (40% left at 0.71×, 12% at 2.04×), but those days still always end in a death. The survivable boundary stays at 0.43× Moderate, and the single-encounter rating is 0.80× High, equal to default.
   - **Still open:** the forecast sees HP damage only, so control (petrifying gaze, paralysis, domination) looks cheap until PCs are out of action, often the casters holding the slots. A control-aware forecast that counts expected incapacitation as lost party actions is the next lever for rationing.
+- ~~Control-aware forecast.~~ Done 2026-10-26: `RationedPolicy.control_share` (design in `engine/BUILD_REPORT.md`).
+  - **Results:** it changes no measured outcome. The survivable day is still 0.43×, the rating is identical (0.80×), and single control fights match default.
+  - **Why:** the hopeless days are lost to HP attrition, not control (each basilisk fight alone is 0–1% defeat), and single fights already get the full budget. Rationing on these benchmarks is now limited by attrition, not by forecast blind spots.
+  - **Data gap found:** the ghoul's paralyzing Claw is in no monster routine, so ghouls never paralyze.
 
 ## Phase 5 — Build comparison (Goal 2)
 

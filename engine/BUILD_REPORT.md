@@ -423,10 +423,26 @@ single-encounter rating is unchanged within seed noise (0.78x vs 0.80x High).
   hopeless days drop (40% vs 49% left at 0.71x, 12% vs 20% at 2.04x), but those
   days still end in a death every time. The survivable boundary is unchanged at
   0.43x, and the single-encounter rating is 0.80x High (default 0.80x).
-- **Remaining gap:** the forecast sees HP damage only, so control threats
-  (petrifying gaze, paralysis, domination) look cheap until PCs are already
-  out of action, often including the casters holding the slots. A control-aware
-  forecast that values incapacitation as lost party actions is the next step.
+- **Control-aware forecast (2026-10-26):** `control_share` estimates the share
+  of party turns lost to enemy control over the fight. Each enemy contributes its
+  strongest ready source per round: an action weighted by recharge chance, an
+  attack rider or on-hit condition times its uses in any routine, or a castable
+  leveled spell. A source counts if it paralyzes, stuns, petrifies, knocks out
+  or incapacitates, upgrades to one of those on a failed repeat save, or
+  dominates (counted double). Duration comes from repeat saves, capped by the
+  fight's at-will length. Forecast damage is cut by that share (at most 90%),
+  and a share of half or more counts as losing. Examples at L5: basilisks ×2
+  0.17, a lone aboleth 0.59 (losing).
+- **Measured effect: none.** The survivable boundary is still 0.43x, the L5
+  rationed rating is identical type by type (0.80x High), and single control
+  fights match default (basilisks ×3 0% vs 0% defeat; aboleth ×2 94% vs 93%).
+  The hopeless six-fight days turn out to be lost to HP attrition, not control:
+  each 1,800 XP basilisk fight alone defeats the party 0–1% of the time. Slots
+  left at that point were budgeted for later fights. In single fights rationed
+  already has its whole budget. The estimator is kept as a correct input for
+  control-heavy days, but these benchmarks show no gain from it.
+- **Data gap found:** the ghoul's paralyzing Claw is in no routine the monster
+  AI plays (its multiattack is two Bites), so ghouls never paralyze.
 
 - **Default:** original damage scoring, lowest legal slot, healing below 50%,
   weak-enemy targeting, existing concentration preservation/commands and

@@ -511,6 +511,8 @@ class RationedPolicy(Policy):
         enemies = combat.enemies(actor)
         if not allies or not enemies: return 0, 0, 0, 0
         outgoing = sum(combat.at_will_damage_rate(a, enemies[0]) for a in allies if not a.has_condition("incapacitated"))
+        # Expected incapacitation and domination take party turns away for the rest of the fight.
+        outgoing *= 1 - self.control_share(combat, actor, allies, enemies, outgoing)
         enemy_hp = sum(e.hp for e in enemies)
         incoming = 0
         for enemy in enemies:
@@ -521,6 +523,86 @@ class RationedPolicy(Policy):
         rounds = enemy_hp / max(1, outgoing)
         # Enemies drop over the fight, so on average about half of them are still attacking.
         return sum(a.hp for a in allies), enemy_hp, outgoing, rounds * incoming / 2
+
+    INCAPACITATING = frozenset({"paralyzed", "stunned", "petrified", "unconscious", "incapacitated"})
+    MAX_CONTROL = 0.9  # never forecast more than this share of party turns lost
+
+    def control_share(self, combat, actor, allies, enemies, outgoing):
+        """Expected share of the party's turns lost to enemy control over the fight.
+
+        Each enemy contributes its strongest ready control source per round: an
+        action (weighted by its recharge chance), an attack rider or on-hit
+        condition (times its uses in the multiattack), or a leveled spell it can
+        still cast. A source counts if it paralyzes, stuns, petrifies, knocks out or
+        incapacitates, upgrades to one of those on a failed repeat save (the
+        basilisk's gaze), or dominates (a controlling charm, counted double since
+        the PC also turns on the party). Lost ally-turns per round, divided by the
+        able allies, is the share; the horizon is the fight's at-will length.
+        """
+        able = [a for a in allies if not a.has_condition("incapacitated")]
+        if not able: return self.MAX_CONTROL
+        horizon = max(1.0, sum(e.hp for e in enemies) / max(1, outgoing))
+        lost = sum(max((self.lost_turns(combat, enemy, block, rate, to_hit, able, horizon)
+                        for block, rate, to_hit in self.control_sources(combat, enemy)), default=0) for enemy in enemies)
+        return min(self.MAX_CONTROL, lost / len(able))
+
+    @staticmethod
+    def control_sources(combat, enemy):
+        """(effect block, uses per round, attack bonus or None) for an enemy's ready effects."""
+        sources = []
+        if not enemy.alive or enemy.has_condition("incapacitated"): return sources
+        for action in enemy.actions:
+            # Ready on its coming turns (action_available also requires it to be acting now).
+            if action.get("cost") not in {"action", "bonus_action"} or action.get("passive") or action.get("trigger"): continue
+            if action.get("resource") and enemy.limited_uses.get(action["resource"], 0) < 1: continue
+            if not enemy.recharge_ready.get(action["name"], True): continue
+            rate = (7 - action["recharge"]) / 6 if action.get("recharge") else 1
+            sources += [(block, rate, None) for block in action.get("effects", [])]
+        uses = {}  # most uses of each attack in any routine (the monster can pick it)
+        for routine in (enemy.routines or []) + [enemy.multiattack or [a["name"] for a in enemy.attacks[:1]]]:
+            for name in set(routine): uses[name] = max(uses.get(name, 0), routine.count(name))
+        for attack in enemy.attacks:
+            n = uses.get(attack["name"], 0)
+            if not n: continue
+            sources += [(block, n, attack["to_hit"]) for block in attack.get("riders", [])]
+            direct = [p for p in attack.get("effects", []) if "apply_condition" in p]
+            if direct: sources.append(({"target": {"select": "single"}, "save": None, "on_hit": direct, "on_fail": [], "apply": []}, n, attack["to_hit"]))
+        for name in enemy.spells:
+            spec = combat.spells[name]
+            if spec["level"] and combat.can_cast(enemy, name):
+                sources += [(block, 1, enemy.spell_attack_bonus if block.get("attack") else None) for block in spec["effects"]]
+        return sources
+
+    def lost_turns(self, combat, enemy, block, rate, to_hit, allies, horizon):
+        """Expected ally-turns lost per round of use of one effect block."""
+        target = block.get("target", {})
+        if target.get("select") == "area":
+            n = area_heuristic(target["shape"], target["size_ft"], len(allies), caster=enemy)
+        elif target.get("select") == "n_targets":
+            n = len(allies) if target.get("n") == "all" else min(len(allies), target.get("n", 1))
+        else:
+            n = 1
+        save = block.get("save")
+        best = 0
+        for p in block.get("on_fail", []) + block.get("on_hit", []) + block.get("apply", []):
+            data = p.get("apply_condition") if isinstance(p, dict) else None
+            if not data: continue
+            condition, upgrade = data["condition"], data.get("upgrade_on_failure")
+            dominated = condition == "charmed" and data.get("control")
+            if condition not in self.INCAPACITATING and upgrade not in self.INCAPACITATING and not dominated: continue
+            total = 0
+            for ally in allies:
+                if condition in ally.condition_immunities: continue
+                chance = combat.hit_probability(enemy, ally, to_hit) if to_hit is not None else 1
+                if save: chance *= combat.save_failure_probability(enemy, ally, save["ability"], save.get("dc"))
+                repeat = data.get("repeat_save")
+                q = combat.save_failure_probability(enemy, ally, repeat["ability"], (save or {}).get("dc")) if repeat else 1
+                if dominated: duration = 2 * min(horizon, 2)
+                elif condition in self.INCAPACITATING: duration = min(horizon, 1 / (1 - q)) if q < 1 else horizon
+                else: duration = q * horizon  # incapacitated only once it upgrades on a failed repeat save
+                total += chance * duration
+            best = max(best, rate * n * total / len(allies))
+        return best
 
     def needs_resources(self, combat, actor):
         hp, _, _, loss = self.at_will_fight(combat, actor)
@@ -533,6 +615,11 @@ class RationedPolicy(Policy):
                  and not c.dead and not c.removed and not c.permanently_removed]
         able = [c for c in party if c.alive and not c.has_condition("incapacitated") and c.team == actor.team]
         if party and len(able) * 2 <= len(party): return True
+        enemies = combat.enemies(actor)
+        allies = [c for c in party if c.alive and c.team == actor.team]
+        if enemies and allies:
+            outgoing = sum(combat.at_will_damage_rate(a, enemies[0]) for a in allies if not a.has_condition("incapacitated"))
+            if self.control_share(combat, actor, allies, enemies, outgoing) >= self.LOSING: return True
         hp, _, _, loss = self.at_will_fight(combat, actor)
         return hp > 0 and loss >= self.LOSING * hp
 
