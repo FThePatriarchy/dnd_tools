@@ -129,7 +129,10 @@ Fix the modelling distortions the sweep exposed, comparing options side by side 
   - **Cause:** default casts any spell that beats a cantrip on expected damage (Fireball three times a day into 600 XP fights). Conservative's "dangerous" test is a fraction of party HP that shrinks with the number of encounters left, so trivial fights still qualify, and its slot choice upcasts.
   - **Approach:** rationed gives each encounter an equal share of slot levels, overridden for emergencies and forecast-costly fights, skips slots once a fight is already won, never upcasts, and shares Hit Dice per short rest.
   - **Results** (`data/reports/finder_L5_standard_day_survive_*.md`): the L5 standard party ends the easiest day with 69% of slots (default 27%, conservative 14%). The hardest day with deaths ≤ 5% rises from 0.35× to 0.43× Moderate per encounter (800 → 1,200 XP per fight; same day at 0.42×: default 16% deaths, rationed 0%), with 24% of slots left. The single-encounter rating is unchanged within noise (0.78× vs 0.80×).
-  - **Known gap:** on hopeless days rationed can die with slots unspent (49% left at 0.71×), because the emergency release waits until an ally is below 25% HP. Releasing everything once the at-will forecast says the fight is lost is the obvious fix.
+  - **Known gap:** on hopeless days rationed could die with slots unspent (49% left at 0.71×).
+- ~~Release everything once the fight is being lost.~~ Done 2026-10-25. The release triggers when at most half the party can act, or when the at-will forecast costs half the party's HP: any spell, the highest slot, healing below half HP, and short-rest features. The forecast also stopped counting incapacitated allies, which had produced false "already won" refusals in basilisk fights.
+  - **Results:** unspent slots on hopeless days drop (40% left at 0.71×, 12% at 2.04×), but those days still always end in a death. The survivable boundary stays at 0.43× Moderate, and the single-encounter rating is 0.80× High, equal to default.
+  - **Still open:** the forecast sees HP damage only, so control (petrifying gaze, paralysis, domination) looks cheap until PCs are out of action, often the casters holding the slots. A control-aware forecast that counts expected incapacitation as lost party actions is the next lever for rationing.
 
 ## Phase 5 — Build comparison (Goal 2)
 

@@ -485,9 +485,13 @@ class RationedPolicy(Policy):
     rest. Hit Dice get an equal share per short rest left before the long
     rest, with extra dice for anyone below half HP. With one encounter left,
     the whole budget is available, so a single fight is fought as usual.
+    Once a fight is being lost (at most half the party can act, or the
+    at-will forecast costs half the party's HP) everything is released: any
+    spell, the highest slot, healing below half HP and short-rest features.
     """
     EMERGENCY = 0.25   # an ally below this HP share (or down) frees every resource
     NEED = 0.25        # forecast at-will HP loss above this party share frees slots
+    LOSING = 0.5       # forecast loss of this party share (or half the party out of action) releases everything
 
     def __init__(self):
         self.dice_allowance, self.dice_spent = {}, {}
@@ -501,11 +505,12 @@ class RationedPolicy(Policy):
                    and (c.hp == 0 or c.hp < c.max_hp * self.EMERGENCY) for c in combat.combatants)
 
     def at_will_fight(self, combat, actor):
-        """(party HP, enemy HP, party at-will damage per round, forecast HP loss) for a weapons-and-cantrips fight."""
+        """(party HP, enemy HP, party at-will damage per round, forecast HP loss) for a weapons-and-cantrips fight.
+        Only allies who can act (not incapacitated: petrified, stunned, paralyzed...) deal damage."""
         allies = [c for c in combat.combatants if c.team == actor.team and c.alive and c.summoner_id is None]
         enemies = combat.enemies(actor)
         if not allies or not enemies: return 0, 0, 0, 0
-        outgoing = sum(combat.at_will_damage_rate(a, enemies[0]) for a in allies)
+        outgoing = sum(combat.at_will_damage_rate(a, enemies[0]) for a in allies if not a.has_condition("incapacitated"))
         enemy_hp = sum(e.hp for e in enemies)
         incoming = 0
         for enemy in enemies:
@@ -521,6 +526,20 @@ class RationedPolicy(Policy):
         hp, _, _, loss = self.at_will_fight(combat, actor)
         return loss > min(hp, max(self.NEED * hp, hp / self.remaining(combat)))
 
+    def losing(self, combat, actor):
+        """The fight is being lost: at most half the party can still act (down, incapacitated or
+        dominated), or a weapons-and-cantrips fight would cost at least half the party's HP."""
+        party = [c for c in combat.combatants if c.__dict__["team"] == actor.__dict__["team"] and c.summoner_id is None
+                 and not c.dead and not c.removed and not c.permanently_removed]
+        able = [c for c in party if c.alive and not c.has_condition("incapacitated") and c.team == actor.team]
+        if party and len(able) * 2 <= len(party): return True
+        hp, _, _, loss = self.at_will_fight(combat, actor)
+        return hp > 0 and loss >= self.LOSING * hp
+
+    def slot(self, combat, actor, spec, slots):
+        # Released resources go out at full strength; otherwise never upcast.
+        return slots[-1] if self.losing(combat, actor) else slots[0]
+
     def already_won(self, combat, actor):
         _, enemy_hp, outgoing, _ = self.at_will_fight(combat, actor)
         return enemy_hp > 0 and outgoing >= enemy_hp
@@ -533,17 +552,18 @@ class RationedPolicy(Policy):
 
     def allow_spell(self, combat, actor, spec):
         if spec["level"] == 0 or spec["name"] in actor.innate_spells: return True
-        if self.emergency(combat, actor): return True
+        if self.emergency(combat, actor) or self.losing(combat, actor): return True
         if self.already_won(combat, actor): return False
         cost = min((k for k, n in actor.spell_slots.items() if n and k >= spec["level"]), default=spec["level"])
         return self.within_budget(combat, actor, cost) or self.needs_resources(combat, actor)
 
     def allow_healing(self, combat, actor, target):
-        return target.hp == 0 or target.hp < target.max_hp * self.EMERGENCY
+        threshold = self.LOSING if self.losing(combat, actor) else self.EMERGENCY
+        return target.hp == 0 or target.hp < target.max_hp * threshold
 
     def short_rest_feature(self, combat, actor):
         return (getattr(combat, "encounters_until_rest", 1) <= 1 or self.emergency(combat, actor)
-                or self.needs_resources(combat, actor))
+                or self.losing(combat, actor) or self.needs_resources(combat, actor))
 
     def allow_surge(self, combat, actor):
         return self.short_rest_feature(combat, actor)

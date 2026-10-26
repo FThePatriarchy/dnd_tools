@@ -50,6 +50,44 @@ def test_allow_spell_cantrips_emergency_and_won_fights(monkeypatch):
     assert not p.allow_spell(combat, caster, SPELL)
 
 
+def test_incapacitated_allies_deal_no_forecast_damage(monkeypatch):
+    p = RationedPolicy()
+    combat, caster, foe = setup({1: 2}, remaining=6)
+    monkeypatch.setattr(combat, "at_will_damage_rate", lambda actor, target: 5)
+    foe.hp = 5
+    assert p.already_won(combat, caster)
+    caster.conditions.add("stunned")                         # petrified/stunned allies cannot finish the fight
+    assert not p.already_won(combat, caster)
+
+
+def test_losing_fight_releases_everything(monkeypatch):
+    p = RationedPolicy()
+    combat, caster, foe = setup({1: 2, 2: 1}, remaining=6)
+    ally = Combatant("ally", team="party", max_hp=40)
+    combat.combatants.append(ally)
+    monkeypatch.setattr(combat, "at_will_damage_rate", lambda actor, target: 1)
+    foe.hp = 10                                              # a cheap fight: about 2.5 HP forecast loss
+    monkeypatch.setattr(p, "within_budget", lambda *a: False)
+    monkeypatch.setattr(p, "needs_resources", lambda *a: False)
+    assert not p.losing(combat, caster) and not p.allow_spell(combat, caster, SPELL)
+    assert p.slot(combat, caster, SPELL, [1, 2]) == 1         # normally the lowest slot
+    ally.conditions.add("paralyzed")                         # half the party out of action
+    assert p.losing(combat, caster) and p.allow_spell(combat, caster, SPELL)
+    assert p.slot(combat, caster, SPELL, [1, 2]) == 2         # released: full strength
+    ally.hp = 15                                             # below half HP: heal when losing
+    assert p.allow_healing(combat, caster, ally)
+    assert p.short_rest_feature(combat, caster)
+
+
+def test_losing_when_the_forecast_costs_half_the_party(monkeypatch):
+    p = RationedPolicy()
+    combat, caster, foe = setup({1: 2}, remaining=6)
+    monkeypatch.setattr(p, "at_will_fight", lambda c, a: (40, 100, 10, 19))
+    assert not p.losing(combat, caster)
+    monkeypatch.setattr(p, "at_will_fight", lambda c, a: (40, 100, 10, 20))
+    assert p.losing(combat, caster)
+
+
 def test_healing_only_for_downed_or_badly_hurt():
     p = RationedPolicy()
     combat, caster, _ = setup({1: 1})

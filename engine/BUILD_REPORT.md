@@ -412,8 +412,21 @@ easiest day it ends with 69% of slots (default 27%, conservative 14%). The
 hardest day that keeps deaths at or below 5% rises from 0.35x to 0.43x Moderate
 per encounter (800 to 1,200 XP per fight), ending with 24% of slots. The
 single-encounter rating is unchanged within seed noise (0.78x vs 0.80x High).
-Known gap: on hopeless days it can die with slots unspent, because the
-emergency release waits for an ally to fall below 25% HP.
+
+- **Losing-fight release (2026-10-25):** once at most half the party can act
+  (down, incapacitated or dominated), or the weapons-and-cantrips forecast costs
+  at least half the party's current HP, every resource is released: any
+  spell, the highest slot, slot healing below half HP, and short-rest
+  features. The forecast also stopped counting incapacitated allies' damage.
+  An audit of a hopeless basilisk day found most refusals came from a false
+  "already won" when petrified PCs were still counted. Result: unspent slots on
+  hopeless days drop (40% vs 49% left at 0.71x, 12% vs 20% at 2.04x), but those
+  days still end in a death every time. The survivable boundary is unchanged at
+  0.43x, and the single-encounter rating is 0.80x High (default 0.80x).
+- **Remaining gap:** the forecast sees HP damage only, so control threats
+  (petrifying gaze, paralysis, domination) look cheap until PCs are already
+  out of action, often including the casters holding the slots. A control-aware
+  forecast that values incapacitation as lost party actions is the next step.
 
 - **Default:** original damage scoring, lowest legal slot, healing below 50%,
   weak-enemy targeting, existing concentration preservation/commands and
