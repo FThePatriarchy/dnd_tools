@@ -471,7 +471,106 @@ class ConservativePolicy(Policy):
         return actor.hp < actor.max_hp * .85
 
 
-STRATEGIES = {"default": Policy, "nova": NovaPolicy, "conservative": ConservativePolicy}
+class RationedPolicy(Policy):
+    """Treats a known day's resources as a budget.
+
+    Spell slots, counted in slot levels, get an equal share per encounter left
+    before the long rest (recomputed each encounter, so savings carry
+    forward). A leveled spell is cast within that share, or beyond it when an
+    ally is down or below 25% HP, or when a weapons-and-cantrips fight is
+    forecast to cost more than 25% of the party's HP or its fair share for
+    this encounter. No slot is spent once at-will damage this round already
+    covers the enemies' HP, and slots are never upcast. Short-rest features
+    (Action Surge, Channel Divinity) are spent on such fights or before a
+    rest. Hit Dice get an equal share per short rest left before the long
+    rest, with extra dice for anyone below half HP. With one encounter left,
+    the whole budget is available, so a single fight is fought as usual.
+    """
+    EMERGENCY = 0.25   # an ally below this HP share (or down) frees every resource
+    NEED = 0.25        # forecast at-will HP loss above this party share frees slots
+
+    def __init__(self):
+        self.dice_allowance, self.dice_spent = {}, {}
+
+    @staticmethod
+    def remaining(combat):
+        return max(1, getattr(combat, "encounters_remaining", 1))
+
+    def emergency(self, combat, actor):
+        return any(c.team == actor.team and c.summoner_id is None and not c.dead and not c.removed and not c.permanently_removed
+                   and (c.hp == 0 or c.hp < c.max_hp * self.EMERGENCY) for c in combat.combatants)
+
+    def at_will_fight(self, combat, actor):
+        """(party HP, enemy HP, party at-will damage per round, forecast HP loss) for a weapons-and-cantrips fight."""
+        allies = [c for c in combat.combatants if c.team == actor.team and c.alive and c.summoner_id is None]
+        enemies = combat.enemies(actor)
+        if not allies or not enemies: return 0, 0, 0, 0
+        outgoing = sum(combat.at_will_damage_rate(a, enemies[0]) for a in allies)
+        enemy_hp = sum(e.hp for e in enemies)
+        incoming = 0
+        for enemy in enemies:
+            rate = sum(combat.at_will_damage_rate(enemy, a) for a in allies) / len(allies)
+            for action in enemy.actions:  # ready nonspell attacks such as breath weapons
+                if combat.action_available(enemy, action): rate = max(rate, combat.expected_action_damage(enemy, action, allies[0]))
+            incoming += rate
+        rounds = enemy_hp / max(1, outgoing)
+        # Enemies drop over the fight, so on average about half of them are still attacking.
+        return sum(a.hp for a in allies), enemy_hp, outgoing, rounds * incoming / 2
+
+    def needs_resources(self, combat, actor):
+        hp, _, _, loss = self.at_will_fight(combat, actor)
+        return loss > min(hp, max(self.NEED * hp, hp / self.remaining(combat)))
+
+    def already_won(self, combat, actor):
+        _, enemy_hp, outgoing, _ = self.at_will_fight(combat, actor)
+        return enemy_hp > 0 and outgoing >= enemy_hp
+
+    def within_budget(self, combat, actor, cost):
+        start = getattr(combat, "slots_at_start", {}).get(actor.id, actor.spell_slots)
+        start_points = sum(level * n for level, n in start.items())
+        spent = start_points - sum(level * n for level, n in actor.spell_slots.items())
+        return spent + cost <= math.ceil(start_points / self.remaining(combat))
+
+    def allow_spell(self, combat, actor, spec):
+        if spec["level"] == 0 or spec["name"] in actor.innate_spells: return True
+        if self.emergency(combat, actor): return True
+        if self.already_won(combat, actor): return False
+        cost = min((k for k, n in actor.spell_slots.items() if n and k >= spec["level"]), default=spec["level"])
+        return self.within_budget(combat, actor, cost) or self.needs_resources(combat, actor)
+
+    def allow_healing(self, combat, actor, target):
+        return target.hp == 0 or target.hp < target.max_hp * self.EMERGENCY
+
+    def short_rest_feature(self, combat, actor):
+        return (getattr(combat, "encounters_until_rest", 1) <= 1 or self.emergency(combat, actor)
+                or self.needs_resources(combat, actor))
+
+    def allow_surge(self, combat, actor):
+        return self.short_rest_feature(combat, actor)
+
+    def allow_action(self, combat, actor, action):
+        if action.get("resource") != "channel_divinity": return True
+        return self.short_rest_feature(combat, actor)
+
+    def reaction(self, combat, reactor, spell, trigger):
+        return ("level" not in spell or self.allow_spell(combat, reactor, spell)) and super().reaction(combat, reactor, spell, trigger)
+
+    def before_rest(self, combat, party, kind, short_rests_left):
+        """Called by run_day before each rest with the short rests left before the long rest."""
+        self.dice_spent = {}
+        self.dice_allowance = {a.id: math.ceil(a.hit_dice / max(1, short_rests_left)) for a in party} if kind == "short" else {}
+
+    def spend_hit_die(self, actor):
+        allowance = self.dice_allowance.get(actor.id)
+        if allowance is None: return actor.hp < actor.max_hp  # no schedule known
+        spent = self.dice_spent.get(actor.id, 0)
+        if actor.hp < actor.max_hp * .5 or (spent < allowance and actor.hp < actor.max_hp * .9):
+            self.dice_spent[actor.id] = spent + 1
+            return True
+        return False
+
+
+STRATEGIES = {"default": Policy, "nova": NovaPolicy, "conservative": ConservativePolicy, "rationed": RationedPolicy}
 
 
 def strategy_policy(name):

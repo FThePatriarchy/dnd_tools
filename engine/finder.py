@@ -24,6 +24,7 @@ import sys
 
 from .calibration import BUDGETS, REPORTS, budget
 from .encounters import DAY_METRICS, run_day_runs, run_encounter, wilson
+from .policy import STRATEGIES
 from .templates import DEFAULT_EXCLUDE, TEMPLATES, describe, encounter_entries, parse_shape, suggest
 
 ENCOUNTER_METRICS = ("win", "tpk", "defeat", "down", "death", "hp_lost", "slots_spent", "rounds", "fled")
@@ -242,7 +243,7 @@ def main():
         p.add_argument("--target", help="primary target, e.g. down=0.5")
         p.add_argument("--limit", action="append", default=[], help="e.g. defeat<=0.02 (repeatable)")
         p.add_argument("--seed", type=int, default=1)
-        p.add_argument("--strategy", default="default", choices=("default", "nova", "conservative"))
+        p.add_argument("--strategy", default="default", choices=list(STRATEGIES))
         p.add_argument("--morale", default="none", choices=("none", "dmg", "rout"))
         p.add_argument("--exclude", nargs="*", default=list(DEFAULT_EXCLUDE))
         p.add_argument("--workers", type=int)

@@ -299,6 +299,10 @@ def run_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max
         when = 0
         combat.future_encounters = []
         combat.encounters_remaining = 0
+        # Encounters before the next rest of either kind (short-rest resources come back then).
+        upcoming = day["steps"][index:]
+        first_rest = next((i for i, f in enumerate(upcoming) if "rest" in f), len(upcoming))
+        combat.encounters_until_rest = sum("encounter" in f for f in upcoming[:first_rest])
         for future in day["steps"][index:]:
             if future.get("rest") == "long": break
             if future.get("rest") == "short": when += 600
@@ -322,6 +326,11 @@ def run_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max
             # stabilized companions to wake, then provide the full rest time.
             wakes = [c.stable_wake_at for c in party if not c.dead and c.hp == 0 and c.stable_wake_at is not None]
             if wakes: combat.advance_time(max(0, max(wakes) - combat.time_rounds))
+            if hasattr(policy, "before_rest"):
+                # Short rests still to come (this one included) before a long rest or the day's end.
+                after = day["steps"][step_index:]
+                until_long = next((i for i, f in enumerate(after) if f.get("rest") == "long"), len(after))
+                policy.before_rest(combat, party, step["rest"], sum(f.get("rest") == "short" for f in after[:until_long]))
             rest = ClockRest(combat, party, step["rest"], policy)
             combat.advance_time(600 if step["rest"] == "short" else 4800)
             rest.finish()

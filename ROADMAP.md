@@ -125,6 +125,11 @@ Fix the modelling distortions the sweep exposed, comparing options side by side 
   - The party stays within 5% deaths only up to about 0.33× Moderate per encounter (about 1,000 XP each, half of DMG Low). From 0.37× there is a 6–17% chance of a death, and at 0.55× about half of days end in one.
   - Slots run out on every survivable day, so the 15% slot target is unreachable. The conservative strategy does not ration better: on the easiest day it ends with 14% of slots against default's 27%.
   - Day-level answers are therefore limited by the AI's resource management more than by the finder. A strategy that rations slots and hit dice across a known day is the next lever.
+- ~~A strategy that rations slots and Hit Dice across a known day.~~ Done 2026-10-25: `--strategy rationed` (`RationedPolicy`; design in `engine/BUILD_REPORT.md`, "Rationed strategy").
+  - **Cause:** default casts any spell that beats a cantrip on expected damage (Fireball three times a day into 600 XP fights). Conservative's "dangerous" test is a fraction of party HP that shrinks with the number of encounters left, so trivial fights still qualify, and its slot choice upcasts.
+  - **Approach:** rationed gives each encounter an equal share of slot levels, overridden for emergencies and forecast-costly fights, skips slots once a fight is already won, never upcasts, and shares Hit Dice per short rest.
+  - **Results** (`data/reports/finder_L5_standard_day_survive_*.md`): the L5 standard party ends the easiest day with 69% of slots (default 27%, conservative 14%). The hardest day with deaths ≤ 5% rises from 0.35× to 0.43× Moderate per encounter (800 → 1,200 XP per fight; same day at 0.42×: default 16% deaths, rationed 0%), with 24% of slots left. The single-encounter rating is unchanged within noise (0.78× vs 0.80×).
+  - **Known gap:** on hopeless days rationed can die with slots unspent (49% left at 0.71×), because the emergency release waits until an ally is below 25% HP. Releasing everything once the at-will forecast says the fight is lost is the obvious fix.
 
 ## Phase 5 — Build comparison (Goal 2)
 

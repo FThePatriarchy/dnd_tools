@@ -364,7 +364,8 @@ network access or commits were used.
   limited uses/Hit Dice, downs and rounds. Encounter means are **conditional on
   reaching that encounter**; unreachable entries have null scalar means.
 - `--strategy` controls the party and independent `--monster-strategy`
-  controls enemies. Both accept `default`, `nova`, `conservative`. Every policy
+  controls enemies. Both accept `default`, `nova`, `conservative`, `rationed`
+  (added 2026-10-25; see "Rationed strategy" below). Every policy
   decision (including reactions, targets, slot level and area exemptions) is
   routed to the appropriate side. The original `engine.simulate` public
   interface/default behavior remains available without CLI changes.
@@ -376,6 +377,43 @@ network access or commits were used.
 
 These are transparent heuristics, not optimal play or a rules-based difficulty
 oracle. Neither policy sees future rolls or encounter results.
+
+#### Rationed strategy (2026-10-25)
+
+`RationedPolicy` treats a known day's resources as a budget. An audit of an easy
+six-encounter L5 day showed why the others run dry: default casts any leveled
+spell that beats a cantrip on expected damage (Fireball three times a day into
+600 XP fights). Conservative's "dangerous" test compares forecast HP loss with
+party HP divided by encounters left, which early in a long day is a small
+share, so trivial fights still qualify. Its slot choice also upcasts. Rationed:
+
+- **Slot budget:** an equal share of slot levels (a level-3 slot costs 3) per
+  encounter left before the long rest, from the slots held at the encounter's
+  start. It is recomputed every encounter, so unspent budget carries forward,
+  and a single encounter has the whole budget.
+- **Overrides:** it spends beyond the share if an ally is down or below 25% HP,
+  or if a weapons-and-cantrips fight is forecast to cost more than 25% of
+  current party HP or the fair share for this encounter. The forecast is
+  enemy HP over party at-will damage, times average incoming damage, halved
+  because enemies drop during the fight.
+- **No waste:** no leveled spell once at-will damage this round already covers
+  the enemies' HP. Lowest legal slot only. Slot healing only for allies at 0 HP
+  or below 25%.
+- **Short-rest features:** Action Surge and Channel Divinity are spent on such
+  fights, or freely in the last encounter before a rest
+  (`combat.encounters_until_rest`, set by `run_day`).
+- **Hit Dice:** `run_day` calls `before_rest(combat, party, kind,
+  short_rests_left)`. Each short rest gets a share of each character's
+  remaining dice, ceil(dice / short rests left before the long rest). That share
+  is spent up to 90% HP, and anyone below half HP may go beyond it.
+
+Measured on the L5 standard party, six encounters with two short rests: on the
+easiest day it ends with 69% of slots (default 27%, conservative 14%). The
+hardest day that keeps deaths at or below 5% rises from 0.35x to 0.43x Moderate
+per encounter (800 to 1,200 XP per fight), ending with 24% of slots. The
+single-encounter rating is unchanged within seed noise (0.78x vs 0.80x High).
+Known gap: on hopeless days it can die with slots unspent, because the
+emergency release waits for an ally to fall below 25% HP.
 
 - **Default:** original damage scoring, lowest legal slot, healing below 50%,
   weak-enemy targeting, existing concentration preservation/commands and
