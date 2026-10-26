@@ -111,8 +111,20 @@ Fix the modelling distortions the sweep exposed, comparing options side by side 
 
 ## Phase 4 — Encounter and day finder (Goals 3 and 4)
 
-- **Encounter:** the user gives a party, a template and a target risk (for example, "wipe under 2%, someone goes down about half the time"). Search one setting, such as goon count or monster CR, until the simulated result hits the target. The answer then reflects that party's actual strength, not the DMG table.
-- **Day:** the user gives a day template (number of encounters, where the rests go) and an end-of-day target (for example, "nobody dies, party ends with 10–20% of slots and hit dice"). Search one difficulty scale factor applied across the day.
+- ~~**Encounter** and **day** finders.~~ Done 2026-10-25: `python -m engine.finder encounter|day` (`engine/finder.py`).
+  - **Goal:** a primary `--target metric=value` (matched as closely as possible) plus `--limit metric<=value` / `>=` (must hold). With limits only, it returns the hardest setting that meets them.
+  - **Setting searched:** one scale on the DMG budget. The encounter finder scales High and fills a template or shape (Phase 3). The day finder scales Moderate for every encounter in a `--plan "E E S E E S E E"` (E encounter, S/L short/long rest). Each encounter in the day gets its own seeded fill, cycling through the given templates.
+  - **Search:** a coarse parallel scan (0.25×–2.7×, 100 runs per point), then two refinement rounds of three interior points (400 runs) inside the bracket where the target or a limit is crossed. Each distinct encounter or day is simulated once per sample size, with a seed derived from its contents, so a search depends only on its seed.
+  - **Output:** the recommendation and its metrics (with 95% ± for yes/no metrics), and the curve with each distinct fill once. The report notes when stepwise fills keep any tested point from landing near the target. `--write NAME` saves `data/reports/finder_NAME.md`. The whole-day runner is `encounters.run_day_runs`.
+- **Encounter demo** (L5, `boss_minions`, someone down ≈ 50%, defeat ≤ 2%; `data/reports/finder_L5_*_boss_minions.md`):
+  - Casual: 0.51× High (an air elemental and four hobgoblins, 2,200 XP; down 64%).
+  - Standard: 0.67× (a guard captain and four berserkers, 2,900 XP; down 58%).
+  - Optimized: the same encounter, down 43%.
+  - The curve is not monotone in XP: a 3,100 XP mage-led fight is far deadlier than a 3,700 XP young black dragon fight. That is the case for simulating instead of trusting XP.
+- **Day demo** (L5 standard, six encounters with two short rests, mixed template, deaths ≤ 5%, 15% of slots left; `finder_L5_standard_day_{default,conservative}.md`):
+  - The party stays within 5% deaths only up to about 0.33× Moderate per encounter (about 1,000 XP each, half of DMG Low). From 0.37× there is a 6–17% chance of a death, and at 0.55× about half of days end in one.
+  - Slots run out on every survivable day, so the 15% slot target is unreachable. The conservative strategy does not ration better: on the easiest day it ends with 14% of slots against default's 27%.
+  - Day-level answers are therefore limited by the AI's resource management more than by the finder. A strategy that rations slots and hit dice across a known day is the next lever.
 
 ## Phase 5 — Build comparison (Goal 2)
 

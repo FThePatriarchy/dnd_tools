@@ -159,3 +159,56 @@ def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, 
     agg = {k: mean(float(r[k]) for r in rows) for k in metrics} if rows else dict.fromkeys(metrics)
     return {"runs": len(rows), "failed_runs": attempted - len(rows), "errors": errors,
             "ci": half_widths(rows) if rows else dict.fromkeys(TRACKED), **agg}
+
+
+DAY_METRICS = ("complete", "defeat", "death", "cleared", "slots_left", "hp_left", "hit_dice_left", "downs")
+
+
+def run_day_runs(builds, day, runs, seed, *, morale="none", strategy="default", monster_strategy="default"):
+    """Run a party through a whole day definition (encounters and rests) many times.
+
+    Returns means of: complete (every encounter cleared and no PC died), defeat
+    (the day ended in a TPK or with every remaining PC out of the fight), death
+    (any PC died), cleared (share of encounters cleared), slots_left, hp_left and
+    hit_dice_left (party totals at the end of the day, as shares of maximum) and
+    downs; plus runs, failed_runs and errors.
+    """
+    global _SPELLS
+    from .day import day_monsters, run_day, validate_day
+    from .day_options import DayOptions
+    from .loader import load_spells
+    from .policy import strategy_policy
+    from .state import Combatant
+    if _SPELLS is None: _SPELLS = load_spells()
+    validate_day(day)
+    opts = DayOptions(morale=morale)
+    sheets = party_sheets(builds, opts)
+    monsters = day_monsters(day)
+    total = sum("encounter" in step for step in day["steps"])
+    rng = random.Random(seed)
+    rows, errors = [], {}
+    for _ in range(runs):
+        party = [Combatant.from_sheet(s, f"party_{i}", "party") for i, s in enumerate(sheets)]
+        max_hp = sum(c.max_hp for c in party)
+        max_slots = sum(sum(c.max_spell_slots.values()) for c in party)
+        max_dice = sum(c.max_hit_dice for c in party)
+        run_seed = rng.getrandbits(64)
+        try:
+            result = run_day(party, day, _SPELLS, run_seed, policy=strategy_policy(strategy),
+                             monster_policy=strategy_policy(monster_strategy), monster_sheets=monsters, options=opts)
+        except Exception as exc:  # engine bugs are reported, not averaged in
+            errors.setdefault(f"{type(exc).__name__}: {exc}", run_seed)
+            continue
+        end = result.end_state or (result.encounters[-1].after_healing if result.encounters else {})
+        rows.append({
+            "complete": result.survived and result.encounters_cleared == total,
+            "defeat": result.failure_reason in DEFEATS,
+            "death": any(c["deaths"] or c["dead"] for c in end.values()),
+            "cleared": result.encounters_cleared / total,
+            "slots_left": sum(sum(c["slots"].values()) for c in end.values()) / max_slots if max_slots else 1.0,
+            "hp_left": sum(0 if c["dead"] else min(c["hp"], c["max_hp"]) for c in end.values()) / max_hp,
+            "hit_dice_left": sum(c["hit_dice"] for c in end.values()) / max_dice if max_dice else 1.0,
+            "downs": sum(e.downs for e in result.encounters),
+        })
+    agg = {k: mean(float(r[k]) for r in rows) for k in DAY_METRICS} if rows else dict.fromkeys(DAY_METRICS)
+    return {"runs": len(rows), "failed_runs": runs - len(rows), "errors": errors, **agg}
