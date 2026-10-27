@@ -1,0 +1,66 @@
+# 🎲 D&D 5.5e Monte Carlo Combat Simulator
+
+![Python Version](https://img.shields.io/badge/python-3.11%2B-blue)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Status](https://img.shields.io/badge/Status-In%20Development-orange)
+
+A high-performance mathematical combat simulator and state-machine engine designed for Dungeons & Dragons 5.5e. By running thousands of automated battles using Monte Carlo simulations, this tool provides real statistical data on encounter difficulty, resource expenditure, and tactical optimization.
+
+---
+
+## 📖 The Problem & Goal
+Dungeon Masters (DMs) frequently struggle to balance combat encounters using the standard Challenge Rating (CR) system, often resulting in accidentally deadly or boringly easy fights. Similarly, theorycrafters rely on "white-room" math to optimize character builds, which fails to account for resource drain over a full "Adventuring Day."
+
+**Our Goal:** Build a pure-function, mathematically rigorous combat engine that accurately predicts encounter difficulty and resource management. 
+
+### Target Audience
+* **Dungeon Masters:** Validate homebrew monsters or test if a boss fight will result in a Total Party Kill (TPK).
+* **Min-Maxers & Theorycrafters:** Mathematically prove which class build, weapon, or spell is statistically superior over a multi-encounter Adventurers League-style day.
+
+---
+
+## ⚙️ Features & Scope
+
+### In-Scope (Core Mechanics)
+* D&D 5.5e core combat mechanics (AC, HP, Initiative, Attack/Damage Rolls, Saving Throws).
+* Advantage / Disadvantage system.
+* Basic status conditions (Stunned, Poisoned, etc.).
+* Damage Resistances and Immunities.
+* Action Economy strictness (Actions, Bonus Actions, Reactions).
+* Mathematical approximations for Area of Effect (AoE) spells.
+* AI Strategy toggles (e.g., "Nova Strategy" vs. "Conservative Resource Strategy").
+
+### Out-of-Scope (Iterative Boundary)
+* Roleplay features and out-of-combat utility spells.
+* 2D grid/spatial movement (distance and positioning).
+* Complex line-of-sight and cover rules.
+
+---
+
+## 🚀 Usage (Command Line Interface)
+
+As a backend-first engine, the primary UI is a Command Line Interface (CLI). 
+
+Run from the repository root. Builds are named after files in `data/handwritten/builds/` and monsters after files in `data/handwritten/monsters/`.
+
+**One fight (win rate, rounds, HP and resources left):**
+```bash
+python -m engine.simulate --party fighter_5 cleric_5 rogue_5 wizard_5 --monsters ogre ogre --runs 1000
+```
+
+**Rate a party against the benchmark set:**
+```bash
+python -m engine.rating --party fighter_5 cleric_5 rogue_5 wizard_5
+```
+
+**Find the encounter a party can take (here: half the time someone goes down):**
+```bash
+python -m engine.finder encounter --level 5 --template elite_pack --target down=0.5
+```
+
+**Compare build choices by swapping them into a reference party:**
+```bash
+python -m engine.compare --level 5 --class fighter --variants
+```
+
+See `ROADMAP.md` for what each tool measures and the results so far.

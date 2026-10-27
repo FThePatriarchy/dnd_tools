@@ -1,6 +1,6 @@
 # Single-class progression (XPHB, levels 1–10)
 
-`classes/{fighter,rogue,wizard,cleric}.yaml` is strictly validated by
+`classes/{fighter,rogue,wizard,cleric,barbarian,paladin}.yaml` is strictly validated by
 `engine.classes.load_class`. Only the named XPHB class and subclass are allowed.
 Each feature has `name`, `level`, `origin: class|subclass`, and executable
 `mechanics`/`actions`, or `unsupported` with a reason. Mixed features can have
@@ -84,7 +84,7 @@ level. Each feat becomes a sheet feature flag.
 | War Caster | Int, Wis or Cha | Spellcasting | advantage on Constitution saves to maintain Concentration | Reactive Spell (no opportunity attacks); somatic components with full hands |
 | Alert (Origin) | — | — | +PB to initiative; Initiative Swap at initiative: trades places with the slowest ally with spell slots who would act later | — |
 
-The greatsword and longbow carry the 2024 `heavy` property; sheet attack
+The greataxe, greatsword, maul and longbow carry the 2024 `heavy` property; sheet attack
 properties accept `heavy`.
 
 ## Builder and build recipes
@@ -94,7 +94,7 @@ validated ordinary character sheet; optional arguments have deterministic
 defaults. `load_build("wizard_7")` loads a recipe. A recipe requires exactly
 `class`, `level`, `subclass`, `abilities`, `equipment`, `choices`. Both CLIs
 accept build stems as party names; existing fixed stems take precedence.
-Subclass is dormant before level three. Only the four named subclasses exist.
+Subclass is dormant before level three. Only the six named subclasses exist.
 
 Choices: `ability_method`, `asis`, `fighting_style`, `weapon_masteries`,
 `skills`, `expertise`, `cunning_strike`, `cantrips`, `prepared_spells`,
@@ -149,3 +149,34 @@ rules prevent an unrelated number elsewhere in prose from validating a mutant.
 Allow-list: universal PB omitted from raw tables, zero for absent grants, and
 lexical one/once/next. `engine/step4_validation.json` records counts. Raw sources
 and reviewed spell/monster files are never rewritten.
+
+
+## Barbarian (Berserker) and Paladin (Devotion), XPHB 1–10
+
+Both use the same strict declaration/source audit and build recipes as the
+original four classes. Standard, casual and optimized builds cover 1/3/5/7/10;
+all intervening levels can be built. Reference parties and historical calibration
+and Step-4 reports remain the original four PCs. `compare.ROLES` maps both new
+classes to the Fighter reference slot. `source_audit(names)` optionally audits
+the new declarations without changing the historical report's default cohort.
+
+| Feature | Simulated | Not simulated / approximation |
+|---|---|---|
+| Rage | Bonus action; 2/3/4 daily uses at levels 1/3/6, regain one on a Short Rest; +2 damage (+3 at 9) on Strength weapon hits; B/P/S resistance; Strength check/save advantage; drops concentration and prevents spells; ends on incapacity | Assumed extended throughout combat, capped at 10 minutes; no per-round attack/damage/bonus-action renewal tracking. XPHB actually extends via attack, enemy save or bonus action, not taking damage. Heavy armor is rejected by builder; mid-combat equipment changes unsupported. |
+| Unarmored Defense | 10 + Dex + Con, plus shield when equipped | No equipment swapping. Unarmored axe/greatsword/maul and scale greataxe kits added. |
+| Reckless Attack / Danger Sense | Policy defaults to Reckless on first weapon attack of own turn; Strength attack advantage and incoming attack advantage until next turn; Dexterity save advantage unless incapacitated | No visibility restriction on Danger Sense (2024). Policy may decline Reckless. |
+| Extra Attack / Feral Instinct | Two Attack-action attacks from 5; initiative advantage from 7 | Fast Movement and Instinctive Pounce omitted (no grid). |
+| Brutal Strike | From 9, once on own turn, forgo all advantage on a Strength attack without disadvantage; +1d10 on hit, doubled on critical; Hamstring Blow stores nonstacking -15 speed until next turn | Policy defaults to using it. No Forceful Blow displacement; movement penalties have no positional effect. |
+| Frenzy | First Strength hit on own turn while raging and Reckless: Rage-bonus count of d6, doubled on critical | No exhaustion cost (2024). |
+| Mindless Rage / Retaliation | Charmed/frightened immunity during Rage, removes existing conditions on entering; at 10, reaction melee attack after damage | Retaliation assumes the damaging creature is in melee reach under existing no-grid reachability; ranged separation is not known. No Relentless Rage (11). |
+| Weapon masteries | Existing Graze/Topple etc.; greataxe Cleave: once per turn, extra attack on a different enemy without positive ability damage modifier | Cleave assumes second enemy within 5 feet of first and in reach. |
+| Paladin spellcasting | 2024 half-caster slots starting at 1; Charisma attack/DC; fixed prepared counts 2/3/4/5/6/6/7/7/9/9; existing spell specs only; Devotion oath spells additional; Divine Smite always prepared from 2; paladin-only in-combat buff EV over remaining rounds capped by duration: attack-roll hit gains (weapon or best attack cantrip), weapon enchantment hit/damage gains, AC prevention on front-line allies, recurring temp HP capped by incoming damage; concentration buffs last the expected rounds before a failed DC 10 Constitution save; a buff's slot is charged the Smite it would have powered when slots are scarcer than rounds; bonus-action buffs retain weapon DPR but are charged this turn's Smite | Prepared count is the XPHB table, **not** Cha modifier + level. Blessed Warrior cantrip style, Find Steed/its free cast and exploration preparation changes omitted. |
+| Lay on Hands | Bonus action, finite 5 × level pool, partial or full healing including downed PCs, daily recovery; AI prioritizes downed/under-half-HP allies | Touch range assumes ally reachable; removing Poisoned for 5 pool points omitted. |
+| Divine Smite / Paladin’s Smite | Actual existing bonus-action spell, only after melee weapon hit; slot upcasting and fiend/undead die; critical doubles dice; same attack damage packet; one free first-level cast per Long Rest from 2; ordinary slot-per-turn, components and Counterspell handling | AI spends free cast first, otherwise slots permitted by strategy; holds a lone slot for a later hit/critical in a two-attack turn. Rationed uses its existing slot-level budget. No unarmed attacks in equipment kits. |
+| Fighting Style / Sacred Weapon | One supported style from 2; Sacred Weapon from 3 consumes Channel Divinity as part of Attack action, adds max(1,Cha) to chosen melee weapon attacks for 10 minutes; two daily CD uses, regain one on Short Rest | Sacred Weapon light and optional Radiant damage conversion omitted; carrying/dropping weapons unsupported. Divine Sense and Abjure Foes omitted. |
+| Aura of Protection / Devotion / Courage | From 6, max(1,Cha) to saves, strongest aura only; charmed immunity from 7 and frightened immunity from 10, suppress existing conditions; inactive while source incapacitated/dead | Same `area("emanation",10,ally_count)` coverage as Aura of Authority: source plus first covered allies in combatant order, no grid. Original team membership is used so existing charms can be suppressed. No Radiant Strikes (11). |
+
+Rage/Sacred Weapon are encounter statuses and are cleared by the ordinary
+encounter cleanup. Finite pools, slots and daily counters persist between
+encounters and use the existing rest machinery. Long-lived positioning and
+manual out-of-combat weapon handling remain outside this model.

@@ -58,6 +58,8 @@ class Combatant:
     original_max_hp: int | None = None
     original_abilities: dict = field(default_factory=dict)
     effects: list[Effect] = field(default_factory=list)
+    aura_sources: list = field(default_factory=list, repr=False)
+    _checking_aura: bool = field(default=False, repr=False)
     statuses: dict[str, dict] = field(default_factory=dict)
     concentration: int | None = None
     spell_slots: dict[int, int] = field(default_factory=dict)
@@ -160,8 +162,25 @@ class Combatant:
     def bloodied(self):
         return self.hp * 2 <= self.max_hp
 
+    @property
+    def raging(self):
+        return "rage" in self.statuses and self.alive and not self.has_condition("incapacitated")
+
+    def aura_active(self):
+        # A charm-dependent incapacity cannot bootstrap its own suppressing aura.
+        if self._checking_aura: return False
+        self._checking_aura = True
+        try: return self.alive and not self.has_condition("incapacitated")
+        finally: self._checking_aura = False
+
+    def class_condition_immune(self, condition):
+        if condition not in {"charmed", "frightened"}: return False
+        if self.features.get("mindless_rage") and self.raging: return True
+        flag = "aura_of_devotion" if condition == "charmed" else "aura_of_courage"
+        return any(c.features.get(flag) and c.aura_active() for c in self.aura_sources)
+
     def immune_to(self, condition):
-        return condition in self.condition_immunities or any(e.kind == "defense" and condition in e.data.get("condition_immunity", []) for e in self.active_effects)
+        return self.class_condition_immune(condition) or condition in self.condition_immunities or any(e.kind == "defense" and condition in e.data.get("condition_immunity", []) for e in self.active_effects)
 
     @property
     def spell_mod(self):
@@ -191,7 +210,7 @@ class Combatant:
 
     def condition_effective(self, effect, active):
         condition = effect.data["condition"]
-        if condition in self.condition_immunities: return False
+        if self.class_condition_immune(condition) or condition in self.condition_immunities: return False
         for defense in active:
             if defense.kind == "defense" and (condition in defense.data.get("condition_immunity", []) or
                     effect.data.get("magical") and condition in defense.data.get("magical_condition_immunity", [])): return False
@@ -199,6 +218,7 @@ class Combatant:
         return True
 
     def has_condition(self, condition: str) -> bool:
+        if self.class_condition_immune(condition): return False
         if condition == "invisible" and self.has_status("invisibility_suppressed"): return False
         if condition == "exhaustion" and self.exhaustion_level > 0: return True
         if not self.effects:

@@ -97,7 +97,7 @@ def validate_sheet(data, path, *, summoned=False):
         if "reach_ft" in a: v.number(a["reach_ft"], p + ".reach_ft", 0)
         if "range_ft" in a: v.number(a["range_ft"], p + ".range_ft", 0)
         if "ability" in a: v.enum(a["ability"], ABILITIES, p + ".ability")
-        if "mastery" in a: v.enum(a["mastery"], {"graze", "vex", "sap", "slow", "push", "topple"}, p + ".mastery")
+        if "mastery" in a: v.enum(a["mastery"], {"graze", "vex", "sap", "slow", "push", "topple", "cleave"}, p + ".mastery")
         v.primitives(a["effects"], p + ".effects")
         if "on_hit_self" in a: v.primitives(a["on_hit_self"], p + ".on_hit_self")
         if "riders" in a: v.blocks(a["riders"], p + ".riders")

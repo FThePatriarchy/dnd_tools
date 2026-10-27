@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 
 from .class_source import numeric_leaves, check_class_source, CORE_ALLOWLIST
-from .classes import SUBCLASSES, validate_class
+from .classes import validate_class
 from .loader import ROOT, ValidationError, read_yaml
 
 
@@ -26,9 +26,10 @@ def mutants(data):
             yield route,altered
 
 
-def source_audit():
+def source_audit(names=("fighter", "rogue", "wizard", "cleric")):
+    # Keep the historical four-class report reproducible; callers can audit other classes.
     report={"classes":{},"numeric_fields":0,"mutants":0,"survivors":[],"allow_list":CORE_ALLOWLIST}
-    for name in SUBCLASSES:
+    for name in names:
         path=ROOT/"classes"/(name+".yaml"); data=read_yaml(path)
         validate_class(data,path)
         count=check_class_source(data,path); attempts=0
@@ -45,7 +46,7 @@ def source_audit():
 def _day_row(args):
     from .day import simulate_day
     level,strategy,runs,seed=args
-    party=tuple(f"{name}_{level}" for name in SUBCLASSES)
+    party=tuple(f"{name}_{level}" for name in ("fighter", "rogue", "wizard", "cleric"))
     summary=simulate_day(party,f"classes_level_{level}",runs,seed,strategy=strategy)
     return {"level":level,**asdict(summary)}
 

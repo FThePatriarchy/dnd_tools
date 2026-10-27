@@ -1,0 +1,19 @@
+class: barbarian
+level: 7
+subclass: berserker
+abilities:
+  str: 15
+  dex: 14
+  con: 13
+  int: 8
+  wis: 12
+  cha: 10
+equipment: unarmored_greataxe
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      str: 2
+  weapon_masteries:
+  - greataxe
+  expertise: []

@@ -30,7 +30,9 @@ from .loader import ROOT, load_sheet
 from .presets import ordered, party, recipe as preset_recipe
 from .rating import rate_party
 
-CLASSES = ("fighter", "cleric", "rogue", "wizard")
+REFERENCE_CLASSES = ("fighter", "cleric", "rogue", "wizard")
+ROLES = {c:c for c in REFERENCE_CLASSES} | {"barbarian":"fighter", "paladin":"fighter"}
+CLASSES = tuple(ROLES)
 NOISE = 0.03       # overall rating: Phase 2 seeds agreed within about 2.3%
 TYPE_NOISE = 0.10  # one opponent type: Phase 2 seeds moved single types by up to ~0.1x
 FIGHTER_KITS = (("greatsword", "chain_greatsword", "great_weapon_fighting", ["greatsword"]),
@@ -68,6 +70,8 @@ def spell_profile(base, cls, level, profile):
 
 
 FEAT_OPTIONS = {  # (feat, +1 ability, changes to the standard recipe)
+    "barbarian": [("great_weapon_master", "str", {})],
+    "paladin": [("great_weapon_master", "str", {"equipment":"chain_greatsword","weapon_masteries":["greatsword"]})],
     "fighter": [("great_weapon_master", "str", {}),
                 ("sharpshooter", "dex", {"equipment": "leather_archer", "fighting_style": ["archery"], "weapon_masteries": ["longbow"]})],
     "rogue": [("sharpshooter", "dex", {"equipment": "studded_shortbow", "weapon_masteries": ["shortbow", "rapier"]})],
@@ -85,7 +89,7 @@ def feat_variants(base, cls, level):
     first = min(asis)
     for feat, ability, changes in FEAT_OPTIONS[cls]:
         r = variant(base, f"feat: {feat.replace('_', ' ')}", **changes)
-        if "fighting_style" in changes and level >= 7: r["choices"]["fighting_style"] = changes["fighting_style"] + ["defense"]
+        if cls == "fighter" and "fighting_style" in changes and level >= 7: r["choices"]["fighting_style"] = changes["fighting_style"] + ["defense"]
         r["choices"]["asis"] = {**deepcopy(asis), first: {"feat": feat, "ability": ability}}
         out.append(r)
     return out
@@ -106,6 +110,14 @@ def variants(cls, level):
                         and set(v["choices"]["fighting_style"]) == set(base["choices"]["fighting_style"]))
         out.pop(standard)
         out.insert(0, base)  # the standard build itself (same choices, its own style order)
+    elif cls == "barbarian":
+        out.append(variant(base,"greatsword kit",equipment="unarmored_greatsword",weapon_masteries=["greatsword"]))
+    elif cls == "paladin":
+        for kit,equipment,style,masteries in [FIGHTER_KITS[0],FIGHTER_KITS[1],("sword and shield","chain_sword_shield","defense",["longsword"])]:
+            changes = {"equipment":equipment,"weapon_masteries":masteries}
+            if level>=2: changes["fighting_style"]=[style]
+            out.append(variant(base,f"{kit} + {style.replace('_',' ')}",**changes))
+        out += [spell_profile(base,cls,level,p) for p in ("optimized","casual")]
     elif cls == "rogue":
         cunning = base["choices"].get("cunning_strike")
         for equipment, masteries in (("studded_shortbow", ["shortbow", "rapier"]),):
@@ -160,7 +172,7 @@ def compare(level, cls, candidates, references=("standard",), *, seed=1, strateg
     results = {}
     for ref in references:
         base_party = party(level, ref)
-        slot = CLASSES.index(cls)
+        slot = REFERENCE_CLASSES.index(ROLES[cls])
         base = rate_party(base_party, seed=seed, strategy=strategy, workers=workers)
         rows = []
         for candidate in candidates:

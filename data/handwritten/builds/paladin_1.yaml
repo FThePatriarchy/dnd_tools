@@ -1,0 +1,21 @@
+class: paladin
+level: 1
+subclass: devotion
+abilities:
+  str: 15
+  dex: 10
+  con: 14
+  int: 8
+  wis: 12
+  cha: 13
+equipment: chain_greatsword
+choices:
+  ability_method: standard_array
+  asis: {}
+  weapon_masteries:
+  - greatsword
+  cantrips: []
+  prepared_spells:
+  - Bless
+  - Cure Wounds
+  expertise: []

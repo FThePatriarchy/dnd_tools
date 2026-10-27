@@ -1,5 +1,6 @@
 """Event-driven resolution. The engine never imports the old extraction pipeline."""
 from collections import Counter, defaultdict
+from copy import deepcopy
 from types import SimpleNamespace
 import random
 
@@ -45,6 +46,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         self.death_rules = False
         self.damage_dealt = Counter()
         self.initialize_monsters()
+        for c in self.combatants: c.aura_sources = []
+        self.class_auras()
 
     def policy_for(self, actor):
         return self.monster_policy if actor.team != "party" and self.monster_policy is not None else self.policy
@@ -104,7 +107,9 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         return max(candidates, key=self.spell_potency) is instance
 
     def refresh_spell_effects(self):
+        self.class_auras()
         for actor in self.combatants:
+            self.class_expire(actor)
             for effect in actor.effects:
                 instance = self.instances.get(effect.source)
                 effect.suppressed = bool(instance and not self.spell_applies(instance, actor))
@@ -252,6 +257,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         natural = dice.d20(self.rng, advantage, disadvantage)
         bonus = self.modifier(target, "save", bonus, ability, consume=True)
         if concentration: bonus += self.modifier(target, "concentration_save", 0, ability)
+        bonus += self.aura_save_bonus(target)
         bonus -= self.exhaustion_penalty(target)
         natural = self.heroic_reroll(target, natural, lambda n: n + bonus >= dc)
         total = natural + bonus
@@ -291,6 +297,10 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if defender.has_condition("prone"):
             if melee: adv = True
             else: dis = True
+        if weapon and ability == "str" and self.current is attacker and attacker.features.get("brutal_strike") and attacker.statuses.get("reckless") and not dis and attacker.statuses.get("brutal_turn") != self.turn_index and self.policy_for(attacker).brutal_strike(self,attacker,defender):
+            adv = False
+            attacker.statuses["brutal_attack"] = True
+            attacker.statuses["brutal_turn"] = self.turn_index
         self.duel_activity(attacker, defender)
         natural = dice.d20(self.rng, adv, dis)
         natural = self.heroic_reroll(attacker, natural, lambda n: n != 1 and (n >= (attacker.features.get("improved_critical",20) if weapon else 20) or n + bonus >= self.armor_class(defender)))
@@ -341,7 +351,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if dtype in target.immunities: amount = 0
         else:
             if any(e.kind == "defense" and dtype in e.data.get("immunity", []) for e in target.active_effects): amount = 0
-            resisted = dtype in target.resistances or target.has_condition("petrified") or any(e.kind == "defense" and dtype in e.data.get("resistance", []) for e in target.active_effects)
+            resisted = (target.raging and dtype in {"bludgeoning","piercing","slashing"}) or dtype in target.resistances or target.has_condition("petrified") or any(e.kind == "defense" and dtype in e.data.get("resistance", []) for e in target.active_effects)
             if resisted: amount //= 2
             if dtype in target.vulnerabilities or any(e.kind == "defense" and dtype in e.data.get("vulnerability", []) for e in target.active_effects): amount *= 2
         for e in target.active_effects:
@@ -441,6 +451,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 if e.kind == "turn_rules" and e.data.get("end_at_zero") and target.hp == 0: self.remove_effects(self.instances[e.source],target)
             if target.summoned_source and target.statuses.get("summon_rules", {}).get("ends_on_damage"): self.end_spell(target.summoned_source)
             self.deplete_transform(target)
+            if "rage" in target.statuses and not target.raging: target.statuses.pop("rage",None)
+            self.retaliation(target,source,amount)
             for e in list(target.active_effects):
                 if e.kind == "status" and e.data["id"] == "agathys" and not target.temp_hp: self.end_spell(e.source)
             for inst in list(self.instances.values()) if not target.alive else ():
@@ -500,6 +512,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
     def can_cast(self, actor, name, slot=None):
         if name not in self.spells or name not in actor.spells or not actor.alive or actor.has_condition("incapacitated"): return False
         spec = self.spells[name]
+        if actor.raging: return False
         if not actor.recharge_ready.get(name, True): return False
         if (actor.has_status("engulfed") or actor.has_status("verbal_components_blocked")) and actor.spell_components.get(name, {}).get("v", spec["components"]["v"]): return False
         kind = actor.spell_costs.get(name, spec["casting_time"])
@@ -1176,6 +1189,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         return performed
 
     def expire(self, event, actor):
+        self.class_expire(actor)
         def due(boundary):
             return boundary and boundary[0] == event and boundary[1] == actor.id and actor.turns_taken >= boundary[2]
         for instance in list(self.instances.values()):
@@ -1203,6 +1217,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         actor.slot_cast_turn = None
 
     def begin_turn(self, actor):
+        self.class_auras()
         self.current = actor
         self.turn_index += 1
         actor.turns_taken += 1
@@ -1269,6 +1284,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
 
     def weapon_attack(self, actor, target, attack):
         if not actor.alive or not self.targetable(target, actor) or actor.has_condition("incapacitated"): return False
+        if self.current is actor and actor.features.get("lay_on_hands"): actor.statuses["weapon_hits"] = actor.statuses.get("weapon_hits",0)+1
         attack = self.enchanted_attack(actor, attack)
         attack = self.class_weapon(actor, attack, target)
         if not actor.recharge_ready.get(attack["name"], True): return False
@@ -1315,9 +1331,18 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             actor.effects.append(from_effect)
         success = self.attack(actor, target, attack["to_hit"], hit, attack.get("kind", "melee") == "melee", weapon=True, ability=attack.get("ability", "str" if attack.get("kind", "melee") == "melee" else "dex"))
         self._monster_attack = previous_context
+        actor.statuses.pop("brutal_attack",None)
         if success: self.class_after_hit(actor, target, cunning)
         if not success and attack.get("mastery") == "graze":
             self.damage(target, max(0, actor.mod(attack.get("ability", "str"))), attack["effects"][0]["damage"]["type"], actor)
+        if success and attack.get("mastery") == "cleave" and actor.statuses.get("cleave_turn") != self.turn_index:
+            others = [e for e in self.enemies(actor) if e is not target]
+            if others:
+                actor.statuses["cleave_turn"] = self.turn_index
+                cleave = {**attack,"effects":deepcopy(attack["effects"])}
+                cleave["effects"][0]["damage"]["bonus"] = cleave["effects"][0]["damage"].get("bonus",0)-max(0,actor.mod(attack.get("ability","str")))
+                self.feature_log(actor,"Cleave")
+                self.weapon_attack(actor,others[0],cleave)
         if extra in actor.effects: actor.effects.remove(extra)
         if (success and actor.features.get("great_weapon_master") and attack.get("kind", "melee") == "melee"
                 and (landed["critical"] or (before_hp > 0 and target.hp == 0)) and self.current is actor
@@ -1341,6 +1366,12 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if not granted:
             self.spend_economy(actor, "action")
             if actor.surge_actions: actor.surge_actions -= 1
+        if not granted and actor.features.get("sacred_weapon") and actor.limited_uses.get("channel_divinity") and actor.statuses.get("sacred_weapon",{}).get("expires",0) <= self.time_rounds:
+            weapon = next((a for a in actor.attacks if a["kind"] == "melee"),None)
+            if weapon and self.policy_for(actor).allow_action(self,actor,{"resource":"channel_divinity"}):
+                actor.limited_uses["channel_divinity"] -= 1; actor.spend("channel_divinity")
+                actor.statuses["sacred_weapon"] = {"weapon":weapon["name"],"expires":self.time_rounds+100}
+                self.feature_log(actor,"Sacred Weapon")
         self.record("action", actor=actor.id, name="Attack", granted=bool(granted))
         names = self.routine(actor, self.enemies(actor)[0]) if self.enemies(actor) else []
         if not granted and actor.replacements:
@@ -1428,7 +1459,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
     def hit_probability(self, actor, target, bonus):
         return min(.95, max(.05, (21 + bonus - self.armor_class(target)) / 20))
 
-    def expected_weapon_damage(self, actor, target):
+    def expected_weapon_damage(self, actor, target, *, attack_bonus=0, damage_bonus=0):
         if actor.routines: return max(self.routine_value(actor, names, target) for names in actor.routines)
         if not actor.attacks: return 0
         total = 0
@@ -1441,13 +1472,16 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                     if "damage" in p and "dice" in p["damage"]:
                         n,sides,_=dice.parts(p["damage"]["dice"])
                         expected += n*(sum(max(3,i) for i in range(1,sides+1))/sides-(sides+1)/2)
-            total += expected * self.hit_probability(actor, target, attack["to_hit"])
+            hit = self.hit_probability(actor, target, attack["to_hit"])
+            if attack_bonus: hit = min(.95, hit + attack_bonus * .05)
+            total += (expected + damage_bonus) * hit
             if actor.features.get("improved_critical"):
                 total += sum(dice.base_mean(p["damage"]) for p in attack["effects"] if "damage" in p) * (21-actor.features["improved_critical"])/20
-            if attack.get("mastery") == "graze": total += max(0, actor.mod("str")) * (1 - self.hit_probability(actor, target, attack["to_hit"]))
+            if attack.get("mastery") == "graze": total += max(0, actor.mod("str")) * (1 - hit)
         attack=actor.attacks[0]
         if self.sneak_eligible(actor,target,attack):
             hit=self.hit_probability(actor,target,attack["to_hit"])
+            if attack_bonus: hit=min(.95,hit+attack_bonus*.05)
             adv,dis=self.roll_flags(actor,"attack_rolls",attack.get("ability","dex"),against=target)
             if adv and not dis: hit=1-(1-hit)**2
             if dis and not adv: hit=hit**2

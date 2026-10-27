@@ -32,6 +32,7 @@ from .loader import ROOT, load_sheet
 from .policy import FEET_PER_TARGET, dmg_area_heuristic, is_grab, printed_grab_count
 
 LEVELS = (1, 3, 5, 7, 10)
+# Fixed reference party, not the supported-class registry.
 CLASSES = ("fighter", "cleric", "rogue", "wizard")
 
 # 2024 DMG, XP budget per character.

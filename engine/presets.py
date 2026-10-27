@@ -29,10 +29,15 @@ from .classes import SUBCLASSES
 from .loader import ROOT, Validator
 
 LEVELS = (1, 3, 5, 7, 10)
-PRIMARY = {"fighter": "str", "rogue": "dex", "wizard": "int", "cleric": "wis"}
+PRIMARY = {"fighter": "str", "rogue": "dex", "wizard": "int", "cleric": "wis", "barbarian": "str", "paladin": "str"}
 
 PROFILES = {
     "optimized": {
+        "barbarian": {"method":"point_buy", "abilities":dict(str=15,dex=14,con=15,int=8,wis=10,cha=8),
+                      "equipment":"unarmored_greatsword", "masteries":["greatsword"]},
+        "paladin": {"method":"point_buy", "abilities":dict(str=15,dex=8,con=14,int=8,wis=10,cha=15),
+                    "equipment":"chain_greatsword", "styles":["great_weapon_fighting"], "masteries":["greatsword"],
+                    "cantrips":[], "spells":["Bless","Command","Cure Wounds","Heroism","Aid","Magic Weapon","Revivify"]},
         "fighter": {"method": "point_buy", "abilities": dict(str=15, dex=14, con=15, int=8, wis=10, cha=8),
                     "equipment": "chain_greatsword", "styles": ["great_weapon_fighting", "defense"], "masteries": ["greatsword"]},
         "rogue": {"method": "point_buy", "abilities": dict(str=8, dex=15, con=15, int=8, wis=14, cha=10),
@@ -53,6 +58,11 @@ PROFILES = {
                               "Freedom of Movement", "Flame Strike", "Greater Restoration", "Summon Celestial"]},
     },
     "casual": {
+        "barbarian": {"method":"standard_array", "abilities":dict(str=14,dex=12,con=13,int=8,wis=10,cha=15),
+                      "flavour":"cha", "equipment":"unarmored_greataxe", "masteries":["greataxe"]},
+        "paladin": {"method":"standard_array", "abilities":dict(str=14,dex=10,con=13,int=8,wis=12,cha=15),
+                    "flavour":"cha", "equipment":"chain_sword_shield", "styles":["defense"], "masteries":["longsword"],
+                    "cantrips":[], "spells":["Heroism","Cure Wounds","Command","Bless","Lesser Restoration","Prayer of Healing","Revivify"]},
         "fighter": {"method": "standard_array", "abilities": dict(str=14, dex=12, con=13, int=10, wis=8, cha=15),
                     "flavour": "cha", "equipment": "chain_sword_shield", "styles": ["dueling", "defense"], "masteries": ["longsword"]},
         "rogue": {"method": "standard_array", "abilities": dict(str=10, dex=14, con=12, int=13, wis=8, cha=15),
@@ -117,15 +127,15 @@ def recipe(name, level, profile_name):
     scores = {a: min(20, p["abilities"][a] + background.get(a, 0)) for a in ABILITIES}
     row = _class(name)["levels"][level]
     choices = {"ability_method": p["method"], "background": background, "asis": asis_for(name, level, p, scores)}
-    if name == "fighter":
-        choices["fighting_style"] = p["styles"][:1 + int(level >= 7)]
-    if name in {"fighter", "rogue"}:
+    if name == "fighter" or name == "paladin" and level >= 2:
+        choices["fighting_style"] = p["styles"][:1 + int(name == "fighter" and level >= 7)]
+    if name in {"fighter", "rogue", "barbarian", "paladin"}:
         choices["weapon_masteries"] = p["masteries"][:row["weapon_masteries"]]
     if name == "rogue" and level >= 5:
         choices["cunning_strike"] = p["cunning"]
     if name == "cleric":
         choices.update(divine_order=p["order"], blessed_strikes=p["strike"])
-    if name in {"wizard", "cleric"}:
+    if name in {"wizard", "cleric", "paladin"}:
         options = spell_options(name, level)
         cantrips = {n: s for n, s in options.items() if s["level"] == 0}
         choices["cantrips"] = ordered(name, p["cantrips"], cantrips)[:row["cantrips"]]

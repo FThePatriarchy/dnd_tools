@@ -15,6 +15,7 @@ The simulation is the source of truth. Expected-value maths (hit chance × damag
 
 ## Current state (2026-10-23)
 
+- Barbarian (Berserker) and Paladin (Devotion), levels 1–10, added 2026-10-26 with casual, standard and optimized builds at 1/3/5/7/10. The reference parties stay fighter, cleric, rogue, wizard, and the four original classes give bit-identical results.
 - Combat engine with 245 XPHB spells, 70 XMM monsters, Fighter/Rogue/Wizard/Cleric levels 1–10, 20 preset builds, adventuring-day mode with 2024 rests.
 - DMG 2024 budget sweep: `python -m engine.calibration --runs 100 --write` runs the engine defaults → `data/reports/calibration_dmg_area_party_spread_grab_half.md` (the baseline). Run it under a Python with pyyaml (currently `C:\Python312`).
 - Engine no-grid defaults since 2026-10-24: monster areas hit half the DMG-table count (`party_spread`), and multi-target grabs reach at most half the group (`grab_half`). The old rules are `policy.dmg_area_heuristic` and `policy.printed_grab_count`.
@@ -157,6 +158,11 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
   - War Caster: +2% on the cleric (+13% against control, from holding concentration) and exactly +0% on the wizard.
   - Sharpshooter: identical to the plain shortbow-first rogue. With no cover or long range modelled it is only +1 Dex, and 19 and 18 Dex give the same modifier.
   - A feat replaces a +2 ASI, so where that +2 does not change a modifier (odd starting scores) the feat is free; with even scores it would cost a point of attack and damage.
+- **Barbarian and Paladin in the fighter's slot** (`compare_L{5,10}_{barbarian,paladin}_variants.md`, standard party; the change is against the standard fighter):
+  - Barbarian: +3% at level 5 (Great Weapon Master or Alert +4%), but -5% at level 10 (-13% against ranged, -10% against swarms). Great Weapon Master brings level 10 back to +0%. The greataxe (Cleave mastery) beats the greatsword kit by 5% overall; the greatsword kit is -17% against casters.
+  - Paladin, with in-combat buff valuation: -2% at level 5 (within noise for the standard kit, both spell profiles and Great Weapon Master; -7% against casters, -6% against control), and -5% at level 10 (-16% against swarms, -14% against control). The sword-and-shield kits are -3% to -4% at level 5 (-18% against casters).
+  - Buffs are now valued against attacking: gain per round over the remaining rounds, cut short by the chance of losing concentration (a DC 10 Constitution save per expected hit) and charged for the Divine Smite the spent slot would have dealt later; a bonus-action buff is also charged for this turn's smite. A first version without the slot and concentration costs cast Bless on round 1 and lost 12% against casters. With them, Bless is rarely worth its action in the standard party (the cleric and wizard mostly cast save spells, so Bless helps only the paladin and rogue), Magic Weapon is cast in about a third of fights, and Command stays below attacking. At level 5 the spell profiles prepare the same spells, so they still match. The cleric and wizard keep the old buff blind spot to preserve the published baselines.
+  - Parties with a paladin simulate about 40% slower, because the auras are recomputed on every save and condition check.
 - **Not yet done:**
   - Searching ability-score and ASI choices.
   - The optimized and casual reference parties for every class.
@@ -168,6 +174,6 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 
 ## Later
 
-- More classes (Paladin, Warlock, Barbarian, Bard) and levels 11–20, each checked against the calibration report.
+- More classes (Warlock, Bard; Barbarian and Paladin done) and levels 11–20, each checked against the calibration report.
 - A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.
-- Repo housekeeping: commit `readme.md` and fix its usage example; ignore the 5etools zip and `raw_data/`; archive the old `spellsim/` + `ai_extractors/` pipeline.
+- Repo housekeeping: done 2026-10-26. `readme.md` has working usage examples; the 5etools zip, `raw_data/` and the retired `spellsim/` + `ai_extractors/` pipeline are ignored and kept locally.

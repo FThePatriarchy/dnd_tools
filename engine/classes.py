@@ -4,9 +4,9 @@ import re
 from .loader import ROOT, Validator, ValidationError, read_yaml
 from .sheets import validate_sheet
 
-SUBCLASSES = {"fighter": "champion", "rogue": "assassin", "wizard": "evoker", "cleric": "life"}
+SUBCLASSES = {"fighter": "champion", "rogue": "assassin", "wizard": "evoker", "cleric": "life", "barbarian": "berserker", "paladin": "devotion"}
 SYMBOLS = {"class_level", "sneak_dice", "spark_dice", "wis_dice"}
-CLASS_FLAGS = set("improved_critical initiative_advantage remarkable_athlete tactical_mind tactical_master heroic_warrior sneak_attack assassinate uncanny_dodge reliable_talent roving_aim poisoners_kit evasion potent_cantrip sculpt_spells empowered_evocation disciple_of_life blessed_healer potent_spellcasting divine_strike arcane_recovery memorize_spell sear_undead thaumaturge armored".split())
+CLASS_FLAGS = set("improved_critical initiative_advantage remarkable_athlete tactical_mind tactical_master heroic_warrior sneak_attack assassinate uncanny_dodge reliable_talent roving_aim poisoners_kit evasion potent_cantrip sculpt_spells empowered_evocation disciple_of_life blessed_healer potent_spellcasting divine_strike arcane_recovery memorize_spell sear_undead thaumaturge armored rage reckless_attack danger_sense frenzy mindless_rage retaliation brutal_strike lay_on_hands sacred_weapon aura_of_protection aura_of_devotion aura_of_courage".split())
 BOOL_FLAGS = CLASS_FLAGS - {"improved_critical", "sneak_attack", "divine_strike"}
 
 
@@ -26,7 +26,7 @@ def validate_class(data, path="<class>", *, source_check=True):
     v.enum(data["name"], SUBCLASSES, "name")
     v.enum(data["source"], {"XPHB"}, "source")
     v.enum(data["subclass"], {SUBCLASSES[data["name"]]}, "subclass")
-    v.enum(data["hit_die"], {"d6", "d8", "d10"}, "hit_die")
+    v.enum(data["hit_die"], {"d6", "d8", "d10", "d12"}, "hit_die")
     v.sequence(data["saves"], "saves")
     for s in data["saves"]: v.enum(s, {"str", "dex", "con", "int", "wis", "cha"}, "saves")
     v.number(data["subclass_level"], "subclass_level", 1, True)

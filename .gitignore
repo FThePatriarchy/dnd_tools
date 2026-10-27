@@ -3,3 +3,14 @@ __pycache__/
 *.log
 .pytest_cache/
 .pytest_tmp*/
+
+# Source data and the retired spell-extraction pipeline (kept locally, not tracked)
+5etools-*.zip
+raw_data/
+spellsim/
+ai_extractors/
+batch_extract_spells.py
+tests/test_spellsim.py
+data/manual_packets/
+data/normalized/
+data/semantic/

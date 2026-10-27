@@ -7,7 +7,7 @@ from .loader import ROOT
 from .sheets import effect_block
 
 RAW = Path(__file__).resolve().parents[1] / "raw_data" / "class"
-SUBS = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life"}
+SUBS = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion"}
 
 
 def records(name):
@@ -26,6 +26,13 @@ def action(name, cost, effects, resource=None, **extra):
 def feature_payload(name, feature):
     n = feature["name"]
     flags = {
+        "Rage": {"rage": True}, "Reckless Attack": {"reckless_attack": True},
+        "Danger Sense": {"danger_sense": True}, "Frenzy": {"frenzy": True},
+        "Mindless Rage": {"mindless_rage": True}, "Retaliation": {"retaliation": True},
+        "Brutal Strike": {"brutal_strike": True}, "Feral Instinct": {"initiative_advantage": True},
+        "Lay on Hands": {"lay_on_hands": True}, "Sacred Weapon": {"sacred_weapon": True},
+        "Aura of Protection": {"aura_of_protection": True}, "Aura of Devotion": {"aura_of_devotion": True},
+        "Aura of Courage": {"aura_of_courage": True},
         "Tactical Mind": {"tactical_mind": True}, "Tactical Master": {"tactical_master": True},
         "Improved Critical": {"improved_critical": 19},
         "Remarkable Athlete": {"initiative_advantage": True, "remarkable_athlete": True},
@@ -73,6 +80,10 @@ def feature_payload(name, feature):
     if n == "Preserve Life":
         b = effect_block("preserve_life", target={"select": "n_targets", "n": "all", "distinct": True, "up_to": True, "filter": ["creature"], "affects": "any", "within_ft": 30, "eligible_if": "target.bloodied"}, apply=[{"heal_pool": {"amount": "life_pool", "cap": "half"}}])
         return {"actions": [action(n, "action", [b], "channel_divinity")]}
+    if n in {"Fast Movement", "Instinctive Pounce", "Divine Sense", "Faithful Steed", "Abjure Foes"}:
+        return {"unsupported": "Movement, detection, steeds and Abjure Foes are outside this combat implementation."}
+    if n == "Primal Knowledge":
+        return {"mechanics": {"builder": True}, "unsupported": "Extra skill proficiency executes; Rage skill ability substitution is not simulated."}
     if n in {"Thieves' Cant", "Ritual Adept"}:
         return {"unsupported": "Language/ritual exploration outside combat and scripted rests."}
     if n == "Tactical Shift": return {"unsupported": "Movement and opportunity attacks require a grid."}
@@ -104,6 +115,16 @@ def declaration(name):
             if level >= 2: resource("action_surge", 1, "all")
             if level >= 9: resource("indomitable", 1)
             row["weapon_masteries"] = 3 if level < 4 else 4 if level < 10 else 5
+        if name == "barbarian":
+            resource("rage", 2 if level < 3 else 3 if level < 6 else 4, 1)
+            row["weapon_masteries"] = 2 if level < 4 else 3 if level < 10 else 4
+        if name == "paladin":
+            resource("lay_on_hands", 5 * level)
+            if level >= 2: resource("paladins_smite", 1)
+            if level >= 3: resource("channel_divinity", 2, 1)
+            row["weapon_masteries"] = 2
+            row["prepared"] = [2,3,4,5,6,6,7,7,9,9][level-1]
+            row["slots"] = {i:n for i,n in enumerate(base["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}
         if name == "rogue":
             row["weapon_masteries"] = 2
             row["sneak_attack"] = f"{(level+1)//2}d6"

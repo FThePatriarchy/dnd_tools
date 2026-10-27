@@ -9,7 +9,8 @@ class SpellMechanics:
         spell.damage_total += amount
         if hook.get("end_after_total") and spell.damage_total >= hook["end_after_total"]: self.end_spell(spell.id)
     def condition_immune(self, target, condition, magical=False, source=None):
-        if condition in target.condition_immunities: return True
+        self.class_auras()
+        if target.class_condition_immune(condition) or condition in target.condition_immunities: return True
         if source and any(e.kind == "ward" and (source.magical_type if magical else source.creature_type) in e.data["types"] and condition in e.data.get("conditions", []) for e in target.active_effects): return True
         return any(condition in e.data.get("condition_immunity", []) or
             magical and condition in e.data.get("magical_condition_immunity", [])

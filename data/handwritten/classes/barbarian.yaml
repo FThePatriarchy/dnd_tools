@@ -1,0 +1,265 @@
+name: barbarian
+source: XPHB
+subclass: berserker
+hit_die: d12
+saves:
+- str
+- con
+subclass_level: 3
+asi_levels:
+- 4
+- 8
+levels:
+  1:
+    proficiency_bonus: 2
+    hit_die: d12
+    features:
+    - Rage
+    - Unarmored Defense
+    - Weapon Mastery
+    resources:
+      rage:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  2:
+    proficiency_bonus: 2
+    hit_die: d12
+    features:
+    - Danger Sense
+    - Reckless Attack
+    resources:
+      rage:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  3:
+    proficiency_bonus: 2
+    hit_die: d12
+    features:
+    - Barbarian Subclass
+    - Primal Knowledge
+    - Path of the Berserker
+    - Frenzy
+    resources:
+      rage:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  4:
+    proficiency_bonus: 2
+    hit_die: d12
+    features:
+    - Ability Score Improvement
+    resources:
+      rage:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 3
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  5:
+    proficiency_bonus: 3
+    hit_die: d12
+    features:
+    - Extra Attack
+    - Fast Movement
+    resources:
+      rage:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 3
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  6:
+    proficiency_bonus: 3
+    hit_die: d12
+    features:
+    - Subclass Feature
+    - Mindless Rage
+    resources:
+      rage:
+        max: 4
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 3
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  7:
+    proficiency_bonus: 3
+    hit_die: d12
+    features:
+    - Feral Instinct
+    - Instinctive Pounce
+    resources:
+      rage:
+        max: 4
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 3
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  8:
+    proficiency_bonus: 3
+    hit_die: d12
+    features:
+    - Ability Score Improvement
+    resources:
+      rage:
+        max: 4
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 3
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  9:
+    proficiency_bonus: 4
+    hit_die: d12
+    features:
+    - Brutal Strike
+    resources:
+      rage:
+        max: 4
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 3
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  10:
+    proficiency_bonus: 4
+    hit_die: d12
+    features:
+    - Subclass Feature
+    - Retaliation
+    resources:
+      rage:
+        max: 4
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+features:
+- name: Rage
+  level: 1
+  origin: class
+  mechanics:
+    rage: true
+- name: Unarmored Defense
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Weapon Mastery
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Danger Sense
+  level: 2
+  origin: class
+  mechanics:
+    danger_sense: true
+- name: Reckless Attack
+  level: 2
+  origin: class
+  mechanics:
+    reckless_attack: true
+- name: Barbarian Subclass
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+- name: Primal Knowledge
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+  unsupported: Extra skill proficiency executes; Rage skill ability substitution is
+    not simulated.
+- name: Ability Score Improvement
+  level: 4
+  origin: class
+  mechanics:
+    builder: true
+- name: Extra Attack
+  level: 5
+  origin: class
+  mechanics:
+    builder: true
+- name: Fast Movement
+  level: 5
+  origin: class
+  unsupported: Movement, detection, steeds and Abjure Foes are outside this combat
+    implementation.
+- name: Subclass Feature
+  level: 6
+  origin: class
+  mechanics:
+    builder: true
+- name: Feral Instinct
+  level: 7
+  origin: class
+  mechanics:
+    initiative_advantage: true
+- name: Instinctive Pounce
+  level: 7
+  origin: class
+  unsupported: Movement, detection, steeds and Abjure Foes are outside this combat
+    implementation.
+- name: Ability Score Improvement
+  level: 8
+  origin: class
+  mechanics:
+    builder: true
+- name: Brutal Strike
+  level: 9
+  origin: class
+  mechanics:
+    brutal_strike: true
+- name: Subclass Feature
+  level: 10
+  origin: class
+  mechanics:
+    builder: true
+- name: Path of the Berserker
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Frenzy
+  level: 3
+  origin: subclass
+  mechanics:
+    frenzy: true
+- name: Mindless Rage
+  level: 6
+  origin: subclass
+  mechanics:
+    mindless_rage: true
+- name: Retaliation
+  level: 10
+  origin: subclass
+  mechanics:
+    retaliation: true

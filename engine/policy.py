@@ -65,6 +65,33 @@ def printed_grab_count(instance, block, n: int, eligible) -> int:
 
 
 class Policy:
+    def reckless_attack(self, combat, actor, target):
+        return True
+
+    def brutal_strike(self, combat, actor, target):
+        return True
+
+    def smite(self, combat, actor, target, critical, free=False):
+        if not free and not self.allow_spell(combat,actor,combat.spells["Divine Smite"]): return False
+        # Hold the bonus action for a possible critical on the remaining attack.
+        return critical or actor.statuses.get("weapon_hits",0) >= actor.extra_attack or not actor.spell_slots or sum(actor.spell_slots.values()) > 1 or free
+
+    def smite_forgone(self, combat, actor, target):
+        """Expected Divine Smite damage this turn: at least one hit, lowest slot (or the free cast)."""
+        if "Divine Smite" not in actor.spells or not actor.attacks: return 0
+        free = actor.limited_uses.get("paladins_smite", 0) > 0
+        slots = sorted(k for k, n in actor.spell_slots.items() if n)
+        if not free and (not slots or not self.allow_spell(combat, actor, combat.spells["Divine Smite"])): return 0
+        hit = combat.hit_probability(actor, target, actor.attacks[0]["to_hit"])
+        return (1 - (1 - hit) ** max(1, actor.extra_attack)) * 4.5 * (1 + (1 if free else slots[0]))
+
+    def smite_slot_cost(self, combat, actor, target, slot):
+        """Divine Smite damage a spent slot would have dealt later, when the fight outlasts the slots."""
+        if not slot or "Divine Smite" not in actor.spells or not actor.attacks: return 0
+        if sum(actor.spell_slots.values()) > combat.expected_remaining_rounds(actor): return 0
+        hit = combat.hit_probability(actor, target, actor.attacks[0]["to_hit"])
+        return (1 - (1 - hit) ** max(1, actor.extra_attack)) * 4.5 * (1 + slot)
+
     def reroll_die(self, combat, actor, natural):
         values = getattr(natural, "values", (natural,))
         return min(range(len(values)), key=values.__getitem__)
@@ -208,9 +235,15 @@ class Policy:
 
     def targets(self, combat, instance, block, eligible, n):
         beneficial = any(k in p for key in ("apply", "on_hit") for p in block[key] for k in ("heal", "heal_pool", "temp_hp", "grant_action", "base_ac", "defense", "remove_condition")) or any(p.get("apply_condition", {}).get("condition") == "invisible" for p in block["apply"]) or instance.spec.get("name") in {"Bless", "Shield of Faith", "Haste", "Fly"}
+        paladin_buff = instance.caster.features.get("lay_on_hands") and any(k in p for p in block["apply"] for k in ("modify", "weapon_enchantment", "max_hp", "temp_hp", "defense"))
+        if paladin_buff:
+            beneficial = True
+            eligible = [c for c in eligible if c.team == instance.caster.team and not any(i.active and i.spec["name"] == instance.spec["name"] and any(e.source == i.id for e in c.effects) for i in combat.instances.values())]
         # Allegiance-neutral legality stays in the engine; this is preference only.
         preferred = [x for x in eligible if (x.team == instance.caster.team) == beneficial]
         ordered = sorted(preferred or eligible, key=lambda x: (x.hp / max(1,x.max_hp) if beneficial else x.hp, x.id))
+        if paladin_buff and any(p.get("modify", {}).get("stat") == "ac" for p in block["apply"]):
+            ordered = sorted(eligible, key=lambda c: (c.position != "front", -max((combat.at_will_damage_rate(e,c) for e in combat.enemies(instance.caster)), default=0), c.id))
         if not beneficial and instance.caster.team != "party" and getattr(combat, "day_options", None):
             candidates = preferred or eligible
             if combat.day_options.targeting != "random":
@@ -286,6 +319,7 @@ class Policy:
         if rules.get("no_action") and rules.get("no_bonus_action"): return
         enemies = combat.enemies(actor)
         if not enemies: return
+        if actor.features.get("rage"): combat.rage(actor)
         if combat.death_rules and combat.can_cast(actor,"Revivify"):
             dead = [c for c in combat.combatants if c.team == actor.team and combat.can_revive(c)]
             if dead: combat.cast(actor,"Revivify",targets=[dead[0]])
@@ -306,6 +340,8 @@ class Policy:
             value=combat.expected_action_damage(actor,best,enemies[0])
             if value>combat.expected_weapon_damage(actor,enemies[0]) and (best["name"]=="Preserve Life" or not combat.can_cast(actor,"Healing Word")):
                 combat.use_action(actor,best["name"])
+        if wounded and actor.features.get("lay_on_hands") and self.allow_healing(combat,actor,wounded[0]):
+            combat.lay_on_hands(actor,wounded[0])
         if wounded:
             if self.allow_healing(combat, actor, wounded[0]) and combat.can_cast(actor, "Healing Word"):
                 combat.cast(actor, "Healing Word", targets=[wounded[0]])
@@ -338,6 +374,7 @@ class Policy:
             for name in actor.spells:
                 if not combat.can_cast(actor, name): continue
                 spec = combat.spells[name]
+                if actor.features.get("lay_on_hands") and spec.get("casting_trigger"): continue
                 if not self.allow_spell(combat, actor, spec): continue
                 casting_time = actor.spell_costs.get(name, spec["casting_time"])
                 if casting_time not in {"action", "bonus_action"}: continue
@@ -345,6 +382,13 @@ class Policy:
                 slot = combat.available_slot(actor, spec)
                 scaled = combat.scale(actor, spec, slot)
                 value = combat.expected_spell_damage(actor, scaled, enemies[0])
+                # Cleric/wizard share the buff blind spot; preserve their published baselines.
+                if actor.features.get("lay_on_hands"):
+                    value = max(value, combat.expected_buff_value(actor, scaled, slot=slot))
+                    # The slot could power a later smite instead.
+                    value -= self.smite_slot_cost(combat, actor, enemies[0], slot)
+                    # A bonus-action buff gives up this turn's Divine Smite.
+                    if casting_time == "bonus_action": value -= self.smite_forgone(combat, actor, enemies[0])
                 if value > 0:
                     # A bonus-action spell leaves the weapon routine available.
                     options.append((value + (weapon if casting_time == "bonus_action" else 0), name))
