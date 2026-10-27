@@ -4,9 +4,10 @@ import re
 from .loader import ROOT, Validator, ValidationError, read_yaml
 from .sheets import validate_sheet
 
-SUBCLASSES = {"fighter": "champion", "rogue": "assassin", "wizard": "evoker", "cleric": "life", "barbarian": "berserker", "paladin": "devotion"}
+SUBCLASSES = {"fighter": "champion", "rogue": "assassin", "wizard": "evoker", "cleric": "life", "barbarian": "berserker", "paladin": "devotion", "warlock": "fiend", "bard": "lore"}
 SYMBOLS = {"class_level", "sneak_dice", "spark_dice", "wis_dice"}
 CLASS_FLAGS = set("improved_critical initiative_advantage remarkable_athlete tactical_mind tactical_master heroic_warrior sneak_attack assassinate uncanny_dodge reliable_talent roving_aim poisoners_kit evasion potent_cantrip sculpt_spells empowered_evocation disciple_of_life blessed_healer potent_spellcasting divine_strike arcane_recovery memorize_spell sear_undead thaumaturge armored rage reckless_attack danger_sense frenzy mindless_rage retaliation brutal_strike lay_on_hands sacred_weapon aura_of_protection aura_of_devotion aura_of_courage".split())
+CLASS_FLAGS.update("values_buffs pact_magic agonizing_blast armor_of_shadows eldritch_mind dark_ones_blessing dark_ones_own_luck fiendish_resilience bardic_inspiration cutting_words jack_of_all_trades".split())
 BOOL_FLAGS = CLASS_FLAGS - {"improved_critical", "sneak_attack", "divine_strike"}
 
 

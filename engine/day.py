@@ -123,6 +123,7 @@ def take_rest(party, kind, rng, policy=None, *, log=None):
             recovery = actor.resource_recovery.get(name, {}).get(kind + "_rest", 0)
             actor.limited_uses[name] = maximum if recovery == "all" else min(maximum, actor.limited_uses[name] + recovery)
         if kind == "short":
+            if actor.features.get("pact_magic"): actor.spell_slots = actor.max_spell_slots.copy()
             from .class_mechanics import arcane_recovery, memorize_spell
             arcane_recovery(actor, policy, log)
             memorize_spell(actor, policy, log)

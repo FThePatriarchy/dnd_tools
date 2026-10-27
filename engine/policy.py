@@ -235,7 +235,7 @@ class Policy:
 
     def targets(self, combat, instance, block, eligible, n):
         beneficial = any(k in p for key in ("apply", "on_hit") for p in block[key] for k in ("heal", "heal_pool", "temp_hp", "grant_action", "base_ac", "defense", "remove_condition")) or any(p.get("apply_condition", {}).get("condition") == "invisible" for p in block["apply"]) or instance.spec.get("name") in {"Bless", "Shield of Faith", "Haste", "Fly"}
-        paladin_buff = instance.caster.features.get("lay_on_hands") and any(k in p for p in block["apply"] for k in ("modify", "weapon_enchantment", "max_hp", "temp_hp", "defense"))
+        paladin_buff = instance.caster.features.get("values_buffs") and any(k in p for p in block["apply"] for k in ("modify", "weapon_enchantment", "max_hp", "temp_hp", "defense"))
         if paladin_buff:
             beneficial = True
             eligible = [c for c in eligible if c.team == instance.caster.team and not any(i.active and i.spec["name"] == instance.spec["name"] and any(e.source == i.id for e in c.effects) for i in combat.instances.values())]
@@ -370,6 +370,8 @@ class Policy:
         if actor.action and not actor.has_condition("incapacitated"):
             options = []
             weapon = combat.expected_weapon_damage(actor, enemies[0])
+            if actor.features.get("pact_magic"):
+                weapon=max(weapon,max((combat.expected_spell_damage(actor,combat.cantrip_spec(actor,n),enemies[0]) for n in actor.spells if combat.spells[n]["level"]==0),default=0))
             if actor.routines: weapon = max(weapon, max(combat.routine_value(actor, r, enemies[0], control=True) for r in actor.routines))
             for name in actor.spells:
                 if not combat.can_cast(actor, name): continue
@@ -383,12 +385,16 @@ class Policy:
                 scaled = combat.scale(actor, spec, slot)
                 value = combat.expected_spell_damage(actor, scaled, enemies[0])
                 # Cleric/wizard share the buff blind spot; preserve their published baselines.
-                if actor.features.get("lay_on_hands"):
+                if actor.features.get("values_buffs"):
                     value = max(value, combat.expected_buff_value(actor, scaled, slot=slot))
+                if actor.features.get("lay_on_hands"):
                     # The slot could power a later smite instead.
                     value -= self.smite_slot_cost(combat, actor, enemies[0], slot)
                     # A bonus-action buff gives up this turn's Divine Smite.
                     if casting_time == "bonus_action": value -= self.smite_forgone(combat, actor, enemies[0])
+                if actor.features.get("pact_magic") and name=="Hex":
+                    horizon=combat.concentration_horizon(actor,enemies,combat.expected_remaining_rounds(actor))
+                    value=max(value,3.5*combat.expected_attack_hits(actor,enemies[0])*horizon*.9)
                 if value > 0:
                     # A bonus-action spell leaves the weapon routine available.
                     options.append((value + (weapon if casting_time == "bonus_action" else 0), name))
@@ -400,8 +406,18 @@ class Policy:
             if best[0] > weapon:
                 if isinstance(best[1], tuple): combat.use_action(actor, best[1][1])
                 else: combat.cast(actor, best[1])
+            elif actor.features.get("pact_magic"):
+                cantrips=[n for n in actor.spells if combat.spells[n]["level"]==0 and combat.can_cast(actor,n)]
+                if cantrips: combat.cast(actor,max(cantrips,key=lambda n:combat.expected_spell_damage(actor,combat.cantrip_spec(actor,n),enemies[0])))
+                else: combat.weapon_action(actor)
             else: combat.weapon_action(actor)
-            if actor.action and combat.enemies(actor): combat.weapon_action(actor)
+            if actor.action and combat.enemies(actor):
+                if actor.features.get("pact_magic") and combat.can_cast(actor,"Eldritch Blast"): combat.cast(actor,"Eldritch Blast")
+                else: combat.weapon_action(actor)
+        if actor.features.get("bardic_inspiration") and actor.bonus_action and combat.enemies(actor):
+            allies=[c for c in combat.combatants if c is not actor and c.team==actor.team and c.alive and c.statuses.get("bardic_inspiration",{}).get("expires",0)<=combat.time_rounds]
+            for ally in sorted(allies,key=lambda c:(-combat.expected_attack_hits(c,combat.enemies(actor)[0]),c.hp/c.max_hp,c.id)):
+                if combat.inspire(actor,ally): break
         # Action Surge is deliberately nova; it never bypasses slot-per-turn rules.
         surge = next((x for x in actor.actions if x.get("resource") == "action_surge"), None)
         if surge and self.allow_surge(combat, actor) and combat.enemies(actor) and combat.action_available(actor, surge):

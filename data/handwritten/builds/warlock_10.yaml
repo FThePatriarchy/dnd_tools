@@ -1,0 +1,36 @@
+class: warlock
+level: 10
+subclass: fiend
+abilities:
+  str: 8
+  dex: 14
+  con: 13
+  int: 12
+  wis: 10
+  cha: 15
+equipment: unarmored_staff
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      cha: 2
+    8:
+      cha: 2
+  weapon_masteries: []
+  cantrips:
+  - Eldritch Blast
+  - Mind Sliver
+  - Mage Hand
+  - Minor Illusion
+  prepared_spells:
+  - Hex
+  - Armor of Agathys
+  - Hellish Rebuke
+  - Hold Person
+  - Mirror Image
+  - Hypnotic Pattern
+  - Counterspell
+  - Hunger of Hadar
+  - Banishment
+  - Synaptic Static
+  expertise: []

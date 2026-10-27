@@ -1,6 +1,6 @@
 # Single-class progression (XPHB, levels 1–10)
 
-`classes/{fighter,rogue,wizard,cleric,barbarian,paladin}.yaml` is strictly validated by
+`classes/{fighter,rogue,wizard,cleric,barbarian,paladin,warlock,bard}.yaml` is strictly validated by
 `engine.classes.load_class`. Only the named XPHB class and subclass are allowed.
 Each feature has `name`, `level`, `origin: class|subclass`, and executable
 `mechanics`/`actions`, or `unsupported` with a reason. Mixed features can have
@@ -94,11 +94,12 @@ validated ordinary character sheet; optional arguments have deterministic
 defaults. `load_build("wizard_7")` loads a recipe. A recipe requires exactly
 `class`, `level`, `subclass`, `abilities`, `equipment`, `choices`. Both CLIs
 accept build stems as party names; existing fixed stems take precedence.
-Subclass is dormant before level three. Only the six named subclasses exist.
+Subclass is dormant before level three. Only the eight named subclasses exist.
 
 Choices: `ability_method`, `asis`, `fighting_style`, `weapon_masteries`,
 `skills`, `expertise`, `cunning_strike`, `cantrips`, `prepared_spells`,
-`spellbook`, `divine_order`, `blessed_strikes`, `background`, `origin_feat`.
+`spellbook`, `divine_order`, `blessed_strikes`, `background`, `origin_feat`,
+`invocations`, `magical_discoveries`.
 
 - Input abilities are pre-ASI. Default `standard_array` is a permutation of
   15,14,13,12,10,8. `point_buy` uses scores 8–15 and at most 27 points.
@@ -113,7 +114,8 @@ Choices: `ability_method`, `asis`, `fighting_style`, `weapon_masteries`,
   14 + min(2,Dex); none 10 + Dex; shield +2; applicable Defense +1. Chain with
   Str below 13 costs 10 speed. Presets never combine shield/two-handed weapon.
   Mage Armor must actually be cast and spend a slot; builder never grants it
-  free AC. Equipment prices/inventory are not simulated.
+  free AC, except the explicitly modeled at-will Armor of Shadows invocation
+  described below. Equipment prices/inventory are not simulated.
 - HP applies final Con modifier retroactively at all levels: max die first,
   fixed average thereafter. Weapon and spell attack/DC math uses final scores.
 - Select no more than the mastery table's count, only supported proficient
@@ -170,7 +172,7 @@ the new declarations without changing the historical report's default cohort.
 | Frenzy | First Strength hit on own turn while raging and Reckless: Rage-bonus count of d6, doubled on critical | No exhaustion cost (2024). |
 | Mindless Rage / Retaliation | Charmed/frightened immunity during Rage, removes existing conditions on entering; at 10, reaction melee attack after damage | Retaliation assumes the damaging creature is in melee reach under existing no-grid reachability; ranged separation is not known. No Relentless Rage (11). |
 | Weapon masteries | Existing Graze/Topple etc.; greataxe Cleave: once per turn, extra attack on a different enemy without positive ability damage modifier | Cleave assumes second enemy within 5 feet of first and in reach. |
-| Paladin spellcasting | 2024 half-caster slots starting at 1; Charisma attack/DC; fixed prepared counts 2/3/4/5/6/6/7/7/9/9; existing spell specs only; Devotion oath spells additional; Divine Smite always prepared from 2; paladin-only in-combat buff EV over remaining rounds capped by duration: attack-roll hit gains (weapon or best attack cantrip), weapon enchantment hit/damage gains, AC prevention on front-line allies, recurring temp HP capped by incoming damage; concentration buffs last the expected rounds before a failed DC 10 Constitution save; a buff's slot is charged the Smite it would have powered when slots are scarcer than rounds; bonus-action buffs retain weapon DPR but are charged this turn's Smite | Prepared count is the XPHB table, **not** Cha modifier + level. Blessed Warrior cantrip style, Find Steed/its free cast and exploration preparation changes omitted. |
+| Paladin spellcasting | 2024 half-caster slots starting at 1; Charisma attack/DC; fixed prepared counts 2/3/4/5/6/6/7/7/9/9; existing spell specs only; Devotion oath spells additional; Divine Smite always prepared from 2; flagged in-combat buff EV (also Bard/Warlock) over remaining rounds capped by duration: attack-roll hit gains (weapon or best attack cantrip), weapon enchantment hit/damage gains, AC prevention on front-line allies, recurring temp HP capped by incoming damage; concentration buffs last the expected rounds before a failed DC 10 Constitution save; a buff's slot is charged the Smite it would have powered when slots are scarcer than rounds; bonus-action buffs retain weapon DPR but are charged this turn's Smite | Prepared count is the XPHB table, **not** Cha modifier + level. Blessed Warrior cantrip style, Find Steed/its free cast and exploration preparation changes omitted. |
 | Lay on Hands | Bonus action, finite 5 × level pool, partial or full healing including downed PCs, daily recovery; AI prioritizes downed/under-half-HP allies | Touch range assumes ally reachable; removing Poisoned for 5 pool points omitted. |
 | Divine Smite / Paladin’s Smite | Actual existing bonus-action spell, only after melee weapon hit; slot upcasting and fiend/undead die; critical doubles dice; same attack damage packet; one free first-level cast per Long Rest from 2; ordinary slot-per-turn, components and Counterspell handling | AI spends free cast first, otherwise slots permitted by strategy; holds a lone slot for a later hit/critical in a two-attack turn. Rationed uses its existing slot-level budget. No unarmed attacks in equipment kits. |
 | Fighting Style / Sacred Weapon | One supported style from 2; Sacred Weapon from 3 consumes Channel Divinity as part of Attack action, adds max(1,Cha) to chosen melee weapon attacks for 10 minutes; two daily CD uses, regain one on Short Rest | Sacred Weapon light and optional Radiant damage conversion omitted; carrying/dropping weapons unsupported. Divine Sense and Abjure Foes omitted. |
@@ -180,3 +182,31 @@ Rage/Sacred Weapon are encounter statuses and are cleared by the ordinary
 encounter cleanup. Finite pools, slots and daily counters persist between
 encounters and use the existing rest machinery. Long-lived positioning and
 manual out-of-combat weapon handling remain outside this model.
+
+
+## Warlock (Fiend) and Bard (Lore), 2024
+
+Class declarations cover levels 1-10; standard/casual/optimized build files
+cover 1, 3, 5, 7 and 10. Reference parties remain Fighter/Cleric/Rogue/Wizard:
+Warlock replaces the Wizard slot, Bard the Cleric slot in comparison variants.
+All spells must already have a handwritten executable spec.
+
+| Feature | Simulated | Deliberate omissions / choices |
+|---|---|---|
+| Pact Magic | Charisma, XPHB prepared/cantrip counts; one level-1 slot at L1, two thereafter through L10; pact level 1/1/2/2/3/3/4/4/5/5. Every slot is at that level, fully restored by short or long rests. | No multiclass slot pool or Mystic Arcanum (L11). Magical Cunning's one-minute rite is skipped, not granted during combat or silently as a short rest. |
+| Eldritch Invocations | `invocations` accepts a modeled subset, bounded by the XPHB invocation count: Armor of Shadows at L1; Agonizing Blast and Eldritch Mind require L2. Defaults take all three when eligible. Agonizing Blast adds Cha on each Eldritch Blast hit, including EV; existing beam scaling gives one beam before L5, two at L5-10. Eldritch Mind gives concentration-save advantage. | Armor of Shadows assumes at-will Mage Armor was cast before combat: unarmored AC 13 + Dex, no slot. No Blade/Tome, forced movement, or other invocations; unused selections confer no invented benefit. |
+| Fiend spells | Existing patron spell specs are always prepared, separately from the table count. | Missing specs (currently Geas) are reported in the built sheet, never fabricated. |
+| Dark One's Blessing | On the Warlock's enemy reduction from positive HP to zero, temp HP = max(1, Cha + Warlock level); replaces only lower temp HP. | The 2024 additional trigger for someone else's kill within 10 feet is omitted without adjacency. |
+| Dark One's Own Luck | L6+, max(1, Cha) uses per long rest; after a failed check/save with a deficit <=10, roll and add d10, spend even if it still fails. | No use on guaranteed failures or successful rolls. No initiative use (initiative has no failure DC). |
+| Fiendish Resilience | L10 slashing resistance, including magical slashing, through typed mitigation. | Fixed sensible weapon-damage choice; no adaptive enemy knowledge or automatic type switching on rests. |
+| Warlock AI | Compares leveled spell damage/control and buffs with the best cantrip; estimates Hex over concentration uptime, otherwise Eldritch Blast. Bonus-action Hex leaves the action for Blast, and pact slots upcast existing spells. | Shared no-grid concentration and remaining-round estimates; no spellcasting during the omitted rite. |
+| Bard spellcasting | Simple-weapon training (studded-staff presets, not martial rapiers), Charisma, XPHB full-caster slots, 2/3/4 cantrips and table-fixed prepared counts; Healing Word can revive a downed ally before the action. | No rituals, instruments or exploration skill scenes. |
+| Bardic Inspiration | Bonus action, max(1, Cha) uses; d6 / d8 at L5 / d10 at L10. Another ally who can see or hear the Bard gets one die for one hour. Only a failed attack/check/save with a recoverable deficit consumes it; no natural-1 attack rescue. Font at L5 fully restores uses on short rests; long rests always restore uses. | No automatic Font spell-slot conversion. AI distributes to the ally with the greatest expected attack-roll count (low HP breaks ties), after healing/spell bonus actions. No failed-initiative interpretation. |
+| Jack of All Trades / Expertise | L2+ half PB on initiative; stacks with Alert's PB. | Other Jack checks and Bard Expertise are omitted; initiative is not a proficient skill. Lore Bonus Proficiencies and L7 Countercharm omitted. |
+| Cutting Words | Lore L3+: reaction plus Inspiration use, visible enemy under the shared 60-foot no-grid reach assumption. Subtract the die on a successful attack with margin < die maximum, or a successful check; never negates a natural-20 attack. Critical attack damage can instead be reduced before typed mitigation. | A damage-roll reducer is available to callers; AI's noncritical default is attack interception, not speculative damage reduction. Reserve the last use against healthy allies when a downed/low-HP ally needs protection. No future-turn prediction or positional line-of-sight geometry. |
+| Magical Discoveries / Secrets | L6 two distinct `magical_discoveries`, always prepared outside the normal count, selected from supported Cleric/Druid/Wizard spells within available slots (defaults Counterspell and Spirit Guardians). L10 ordinary prepared choices can also use those lists, with Charisma. | Discovery replacements are chosen in each build, not dynamically in combat. No above-slot spells or duplicate discoveries. |
+| Shared buff valuation | Builder sets `values_buffs` only for Paladin, Warlock, Bard; all three use `expected_buff_value`, attack gains and concentration horizon. | Smite opportunity costs remain Paladin-only. Cleric/Wizard keep their published AI blind spot, intentionally preserving old results. |
+
+Existing unclocked day cleanup still removes all effects between encounters;
+the clocked day runner preserves real deadlines. These classes do not change
+that shared lifecycle or any old-class spell/rule behavior.

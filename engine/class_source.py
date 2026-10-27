@@ -22,7 +22,7 @@ def source(name):
     path = Path(__file__).resolve().parents[1] / "raw_data/class" / ("class-" + name + ".json")
     d = json.loads(path.read_text(encoding="utf-8"))
     c = next(x for x in d["class"] if x["source"] == "XPHB")
-    short = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion"}[name]
+    short = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion", "warlock": "Fiend", "bard": "Lore"}[name]
     s = next(x for x in d["subclass"] if x["source"] == "XPHB" and x["shortName"] == short)
     f = {("class", x["name"], x["level"]): x for x in d["classFeature"] if x["source"] == "XPHB" and x["level"] <= 10}
     f.update({("subclass", x["name"], x["level"]): x for x in d["subclassFeature"] if x["source"] == "XPHB" and x["subclassShortName"] == short and x["level"] <= 10})
@@ -87,6 +87,12 @@ def check_class_source(data, path="<class>"):
             if level >= 2: use("paladins_smite", 1)
             if level >= 3: use("channel_divinity", table[0], 1)
             masteries, prepared = 2, table[1]
+            slots = {i:n for i,n in enumerate(c["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}
+        elif c["name"] == "Warlock":
+            cantrips, prepared = table[1:3]
+            slots = {table[4]:table[3]}
+        elif c["name"] == "Bard":
+            cantrips, prepared = table[1:3]
             slots = {i:n for i,n in enumerate(c["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}
         else:
             cantrips, prepared = table[-2:]

@@ -31,7 +31,7 @@ from .presets import ordered, party, recipe as preset_recipe
 from .rating import rate_party
 
 REFERENCE_CLASSES = ("fighter", "cleric", "rogue", "wizard")
-ROLES = {c:c for c in REFERENCE_CLASSES} | {"barbarian":"fighter", "paladin":"fighter"}
+ROLES = {c:c for c in REFERENCE_CLASSES} | {"barbarian":"fighter", "paladin":"fighter", "warlock":"wizard", "bard":"cleric"}
 CLASSES = tuple(ROLES)
 NOISE = 0.03       # overall rating: Phase 2 seeds agreed within about 2.3%
 TYPE_NOISE = 0.10  # one opponent type: Phase 2 seeds moved single types by up to ~0.1x
@@ -69,7 +69,9 @@ def spell_profile(base, cls, level, profile):
     return r
 
 
-FEAT_OPTIONS = {  # (feat, +1 ability, changes to the standard recipe)
+FEAT_OPTIONS = {
+    "warlock": [("war_caster", "cha", {})],
+    "bard": [("war_caster", "cha", {})],  # (feat, +1 ability, changes to the standard recipe)
     "barbarian": [("great_weapon_master", "str", {})],
     "paladin": [("great_weapon_master", "str", {"equipment":"chain_greatsword","weapon_masteries":["greatsword"]})],
     "fighter": [("great_weapon_master", "str", {}),
@@ -134,6 +136,11 @@ def variants(cls, level):
         thaum["choices"]["cantrips"] = ordered("cleric", base["choices"]["cantrips"], options)[:count]
         out.append(thaum)
         out += [spell_profile(base, cls, level, p) for p in ("optimized", "casual")]
+    elif cls in {"warlock", "bard"}:
+        out += [spell_profile(base,cls,level,p) for p in ("optimized","casual")]
+        if cls=="warlock" and level>=2:
+            out.append(variant(base,"invocations: defense",invocations=["armor_of_shadows","eldritch_mind"]))
+            out.append(variant(base,"invocations: offense",invocations=["agonizing_blast","eldritch_mind"]))
     elif cls == "wizard":
         out += [spell_profile(base, cls, level, p) for p in ("optimized", "casual")]
     out += feat_variants(base, cls, level)

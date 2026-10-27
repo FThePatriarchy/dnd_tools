@@ -1,0 +1,200 @@
+name: warlock
+source: XPHB
+subclass: fiend
+hit_die: d8
+saves:
+- wis
+- cha
+subclass_level: 3
+asi_levels:
+- 4
+- 8
+levels:
+  1:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Eldritch Invocation Options
+    - Eldritch Invocations
+    - Pact Magic
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 2
+    prepared: 2
+    slots:
+      1: 1
+  2:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Magical Cunning
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 2
+    prepared: 3
+    slots:
+      1: 2
+  3:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Warlock Subclass
+    - Fiend Patron
+    - Dark One's Blessing
+    - Fiend Spells
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 2
+    prepared: 4
+    slots:
+      2: 2
+  4:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 5
+    slots:
+      2: 2
+  5:
+    proficiency_bonus: 3
+    hit_die: d8
+    features: []
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 6
+    slots:
+      3: 2
+  6:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Dark One's Own Luck
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 7
+    slots:
+      3: 2
+  7:
+    proficiency_bonus: 3
+    hit_die: d8
+    features: []
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 8
+    slots:
+      4: 2
+  8:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 9
+    slots:
+      4: 2
+  9:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Contact Patron
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 10
+    slots:
+      5: 2
+  10:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Fiendish Resilience
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 10
+    slots:
+      5: 2
+features:
+- name: Eldritch Invocation Options
+  level: 1
+  origin: class
+  unsupported: Only Armor of Shadows, Agonizing Blast and Eldritch Mind are modeled.
+- name: Eldritch Invocations
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Pact Magic
+  level: 1
+  origin: class
+  mechanics:
+    pact_magic: true
+- name: Magical Cunning
+  level: 2
+  origin: class
+  unsupported: One-minute recovery rite is not automated between encounters.
+- name: Warlock Subclass
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 4
+  origin: class
+  mechanics:
+    builder: true
+- name: Subclass Feature
+  level: 6
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 8
+  origin: class
+  mechanics:
+    builder: true
+- name: Contact Patron
+  level: 9
+  origin: class
+  unsupported: Exploration only.
+- name: Subclass Feature
+  level: 10
+  origin: class
+  mechanics:
+    builder: true
+- name: Fiend Patron
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Dark One's Blessing
+  level: 3
+  origin: subclass
+  mechanics:
+    dark_ones_blessing: true
+- name: Fiend Spells
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Dark One's Own Luck
+  level: 6
+  origin: subclass
+  mechanics:
+    dark_ones_own_luck: true
+- name: Fiendish Resilience
+  level: 10
+  origin: subclass
+  mechanics:
+    fiendish_resilience: true

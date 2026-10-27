@@ -1,0 +1,45 @@
+class: bard
+level: 10
+subclass: lore
+abilities:
+  str: 8
+  dex: 12
+  con: 13
+  int: 15
+  wis: 10
+  cha: 14
+equipment: studded_staff
+choices:
+  ability_method: standard_array
+  background:
+    cha: 1
+    con: 1
+    int: 1
+  asis:
+    4:
+      cha: 1
+      int: 1
+    8:
+      cha: 1
+      int: 1
+  cantrips:
+  - Starry Wisp
+  - Vicious Mockery
+  - Mage Hand
+  - Minor Illusion
+  prepared_spells:
+  - Charm Person
+  - Thunderwave
+  - Healing Word
+  - Shatter
+  - Invisibility
+  - Dispel Magic
+  - Fireball
+  - Wall of Force
+  - Dissonant Whispers
+  - Sleep
+  - Faerie Fire
+  - Hold Person
+  - Hypnotic Pattern
+  - Slow
+  - Aid

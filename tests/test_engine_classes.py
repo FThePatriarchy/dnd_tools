@@ -315,7 +315,7 @@ def test_potent_spellcasting_and_divine_strike_own_turn_limit(spells,monkeypatch
 @pytest.mark.parametrize("path", sorted((ROOT/"builds").glob("*.yaml")), ids=lambda p:p.stem)
 def test_every_preset_builder_math(path):
     spec=read_yaml(path); sheet=load_build(path); level=spec["level"]; name=spec["class"]
-    faces={"fighter":10,"rogue":8,"wizard":6,"cleric":8,"barbarian":12,"paladin":10}[name]
+    faces={"fighter":10,"rogue":8,"wizard":6,"cleric":8,"barbarian":12,"paladin":10,"warlock":8,"bard":8}[name]
     abilities=spec["abilities"].copy()
     for add in spec["choices"]["asis"].values():
         for a,n in add.items(): abilities[a]+=n
@@ -326,7 +326,7 @@ def test_every_preset_builder_math(path):
     assert sheet["proficiency_bonus"]==2+(level-1)//4
     armor,shield,weapons=EQUIPMENT[spec["equipment"]]
     styles=spec["choices"].get("fighting_style",[]) if name in {"fighter","paladin"} else []
-    assert sheet["ac"]=={"none":10+mod("dex")+(mod("con") if name=="barbarian" else 0),"chain":16,"studded":12+mod("dex"),"scale":14+min(2,mod("dex"))}[armor]+2*shield+int("defense" in styles and armor!="none")
+    assert sheet["ac"]=={"none":(13 if sheet["features"].get("armor_of_shadows") else 10)+mod("dex")+(mod("con") if name=="barbarian" else 0),"chain":16,"studded":12+mod("dex"),"scale":14+min(2,mod("dex"))}[armor]+2*shield+int("defense" in styles and armor!="none")
     for attack in sheet["attacks"]:
         archery=2 if "archery" in styles and attack["kind"]=="ranged" else 0
         dueling=2 if "dueling" in styles and attack["kind"]=="melee" and shield and "two_handed" not in attack["properties"] else 0
@@ -530,7 +530,7 @@ def test_preserve_life_rejects_unbloodied_without_spending(spells):
     assert c.limited_uses["channel_divinity"]==2 and c.action==1
 
 
-@pytest.mark.parametrize("name",["fighter","rogue","wizard","cleric","barbarian","paladin"])
+@pytest.mark.parametrize("name",["fighter","rogue","wizard","cleric","barbarian","paladin","warlock","bard"])
 def test_build_every_level_validates(name):
     for level in range(1,11):
         s=build(name,level)

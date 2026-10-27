@@ -1,0 +1,32 @@
+class: bard
+level: 5
+subclass: lore
+abilities:
+  str: 8
+  dex: 14
+  con: 13
+  int: 12
+  wis: 10
+  cha: 15
+equipment: studded_staff
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      cha: 2
+  weapon_masteries: []
+  cantrips:
+  - Vicious Mockery
+  - Starry Wisp
+  - Mage Hand
+  prepared_spells:
+  - Healing Word
+  - Dissonant Whispers
+  - Sleep
+  - Faerie Fire
+  - Shatter
+  - Hold Person
+  - Hypnotic Pattern
+  - Slow
+  - Aid
+  expertise: []

@@ -251,7 +251,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             advantage = True
             self.feature_log(target, "Magic Resistance")
         disadvantage |= ability == "dex" and target.has_condition("restrained")
-        if concentration and target.features.get("war_caster"):
+        if concentration and (target.features.get("war_caster") or target.features.get("eldritch_mind")):
             advantage = True  # War Caster: advantage on saves to maintain Concentration
         bonus = target.save_bonuses.get(ability, target.mod(ability) + (target.proficiency_bonus if ability in target.save_proficiencies else 0))
         natural = dice.d20(self.rng, advantage, disadvantage)
@@ -310,6 +310,14 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         critical = critical_roll or (melee and any(defender.has_condition(c) for c in ("paralyzed", "unconscious")))
         attack = {"natural": natural, "total": total, "critical": critical, "advantage": adv and not dis, "disadvantage": dis and not adv, "weapon": weapon, "melee": melee}
         hit = natural != 1 and (critical_roll or total >= self.armor_class(defender))
+        if not hit and natural!=1:
+            total=self.failed_test_bonus(attacker,total,self.armor_class(defender),luck=False)
+            attack["total"]=total
+            hit=total>=self.armor_class(defender)
+        if hit and not critical_roll:
+            total=self.cutting_words(attacker,total,self.armor_class(defender),defender)
+            attack["total"]=total
+            hit=total>=self.armor_class(defender)
         if hit:
             self.offer_reactions("on_attack_provisional_hit", attacker=attacker, defender=defender, who=defender, attack=attack)
             hit = natural != 1 and (critical_roll or total >= self.armor_class(defender))
@@ -376,6 +384,13 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         typed = defaultdict(int)
         for (target, dtype, half), amount in components.items():
             typed[target, dtype] += amount // 2 if half else amount
+        if attack_context and attack_context[2].get("critical"):
+            attacker,defender,_=attack_context
+            entries=[(k,n) for k,n in typed.items() if k[0] is defender]
+            total=sum(n for _,n in entries)
+            reduction=total-self.cutting_words(attacker,total,defender=defender)
+            for key,n in entries:
+                removed=min(n,reduction); typed[key]-=removed; reduction-=removed
         self.uncanny_reduce(typed, attack_context)
         grouped = defaultdict(dict)
         for (target, dtype), amount in typed.items():
@@ -408,6 +423,9 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             if self.saving_throw(target, "con", target.features["undead_fortitude"] + amount):
                 target.hp = 1
                 self.feature_log(target, "Undead Fortitude")
+        if before > 0 and target.hp == 0 and source is not None and source.team!=target.team and source.alive and source.features.get("dark_ones_blessing"):
+            source.temp_hp=max(source.temp_hp,max(1,source.level+source.mod("cha")))
+            self.feature_log(source,"Dark One's Blessing",amount=source.temp_hp)
         if before > 0 and target.hp == 0:
             target.downs += 1
             target.conditions.update({"unconscious", "prone"})

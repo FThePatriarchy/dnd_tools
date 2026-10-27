@@ -29,7 +29,7 @@ from .classes import SUBCLASSES
 from .loader import ROOT, Validator
 
 LEVELS = (1, 3, 5, 7, 10)
-PRIMARY = {"fighter": "str", "rogue": "dex", "wizard": "int", "cleric": "wis", "barbarian": "str", "paladin": "str"}
+PRIMARY = {"fighter": "str", "rogue": "dex", "wizard": "int", "cleric": "wis", "barbarian": "str", "paladin": "str", "warlock": "cha", "bard": "cha"}
 
 PROFILES = {
     "optimized": {
@@ -86,6 +86,16 @@ PROFILES = {
 }
 
 
+for profile, classes in PROFILES.items():
+    for name in ("warlock", "bard"):
+        classes[name] = {"method":"point_buy" if profile=="optimized" else "standard_array",
+                         "abilities":dict(str=8,dex=14,con=15,int=8,wis=10,cha=15) if profile=="optimized" else dict(str=8,dex=12,con=13,int=15,wis=10,cha=14),
+                         "equipment":"unarmored_staff" if name=="warlock" else "studded_staff",
+                         "cantrips":["Eldritch Blast","Mind Sliver","Mage Hand","Minor Illusion"] if name=="warlock" else ["Starry Wisp","Vicious Mockery","Mage Hand","Minor Illusion"],
+                         "spells":(["Hex","Armor of Agathys","Hypnotic Pattern","Counterspell","Synaptic Static","Hold Person"] if name=="warlock" else ["Healing Word","Fireball","Wall of Force","Sleep","Dissonant Whispers","Faerie Fire","Hypnotic Pattern","Slow","Synaptic Static","Polymorph"]) if profile=="optimized" else ["Charm Person","Thunderwave","Healing Word","Hex","Shatter","Invisibility","Dispel Magic"],
+                         **({"flavour":"int"} if profile=="casual" else {})}
+
+
 def ordered(name, preferred, options, exclude=()):
     """Preferred names first, then the builder's default order; illegal or excluded names dropped."""
     first = [n for n in preferred if n in options and n not in exclude]
@@ -135,7 +145,7 @@ def recipe(name, level, profile_name):
         choices["cunning_strike"] = p["cunning"]
     if name == "cleric":
         choices.update(divine_order=p["order"], blessed_strikes=p["strike"])
-    if name in {"wizard", "cleric", "paladin"}:
+    if name in {"wizard", "cleric", "paladin", "warlock", "bard"}:
         options = spell_options(name, level)
         cantrips = {n: s for n, s in options.items() if s["level"] == 0}
         choices["cantrips"] = ordered(name, p["cantrips"], cantrips)[:row["cantrips"]]

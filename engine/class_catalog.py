@@ -7,7 +7,7 @@ from .loader import ROOT
 from .sheets import effect_block
 
 RAW = Path(__file__).resolve().parents[1] / "raw_data" / "class"
-SUBS = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion"}
+SUBS = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion", "warlock": "Fiend", "bard": "Lore"}
 
 
 def records(name):
@@ -50,6 +50,17 @@ def feature_payload(name, feature):
         "Divine Strike": {"divine_strike": "1d8"}, "Potent Spellcasting": {"potent_spellcasting": True},
         "Thaumaturge": {"thaumaturge": True},
     }
+    flags.update({"Pact Magic": {"pact_magic": True}, "Dark One's Blessing": {"dark_ones_blessing": True},
+                  "Dark One's Own Luck": {"dark_ones_own_luck": True}, "Fiendish Resilience": {"fiendish_resilience": True},
+                  "Bardic Inspiration": {"bardic_inspiration": True}, "Cutting Words": {"cutting_words": True},
+                  "Jack of All Trades": {"jack_of_all_trades": True}})
+    omitted = {"Magical Cunning": "One-minute recovery rite is not automated between encounters.",
+               "Contact Patron": "Exploration only.", "Countercharm": "Not simulated.",
+               "Bonus Proficiencies": "Lore bonus skills are not simulated.",
+               "Expertise": "Bard expertise is outside combat; initiative is not a proficient skill.",
+               "Font of Inspiration": "Short-rest recovery executes; spell-slot conversion is not automated.",
+               "Eldritch Invocation Options": "Only Armor of Shadows, Agonizing Blast and Eldritch Mind are modeled."}
+    if name in {"warlock", "bard"} and n in omitted: return {"unsupported": omitted[n]}
     if n in flags: return {"mechanics": flags[n]}
     if n == "Second Wind":
         return {"actions": [action(n, "bonus_action", [effect_block("second_wind", apply=[{"heal": {"dice": "1d10", "bonus": "class_level"}}])], "second_wind")]}
@@ -124,6 +135,13 @@ def declaration(name):
             if level >= 3: resource("channel_divinity", 2, 1)
             row["weapon_masteries"] = 2
             row["prepared"] = [2,3,4,5,6,6,7,7,9,9][level-1]
+            row["slots"] = {i:n for i,n in enumerate(base["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}
+        if name == "warlock":
+            table = base["classTableGroups"][0]["rows"][level-1]
+            row.update(cantrips=table[1], prepared=table[2], slots={table[4]:table[3]})
+        if name == "bard":
+            row.update(cantrips=2 if level<4 else 3 if level<10 else 4,
+                       prepared=[4,5,6,7,9,10,11,12,14,15][level-1])
             row["slots"] = {i:n for i,n in enumerate(base["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}
         if name == "rogue":
             row["weapon_masteries"] = 2

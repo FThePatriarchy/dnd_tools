@@ -8,6 +8,47 @@ SKILLS = {"acrobatics", "animal handling", "arcana", "athletics", "deception", "
 
 
 class ClassMechanics:
+    def bardic_die(self, actor):
+        return 10 if actor.level>=10 else 8 if actor.level>=5 else 6
+
+    def inspire(self, actor, target):
+        if not actor.features.get("bardic_inspiration") or not actor.alive or actor.has_condition("incapacitated") or not actor.bonus_action or self.turn_rules(actor).get("no_bonus_action") or not actor.limited_uses.get("bardic_inspiration"): return False
+        if target is actor or target.team!=actor.team or not target.alive or self.isolation(target)!=self.isolation(actor): return False
+        if not actor.visible_to(target) and target.has_condition("deafened"): return False
+        if target.statuses.get("bardic_inspiration",{}).get("expires",0)>self.time_rounds: return False
+        self.spend_economy(actor,"bonus_action")
+        actor.limited_uses["bardic_inspiration"]-=1; actor.spend("bardic_inspiration")
+        target.statuses["bardic_inspiration"]={"die":self.bardic_die(actor),"expires":self.time_rounds+600}
+        self.feature_log(actor,"Bardic Inspiration",target=target.id)
+        return True
+
+    def failed_test_bonus(self, actor, total, dc, *, luck=True):
+        inspiration=actor.statuses.get("bardic_inspiration",{})
+        if inspiration.get("expires",0)<=self.time_rounds:
+            actor.statuses.pop("bardic_inspiration",None); inspiration={}
+        if 0<dc-total<=inspiration.get("die",0):
+            total+=self.rng.randint(1,inspiration["die"])
+            actor.statuses.pop("bardic_inspiration",None)
+            self.feature_log(actor,"Bardic Inspiration used",total=total,dc=dc)
+        if luck and 0<dc-total<=10 and actor.limited_uses.get("dark_ones_own_luck"):
+            actor.limited_uses["dark_ones_own_luck"]-=1; actor.spend("dark_ones_own_luck")
+            total+=dice.roll(self.rng,"1d10")
+            self.feature_log(actor,"Dark One's Own Luck",total=total,dc=dc)
+        return total
+
+    def cutting_words(self, enemy, total, dc=None, defender=None):
+        for bard in self.combatants:
+            if not bard.features.get("cutting_words") or bard.team==enemy.team or not bard.alive or bard.has_condition("incapacitated") or not bard.reaction or self.turn_rules(bard).get("no_reactions") or not bard.limited_uses.get("bardic_inspiration"): continue
+            if not enemy.visible_to(bard) or self.isolation(enemy)!=self.isolation(bard) or defender is not None and defender.team!=bard.team: continue
+            if dc is not None and not 0<=total-dc<self.bardic_die(bard) or dc is None and total<=0: continue
+            if defender is not None and defender.hp>defender.max_hp/2 and bard.limited_uses["bardic_inspiration"]<=1 and any(c.team==bard.team and not c.dead and c.hp<=c.max_hp/2 for c in self.combatants): continue
+            bard.reaction-=1; bard.limited_uses["bardic_inspiration"]-=1; bard.spend("bardic_inspiration")
+            total-=self.rng.randint(1,self.bardic_die(bard))
+            if dc is None: total=max(0,total)
+            self.feature_log(bard,"Cutting Words",target=enemy.id,total=total)
+            if dc is None or total<dc: break
+        return total
+
     def expected_buff_value(self, actor, spec, *, slot=None):
         """In-combat damage-equivalent gain; Bless saves/frightened immunity omitted."""
         enemies = self.enemies(actor)
@@ -59,7 +100,7 @@ class ClassMechanics:
         allies = [c for c in self.combatants if c.team == actor.team and c.alive]
         hits = sum(self.expected_attack_hits(e, actor) for e in enemies) / max(1, len(allies))
         bonus = actor.save_bonuses.get("con", actor.mod("con") + (actor.proficiency_bonus if "con" in actor.save_proficiencies else 0))
-        fail = min(.95, max(.05, (9 - bonus) / 20)) * (.5 if actor.features.get("war_caster") else 1)
+        fail = min(.95, max(.05, (9 - bonus) / 20)) * (.5 if (actor.features.get("war_caster") or actor.features.get("eldritch_mind")) else 1)
         keep = (1 - fail) ** hits
         return horizon if keep >= 1 else (1 - keep ** horizon) / (1 - keep)
 
@@ -158,6 +199,10 @@ class ClassMechanics:
         self.feature_log(instance.caster,"Sear Undead",target=target.id)
 
     def class_scale(self, actor, spec):
+        if actor.features.get("agonizing_blast") and spec["name"]=="Eldritch Blast":
+            for b in spec["effects"]:
+                for p in b["on_hit"]:
+                    if "damage" in p: p["damage"]["bonus"]+=actor.mod("cha")
         if actor.features.get("potent_cantrip") and spec["level"] == 0:
             for b in spec["effects"]:
                 if b["attack"] and not b.get("on_miss"):
@@ -292,6 +337,9 @@ class ClassMechanics:
         return natural
 
     def class_failed_save(self, actor, ability, dc, bonus, natural, success):
+        if not success and not (ability=="death" and natural==1):
+            total=self.failed_test_bonus(actor,natural+bonus,dc)
+            if total!=natural+bonus: return total>=dc,total,natural
         if not success and actor.limited_uses.get("indomitable", 0) and self.policy_for(actor).indomitable(self, actor, ability, dc):
             actor.limited_uses["indomitable"] -= 1
             actor.spend("indomitable")
@@ -352,6 +400,8 @@ class ClassMechanics:
                 actor.spend("second_wind")
             self.feature_log(actor, "Tactical Mind", added=added, success=total + added >= dc)
             total += added
+        if total>=dc: total=self.cutting_words(actor,total,dc)
+        total=self.failed_test_bonus(actor,total,dc)
         return total >= dc
 
 
