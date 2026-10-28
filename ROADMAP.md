@@ -15,6 +15,7 @@ The simulation is the source of truth. Expected-value maths (hit chance × damag
 
 ## Current state (2026-10-23)
 
+- Monk (Open Hand) and Ranger (Hunter), levels 1–10, added 2026-10-27 with casual, standard and optimized builds at 1/3/5/7/10. Both use the `values_buffs` flag, and the ranger's free Hunter's Mark casts share the warlock's Hex valuation; the eight earlier classes give bit-identical results. Combat scope and omissions are in `data/handwritten/CLASS_FORMAT.md`.
 - Warlock (Fiend) and Bard (Lore), levels 1–10, added 2026-10-27 with casual, standard and optimized builds at 1/3/5/7/10. They use the paladin's buff valuation through a `values_buffs` flag; the six earlier classes give bit-identical results. Combat scope and omissions are in `data/handwritten/CLASS_FORMAT.md`.
 - Barbarian (Berserker) and Paladin (Devotion), levels 1–10, added 2026-10-26 with casual, standard and optimized builds at 1/3/5/7/10. The reference parties stay fighter, cleric, rogue, wizard, and the four original classes give bit-identical results.
 - Combat engine with 245 XPHB spells, 70 XMM monsters, Fighter/Rogue/Wizard/Cleric levels 1–10, 20 preset builds, adventuring-day mode with 2024 rests.
@@ -167,6 +168,9 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 - **Warlock in the wizard's slot, Bard in the cleric's** (`compare_L{5,10}_{warlock,bard}_variants.md`, standard party):
   - Warlock: -23% at level 5, but only because of the solo ladder (-78%); every other opponent type is within noise. Without the wizard the party has no fire, so the troll keeps regenerating: the party wins 82% of fights against one troll (100% with the wizard) and the solo ladder stops there. No AI targets regeneration, so the wizard stops it only because Fire Bolt and Fireball happen to be fire. The warlock prepares Hellish Rebuke but the AI does not pick fire for it. At level 10 the warlock is +4% (+23% against casters). Dropping Agonizing Blast or Armor of Shadows from the default three invocations costs another 3–5%, mostly against solo and ranged opponents.
   - Bard: +2% at level 5 (within noise; +17% against control) and -10% at level 10 (-16% to -18% against ranged, swarm and control). The casual spell profile is -4% at level 5 (-15% against casters). Alert and War Caster are within noise.
+- **Monk in the rogue's slot, Ranger in the fighter's** (`compare_L{5,10}_{monk,ranger}_variants.md`, standard party):
+  - Monk: +8% at level 5 (+20% against brutes, +13% against control) and +5% at level 10 (+14% against brutes). Holding back focus for Stunning Strike ("reserve") and Alert are both +9%, within noise of the standard monk.
+  - Ranger: -8% at level 5 (-19% against casters, -12% against control) and -12% at level 10 (-35% against control, -21% against swarms). The sword-and-shield kit, Horde Breaker, Alert and Sharpshooter are all within 1% of the longbow default; Sharpshooter matches it exactly, as on the rogue. Against vampire spawn the level 10 ranger casts Entangle before Hunter's Mark (Hunter's Mark then waits for concentration, 0.08 casts per fight) and spends its action on Cure Wounds about twice per fight. Banning Entangle cuts the win rate against five spawn from 75% to 64%; banning Cure Wounds raises it to 80% there but lowers it against eight guard captains (17% to 11%). So the gap is the fighter's kit (heavy armour, Action Surge, Indomitable, 83% against the same spawn), not a ranger AI fault.
 - **Not yet done:**
   - Searching ability-score and ASI choices.
   - The optimized and casual reference parties for every class.
@@ -178,6 +182,6 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 
 ## Later
 
-- More classes (Barbarian, Paladin, Warlock and Bard done; Druid, Monk, Ranger and Sorcerer left) and levels 11–20, each checked against the calibration report.
+- More classes (Barbarian, Paladin, Warlock, Bard, Monk and Ranger done; Druid and Sorcerer left) and levels 11–20, each checked against the calibration report.
 - A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.
 - Repo housekeeping: done 2026-10-26. `readme.md` has working usage examples; the 5etools zip, `raw_data/` and the retired `spellsim/` + `ai_extractors/` pipeline are ignored and kept locally.

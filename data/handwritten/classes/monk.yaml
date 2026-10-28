@@ -1,0 +1,334 @@
+name: monk
+source: XPHB
+subclass: open hand
+hit_die: d8
+saves:
+- str
+- dex
+subclass_level: 3
+asi_levels:
+- 4
+- 8
+levels:
+  1:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Bonus Unarmed Strike
+    - Dexterous Attacks
+    - Martial Arts
+    - Martial Arts Die
+    - Unarmored Defense
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  2:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Flurry of Blows
+    - Monk's Focus
+    - Patient Defense
+    - Step of the Wind
+    - Unarmored Movement
+    - Uncanny Metabolism
+    resources:
+      focus:
+        max: 2
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  3:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Deflect Attacks
+    - Monk Subclass
+    - Open Hand Technique
+    - Warrior of the Open Hand
+    resources:
+      focus:
+        max: 3
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  4:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    - Slow Fall
+    resources:
+      focus:
+        max: 4
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  5:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Extra Attack
+    - Stunning Strike
+    resources:
+      focus:
+        max: 5
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  6:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Empowered Strikes
+    - Subclass Feature
+    - Wholeness of Body
+    resources:
+      focus:
+        max: 6
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  7:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Evasion
+    resources:
+      focus:
+        max: 7
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  8:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources:
+      focus:
+        max: 8
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  9:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Acrobatic Movement
+    resources:
+      focus:
+        max: 9
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  10:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Heightened Focus
+    - Self-Restoration
+    resources:
+      focus:
+        max: 10
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+features:
+- name: Bonus Unarmed Strike
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Dexterous Attacks
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Martial Arts
+  level: 1
+  origin: class
+  mechanics:
+    martial_arts: true
+- name: Martial Arts Die
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Unarmored Defense
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Flurry of Blows
+  level: 2
+  origin: class
+  mechanics:
+    builder: true
+- name: Monk's Focus
+  level: 2
+  origin: class
+  mechanics:
+    monks_focus: true
+- name: Patient Defense
+  level: 2
+  origin: class
+  mechanics:
+    builder: true
+- name: Step of the Wind
+  level: 2
+  origin: class
+  unsupported: Movement and exploration benefits are not simulated.
+- name: Unarmored Movement
+  level: 2
+  origin: class
+  mechanics:
+    builder: true
+- name: Uncanny Metabolism
+  level: 2
+  origin: class
+  mechanics:
+    uncanny_metabolism: true
+- name: Deflect Attacks
+  level: 3
+  origin: class
+  mechanics:
+    deflect_attacks: true
+- name: Monk Subclass
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 4
+  origin: class
+  mechanics:
+    builder: true
+- name: Slow Fall
+  level: 4
+  origin: class
+  unsupported: Movement and exploration benefits are not simulated.
+- name: Extra Attack
+  level: 5
+  origin: class
+  mechanics:
+    builder: true
+- name: Stunning Strike
+  level: 5
+  origin: class
+  mechanics:
+    stunning_strike: true
+- name: Empowered Strikes
+  level: 6
+  origin: class
+  mechanics:
+    empowered_strikes: true
+- name: Subclass Feature
+  level: 6
+  origin: class
+  mechanics:
+    builder: true
+- name: Evasion
+  level: 7
+  origin: class
+  mechanics:
+    evasion: true
+- name: Ability Score Improvement
+  level: 8
+  origin: class
+  mechanics:
+    builder: true
+- name: Acrobatic Movement
+  level: 9
+  origin: class
+  unsupported: Movement and exploration benefits are not simulated.
+- name: Heightened Focus
+  level: 10
+  origin: class
+  mechanics:
+    heightened_focus: true
+- name: Self-Restoration
+  level: 10
+  origin: class
+  mechanics:
+    self_restoration: true
+- name: Open Hand Technique
+  level: 3
+  origin: subclass
+  mechanics:
+    open_hand_technique: true
+- name: Warrior of the Open Hand
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Wholeness of Body
+  level: 6
+  origin: subclass
+  mechanics:
+    wholeness_of_body: true

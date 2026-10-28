@@ -1,0 +1,25 @@
+class: ranger
+level: 3
+subclass: hunter
+abilities:
+  str: 10
+  dex: 15
+  con: 13
+  int: 8
+  wis: 14
+  cha: 12
+equipment: leather_archer
+choices:
+  ability_method: standard_array
+  asis: {}
+  weapon_masteries:
+  - longbow
+  fighting_style:
+  - archery
+  cantrips: []
+  prepared_spells:
+  - Cure Wounds
+  - Entangle
+  - Hail of Thorns
+  - Animal Friendship
+  expertise: []

@@ -7,7 +7,7 @@ from .loader import ROOT
 from .sheets import effect_block
 
 RAW = Path(__file__).resolve().parents[1] / "raw_data" / "class"
-SUBS = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion", "warlock": "Fiend", "bard": "Lore"}
+SUBS = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion", "warlock": "Fiend", "bard": "Lore", "monk": "Open Hand", "ranger": "Hunter"}
 
 
 def records(name):
@@ -54,6 +54,9 @@ def feature_payload(name, feature):
                   "Dark One's Own Luck": {"dark_ones_own_luck": True}, "Fiendish Resilience": {"fiendish_resilience": True},
                   "Bardic Inspiration": {"bardic_inspiration": True}, "Cutting Words": {"cutting_words": True},
                   "Jack of All Trades": {"jack_of_all_trades": True}})
+    flags.update({n:{k:True} for n,k in {"Martial Arts":"martial_arts", "Monk's Focus":"monks_focus", "Uncanny Metabolism":"uncanny_metabolism", "Deflect Attacks":"deflect_attacks", "Stunning Strike":"stunning_strike", "Empowered Strikes":"empowered_strikes", "Heightened Focus":"heightened_focus", "Self-Restoration":"self_restoration", "Open Hand Technique":"open_hand_technique", "Wholeness of Body":"wholeness_of_body", "Favored Enemy":"favored_enemy", "Hunter's Prey":"colossus_slayer", "Defensive Tactics":"multiattack_defense"}.items()})
+    if name in {"monk","ranger"} and n in {"Step of the Wind","Slow Fall","Acrobatic Movement","Roving","Expertise","Deft Explorer","Hunter's Lore","Tireless"}:
+        return {"unsupported":"Temp-HP preparation and exhaustion recovery are not simulated." if n=="Tireless" else "Movement and exploration benefits are not simulated."}
     omitted = {"Magical Cunning": "One-minute recovery rite is not automated between encounters.",
                "Contact Patron": "Exploration only.", "Countercharm": "Not simulated.",
                "Bonus Proficiencies": "Lore bonus skills are not simulated.",
@@ -136,6 +139,13 @@ def declaration(name):
             row["weapon_masteries"] = 2
             row["prepared"] = [2,3,4,5,6,6,7,7,9,9][level-1]
             row["slots"] = {i:n for i,n in enumerate(base["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}
+        if name == "monk" and level>=2:
+            resource("focus",level,"all")
+            resource("uncanny_metabolism",1)
+        if name == "ranger":
+            resource("favored_enemy",2 if level<5 else 3 if level<9 else 4)
+            row.update(weapon_masteries=2,prepared=[2,3,4,5,6,6,7,7,9,9][level-1])
+            row["slots"]={i:n for i,n in enumerate(base["classTableGroups"][2]["rowsSpellProgression"][level-1],1) if n}
         if name == "warlock":
             table = base["classTableGroups"][0]["rows"][level-1]
             row.update(cantrips=table[1], prepared=table[2], slots={table[4]:table[3]})

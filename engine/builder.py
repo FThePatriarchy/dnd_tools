@@ -19,17 +19,21 @@ SPELL_LISTS["warlock"] = set("Blade Ward; Chill Touch; Eldritch Blast; Friends; 
 SPELL_LISTS["bard"] = set("Blade Ward; Dancing Lights; Friends; Light; Mage Hand; Mending; Message; Minor Illusion; Prestidigitation; Starry Wisp; Thunderclap; True Strike; Vicious Mockery; Animal Friendship; Bane; Charm Person; Color Spray; Command; Comprehend Languages; Cure Wounds; Detect Magic; Disguise Self; Dissonant Whispers; Faerie Fire; Feather Fall; Healing Word; Heroism; Identify; Illusory Script; Longstrider; Silent Image; Sleep; Speak with Animals; Tasha's Hideous Laughter; Thunderwave; Unseen Servant; Aid; Animal Messenger; Blindness/Deafness; Calm Emotions; Cloud of Daggers; Crown of Madness; Detect Thoughts; Enhance Ability; Enlarge/Reduce; Enthrall; Heat Metal; Hold Person; Invisibility; Knock; Lesser Restoration; Locate Animals or Plants; Locate Object; Magic Mouth; Mirror Image; Phantasmal Force; See Invisibility; Shatter; Silence; Suggestion; Zone of Truth; Bestow Curse; Clairvoyance; Dispel Magic; Fear; Feign Death; Glyph of Warding; Hypnotic Pattern; Leomund's Tiny Hut; Major Image; Mass Healing Word; Nondetection; Plant Growth; Sending; Slow; Speak with Dead; Speak with Plants; Stinking Cloud; Tongues; Charm Monster; Compulsion; Confusion; Dimension Door; Freedom of Movement; Greater Invisibility; Hallucinatory Terrain; Locate Creature; Phantasmal Killer; Polymorph; Animate Objects; Awaken; Dominate Person; Dream; Geas; Greater Restoration; Hold Monster; Legend Lore; Mass Cure Wounds; Mislead; Modify Memory; Planar Binding; Raise Dead; Rary's Telepathic Bond; Scrying; Seeming; Synaptic Static; Teleportation Circle".split("; "))
 SPELL_LISTS["druid"] = set("Guidance; Resistance; Starry Wisp; Thorn Whip; Shillelagh; Produce Flame; Entangle; Faerie Fire; Goodberry; Healing Word; Cure Wounds; Thunderwave; Barkskin; Heat Metal; Moonbeam; Pass without Trace; Spike Growth; Call Lightning; Conjure Animals; Plant Growth; Sleet Storm; Conjure Woodland Beings; Conjure Minor Elementals; Ice Storm; Wall of Fire; Antilife Shell; Cone of Cold; Insect Plague; Mass Cure Wounds; Wall of Stone".split("; "))
 SPELL_LISTS["druid"].update("Animal Friendship; Charm Person; Create or Destroy Water; Detect Magic; Detect Poison and Disease; Fog Cloud; Jump; Longstrider; Protection from Evil and Good; Purify Food and Drink; Speak with Animals; Animal Messenger; Augury; Beast Sense; Continual Flame; Darkvision; Enhance Ability; Enlarge/Reduce; Find Traps; Flame Blade; Flaming Sphere; Gust of Wind; Hold Person; Lesser Restoration; Locate Animals or Plants; Locate Object; Protection from Poison; Summon Beast; Aura of Vitality; Conjure Minor Elementals; Conjure Elemental; Daylight; Dispel Magic; Elemental Weapon; Feign Death; Meld into Stone; Protection from Energy; Revivify; Speak with Plants; Summon Fey; Water Breathing; Water Walk; Wind Wall; Blight; Charm Monster; Confusion; Divination; Dominate Beast; Fire Shield; Freedom of Movement; Giant Insect; Grasping Vine; Hallucinatory Terrain; Locate Creature; Polymorph; Stone Shape; Stoneskin; Summon Elemental; Awaken; Commune with Nature; Contagion; Geas; Greater Restoration; Planar Binding; Reincarnate; Scrying; Tree Stride; Druidcraft; Elementalism; Mending; Poison Spray; Thunderclap".split("; "))
+SPELL_LISTS["ranger"] = set("Hunter's Mark; Cure Wounds; Entangle; Ensnaring Strike; Hail of Thorns; Fog Cloud; Longstrider; Jump; Goodberry; Detect Magic; Detect Poison and Disease; Speak with Animals; Animal Friendship; Alarm; Protection from Poison; Lesser Restoration; Aid; Enhance Ability; Gust of Wind; Magic Weapon; Pass without Trace; Silence; Spike Growth; Summon Beast; Barkskin; Beast Sense; Cordon of Arrows; Darkvision; Find Traps; Locate Animals or Plants; Locate Object; Animal Messenger; Conjure Animals; Conjure Barrage; Daylight; Dispel Magic; Elemental Weapon; Lightning Arrow; Meld into Stone; Nondetection; Plant Growth; Protection from Energy; Revivify; Speak with Plants; Summon Fey; Water Breathing; Water Walk; Wind Wall".split("; "))
 PRIORITY = {
+    "ranger": ["Cure Wounds","Entangle","Hail of Thorns","Aid","Spike Growth","Magic Weapon","Summon Beast","Revivify","Lightning Arrow"],
     "warlock": ["Hex", "Armor of Agathys", "Hellish Rebuke", "Hold Person", "Mirror Image", "Hypnotic Pattern", "Counterspell", "Hunger of Hadar", "Banishment", "Synaptic Static"],
     "bard": ["Healing Word", "Fireball", "Wall of Force", "Dissonant Whispers", "Sleep", "Faerie Fire", "Shatter", "Hold Person", "Hypnotic Pattern", "Slow", "Aid", "Polymorph", "Synaptic Static", "Mass Cure Wounds", "Lesser Restoration"],
     "paladin": ["Bless", "Cure Wounds", "Heroism", "Command", "Shield of Faith", "Aid", "Lesser Restoration", "Magic Weapon", "Revivify", "Dispel Magic"],
     "wizard": ["Fireball", "Shield", "Mage Armor", "Magic Missile", "Counterspell", "Scorching Ray", "Thunderwave", "Mirror Image", "Misty Step", "Haste", "Web", "Cone of Cold", "Ice Storm", "Wall of Fire", "Fire Shield", "Slow", "Sleep", "Chromatic Orb", "Burning Hands", "Lightning Bolt"],
     "cleric": ["Spirit Guardians", "Healing Word", "Guiding Bolt", "Spiritual Weapon", "Hold Person", "Shield of Faith", "Bless", "Cure Wounds", "Aid", "Lesser Restoration", "Mass Healing Word", "Bane", "Sanctuary", "Command", "Inflict Wounds", "Silence", "Warding Bond", "Death Ward", "Mass Cure Wounds", "Flame Strike"],
 }
-CANTRIPS = {"warlock": ["Eldritch Blast", "Mind Sliver", "Mage Hand", "Minor Illusion"], "bard": ["Vicious Mockery", "Starry Wisp", "Mage Hand", "Minor Illusion"],"paladin": [], "wizard": ["Fire Bolt", "Ray of Frost", "Toll the Dead", "Shocking Grasp", "Acid Splash"],
+CANTRIPS = {"ranger": [], "warlock": ["Eldritch Blast", "Mind Sliver", "Mage Hand", "Minor Illusion"], "bard": ["Vicious Mockery", "Starry Wisp", "Mage Hand", "Minor Illusion"],"paladin": [], "wizard": ["Fire Bolt", "Ray of Frost", "Toll the Dead", "Shocking Grasp", "Acid Splash"],
             "cleric": ["Sacred Flame", "Toll the Dead", "Guidance", "Word of Radiance", "Resistance", "Thaumaturgy"]}
 ABILITIES = ("str", "dex", "con", "int", "wis", "cha")
 DEFAULT_ABILITIES = {
+    "monk": dict(zip(ABILITIES, [10,15,13,8,14,12])),
+    "ranger": dict(zip(ABILITIES, [10,15,13,8,14,12])),
     "warlock": dict(zip(ABILITIES, [8,14,13,12,10,15])),
     "bard": dict(zip(ABILITIES, [8,14,13,12,10,15])),
     "barbarian": dict(zip(ABILITIES, [15,14,13,8,12,10])),
@@ -39,7 +43,7 @@ DEFAULT_ABILITIES = {
     "wizard": dict(zip(ABILITIES, [8,14,13,15,12,10])),
     "cleric": dict(zip(ABILITIES, [13,10,14,12,15,8])),
 }
-SKILLS = {"warlock": ["arcana", "deception"], "bard": ["performance", "persuasion", "perception"],"barbarian": ["athletics", "perception", "survival"], "paladin": ["athletics", "persuasion"], "fighter": ["athletics", "perception"], "rogue": ["stealth", "sleight of hand", "perception", "investigation"],
+SKILLS = {"monk":["acrobatics","insight"], "ranger":["perception","stealth","survival"], "warlock": ["arcana", "deception"], "bard": ["performance", "persuasion", "perception"],"barbarian": ["athletics", "perception", "survival"], "paladin": ["athletics", "persuasion"], "fighter": ["athletics", "perception"], "rogue": ["stealth", "sleight of hand", "perception", "investigation"],
           "wizard": ["arcana", "history"], "cleric": ["religion", "insight"]}
 WEAPONS = {
     "greataxe": ("1d12", "slashing", "melee", "cleave", ["two_handed", "heavy"]),
@@ -53,6 +57,7 @@ WEAPONS = {
     "quarterstaff": ("1d6", "bludgeoning", "melee", "topple", ["versatile"]),
 }
 EQUIPMENT = {
+    "scale_sword_shield": ("scale", True, ["longsword"]),
     "unarmored_greataxe": ("none", False, ["greataxe"]),
     "unarmored_greatsword": ("none", False, ["greatsword"]),
     "unarmored_maul": ("none", False, ["maul"]),
@@ -68,7 +73,7 @@ EQUIPMENT = {
     "scale_shield": ("scale", True, ["mace"]),
 }
 DEFAULT_EQUIPMENT = dict(zip(SUBCLASSES, ("chain_greatsword", "studded_rapier", "unarmored_staff", "chain_shield")))
-DEFAULT_EQUIPMENT.update(barbarian="unarmored_greataxe", paladin="chain_greatsword", warlock="unarmored_staff", bard="studded_staff")
+DEFAULT_EQUIPMENT.update(barbarian="unarmored_greataxe", paladin="chain_greatsword", warlock="unarmored_staff", bard="studded_staff", monk="unarmored_staff", ranger="leather_archer")
 STYLES = {"defense", "archery", "dueling", "great_weapon_fighting"}
 # 2024 General feats taken in place of an ASI: the +1 ability options and prerequisite.
 FEATS = {
@@ -90,7 +95,7 @@ def _class(name): return load_class(name)
 @lru_cache(None)
 def spell_options(name, level):
     spells = _spells()
-    cap = max(_class(name)["levels"][level]["slots"], default=0) if name in {"paladin", "warlock"} else (level + 1)//2
+    cap = max(_class(name)["levels"][level]["slots"], default=0) if name in {"paladin", "warlock", "ranger"} else (level + 1)//2
     names = SPELL_LISTS.get(name, set())
     if name=="bard" and level>=10: names = names | {n for n in SPELL_LISTS["cleric"] | SPELL_LISTS["druid"] | SPELL_LISTS["wizard"] if n in spells and spells[n]["level"]>0}
     return {n: spells[n] for n in names if n in spells and spells[n]["level"] <= cap}
@@ -102,7 +107,7 @@ def spell_order(name, options):
 
 def default_asis(name, level, abilities):
     c = _class(name); result={}; scores=abilities.copy()
-    primary = {"fighter":"str", "rogue":"dex", "wizard":"int", "cleric":"wis", "barbarian":"str", "paladin":"str", "warlock":"cha", "bard":"cha"}[name]
+    primary = {"fighter":"str", "rogue":"dex", "wizard":"int", "cleric":"wis", "barbarian":"str", "paladin":"str", "warlock":"cha", "bard":"cha", "monk":"dex", "ranger":"dex"}[name]
     for n in c["asi_levels"]:
         if n > level: continue
         add={}
@@ -154,7 +159,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     subclass = c["subclass"] if subclass is None else subclass
     v.enum(subclass,{c["subclass"]},"subclass")
     choices=deepcopy(choices) if choices is not None else {}
-    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat invocations magical_discoveries")
+    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat invocations magical_discoveries hunters_prey open_hand stunning_budget")
     v.check(class_name=="bard" or "magical_discoveries" not in choices,"choices.magical_discoveries","Bard choice only")
     v.check(type(background) is bool,"background","expected boolean")
     abilities=deepcopy(abilities if abilities is not None else DEFAULT_ABILITIES[class_name])
@@ -169,7 +174,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         v.check(sum(costs[n] for n in abilities.values())<=27,"abilities","point-buy budget exceeds 27")
     unboosted = abilities.copy()
     if background:
-        primary = {"fighter":"str", "rogue":"dex", "wizard":"int", "cleric":"wis", "barbarian":"str", "paladin":"str", "warlock":"cha", "bard":"cha"}[class_name]
+        primary = {"fighter":"str", "rogue":"dex", "wizard":"int", "cleric":"wis", "barbarian":"str", "paladin":"str", "warlock":"cha", "bard":"cha", "monk":"dex", "ranger":"dex"}[class_name]
         increases = choices.get("background", {primary:2,"con":1})
         v.obj(increases,"choices.background","",ABILITIES)
         v.check(sorted(increases.values()) in ([1,2],[1,1,1]),"choices.background","expected +2/+1 or +1/+1/+1")
@@ -220,19 +225,22 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     if class_name=="rogue": v.check(armor=="studded" and not shield and set(weapons)<={"rapier","shortbow"},"equipment","Rogue equipment not proficient")
     if class_name=="cleric": v.check(armor in {"chain","scale"} and (armor!="chain" or order=="protector"),"equipment","requires Protector for heavy armor")
     if class_name=="barbarian": v.check(armor!="chain","equipment","Barbarian lacks heavy armor training")
-    styles=choices.get("fighting_style",["defense"] + (["great_weapon_fighting"] if class_name=="fighter" and level>=7 else [])) if class_name in {"fighter","paladin"} and (class_name=="fighter" or level>=2) else []
+    if class_name=="monk": v.check(armor=="none" and not shield and set(weapons)<={"quarterstaff","mace"},"equipment","Monk requires unarmored monk-weapon kit")
+    if class_name=="ranger": v.check(armor!="chain","equipment","Ranger lacks heavy armor training")
+    styles=choices.get("fighting_style",(["archery"] if class_name=="ranger" else ["defense"]) + (["great_weapon_fighting"] if class_name=="fighter" and level>=7 else [])) if class_name in {"fighter","paladin","ranger"} and (class_name=="fighter" or level>=2) else []
     if isinstance(styles,str): styles=[styles]
-    if class_name in {"fighter","paladin"} and (class_name=="fighter" or level>=2):
+    if class_name in {"fighter","paladin","ranger"} and (class_name=="fighter" or level>=2):
         v.sequence(styles,"choices.fighting_style"); v.check(len(styles)==1+int(class_name=="fighter" and level>=7) and len(set(styles))==len(styles),"choices.fighting_style","wrong number of distinct styles")
         for style in styles: v.enum(style,STYLES,"choices.fighting_style")
     else: v.check("fighting_style" not in choices,"choices.fighting_style","Fighter choice only")
-    masteries=choices.get("weapon_masteries",weapons if class_name in {"fighter","rogue","barbarian","paladin"} else [])
+    masteries=choices.get("weapon_masteries",weapons if class_name in {"fighter","rogue","barbarian","paladin","ranger"} else [])
     v.sequence(masteries,"choices.weapon_masteries"); v.check(len(set(masteries))==len(masteries) and len(masteries)<=row["weapon_masteries"],"choices.weapon_masteries","exceeds mastery count or duplicate")
     for n in masteries:
         v.enum(n,WEAPONS,"choices.weapon_masteries")
         if class_name=="rogue": v.enum(n,{"rapier","shortbow","mace","quarterstaff"},"choices.weapon_masteries")
     ac={"none":10+mod("dex"),"chain":16,"studded":12+mod("dex"),"scale":14+min(2,mod("dex"))}[armor] + 2*shield + int("defense" in styles and armor!="none")
     if class_name=="barbarian" and armor=="none": ac += mod("con")
+    if class_name=="monk": ac += mod("wis")
     faces=int(c["hit_die"][1:]); hp=max(1,faces+mod("con"))+(level-1)*max(1,faces//2+1+mod("con"))
     sheet={"name":f"{class_name.title()} {level} ({subclass.title()})", "source":"XPHB", "level":level,
            "hit_dice":{"die":c["hit_die"],"count":level}, "max_hp":hp,"ac":ac,"abilities":abilities,
@@ -242,7 +250,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     if class_name=="cleric": v.enum(selected_strike,{"potent_spellcasting","divine_strike"},"choices.blessed_strikes")
     else: v.check("blessed_strikes" not in choices,"choices.blessed_strikes","Cleric choice only")
     sheet["unsupported"]=[]
-    sheet["position"] = "front" if (armor in {"chain","scale"} or class_name=="barbarian") and any(WEAPONS[n][2] == "melee" for n in weapons) else "back"
+    sheet["position"] = "front" if (armor in {"chain","scale"} or class_name in {"barbarian","monk"}) and any(WEAPONS[n][2] == "melee" for n in weapons) else "back"
     for f in c["features"]:
         if f["level"]>level: continue
         if f["name"] in {"Divine Strike","Potent Spellcasting"} and f["name"].lower().replace(" ","_")!=selected_strike: continue
@@ -251,7 +259,19 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         sheet["features"].update({k:substitute(x,level,row) for k,x in f.get("mechanics",{}).items() if k not in {"builder","progression"}})
         if "unsupported" in f: sheet["unsupported"].append(f["name"]+": "+f["unsupported"])
     # Do not enable for cleric/wizard: their published results must stay bit-identical.
-    if class_name in {"paladin","warlock","bard"}: sheet["features"]["values_buffs"]=True
+    if class_name in {"paladin","warlock","bard","monk","ranger"}: sheet["features"]["values_buffs"]=True
+    for key,owner,minimum,options,default in (("hunters_prey","ranger",3,{"colossus_slayer","horde_breaker"},"colossus_slayer"),("open_hand","monk",3,{"topple","addle"},"topple"),("stunning_budget","monk",5,{"balanced","reserve"},"balanced")):
+        if key in choices: v.check(class_name==owner and level>=minimum,"choices."+key,"choice not available")
+        if class_name==owner and level>=minimum:
+            chosen=choices.get(key,default); v.enum(chosen,options,"choices."+key)
+            if key=="hunters_prey":
+                sheet["features"]["colossus_slayer"]=chosen=="colossus_slayer"
+                sheet["features"]["horde_breaker"]=chosen=="horde_breaker"
+            else: sheet["features"]["open_hand_addle" if key=="open_hand" else "stunning_reserve"]=chosen!=default
+    if class_name=="monk":
+        sheet.update(spell_ability="wis",spell_dc=8+row["proficiency_bonus"]+mod("wis"))
+        sheet["speed"]+=0 if level<2 else 10 if level<6 else 15 if level<10 else 20
+        if level>=6: sheet["limited_uses"]["wholeness_of_body"]={"max":max(1,mod("wis")),"long_rest":"all"}
     if class_name=="warlock":
         invocations=choices.get("invocations",["armor_of_shadows"] + (["agonizing_blast","eldritch_mind"] if level>=2 else []))
         v.sequence(invocations,"choices.invocations")
@@ -274,21 +294,27 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         v.enum(origin,ORIGIN_FEATS,"choices.origin_feat")
         sheet["features"][origin]=True
         if origin=="alert": sheet["initiative_bonus"]=sheet.get("initiative_bonus",0)+row["proficiency_bonus"]
-    if class_name in {"fighter","barbarian","paladin"} and level>=5: sheet["extra_attack"]=2
+    if class_name in {"fighter","barbarian","paladin","monk","ranger"} and level>=5: sheet["extra_attack"]=2
     for weapon in weapons:
         ds,dt,kind,mastery,properties=WEAPONS[weapon]
         ability="dex" if kind=="ranged" or "finesse" in properties and mod("dex")>mod("str") else "str"
         if weapon in {"longsword","quarterstaff"} and not shield: ds="1d10" if weapon=="longsword" else "1d8"
         if "versatile" in properties and not shield: properties=[*properties,"two_handed"]
+        if class_name=="monk":
+            ability="dex" if mod("dex")>=mod("str") else "str"
+            if level>=5: ds="1d8"
         bonus=mod(ability)+(2 if "dueling" in styles and kind=="melee" and "two_handed" not in properties and shield else 0)
         attack={"name":weapon.title(),"kind":kind,"ability":ability,"properties":properties.copy(),"to_hit":row["proficiency_bonus"]+mod(ability)+(2 if "archery" in styles and kind=="ranged" else 0),"effects":[{"damage":{"dice":ds,"bonus":bonus,"type":dt}}]}
         if kind=="melee": attack["reach_ft"]=5
         else: attack["range_ft"]=80 if weapon=="shortbow" else 150
         if weapon in masteries: attack["mastery"]=mastery
         sheet["attacks"].append(attack)
+    if class_name=="monk":
+        ability="dex" if mod("dex")>=mod("str") else "str"
+        sheet["attacks"].append({"name":"Unarmed Strike","kind":"melee","ability":ability,"properties":[],"to_hit":row["proficiency_bonus"]+mod(ability),"reach_ft":5,"effects":[{"damage":{"dice":"1d8" if level>=5 else "1d6","bonus":mod(ability),"type":"force" if level>=6 else "bludgeoning"}}]})
     skills=choices.get("skills",SKILLS[class_name]); v.sequence(skills,"choices.skills")
     if class_name=="barbarian" and level<3 and "skills" not in choices: skills=skills[:2]
-    expected=4 if class_name=="rogue" else 3 if class_name=="barbarian" and level>=3 else 3 if class_name=="bard" else 2
+    expected=4 if class_name=="rogue" else 3 if class_name=="barbarian" and level>=3 else 3 if class_name in {"bard","ranger"} else 2
     v.check(len(skills)==expected and len(set(skills))==len(skills),"choices.skills","wrong skill count")
     allowed=source(class_name)[0]["startingProficiencies"]["skills"][0].get("choose",{}).get("from","acrobatics; animal handling; arcana; athletics; deception; history; insight; intimidation; investigation; medicine; nature; perception; performance; persuasion; religion; sleight of hand; stealth; survival".split("; "))
     for skill in skills: v.enum(skill,set(allowed),"choices.skills")
@@ -314,7 +340,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         v.sequence(cantrips,"choices.cantrips")
         v.check(len(cantrips)==row["cantrips"]+int(class_name=="cleric" and order=="thaumaturge") and len(set(cantrips))==len(cantrips),"choices.cantrips","wrong cantrip count")
         for n in cantrips: v.check(n in options and options[n]["level"]==0,"choices.cantrips",f"not a supported {class_name} cantrip: {n}")
-        domain=[]
+        domain=["Hunter's Mark"] if class_name=="ranger" else []
         if class_name in {"cleric","paladin","warlock"} and level>=3:
             for at,names in source(class_name)[1]["additionalSpells"][0]["prepared"].items():
                 if int(at)<=level:
@@ -383,7 +409,8 @@ def write_presets(names=SUBCLASSES):
         for level in (1,3,5,7,10):
             d={"class":name,"level":level,"subclass":sub,"abilities":DEFAULT_ABILITIES[name],"equipment":DEFAULT_EQUIPMENT[name],"choices":{"ability_method":"standard_array","asis":default_asis(name,level,DEFAULT_ABILITIES[name])}}
             sheet=build(name,level,sub,d["abilities"],d["equipment"],d["choices"])
-            d["choices"]["weapon_masteries"]=[n for n in EQUIPMENT[d["equipment"]][2] if name in {"fighter","rogue","barbarian","paladin"}]
+            d["choices"]["weapon_masteries"]=[n for n in EQUIPMENT[d["equipment"]][2] if name in {"fighter","rogue","barbarian","paladin","ranger"}]
+            if name=="ranger" and level>=2: d["choices"]["fighting_style"]=["archery"]
             if name=="paladin" and level>=2: d["choices"]["fighting_style"]=["defense"]
             if name=="fighter": d["choices"]["fighting_style"]=["defense"]+(["great_weapon_fighting"] if level>=7 else [])
             for k in ("cantrips","prepared_spells","spellbook"):

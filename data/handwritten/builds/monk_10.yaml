@@ -1,0 +1,20 @@
+class: monk
+level: 10
+subclass: open hand
+abilities:
+  str: 10
+  dex: 15
+  con: 13
+  int: 8
+  wis: 14
+  cha: 12
+equipment: unarmored_staff
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      dex: 2
+    8:
+      dex: 2
+  weapon_masteries: []
+  expertise: []

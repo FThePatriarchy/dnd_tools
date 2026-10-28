@@ -1,0 +1,258 @@
+name: ranger
+source: XPHB
+subclass: hunter
+hit_die: d10
+saves:
+- str
+- dex
+subclass_level: 3
+asi_levels:
+- 4
+- 8
+levels:
+  1:
+    proficiency_bonus: 2
+    hit_die: d10
+    features:
+    - Favored Enemy
+    - Spellcasting
+    - Weapon Mastery
+    resources:
+      favored_enemy:
+        max: 2
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 2
+    slots:
+      1: 2
+  2:
+    proficiency_bonus: 2
+    hit_die: d10
+    features:
+    - Deft Explorer
+    - Fighting Style
+    resources:
+      favored_enemy:
+        max: 2
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 3
+    slots:
+      1: 2
+  3:
+    proficiency_bonus: 2
+    hit_die: d10
+    features:
+    - Ranger Subclass
+    - Hunter
+    - Hunter's Lore
+    - Hunter's Prey
+    resources:
+      favored_enemy:
+        max: 2
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 4
+    slots:
+      1: 3
+  4:
+    proficiency_bonus: 2
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      favored_enemy:
+        max: 2
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 5
+    slots:
+      1: 3
+  5:
+    proficiency_bonus: 3
+    hit_die: d10
+    features:
+    - Extra Attack
+    resources:
+      favored_enemy:
+        max: 3
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 6
+    slots:
+      1: 4
+      2: 2
+  6:
+    proficiency_bonus: 3
+    hit_die: d10
+    features:
+    - Roving
+    resources:
+      favored_enemy:
+        max: 3
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 6
+    slots:
+      1: 4
+      2: 2
+  7:
+    proficiency_bonus: 3
+    hit_die: d10
+    features:
+    - Subclass Feature
+    - Defensive Tactics
+    resources:
+      favored_enemy:
+        max: 3
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 7
+    slots:
+      1: 4
+      2: 3
+  8:
+    proficiency_bonus: 3
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      favored_enemy:
+        max: 3
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 7
+    slots:
+      1: 4
+      2: 3
+  9:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Expertise
+    resources:
+      favored_enemy:
+        max: 4
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 9
+    slots:
+      1: 4
+      2: 3
+      3: 2
+  10:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Tireless
+    resources:
+      favored_enemy:
+        max: 4
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 9
+    slots:
+      1: 4
+      2: 3
+      3: 2
+features:
+- name: Favored Enemy
+  level: 1
+  origin: class
+  mechanics:
+    favored_enemy: true
+- name: Spellcasting
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Weapon Mastery
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Deft Explorer
+  level: 2
+  origin: class
+  unsupported: Movement and exploration benefits are not simulated.
+- name: Fighting Style
+  level: 2
+  origin: class
+  mechanics:
+    builder: true
+- name: Ranger Subclass
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 4
+  origin: class
+  mechanics:
+    builder: true
+- name: Extra Attack
+  level: 5
+  origin: class
+  mechanics:
+    builder: true
+- name: Roving
+  level: 6
+  origin: class
+  unsupported: Movement and exploration benefits are not simulated.
+- name: Subclass Feature
+  level: 7
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 8
+  origin: class
+  mechanics:
+    builder: true
+- name: Expertise
+  level: 9
+  origin: class
+  unsupported: Movement and exploration benefits are not simulated.
+- name: Tireless
+  level: 10
+  origin: class
+  unsupported: Temp-HP preparation and exhaustion recovery are not simulated.
+- name: Hunter
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Hunter's Lore
+  level: 3
+  origin: subclass
+  unsupported: Movement and exploration benefits are not simulated.
+- name: Hunter's Prey
+  level: 3
+  origin: subclass
+  mechanics:
+    colossus_slayer: true
+- name: Defensive Tactics
+  level: 7
+  origin: subclass
+  mechanics:
+    multiattack_defense: true

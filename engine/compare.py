@@ -31,7 +31,7 @@ from .presets import ordered, party, recipe as preset_recipe
 from .rating import rate_party
 
 REFERENCE_CLASSES = ("fighter", "cleric", "rogue", "wizard")
-ROLES = {c:c for c in REFERENCE_CLASSES} | {"barbarian":"fighter", "paladin":"fighter", "warlock":"wizard", "bard":"cleric"}
+ROLES = {c:c for c in REFERENCE_CLASSES} | {"barbarian":"fighter", "paladin":"fighter", "warlock":"wizard", "bard":"cleric", "monk":"rogue", "ranger":"fighter"}
 CLASSES = tuple(ROLES)
 NOISE = 0.03       # overall rating: Phase 2 seeds agreed within about 2.3%
 TYPE_NOISE = 0.10  # one opponent type: Phase 2 seeds moved single types by up to ~0.1x
@@ -70,6 +70,8 @@ def spell_profile(base, cls, level, profile):
 
 
 FEAT_OPTIONS = {
+    "monk": [],
+    "ranger": [("sharpshooter","dex",{})],
     "warlock": [("war_caster", "cha", {})],
     "bard": [("war_caster", "cha", {})],  # (feat, +1 ability, changes to the standard recipe)
     "barbarian": [("great_weapon_master", "str", {})],
@@ -112,6 +114,13 @@ def variants(cls, level):
                         and set(v["choices"]["fighting_style"]) == set(base["choices"]["fighting_style"]))
         out.pop(standard)
         out.insert(0, base)  # the standard build itself (same choices, its own style order)
+    elif cls == "monk":
+        if level>=5: out.append(variant(base,"Stunning Strike: reserve",stunning_budget="reserve"))
+    elif cls == "ranger":
+        changes={"equipment":"scale_sword_shield","weapon_masteries":["longsword"]}
+        if level>=2: changes["fighting_style"]=["dueling"]
+        out.append(variant(base,"melee sword and shield kit",**changes))
+        if level>=3: out.append(variant(base,"Hunter's Prey: Horde Breaker",hunters_prey="horde_breaker"))
     elif cls == "barbarian":
         out.append(variant(base,"greatsword kit",equipment="unarmored_greatsword",weapon_masteries=["greatsword"]))
     elif cls == "paladin":

@@ -8,6 +8,112 @@ SKILLS = {"acrobatics", "animal handling", "arcana", "athletics", "deception", "
 
 
 class ClassMechanics:
+    def martial_die(self, actor):
+        return "1d10" if actor.level>=11 else "1d8" if actor.level>=5 else "1d6"
+
+    def free_mark(self, actor, name, slot=None):
+        return name=="Hunter's Mark" and actor.features.get("favored_enemy") and actor.limited_uses.get("favored_enemy",0)>0 and slot in {None,1}
+
+    def monk_initiative(self, actor):
+        if actor.alive and actor.features.get("uncanny_metabolism") and actor.limited_uses.get("uncanny_metabolism") and (actor.limited_uses.get("focus",0)<actor.max_limited_uses["focus"] or actor.hp<actor.max_hp):
+            actor.limited_uses["uncanny_metabolism"]-=1; actor.spend("uncanny_metabolism")
+            actor.limited_uses["focus"]=actor.max_limited_uses["focus"]
+            self.heal(actor,dice.roll(self.rng,self.martial_die(actor))+actor.level)
+            self.feature_log(actor,"Uncanny Metabolism")
+
+    def spend_focus(self, actor):
+        actor.limited_uses["focus"]-=1; actor.spend("focus")
+
+    def patient_defense(self, actor, dodge=False):
+        if self.current is not actor or not actor.features.get("monks_focus") or not actor.alive or actor.has_condition("incapacitated") or not actor.bonus_action or self.turn_rules(actor).get("no_bonus_action") or dodge and not actor.limited_uses.get("focus"): return False
+        self.spend_economy(actor,"bonus_action")
+        actor.effects.append(Effect("status",{"id":"disengaged","data":{}},0,"patient_defense",("end_of_turn",actor.id,actor.turns_taken)))
+        if dodge:
+            self.spend_focus(actor)
+            actor.effects.append(Effect("status",{"id":"monk_dodge","data":{}},0,"patient_defense",("start_of_turn",actor.id,actor.turns_taken+1)))
+        self.feature_log(actor,"Patient Defense",dodge=dodge)
+        return True
+
+    def wholeness(self, actor):
+        if self.current is not actor or not actor.features.get("wholeness_of_body") or not actor.alive or actor.has_condition("incapacitated") or not actor.bonus_action or self.turn_rules(actor).get("no_bonus_action") or not actor.limited_uses.get("wholeness_of_body") or actor.hp>=actor.max_hp: return False
+        self.spend_economy(actor,"bonus_action")
+        actor.limited_uses["wholeness_of_body"]-=1; actor.spend("wholeness_of_body")
+        self.heal(actor,max(1,dice.roll(self.rng,self.martial_die(actor))+actor.mod("wis")))
+        self.feature_log(actor,"Wholeness of Body")
+        return True
+
+    def monk_bonus(self, actor, flurry=False):
+        if self.current is not actor or not actor.features.get("martial_arts") or not actor.alive or actor.has_condition("incapacitated") or not actor.bonus_action or self.turn_rules(actor).get("no_bonus_action") or flurry and not actor.limited_uses.get("focus"): return False
+        attack=next((a for a in actor.attacks if a["name"]=="Unarmed Strike"),None)
+        if attack is None or not self.reachable(actor,self.enemies(actor),attack): return False
+        self.spend_economy(actor,"bonus_action")
+        if flurry: self.spend_focus(actor)
+        self.feature_log(actor,"Flurry of Blows" if flurry else "Martial Arts")
+        actor.statuses["flurry"]=flurry
+        try:
+            for _ in range((3 if actor.features.get("heightened_focus") else 2) if flurry else 1):
+                enemies=self.reachable(actor,self.enemies(actor),attack)
+                if not enemies or actor.has_condition("incapacitated"): break
+                self.weapon_attack(actor,self.policy_for(actor).weapon_target(self,actor,enemies),attack)
+        finally: actor.statuses.pop("flurry",None)
+        return True
+
+    def monk_hit(self, actor, target, attack):
+        if not actor.features.get("martial_arts") or not target.alive or attack["name"] not in {"Unarmed Strike","Quarterstaff","Mace"}: return
+        dc=8+actor.mod("wis")+actor.proficiency_bonus
+        until=("start_of_turn",actor.id,actor.turns_taken+1)
+        if actor.features.get("stunning_strike") and actor.statuses.get("stun_turn")!=self.turn_index and self.policy_for(actor).stunning_strike(self,actor,target):
+            actor.statuses["stun_turn"]=self.turn_index
+            self.spend_focus(actor)
+            success=self.saving_throw(target,"con",dc,conditions=["stunned"])
+            if success:
+                target.effects.append(Effect("modify",{"stat":"speed","op":"mul","value":0.5,"scope":"all"},0,"stunning_strike",until))
+                target.effects.append(Effect("advantage",{"on":"attack_rolls","scope":"all","recipient":"any_attacker"},0,"stunning_strike",until,uses=1))
+            elif not target.immune_to("stunned"):
+                target.effects.append(Effect("apply_condition",{"condition":"stunned"},0,"stunning_strike",until))
+                if target.concentration is not None: self.end_spell(target.concentration)
+            self.feature_log(actor,"Stunning Strike",target=target.id,success=success)
+        if actor.statuses.get("flurry") and actor.features.get("open_hand_technique"):
+            # Addle only stops Opportunity Attacks, which need a grid; it is a no-op unless chosen.
+            addle=bool(actor.features.get("open_hand_addle"))
+            if addle:
+                target.effects.append(Effect("status",{"id":"no_opportunity_attacks","data":{}},0,"open_hand",("start_of_turn",target.id,target.turns_taken+1)))
+            elif not target.has_condition("prone") and not target.immune_to("prone") and not self.saving_throw(target,"dex",dc,conditions=["prone"]): target.conditions.add("prone")
+            self.feature_log(actor,"Open Hand Technique",option="Addle" if addle else "Topple",target=target.id)
+
+    def deflect_reduce(self, typed, attack_context):
+        if attack_context is None: return
+        attacker,target,attack=attack_context
+        if not target.features.get("deflect_attacks") or not target.alive or not target.reaction or target.has_condition("incapacitated") or self.turn_rules(target).get("no_reactions"): return
+        entries=[(k,n) for k,n in typed.items() if k[0] is target]
+        if not any(k[1] in {"bludgeoning","piercing","slashing"} and n>0 for k,n in entries): return
+        target.reaction-=1
+        reduction=dice.roll(self.rng,"1d10")+target.mod("dex")+target.level
+        for k,n in entries:
+            removed=min(n,max(0,reduction)); typed[k]-=removed; reduction-=removed
+        self.feature_log(target,"Deflect Attacks")
+        # shortcut: redirection needs reach/cover adjudication; reduction alone is modeled.
+
+    def hunter_attack(self, actor, target, attack):
+        if not actor.features.get("horde_breaker") or self.current is not actor or actor.statuses.get("horde_turn")==self.turn_index: return
+        attacked=actor.statuses.setdefault("hunter_targets",set())
+        attacked.add(target.id)
+        others=[e for e in self.reachable(actor,self.enemies(actor),attack) if e.id not in attacked]
+        if not others: return
+        actor.statuses["horde_turn"]=self.turn_index
+        self.feature_log(actor,"Horde Breaker")
+        # shortcut: another reachable enemy is assumed within five feet of the first.
+        self.weapon_attack(actor,self.policy_for(actor).weapon_target(self,actor,others),attack)
+
+    def monk_end_turn(self, actor):
+        if not actor.features.get("self_restoration"): return
+        condition=next((c for c in ("charmed","frightened","poisoned") if actor.has_condition(c)),None)
+        if condition and self.can_end_condition(actor,condition):
+            actor.conditions.discard(condition)
+            actor.effects=[e for e in actor.effects if not (e.kind=="apply_condition" and e.data["condition"]==condition)]
+            self.refresh_spell_effects()
+            self.feature_log(actor,"Self-Restoration",condition=condition)
+
     def bardic_die(self, actor):
         return 10 if actor.level>=10 else 8 if actor.level>=5 else 6
 
@@ -256,6 +362,10 @@ class ClassMechanics:
 
     def class_hit(self, actor, target, attack, critical, roll):
         option = None
+        if actor.features.get("colossus_slayer") and target.hp<target.max_hp and actor.statuses.get("colossus_turn")!=self.turn_index:
+            actor.statuses["colossus_turn"]=self.turn_index
+            self.damage(target,dice.roll(self.rng,"1d8",critical),attack["effects"][0]["damage"]["type"],actor)
+            self.feature_log(actor,"Colossus Slayer")
         if actor.raging and attack.get("ability", "str") == "str":
             bonus = 2 if actor.level < 9 else 3
             dtype = attack["effects"][0]["damage"]["type"]
@@ -328,7 +438,13 @@ class ClassMechanics:
         adv |= on == "saves" and scope == "dex" and actor.features.get("danger_sense",False) and not actor.has_condition("incapacitated")
         adv |= on == "attack_rolls" and scope == "str" and bool(actor.statuses.get("reckless"))
         adv |= on == "attack_rolls" and against is not None and bool(against.statuses.get("reckless"))
-        return adv, False
+        dodge=actor.features.get("monks_focus",False) and actor.has_status("monk_dodge") and not actor.has_condition("incapacitated") and self.modifier(actor,"speed",actor.speed)>0
+        adv |= on=="saves" and scope=="dex" and dodge
+        dis=False
+        if on=="attack_rolls" and against is not None:
+            dis |= against.features.get("monks_focus",False) and against.has_status("monk_dodge") and not against.has_condition("incapacitated") and self.modifier(against,"speed",against.speed)>0 and actor.visible_to(against)
+            dis |= against.features.get("multiattack_defense",False) and against.statuses.get("multiattack_defense",{}).get(actor.id)==self.turn_index
+        return adv, dis
 
     def heroic_reroll(self, actor, natural, succeeds):
         if not succeeds(natural) and actor.statuses.pop("heroic_inspiration", None) is not None:
@@ -354,6 +470,7 @@ class ClassMechanics:
         if "sacred_weapon" in actor.statuses and compare_deadline(self.time_rounds,actor.statuses["sacred_weapon"]["expires"]) >= 0: actor.statuses.pop("sacred_weapon",None)
 
     def class_start_turn(self, actor):
+        if actor.features.get("horde_breaker"): actor.statuses["hunter_targets"]=set()
         if actor.features.get("lay_on_hands"): actor.statuses["weapon_hits"] = 0
         actor.statuses.pop("reckless",None)
         actor.statuses.pop("reckless_decided",None)

@@ -10,7 +10,7 @@ from engine.loader import ROOT
 from engine.presets import party
 
 
-@pytest.mark.parametrize("cls", ["fighter", "rogue", "cleric", "wizard", "barbarian", "paladin", "warlock", "bard"])
+@pytest.mark.parametrize("cls", ["fighter", "rogue", "cleric", "wizard", "barbarian", "paladin", "warlock", "bard", "monk", "ranger"])
 def test_variants_start_with_standard_and_are_distinct(cls):
     for level in (1, 5, 7):
         found = variants(cls, level)

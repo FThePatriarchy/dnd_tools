@@ -29,7 +29,7 @@ from .classes import SUBCLASSES
 from .loader import ROOT, Validator
 
 LEVELS = (1, 3, 5, 7, 10)
-PRIMARY = {"fighter": "str", "rogue": "dex", "wizard": "int", "cleric": "wis", "barbarian": "str", "paladin": "str", "warlock": "cha", "bard": "cha"}
+PRIMARY = {"fighter": "str", "rogue": "dex", "wizard": "int", "cleric": "wis", "barbarian": "str", "paladin": "str", "warlock": "cha", "bard": "cha", "monk":"dex", "ranger":"dex"}
 
 PROFILES = {
     "optimized": {
@@ -96,6 +96,16 @@ for profile, classes in PROFILES.items():
                          **({"flavour":"int"} if profile=="casual" else {})}
 
 
+for profile, classes in PROFILES.items():
+    for name in ("monk","ranger"):
+        classes[name]={"method":"point_buy" if profile=="optimized" else "standard_array",
+                       "abilities":dict(str=8,dex=15,con=15,int=8,wis=14,cha=10) if profile=="optimized" else dict(str=10,dex=14,con=13,int=8,wis=12,cha=15),
+                       "equipment":"unarmored_staff" if name=="monk" else "leather_archer",
+                       **({"flavour":"cha"} if profile=="casual" else {}),
+                       "styles":["archery"],"masteries":["longbow"],"cantrips":[],
+                       "spells":["Cure Wounds","Entangle","Aid","Spike Growth","Summon Beast","Magic Weapon","Lightning Arrow","Revivify"]}
+
+
 def ordered(name, preferred, options, exclude=()):
     """Preferred names first, then the builder's default order; illegal or excluded names dropped."""
     first = [n for n in preferred if n in options and n not in exclude]
@@ -137,15 +147,15 @@ def recipe(name, level, profile_name):
     scores = {a: min(20, p["abilities"][a] + background.get(a, 0)) for a in ABILITIES}
     row = _class(name)["levels"][level]
     choices = {"ability_method": p["method"], "background": background, "asis": asis_for(name, level, p, scores)}
-    if name == "fighter" or name == "paladin" and level >= 2:
+    if name == "fighter" or name in {"paladin","ranger"} and level >= 2:
         choices["fighting_style"] = p["styles"][:1 + int(name == "fighter" and level >= 7)]
-    if name in {"fighter", "rogue", "barbarian", "paladin"}:
+    if name in {"fighter", "rogue", "barbarian", "paladin", "ranger"}:
         choices["weapon_masteries"] = p["masteries"][:row["weapon_masteries"]]
     if name == "rogue" and level >= 5:
         choices["cunning_strike"] = p["cunning"]
     if name == "cleric":
         choices.update(divine_order=p["order"], blessed_strikes=p["strike"])
-    if name in {"wizard", "cleric", "paladin", "warlock", "bard"}:
+    if name in {"wizard", "cleric", "paladin", "warlock", "bard", "ranger"}:
         options = spell_options(name, level)
         cantrips = {n: s for n, s in options.items() if s["level"] == 0}
         choices["cantrips"] = ordered(name, p["cantrips"], cantrips)[:row["cantrips"]]

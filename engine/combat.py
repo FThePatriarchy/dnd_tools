@@ -328,6 +328,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             self.end_activity_effects(attacker)
             return False
         if hit:
+            if defender.features.get("multiattack_defense"): defender.statuses.setdefault("multiattack_defense",{})[attacker.id]=self.turn_index
             previous = self._damage_batch
             self._damage_batch = []
             on_hit(critical, attack)
@@ -391,6 +392,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             reduction=total-self.cutting_words(attacker,total,defender=defender)
             for key,n in entries:
                 removed=min(n,reduction); typed[key]-=removed; reduction-=removed
+        self.deflect_reduce(typed, attack_context)
         self.uncanny_reduce(typed, attack_context)
         grouped = defaultdict(dict)
         for (target, dtype), amount in typed.items():
@@ -519,6 +521,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         return bool(evaluate(expression, ctx))
 
     def available_slot(self, actor, spec):
+        if self.free_mark(actor,spec["name"]): return 1
         if spec["name"] in actor.spell_resources:
             return actor.spell_levels.get(spec["name"], spec["level"]) if actor.limited_uses.get(actor.spell_resources[spec["name"]], 0) else None
         if spec["name"] in actor.spell_levels: return actor.spell_levels[spec["name"]]
@@ -540,10 +543,11 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if kind not in {"action", "bonus_action", "reaction"} or getattr(actor, kind) < 1: return False
         if kind == "action" and actor.action <= actor.surge_actions: return False
         if kind != "reaction" and self.current is not actor: return False
-        innate = name in actor.innate_spells or name in actor.spell_resources or name in actor.spell_levels
+        innate = self.free_mark(actor,name,slot) or name in actor.innate_spells or name in actor.spell_resources or name in actor.spell_levels
         if spec["level"] and not innate and actor.slot_cast_turn == self.turn_index: return False
         available = self.available_slot(actor, spec) if slot is None else slot
         if available is None or available < spec["level"]: return False
+        if self.free_mark(actor,name,slot): return available==1
         if innate and available != actor.spell_levels.get(name, spec["level"]): return False
         if not spec["level"]: return available == 0
         if name in actor.spell_resources: return actor.limited_uses.get(actor.spell_resources[name], 0) > 0
@@ -598,11 +602,11 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         # Ending self-Haste (or a reaction) can make this casting impossible.
         if caster.has_condition("incapacitated") or not caster.alive: return None
         pending = {"caster": caster, "spell": spec, "targets": targets or [], "cancelled": False}
-        innate = name in caster.innate_spells or name in caster.spell_resources or name in caster.spell_levels
+        innate = self.free_mark(caster,name,slot) or name in caster.innate_spells or name in caster.spell_resources or name in caster.spell_levels
         instance.choices["_slot_expended"] = bool(slot and not innate)
         previous_slot_turn = caster.slot_cast_turn
         if innate:
-            resource = caster.spell_resources.get(name, name)
+            resource = "favored_enemy" if self.free_mark(caster,name,slot) else caster.spell_resources.get(name, name)
             if resource in caster.limited_uses:
                 caster.limited_uses[resource] -= 1
                 caster.spend(resource)
@@ -1286,6 +1290,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
     def end_turn(self, actor):
         for inst in list(self.instances.values()):
             if inst.active and inst.caster is actor and inst.maintained_turn < actor.turns_taken and any(e.source == inst.id and e.kind == "turn_rules" and e.data.get("maintained_by_action") for c in self.combatants for e in c.effects): self.end_spell(inst.id)
+        self.monk_end_turn(actor)
         self.spell_end_turn(actor)
         self.dispatch("end_of_turn", who=actor)
         self.dispatch("end_of_turn_in_aura", who=actor)
@@ -1350,7 +1355,10 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         success = self.attack(actor, target, attack["to_hit"], hit, attack.get("kind", "melee") == "melee", weapon=True, ability=attack.get("ability", "str" if attack.get("kind", "melee") == "melee" else "dex"))
         self._monster_attack = previous_context
         actor.statuses.pop("brutal_attack",None)
-        if success: self.class_after_hit(actor, target, cunning)
+        if success:
+            self.class_after_hit(actor, target, cunning)
+            self.monk_hit(actor,target,attack)
+        self.hunter_attack(actor,target,attack)
         if not success and attack.get("mastery") == "graze":
             self.damage(target, max(0, actor.mod(attack.get("ability", "str"))), attack["effects"][0]["damage"]["type"], actor)
         if success and attack.get("mastery") == "cleave" and actor.statuses.get("cleave_turn") != self.turn_index:
@@ -1676,6 +1684,10 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
 
     def run(self, max_rounds=100):
         self.interrupt_rest("initiative")
+        self.focus_at_start={}
+        for actor in self.combatants:
+            self.monk_initiative(actor)
+            if actor.features.get("monks_focus"): self.focus_at_start[actor.id]=(actor.limited_uses["focus"],actor.resources_spent.get("focus",0))
         initiative = sorted((c for c in self.combatants if c.summoner_id is None), key=lambda c: (-(dice.d20(self.rng, advantage=c.has_condition("invisible") or c.features.get("initiative_advantage", False)) + c.mod("dex") + c.initiative_bonus), c.id))
         for c in [c for c in initiative if c.features.get("alert")]:
             # Alert's Initiative Swap: trade places with the slowest ally who has spell slots, if later.

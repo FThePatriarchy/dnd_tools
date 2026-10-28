@@ -65,6 +65,26 @@ def printed_grab_count(instance, block, n: int, eligible) -> int:
 
 
 class Policy:
+    def focus_allowed(self, combat, actor):
+        points=actor.limited_uses.get("focus",0)
+        if not points: return False
+        starts=getattr(combat,"focus_at_start",None)
+        if starts is None: combat.focus_at_start=starts={}
+        start,spent_start=starts.setdefault(actor.id,(points,actor.resources_spent.get("focus",0)))
+        remaining=max(1,getattr(combat,"encounters_until_rest",getattr(combat,"encounters_remaining",1)))
+        budget=math.ceil(start/remaining)
+        spent=actor.resources_spent.get("focus",0)-spent_start
+        if actor.hp<actor.max_hp/4: return True
+        return spent<budget and spent<max(1,math.ceil(budget*actor.turns_taken/max(2,combat.expected_remaining_rounds(actor)+actor.turns_taken-1)))
+
+    def stunning_strike(self, combat, actor, target):
+        if not self.focus_allowed(combat,actor) or target.has_condition("incapacitated") or target.immune_to("stunned"): return False
+        bonus=target.save_bonuses.get("con",target.mod("con")+(target.proficiency_bonus if "con" in target.save_proficiencies else 0))
+        fail=max(0,min(1,(7+actor.mod("wis")+actor.proficiency_bonus-bonus)/20))
+        threshold=.6 if actor.features.get("stunning_reserve") else .4
+        valuable=bool(target.spells) or target.max_hp>=.75*max((e.max_hp for e in combat.enemies(actor)),default=target.max_hp)
+        return valuable and fail>=threshold and target.hp>2*(actor.mod("dex")+4.5) and bool(target.attacks or target.spells or target.actions)
+
     def reckless_attack(self, combat, actor, target):
         return True
 
@@ -320,6 +340,8 @@ class Policy:
         enemies = combat.enemies(actor)
         if not enemies: return
         if actor.features.get("rage"): combat.rage(actor)
+        if actor.features.get("monks_focus") and actor.hp<actor.max_hp*.35 and any(e.attacks for e in enemies) and self.focus_allowed(combat,actor): combat.patient_defense(actor,dodge=True)
+        if actor.features.get("wholeness_of_body") and actor.hp<actor.max_hp/2: combat.wholeness(actor)
         if combat.death_rules and combat.can_cast(actor,"Revivify"):
             dead = [c for c in combat.combatants if c.team == actor.team and combat.can_revive(c)]
             if dead: combat.cast(actor,"Revivify",targets=[dead[0]])
@@ -377,7 +399,7 @@ class Policy:
                 if not combat.can_cast(actor, name): continue
                 spec = combat.spells[name]
                 if actor.features.get("lay_on_hands") and spec.get("casting_trigger"): continue
-                if not self.allow_spell(combat, actor, spec): continue
+                if not combat.free_mark(actor,name) and not self.allow_spell(combat, actor, spec): continue
                 casting_time = actor.spell_costs.get(name, spec["casting_time"])
                 if casting_time not in {"action", "bonus_action"}: continue
                 if spec["concentration"] and actor.concentration is not None: continue
@@ -392,7 +414,7 @@ class Policy:
                     value -= self.smite_slot_cost(combat, actor, enemies[0], slot)
                     # A bonus-action buff gives up this turn's Divine Smite.
                     if casting_time == "bonus_action": value -= self.smite_forgone(combat, actor, enemies[0])
-                if actor.features.get("pact_magic") and name=="Hex":
+                if (actor.features.get("pact_magic") and name=="Hex") or (actor.features.get("favored_enemy") and name=="Hunter's Mark"):
                     horizon=combat.concentration_horizon(actor,enemies,combat.expected_remaining_rounds(actor))
                     value=max(value,3.5*combat.expected_attack_hits(actor,enemies[0])*horizon*.9)
                 if value > 0:
@@ -414,6 +436,7 @@ class Policy:
             if actor.action and combat.enemies(actor):
                 if actor.features.get("pact_magic") and combat.can_cast(actor,"Eldritch Blast"): combat.cast(actor,"Eldritch Blast")
                 else: combat.weapon_action(actor)
+        if actor.features.get("martial_arts") and actor.bonus_action and combat.enemies(actor): combat.monk_bonus(actor,flurry=self.focus_allowed(combat,actor))
         if actor.features.get("bardic_inspiration") and actor.bonus_action and combat.enemies(actor):
             allies=[c for c in combat.combatants if c is not actor and c.team==actor.team and c.alive and c.statuses.get("bardic_inspiration",{}).get("expires",0)<=combat.time_rounds]
             for ally in sorted(allies,key=lambda c:(-combat.expected_attack_hits(c,combat.enemies(actor)[0]),c.hp/c.max_hp,c.id)):
