@@ -193,5 +193,5 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 ## Later
 
 - More classes (all twelve 2024 classes done at levels 1–10) and levels 11–20, each checked against the calibration report.
-- A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.
+- ~~A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.~~ Done 2026-10-31: `python -m engine.dm fight|day|monsters` (`engine/dm.py`). `fight` runs adaptively (100–800 runs) and reports win, defeat, TPK, someone down and someone dead with 95% margins, the encounter's XP as a multiple of this party's DMG High budget, and each PC's chance to drop or die, HP left and mean resources spent. `day` takes a day file or inline `--steps` and adds, per encounter, how often it is reached and cleared. `monsters` lists usable monsters by CR. The shared runners gained an optional `detail` output; their metrics are unchanged.
 - Repo housekeeping: done 2026-10-26. `readme.md` has working usage examples; the 5etools zip, `raw_data/` and the retired `spellsim/` + `ai_extractors/` pipeline are ignored and kept locally.

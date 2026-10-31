@@ -100,13 +100,15 @@ def party_sheets(builds, options):
 
 
 def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, morale="none",
-                  strategy="default", monster_strategy="default"):
+                  strategy="default", monster_strategy="default", detail=False):
     """Run a party (build names) against one encounter (entries like "ogre x3").
 
     runs is a fixed count or an Adaptive spec. area and target_cap are engine
     hooks (None means the engine default). Returns aggregated metrics: means of
     win, tpk, defeat, down, death, downs, deaths, hp_lost, slots_spent, rounds and
-    fled, plus runs, failed_runs, errors and ci (95% half-widths).
+    fled, plus runs, failed_runs, errors and ci (95% half-widths). With detail,
+    also "characters": per PC in party order, the chance of going down and of
+    dying, the mean share of HP left and the mean resources spent per fight.
     """
     global _SPELLS
     from .day import encounter_names, run_day
@@ -121,7 +123,7 @@ def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, 
     day = {"name": "encounter", "steps": [{"encounter": list(encounter)}]}
     monsters = {name: load_sheet(ROOT / "monsters" / (name + ".yaml")) for name in set(names)}
     rng = random.Random(seed)
-    rows, errors = [], {}
+    rows, errors, characters = [], {}, []
     spec = runs if isinstance(runs, Adaptive) else None
 
     def one_run():
@@ -138,6 +140,8 @@ def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, 
             errors.setdefault(f"{type(exc).__name__}: {exc}", run_seed)
             return
         enc = result.encounters[0]
+        if detail: characters.append({i: (enc.downs_by_character.get(i, 0) > 0, c["dead"], 0 if c["dead"] else min(c["hp"], base_hp[i]) / base_hp[i],
+                                          c["resources_spent"]) for i, c in enc.end.items()})
         # Aid-style max HP increases are clamped so a buffed party cannot show negative loss.
         end_hp = sum(0 if c["dead"] else min(c["hp"], base_hp[i]) for i, c in enc.end.items())
         end_slots = sum(sum(c["slots"].values()) for c in enc.end.values())
@@ -164,21 +168,39 @@ def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, 
         target = min(spec.max_runs, attempted + spec.batch)
     metrics = ("win", "tpk", "defeat", "down", "death", "downs", "deaths", "hp_lost", "slots_spent", "rounds", "fled")
     agg = {k: mean(float(r[k]) for r in rows) for k in metrics} if rows else dict.fromkeys(metrics)
-    return {"runs": len(rows), "failed_runs": attempted - len(rows), "errors": errors,
-            "ci": half_widths(rows) if rows else dict.fromkeys(TRACKED), **agg}
+    out = {"runs": len(rows), "failed_runs": attempted - len(rows), "errors": errors,
+           "ci": half_widths(rows) if rows else dict.fromkeys(TRACKED), **agg}
+    if detail: out["characters"] = character_summary(sheets, characters)
+    return out
+
+
+def character_summary(sheets, runs):
+    """Per-PC means over runs of {id: (went down, dead, HP share left, resources spent)}."""
+    from collections import Counter
+    result = []
+    for i, sheet in enumerate(sheets):
+        rows = [r[f"party_{i}"] for r in runs if f"party_{i}" in r]
+        spent = Counter()
+        for r in rows: spent.update(r[3])
+        n = len(rows) or 1
+        result.append({"name": sheet["name"], "down": sum(r[0] for r in rows) / n, "death": sum(bool(r[1]) for r in rows) / n,
+                       "hp_left": sum(r[2] for r in rows) / n, "spent": {k: v / n for k, v in sorted(spent.items()) if v}})
+    return result
 
 
 DAY_METRICS = ("complete", "defeat", "death", "cleared", "slots_left", "hp_left", "hit_dice_left", "downs")
 
 
-def run_day_runs(builds, day, runs, seed, *, morale="none", strategy="default", monster_strategy="default"):
+def run_day_runs(builds, day, runs, seed, *, morale="none", strategy="default", monster_strategy="default", detail=False):
     """Run a party through a whole day definition (encounters and rests) many times.
 
     Returns means of: complete (every encounter cleared and no PC died), defeat
     (the day ended in a TPK or with every remaining PC out of the fight), death
     (any PC died), cleared (share of encounters cleared), slots_left, hp_left and
     hit_dice_left (party totals at the end of the day, as shares of maximum) and
-    downs; plus runs, failed_runs and errors.
+    downs; plus runs, failed_runs and errors. With detail, also "encounters" (per
+    encounter: the chance it is reached, cleared, someone goes down, and its mean
+    rounds when reached) and "characters" (as run_encounter, over the whole day).
     """
     global _SPELLS
     from .day import day_monsters, run_day, validate_day
@@ -193,9 +215,10 @@ def run_day_runs(builds, day, runs, seed, *, morale="none", strategy="default", 
     monsters = day_monsters(day)
     total = sum("encounter" in step for step in day["steps"])
     rng = random.Random(seed)
-    rows, errors = [], {}
+    rows, errors, characters, fights = [], {}, [], []
     for _ in range(runs):
         party = [Combatant.from_sheet(s, f"party_{i}", "party") for i, s in enumerate(sheets)]
+        base_hp = {c.id: c.max_hp for c in party}
         max_hp = sum(c.max_hp for c in party)
         max_slots = sum(sum(c.max_spell_slots.values()) for c in party)
         max_dice = sum(c.max_hit_dice for c in party)
@@ -207,6 +230,11 @@ def run_day_runs(builds, day, runs, seed, *, morale="none", strategy="default", 
             errors.setdefault(f"{type(exc).__name__}: {exc}", run_seed)
             continue
         end = result.end_state or (result.encounters[-1].after_healing if result.encounters else {})
+        if detail:
+            downed = {i for e in result.encounters for i, n in e.downs_by_character.items() if n}
+            characters.append({i: (i in downed, c["dead"] or c["deaths"], 0 if c["dead"] else min(c["hp"], base_hp[i]) / base_hp[i], c["resources_spent"])
+                               for i, c in end.items()})
+            fights.append([(e.cleared, e.downs > 0, e.rounds) for e in result.encounters])
         rows.append({
             "complete": result.survived and result.encounters_cleared == total,
             "defeat": result.failure_reason in DEFEATS,
@@ -218,4 +246,14 @@ def run_day_runs(builds, day, runs, seed, *, morale="none", strategy="default", 
             "downs": sum(e.downs for e in result.encounters),
         })
     agg = {k: mean(float(r[k]) for r in rows) for k in DAY_METRICS} if rows else dict.fromkeys(DAY_METRICS)
-    return {"runs": len(rows), "failed_runs": runs - len(rows), "errors": errors, **agg}
+    out = {"runs": len(rows), "failed_runs": runs - len(rows), "errors": errors, **agg}
+    if detail:
+        n = len(fights) or 1
+        out["encounters"] = []
+        for k in range(total):
+            reached = [f[k] for f in fights if len(f) > k]
+            out["encounters"].append({"reached": len(reached) / n, "cleared": sum(r[0] for r in reached) / n,
+                                      "down": sum(r[1] for r in reached) / n,
+                                      "rounds": mean(r[2] for r in reached) if reached else None})
+        out["characters"] = character_summary(sheets, characters)
+    return out

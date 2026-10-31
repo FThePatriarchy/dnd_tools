@@ -43,7 +43,24 @@ As a backend-first engine, the primary UI is a Command Line Interface (CLI).
 
 Run from the repository root. Builds are named after files in `data/handwritten/builds/` and monsters after files in `data/handwritten/monsters/`.
 
-**One fight (win rate, rounds, HP and resources left):**
+**For DMs: how will my party do against this fight?** Win, defeat, someone down and someone dead (with 95% margins), the encounter's XP against the DMG budget for this party, and each character's chance of dropping plus the resources they spend:
+```bash
+python -m engine.dm fight --party fighter_5 cleric_5 rogue_5 wizard_5 --monsters "ogre x2" "goblin_warrior x4"
+```
+
+**A whole adventuring day** (encounters and rests in order; per-encounter and per-character results):
+```bash
+python -m engine.dm day --level 5 --steps "ogre x2" short "bandit x6, bandit_captain" long troll
+```
+
+**Which monsters can I use?**
+```bash
+python -m engine.dm monsters --max-cr 3
+```
+
+`--level N --profile casual|standard|optimized` picks a preset party instead of `--party`; `--strategy`, `--morale dmg` and `--json` work on both `fight` and `day`.
+
+**One fight, raw summary (the original runner):**
 ```bash
 python -m engine.simulate --party fighter_5 cleric_5 rogue_5 wizard_5 --monsters ogre ogre --runs 1000
 ```
