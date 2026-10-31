@@ -22,7 +22,7 @@ def source(name):
     path = Path(__file__).resolve().parents[1] / "raw_data/class" / ("class-" + name + ".json")
     d = json.loads(path.read_text(encoding="utf-8"))
     c = next(x for x in d["class"] if x["source"] == "XPHB")
-    short = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion", "warlock": "Fiend", "bard": "Lore", "monk": "Open Hand", "ranger": "Hunter"}[name]
+    short = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion", "warlock": "Fiend", "bard": "Lore", "monk": "Open Hand", "ranger": "Hunter", "druid": "Moon", "sorcerer": "Draconic"}[name]
     s = next(x for x in d["subclass"] if x["source"] == "XPHB" and x["shortName"] == short)
     f = {("class", x["name"], x["level"]): x for x in d["classFeature"] if x["source"] == "XPHB" and x["level"] <= 10}
     f.update({("subclass", x["name"], x["level"]): x for x in d["subclassFeature"] if x["source"] == "XPHB" and x["subclassShortName"] == short and x["level"] <= 10})
@@ -99,6 +99,17 @@ def check_class_source(data, path="<class>"):
         elif c["name"] == "Warlock":
             cantrips, prepared = table[1:3]
             slots = {table[4]:table[3]}
+        elif c["name"] in {"Druid","Sorcerer"}:
+            groups=c["classTableGroups"]
+            cantrips,prepared=groups[0 if c["name"]=="Druid" else 1]["rows"][level-1][-2:]
+            slots={i:n for i,n in enumerate(groups[-1]["rowsSpellProgression"][level-1],1) if n}
+            if c["name"]=="Druid" and level>=2: use("wild_shape",table[0],1)
+            if c["name"]=="Sorcerer":
+                text=json.dumps(features[("class","Innate Sorcery",1)]["entries"])
+                v.check("twice" in text and "Long Rest" in text,p,"missing Innate recovery")
+                use("innate_sorcery",2)
+                if level>=2: use("sorcery_points",table[0])
+                if level>=5: use("sorcerous_restoration",1)
         elif c["name"] == "Bard":
             cantrips, prepared = table[1:3]
             slots = {i:n for i,n in enumerate(c["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}

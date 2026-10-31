@@ -8,6 +8,104 @@ SKILLS = {"acrobatics", "animal handling", "arcana", "athletics", "deception", "
 
 
 class ClassMechanics:
+    def class_bonus_available(self, actor):
+        return self.current is actor and actor.alive and not actor.has_condition("incapacitated") and actor.bonus_action>0 and not self.turn_rules(actor).get("no_bonus_action")
+
+    def wild_shape(self, actor, form_name):
+        from fractions import Fraction
+        from .loader import ROOT, load_sheet
+        if not actor.features.get("wild_shape") or not actor.limited_uses.get("wild_shape") or not self.class_bonus_available(actor) or actor.has_status("wild_shape") or actor.transform_snapshot is not None: return False
+        # shortcut: known forms use existing Beast sheets; expand when more Beasts are imported.
+        if form_name not in {"wolf","dire_wolf","brown_bear","giant_spider"}: return False
+        form=load_sheet(ROOT/"monsters"/(form_name+".yaml"))
+        cap=actor.level//3 if actor.features.get("circle_forms") else .25 if actor.level<4 else .5
+        if form["creature_type"]!="beast" or Fraction(str(form["cr"]))>cap or form.get("movement_modes",{}).get("fly",0) and actor.level<8: return False
+        fields=("abilities","ac","attacks","multiattack","routines","actions","features","speed","movement_modes","size","save_bonuses","resistances","immunities","vulnerabilities","condition_immunities","creature_type","position")
+        snapshot={k:deepcopy(getattr(actor,k)) for k in fields}
+        for key in fields:
+            if key in form: setattr(actor,key,deepcopy(form[key]))
+        actor.abilities.update({a:snapshot["abilities"][a] for a in ("int","wis","cha")})
+        actor.features={**snapshot["features"],**form.get("features",{})}
+        actor.routines=deepcopy(form.get("routines",[]))
+        actor.multiattack=deepcopy(form.get("multiattack",[]))
+        for ability in ("str","dex","con","int","wis","cha"):
+            own=actor.mod(ability)+(actor.proficiency_bonus if ability in actor.save_proficiencies else 0)
+            actor.save_bonuses[ability]=max(own,form.get("save_bonuses",{}).get(ability,actor.mod(ability)))
+        if actor.features.get("circle_forms"): actor.ac=max(actor.ac,13+actor.mod("wis"))
+        actor.temp_hp=max(actor.temp_hp,actor.level*(3 if actor.features.get("circle_forms") else 1))
+        actor.statuses["wild_shape"]={"snapshot":snapshot,"expires":self.time_rounds+600*(actor.level//2),"form":form_name}
+        actor.position="front"
+        self.spend_economy(actor,"bonus_action"); actor.limited_uses["wild_shape"]-=1; actor.spend("wild_shape")
+        self.feature_log(actor,"Wild Shape",form=form_name)
+        return True
+
+    def end_wild_shape(self, actor):
+        shaped=actor.statuses.pop("wild_shape",None)
+        if shaped:
+            for k,v in shaped["snapshot"].items(): setattr(actor,k,v)
+            self.feature_log(actor,"End Wild Shape")
+
+    def innate_sorcery(self, actor):
+        if not actor.features.get("innate_sorcery") or not actor.limited_uses.get("innate_sorcery") or actor.has_status("innate_sorcery") or not self.class_bonus_available(actor): return False
+        self.spend_economy(actor,"bonus_action"); actor.limited_uses["innate_sorcery"]-=1; actor.spend("innate_sorcery")
+        actor.statuses["innate_sorcery"]={"expires":self.time_rounds+10}
+        actor.spell_dc+=1
+        self.feature_log(actor,"Innate Sorcery")
+        return True
+
+    def font_of_magic(self, actor, slot, *, create=False):
+        if not actor.features.get("font_of_magic") or self.current is not actor or not actor.alive or actor.has_condition("incapacitated") or type(slot) is not int or not 1<=slot<=5: return False
+        points=actor.limited_uses["sorcery_points"]
+        if create:
+            cost=(2,3,5,6,7)[slot-1]
+            if actor.level<max(2,2*slot-1) or points<cost or not self.class_bonus_available(actor): return False
+            self.spend_economy(actor,"bonus_action"); actor.limited_uses["sorcery_points"]-=cost; actor.spend("sorcery_points",cost)
+            actor.spell_slots[slot]=actor.spell_slots.get(slot,0)+1
+        else:
+            if not actor.spell_slots.get(slot) or points>=actor.max_limited_uses["sorcery_points"]: return False
+            actor.spell_slots[slot]-=1; actor.spend(f"slot_{slot}")
+            actor.limited_uses["sorcery_points"]=min(actor.max_limited_uses["sorcery_points"],points+slot)
+        self.feature_log(actor,"Font of Magic",slot=slot,create=create)
+        return True
+
+    def metamagic_cast(self, actor, name, option, **kwargs):
+        costs={"quickened_spell":2,"heightened_spell":2,"careful_spell":1,"extended_spell":1}
+        if option not in costs or not actor.features.get(option) or actor.limited_uses.get("sorcery_points",0)<costs[option] or name not in self.spells: return None
+        spec=self.spells[name]
+        if option in {"heightened_spell","careful_spell"} and not any(b["save"] for b in spec["effects"]): return None
+        if option=="extended_spell" and spec["duration"]["type"] not in {"minutes","hours","days"}: return None
+        if option=="quickened_spell" and (spec["casting_time"]!="action" or actor.statuses.get("leveled_spell_turn")==self.turn_index): return None
+        old_costs=actor.spell_costs
+        if option=="quickened_spell": actor.spell_costs={**old_costs,name:"bonus_action"}
+        actor.statuses["casting_metamagic"]={"option":option,"cost":costs[option],"spell":name,"target":next((t.id for t in kwargs.get("targets") or [] if t.team!=actor.team),None)}
+        try: return self.cast(actor,name,**kwargs)
+        finally:
+            actor.spell_costs=old_costs
+            actor.statuses.pop("casting_metamagic",None)
+
+    def apply_metamagic(self, instance):
+        meta=instance.caster.statuses.get("casting_metamagic",{})
+        if meta.get("spell")!=instance.spec["name"]: return
+        option=meta.get("option")
+        if not option: return
+        instance.choices["_metamagic"]=option
+        if option=="heightened_spell":
+            enemies=self.enemies(instance.caster)
+            if enemies: instance.choices["_heightened_target"]=instance.caster.statuses["casting_metamagic"].get("target") or min(enemies,key=lambda t:(t.hp,t.id)).id
+        if option=="extended_spell":
+            duration=instance.spec["duration"]
+            minutes=duration["n"]*{"minutes":1,"hours":60,"days":1440}[duration["type"]]
+            instance.spec["duration"]={"type":"minutes","n":min(1440,minutes*2)}
+
+    def spell_save(self, instance, target, ability, dc, *args, **kwargs):
+        penalty=None
+        if target.id==instance.choices.get("_heightened_target"):
+            penalty=Effect("disadvantage",{"on":"saves","scope":ability,"against":None},instance.id,"heightened")
+            target.effects.append(penalty)
+        try: return self.saving_throw(target,ability,dc,*args,**kwargs)
+        finally:
+            if penalty in target.effects: target.effects.remove(penalty)
+
     def martial_die(self, actor):
         return "1d10" if actor.level>=11 else "1d8" if actor.level>=5 else "1d6"
 
@@ -327,9 +425,13 @@ class ClassMechanics:
         if len(selected) > max(0,n) or len(set(selected)) != len(selected) or any(t not in eligible for t in selected): raise ValueError("illegal Sculpt Spells selection")
         chosen.update(t.id for t in selected)
 
-    def class_damage_bonus(self, instance, target, amount, block):
+    def class_damage_bonus(self, instance, target, amount, block, dtype=None):
         caster, spec = instance.caster, instance.spec
         if "level" not in spec: return amount
+        if caster.features.get("elemental_affinity") and dtype=="fire" and "_affinity_roll" not in instance.choices:
+            instance.choices["_affinity_roll"]=True
+            amount+=caster.mod("cha")
+            self.feature_log(caster,"Elemental Affinity")
         if spec["level"] == 0 and caster.features.get("potent_spellcasting"):
             amount += caster.spell_mod
             self.feature_log(caster, "Potent Spellcasting")
@@ -466,6 +568,9 @@ class ClassMechanics:
         return success, natural + bonus, natural
 
     def class_expire(self, actor):
+        if actor.has_status("innate_sorcery") and compare_deadline(self.time_rounds,actor.statuses["innate_sorcery"]["expires"])>=0:
+            actor.statuses.pop("innate_sorcery"); actor.spell_dc-=1
+        if actor.has_status("wild_shape") and (not actor.alive or actor.has_condition("incapacitated") or compare_deadline(self.time_rounds,actor.statuses["wild_shape"]["expires"])>=0): self.end_wild_shape(actor)
         if "rage" in actor.statuses and (not actor.raging or compare_deadline(self.time_rounds,actor.statuses["rage"]["expires"]) >= 0): actor.statuses.pop("rage",None)
         if "sacred_weapon" in actor.statuses and compare_deadline(self.time_rounds,actor.statuses["sacred_weapon"]["expires"]) >= 0: actor.statuses.pop("sacred_weapon",None)
 
@@ -480,6 +585,10 @@ class ClassMechanics:
             self.feature_log(actor, "Heroic Warrior")
 
     def class_weapon(self, actor, attack, target):
+        if actor.has_status("wild_shape") and actor.features.get("improved_circle_forms"):
+            attack=deepcopy(attack)
+            for p in attack["effects"]:
+                if "damage" in p: p["damage"]["type"]="radiant"
         if self.current is actor and actor.features.get("reckless_attack") and not actor.statuses.get("reckless_decided"):
             actor.statuses["reckless_decided"] = True
             if self.policy_for(actor).reckless_attack(self,actor,target):

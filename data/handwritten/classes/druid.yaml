@@ -1,0 +1,290 @@
+name: druid
+source: XPHB
+subclass: moon
+hit_die: d8
+saves:
+- int
+- wis
+subclass_level: 3
+asi_levels:
+- 4
+- 8
+levels:
+  1:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Druidic
+    - Magician
+    - Primal Order
+    - Spellcasting
+    - Warden
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 2
+    prepared: 4
+    slots:
+      1: 2
+  2:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Wild Companion
+    - Wild Shape
+    resources:
+      wild_shape:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 2
+    prepared: 5
+    slots:
+      1: 3
+  3:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Druid Subclass
+    - Circle Forms
+    - Circle of the Moon
+    - Circle of the Moon Spells
+    resources:
+      wild_shape:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 2
+    prepared: 6
+    slots:
+      1: 4
+      2: 2
+  4:
+    proficiency_bonus: 2
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources:
+      wild_shape:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 7
+    slots:
+      1: 4
+      2: 3
+  5:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Wild Resurgence
+    resources:
+      wild_shape:
+        max: 2
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 9
+    slots:
+      1: 4
+      2: 3
+      3: 2
+  6:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Improved Circle Forms
+    resources:
+      wild_shape:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 10
+    slots:
+      1: 4
+      2: 3
+      3: 3
+  7:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Elemental Fury
+    - Potent Spellcasting
+    - Primal Strike
+    resources:
+      wild_shape:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 11
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 1
+  8:
+    proficiency_bonus: 3
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources:
+      wild_shape:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 12
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 2
+  9:
+    proficiency_bonus: 4
+    hit_die: d8
+    features: []
+    resources:
+      wild_shape:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 3
+    prepared: 14
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 1
+  10:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Moonlight Step
+    resources:
+      wild_shape:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 15
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+features:
+- name: Druidic
+  level: 1
+  origin: class
+  unsupported: Language and free Speak with Animals are exploration only.
+- name: Magician
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Primal Order
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Spellcasting
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Warden
+  level: 1
+  origin: class
+  mechanics:
+    builder: true
+- name: Wild Companion
+  level: 2
+  origin: class
+  unsupported: Companion not simulated.
+- name: Wild Shape
+  level: 2
+  origin: class
+  mechanics:
+    wild_shape: true
+- name: Druid Subclass
+  level: 3
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 4
+  origin: class
+  mechanics:
+    builder: true
+- name: Wild Resurgence
+  level: 5
+  origin: class
+  unsupported: Slot and shape conversion omitted.
+- name: Subclass Feature
+  level: 6
+  origin: class
+  mechanics:
+    builder: true
+- name: Elemental Fury
+  level: 7
+  origin: class
+  mechanics:
+    builder: true
+- name: Potent Spellcasting
+  level: 7
+  origin: class
+  mechanics:
+    potent_spellcasting: true
+- name: Primal Strike
+  level: 7
+  origin: class
+  unsupported: Potent Spellcasting selected instead.
+- name: Ability Score Improvement
+  level: 8
+  origin: class
+  mechanics:
+    builder: true
+- name: Subclass Feature
+  level: 10
+  origin: class
+  mechanics:
+    builder: true
+- name: Circle Forms
+  level: 3
+  origin: subclass
+  mechanics:
+    circle_forms: true
+- name: Circle of the Moon
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Circle of the Moon Spells
+  level: 3
+  origin: subclass
+  mechanics:
+    builder: true
+- name: Improved Circle Forms
+  level: 6
+  origin: subclass
+  mechanics:
+    improved_circle_forms: true
+- name: Moonlight Step
+  level: 10
+  origin: subclass
+  unsupported: Teleport and next-attack advantage omitted.

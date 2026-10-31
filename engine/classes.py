@@ -4,11 +4,12 @@ import re
 from .loader import ROOT, Validator, ValidationError, read_yaml
 from .sheets import validate_sheet
 
-SUBCLASSES = {"fighter": "champion", "rogue": "assassin", "wizard": "evoker", "cleric": "life", "barbarian": "berserker", "paladin": "devotion", "warlock": "fiend", "bard": "lore", "monk": "open hand", "ranger": "hunter"}
+SUBCLASSES = {"fighter": "champion", "rogue": "assassin", "wizard": "evoker", "cleric": "life", "barbarian": "berserker", "paladin": "devotion", "warlock": "fiend", "bard": "lore", "monk": "open hand", "ranger": "hunter", "druid": "moon", "sorcerer": "draconic"}
 SYMBOLS = {"class_level", "sneak_dice", "spark_dice", "wis_dice"}
 CLASS_FLAGS = set("improved_critical initiative_advantage remarkable_athlete tactical_mind tactical_master heroic_warrior sneak_attack assassinate uncanny_dodge reliable_talent roving_aim poisoners_kit evasion potent_cantrip sculpt_spells empowered_evocation disciple_of_life blessed_healer potent_spellcasting divine_strike arcane_recovery memorize_spell sear_undead thaumaturge armored rage reckless_attack danger_sense frenzy mindless_rage retaliation brutal_strike lay_on_hands sacred_weapon aura_of_protection aura_of_devotion aura_of_courage".split())
 CLASS_FLAGS.update("values_buffs pact_magic agonizing_blast armor_of_shadows eldritch_mind dark_ones_blessing dark_ones_own_luck fiendish_resilience bardic_inspiration cutting_words jack_of_all_trades".split())
 CLASS_FLAGS.update("martial_arts monks_focus uncanny_metabolism deflect_attacks stunning_strike empowered_strikes heightened_focus self_restoration open_hand_technique wholeness_of_body favored_enemy colossus_slayer horde_breaker multiattack_defense open_hand_addle stunning_reserve".split())
+CLASS_FLAGS.update("wild_shape circle_forms improved_circle_forms innate_sorcery font_of_magic elemental_affinity quickened_spell heightened_spell careful_spell extended_spell".split())
 BOOL_FLAGS = CLASS_FLAGS - {"improved_critical", "sneak_attack", "divine_strike"}
 
 

@@ -31,7 +31,7 @@ from .presets import ordered, party, recipe as preset_recipe
 from .rating import rate_party
 
 REFERENCE_CLASSES = ("fighter", "cleric", "rogue", "wizard")
-ROLES = {c:c for c in REFERENCE_CLASSES} | {"barbarian":"fighter", "paladin":"fighter", "warlock":"wizard", "bard":"cleric", "monk":"rogue", "ranger":"fighter"}
+ROLES = {c:c for c in REFERENCE_CLASSES} | {"barbarian":"fighter", "paladin":"fighter", "warlock":"wizard", "bard":"cleric", "monk":"rogue", "ranger":"fighter", "druid":"cleric", "sorcerer":"wizard"}
 CLASSES = tuple(ROLES)
 NOISE = 0.03       # overall rating: Phase 2 seeds agreed within about 2.3%
 TYPE_NOISE = 0.10  # one opponent type: Phase 2 seeds moved single types by up to ~0.1x
@@ -70,6 +70,8 @@ def spell_profile(base, cls, level, profile):
 
 
 FEAT_OPTIONS = {
+    "druid": [("war_caster","wis",{})],
+    "sorcerer": [("war_caster","cha",{})],
     "monk": [],
     "ranger": [("sharpshooter","dex",{})],
     "warlock": [("war_caster", "cha", {})],
@@ -114,6 +116,10 @@ def variants(cls, level):
                         and set(v["choices"]["fighting_style"]) == set(base["choices"]["fighting_style"]))
         out.pop(standard)
         out.insert(0, base)  # the standard build itself (same choices, its own style order)
+    elif cls in {"druid","sorcerer"}:
+        out += [spell_profile(base,cls,level,p) for p in ("optimized","casual")]
+        if cls=="sorcerer" and 2<=level<10:
+            out.append(variant(base,"Metamagic: lasting control",metamagic=["heightened_spell","extended_spell"]))
     elif cls == "monk":
         if level>=5: out.append(variant(base,"Stunning Strike: reserve",stunning_budget="reserve"))
     elif cls == "ranger":

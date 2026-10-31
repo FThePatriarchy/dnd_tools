@@ -65,6 +65,29 @@ def printed_grab_count(instance, block, n: int, eligible) -> int:
 
 
 class Policy:
+    def choose_wild_shape(self, combat, actor):
+        from .loader import ROOT, load_sheet
+        from .state import Combatant
+        if actor.has_status("wild_shape") or not actor.limited_uses.get("wild_shape") or not actor.bonus_action: return
+        enemies=combat.enemies(actor)
+        if not enemies: return
+        concentration=any(combat.spells[n]["concentration"] and combat.can_cast(actor,n) for n in actor.spells)
+        if actor.concentration is None and concentration and actor.hp>=actor.max_hp/2: return
+        names=["wolf"] if actor.level<3 else ["dire_wolf","brown_bear","giant_spider"]
+        forms=[(n,Combatant.from_sheet(load_sheet(ROOT/"monsters"/(n+".yaml")),"shape_probe",actor.team)) for n in names]
+        best=max(forms,key=lambda item:combat.expected_weapon_damage(item[1],enemies[0]))[0]
+        combat.wild_shape(actor,best)
+
+    def combat_spell(self, combat, actor, name):
+        spec=combat.spells[name]
+        option=None
+        points=actor.limited_uses.get("sorcery_points",0)
+        if points>=2 and actor.features.get("quickened_spell") and actor.action and actor.bonus_action and spec["casting_time"]=="action" and spec["level"] and actor.statuses.get("leveled_spell_turn")!=combat.turn_index:
+            option="quickened_spell"
+        elif points>=2 and actor.features.get("heightened_spell") and spec["level"]>=2 and any(b["save"] for b in spec["effects"]): option="heightened_spell"
+        elif points and actor.features.get("extended_spell") and spec["concentration"] and spec["duration"]["type"] in {"minutes","hours","days"}: option="extended_spell"
+        return combat.cast(actor,name,metamagic=option)
+
     def focus_allowed(self, combat, actor):
         points=actor.limited_uses.get("focus",0)
         if not points: return False
@@ -340,6 +363,8 @@ class Policy:
         enemies = combat.enemies(actor)
         if not enemies: return
         if actor.features.get("rage"): combat.rage(actor)
+        if actor.features.get("innate_sorcery"): combat.innate_sorcery(actor)
+        if actor.features.get("wild_shape"): self.choose_wild_shape(combat,actor)
         if actor.features.get("monks_focus") and actor.hp<actor.max_hp*.35 and any(e.attacks for e in enemies) and self.focus_allowed(combat,actor): combat.patient_defense(actor,dodge=True)
         if actor.features.get("wholeness_of_body") and actor.hp<actor.max_hp/2: combat.wholeness(actor)
         if combat.death_rules and combat.can_cast(actor,"Revivify"):
@@ -427,6 +452,7 @@ class Policy:
             best = max(options, key=lambda x: x[0], default=(0, None))
             if best[0] > weapon:
                 if isinstance(best[1], tuple): combat.use_action(actor, best[1][1])
+                elif actor.features.get("font_of_magic"): self.combat_spell(combat,actor,best[1])
                 else: combat.cast(actor, best[1])
             elif actor.features.get("pact_magic"):
                 cantrips=[n for n in actor.spells if combat.spells[n]["level"]==0 and combat.can_cast(actor,n)]
@@ -434,8 +460,13 @@ class Policy:
                 else: combat.weapon_action(actor)
             else: combat.weapon_action(actor)
             if actor.action and combat.enemies(actor):
-                if actor.features.get("pact_magic") and combat.can_cast(actor,"Eldritch Blast"): combat.cast(actor,"Eldritch Blast")
+                if actor.features.get("innate_sorcery"):
+                    cantrips=[n for n in actor.spells if combat.spells[n]["level"]==0 and combat.can_cast(actor,n)]
+                    if cantrips: combat.cast(actor,max(cantrips,key=lambda n:combat.expected_spell_damage(actor,combat.cantrip_spec(actor,n),enemies[0])))
+                    else: combat.weapon_action(actor)
+                elif actor.features.get("pact_magic") and combat.can_cast(actor,"Eldritch Blast"): combat.cast(actor,"Eldritch Blast")
                 else: combat.weapon_action(actor)
+        if actor.features.get("wild_shape"): self.choose_wild_shape(combat,actor)
         if actor.features.get("martial_arts") and actor.bonus_action and combat.enemies(actor): combat.monk_bonus(actor,flurry=self.focus_allowed(combat,actor))
         if actor.features.get("bardic_inspiration") and actor.bonus_action and combat.enemies(actor):
             allies=[c for c in combat.combatants if c is not actor and c.team==actor.team and c.alive and c.statuses.get("bardic_inspiration",{}).get("expires",0)<=combat.time_rounds]

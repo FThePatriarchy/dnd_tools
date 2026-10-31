@@ -7,7 +7,7 @@ from .loader import ROOT
 from .sheets import effect_block
 
 RAW = Path(__file__).resolve().parents[1] / "raw_data" / "class"
-SUBS = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion", "warlock": "Fiend", "bard": "Lore", "monk": "Open Hand", "ranger": "Hunter"}
+SUBS = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion", "warlock": "Fiend", "bard": "Lore", "monk": "Open Hand", "ranger": "Hunter", "druid": "Moon", "sorcerer": "Draconic"}
 
 
 def records(name):
@@ -55,6 +55,11 @@ def feature_payload(name, feature):
                   "Bardic Inspiration": {"bardic_inspiration": True}, "Cutting Words": {"cutting_words": True},
                   "Jack of All Trades": {"jack_of_all_trades": True}})
     flags.update({n:{k:True} for n,k in {"Martial Arts":"martial_arts", "Monk's Focus":"monks_focus", "Uncanny Metabolism":"uncanny_metabolism", "Deflect Attacks":"deflect_attacks", "Stunning Strike":"stunning_strike", "Empowered Strikes":"empowered_strikes", "Heightened Focus":"heightened_focus", "Self-Restoration":"self_restoration", "Open Hand Technique":"open_hand_technique", "Wholeness of Body":"wholeness_of_body", "Favored Enemy":"favored_enemy", "Hunter's Prey":"colossus_slayer", "Defensive Tactics":"multiattack_defense"}.items()})
+    if name in {"druid","sorcerer"}:
+        implemented={"Wild Shape":"wild_shape", "Circle Forms":"circle_forms", "Improved Circle Forms":"improved_circle_forms", "Innate Sorcery":"innate_sorcery", "Font of Magic":"font_of_magic", "Elemental Affinity":"elemental_affinity"}
+        if n in implemented: return {"mechanics":{implemented[n]:True}}
+        omitted={"Druidic":"Language and free Speak with Animals are exploration only.", "Wild Companion":"Companion not simulated.", "Wild Resurgence":"Slot and shape conversion omitted.", "Primal Strike":"Potent Spellcasting selected instead.", "Moonlight Step":"Teleport and next-attack advantage omitted.", "Sorcery Incarnate":"Extra Innate activations and dual Metamagic omitted."}
+        if n in omitted: return {"unsupported":omitted[n]}
     if name in {"monk","ranger"} and n in {"Step of the Wind","Slow Fall","Acrobatic Movement","Roving","Expertise","Deft Explorer","Hunter's Lore","Tireless"}:
         return {"unsupported":"Temp-HP preparation and exhaustion recovery are not simulated." if n=="Tireless" else "Movement and exploration benefits are not simulated."}
     omitted = {"Magical Cunning": "One-minute recovery rite is not automated between encounters.",
@@ -153,6 +158,16 @@ def declaration(name):
             row.update(cantrips=2 if level<4 else 3 if level<10 else 4,
                        prepared=[4,5,6,7,9,10,11,12,14,15][level-1])
             row["slots"] = {i:n for i,n in enumerate(base["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}
+        if name in {"druid","sorcerer"}:
+            groups=base["classTableGroups"]
+            counts=groups[0 if name=="druid" else 1]["rows"][level-1]
+            row.update(cantrips=counts[-2],prepared=counts[-1])
+            row["slots"]={i:n for i,n in enumerate(groups[-1]["rowsSpellProgression"][level-1],1) if n}
+            if name=="druid" and level>=2: resource("wild_shape",2 if level<6 else 3,1)
+            if name=="sorcerer":
+                resource("innate_sorcery",2)
+                if level>=2: resource("sorcery_points",level)
+                if level>=5: resource("sorcerous_restoration",1)
         if name == "rogue":
             row["weapon_masteries"] = 2
             row["sneak_attack"] = f"{(level+1)//2}d6"

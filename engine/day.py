@@ -78,6 +78,8 @@ def cleanup_encounter(combat, *, preserve_death=False):
         actor.effects.clear()
         actor.conditions.clear()
         actor.exhaustion_level = 0
+        combat.end_wild_shape(actor)
+        if actor.statuses.pop("innate_sorcery",None) is not None: actor.spell_dc-=1
         actor.statuses.clear()
         if stable: actor.statuses["stable"] = {}
         actor.temp_hp = 0
@@ -100,6 +102,10 @@ def take_rest(party, kind, rng, policy=None, *, log=None):
     for actor in party:
         if not actor.alive: continue
         if kind == "long":
+            shaped=actor.statuses.pop("wild_shape",None)
+            if shaped:
+                for k,v in shaped["snapshot"].items(): setattr(actor,k,v)
+            if actor.statuses.pop("innate_sorcery",None) is not None: actor.spell_dc-=1
             exceptions = actor.statuses.get("long_rest_no_restore", {})
             if not exceptions.get("max_hp") and actor.base_max_hp < actor.original_max_hp:
                 actor.base_max_hp = actor.original_max_hp
@@ -122,6 +128,11 @@ def take_rest(party, kind, rng, policy=None, *, log=None):
         for name, maximum in actor.max_limited_uses.items():
             recovery = actor.resource_recovery.get(name, {}).get(kind + "_rest", 0)
             actor.limited_uses[name] = maximum if recovery == "all" else min(maximum, actor.limited_uses[name] + recovery)
+        if kind=="short" and actor.limited_uses.get("sorcerous_restoration",0) and actor.limited_uses.get("sorcery_points",0)<actor.max_limited_uses.get("sorcery_points",0):
+            restored=min(actor.level//2,actor.max_limited_uses["sorcery_points"]-actor.limited_uses["sorcery_points"])
+            actor.limited_uses["sorcery_points"]+=restored
+            actor.limited_uses["sorcerous_restoration"]-=1; actor.spend("sorcerous_restoration")
+            if log is not None: log.append({"event":"rest_feature","actor":actor.id,"name":"Sorcerous Restoration","points":restored})
         if kind == "short":
             if actor.features.get("pact_magic"): actor.spell_slots = actor.max_spell_slots.copy()
             from .class_mechanics import arcane_recovery, memorize_spell

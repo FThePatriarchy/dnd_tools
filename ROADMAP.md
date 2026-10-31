@@ -15,6 +15,7 @@ The simulation is the source of truth. Expected-value maths (hit chance × damag
 
 ## Current state (2026-10-23)
 
+- Druid (Moon) and Sorcerer (Draconic), levels 1-10, now have standard/casual/optimized builds at 1/3/5/7/10. Both use `values_buffs`; reference parties are unchanged. Wild Shape, Innate Sorcery, selected Metamagic and rest resources are implemented; scope and XPHB corrections are in `data/handwritten/CLASS_FORMAT.md`. Comparison results are under Phase 5.
 - Monk (Open Hand) and Ranger (Hunter), levels 1–10, added 2026-10-27 with casual, standard and optimized builds at 1/3/5/7/10. Both use the `values_buffs` flag, and the ranger's free Hunter's Mark casts share the warlock's Hex valuation; the eight earlier classes give bit-identical results. Combat scope and omissions are in `data/handwritten/CLASS_FORMAT.md`.
 - Warlock (Fiend) and Bard (Lore), levels 1–10, added 2026-10-27 with casual, standard and optimized builds at 1/3/5/7/10. They use the paladin's buff valuation through a `values_buffs` flag; the six earlier classes give bit-identical results. Combat scope and omissions are in `data/handwritten/CLASS_FORMAT.md`.
 - Barbarian (Berserker) and Paladin (Devotion), levels 1–10, added 2026-10-26 with casual, standard and optimized builds at 1/3/5/7/10. The reference parties stay fighter, cleric, rogue, wizard, and the four original classes give bit-identical results.
@@ -171,6 +172,9 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 - **Monk in the rogue's slot, Ranger in the fighter's** (`compare_L{5,10}_{monk,ranger}_variants.md`, standard party):
   - Monk: +8% at level 5 (+20% against brutes, +13% against control) and +5% at level 10 (+14% against brutes). Holding back focus for Stunning Strike ("reserve") and Alert are both +9%, within noise of the standard monk.
   - Ranger: -8% at level 5 (-19% against casters, -12% against control) and -12% at level 10 (-35% against control, -21% against swarms). The sword-and-shield kit, Horde Breaker, Alert and Sharpshooter are all within 1% of the longbow default; Sharpshooter matches it exactly, as on the rogue. Against vampire spawn the level 10 ranger casts Entangle before Hunter's Mark (Hunter's Mark then waits for concentration, 0.08 casts per fight) and spends its action on Cure Wounds about twice per fight. Banning Entangle cuts the win rate against five spawn from 75% to 64%; banning Cure Wounds raises it to 80% there but lowers it against eight guard captains (17% to 11%). So the gap is the fighter's kit (heavy armour, Action Surge, Indomitable, 83% against the same spawn), not a ranger AI fault.
+- **Druid in the cleric's slot, Sorcerer in the wizard's** (`compare_L{5,10}_{druid,sorcerer}_variants.md`, standard party):
+  - Druid: -5% at level 5 (-11% against ranged and casters) and -11% at level 10 (-20% against swarms, -15% against ranged and control). The three spell profiles give identical results at level 5: the AI casts the same few spells from each list. Alert (-6%) and War Caster (-4%) are within noise of the standard druid. Only the standard druid was rated at level 10.
+  - Sorcerer: +11% at level 5 (+19% against brutes, +18% against swarms) and +12% at level 10 (+25% against casters, +23% against swarms). Innate Sorcery (+1 DC and advantage on spell attacks), Quickened leveled spells plus a cantrip, and Draconic Resilience's extra HP and AC outweigh the wizard's extra prepared spells. The casual spell list costs 2% at level 5 and 7% at level 10; the "lasting control" Metamagic pair (Heightened + Extended) is 3% below the default Quickened + Heightened at level 5.
 - **Not yet done:**
   - Searching ability-score and ASI choices.
   - The optimized and casual reference parties for every class.
@@ -182,6 +186,6 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 
 ## Later
 
-- More classes (Barbarian, Paladin, Warlock, Bard, Monk and Ranger done; Druid and Sorcerer left) and levels 11–20, each checked against the calibration report.
+- More classes (all twelve 2024 classes done at levels 1–10) and levels 11–20, each checked against the calibration report.
 - A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.
 - Repo housekeeping: done 2026-10-26. `readme.md` has working usage examples; the 5etools zip, `raw_data/` and the retired `spellsim/` + `ai_extractors/` pipeline are ignored and kept locally.

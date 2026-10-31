@@ -29,7 +29,7 @@ from .classes import SUBCLASSES
 from .loader import ROOT, Validator
 
 LEVELS = (1, 3, 5, 7, 10)
-PRIMARY = {"fighter": "str", "rogue": "dex", "wizard": "int", "cleric": "wis", "barbarian": "str", "paladin": "str", "warlock": "cha", "bard": "cha", "monk":"dex", "ranger":"dex"}
+PRIMARY = {"fighter": "str", "rogue": "dex", "wizard": "int", "cleric": "wis", "barbarian": "str", "paladin": "str", "warlock": "cha", "bard": "cha", "monk":"dex", "ranger":"dex", "druid":"wis", "sorcerer":"cha"}
 
 PROFILES = {
     "optimized": {
@@ -106,6 +106,17 @@ for profile, classes in PROFILES.items():
                        "spells":["Cure Wounds","Entangle","Aid","Spike Growth","Summon Beast","Magic Weapon","Lightning Arrow","Revivify"]}
 
 
+for profile, classes in PROFILES.items():
+    for name in ("druid","sorcerer"):
+        primary=PRIMARY[name]
+        classes[name]={"method":"point_buy" if profile=="optimized" else "standard_array",
+                       "abilities":dict(zip(ABILITIES,[8,14,15,8,15,10] if name=="druid" else [8,14,15,8,10,15])) if profile=="optimized" else dict(zip(ABILITIES,[8,12,13,15,14,10] if name=="druid" else [8,12,13,15,10,14])),
+                       "equipment":"scale_shield" if name=="druid" else "unarmored_staff",
+                       "cantrips":["Thorn Whip","Produce Flame","Guidance","Poison Spray"] if name=="druid" else ["Fire Bolt","Ray of Frost","Shocking Grasp","Acid Splash","Mind Sliver","Light"],
+                       "spells":(["Healing Word","Entangle","Faerie Fire","Spike Growth","Heat Metal","Call Lightning","Conjure Woodland Beings","Wall of Fire"] if name=="druid" else ["Shield","Magic Missile","Fireball","Web","Hypnotic Pattern","Counterspell","Scorching Ray","Wall of Fire"]) if profile=="optimized" else (["Cure Wounds","Thunderwave","Faerie Fire","Flaming Sphere","Call Lightning","Ice Storm"] if name=="druid" else ["Burning Hands","Magic Missile","Thunderwave","Scorching Ray","Lightning Bolt","Fireball","Ice Storm"]),
+                       **({"flavour":"int","exclude":["Shield","Counterspell"]} if profile=="casual" else {})}
+
+
 def ordered(name, preferred, options, exclude=()):
     """Preferred names first, then the builder's default order; illegal or excluded names dropped."""
     first = [n for n in preferred if n in options and n not in exclude]
@@ -155,7 +166,7 @@ def recipe(name, level, profile_name):
         choices["cunning_strike"] = p["cunning"]
     if name == "cleric":
         choices.update(divine_order=p["order"], blessed_strikes=p["strike"])
-    if name in {"wizard", "cleric", "paladin", "warlock", "bard", "ranger"}:
+    if name in {"wizard", "cleric", "paladin", "warlock", "bard", "ranger", "druid", "sorcerer"}:
         options = spell_options(name, level)
         cantrips = {n: s for n, s in options.items() if s["level"] == 0}
         choices["cantrips"] = ordered(name, p["cantrips"], cantrips)[:row["cantrips"]]
