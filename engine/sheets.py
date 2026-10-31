@@ -89,7 +89,7 @@ def validate_sheet(data, path, *, summoned=False):
         v.obj(a, p, "name kind to_hit effects", "reach_ft range_ft ability mastery recharge resource riders advantage_if on_hit_self properties")
         if "properties" in a:
             v.sequence(a["properties"], p + ".properties")
-            for prop in a["properties"]: v.enum(prop, {"finesse", "two_handed", "versatile", "light", "heavy"}, p + ".properties")
+            for prop in a["properties"]: v.enum(prop, {"finesse", "two_handed", "versatile", "light", "heavy", "reach"}, p + ".properties")
         v.text(a["name"], p + ".name")
         v.enum(a["kind"], {"melee", "ranged"}, p + ".kind")
         if summoned and a["to_hit"] == "spell_attack": pass
@@ -169,7 +169,7 @@ def validate_sheet(data, path, *, summoned=False):
     if "features" in data:
         f = data["features"]
         from .classes import CLASS_FLAGS
-        v.obj(f, "features", "", set("pack_tactics magic_resistance sunlight_sensitivity bloodied_frenzy evasion parry regeneration undead_fortitude life_drain redirect_attack authority_aura grapple_damage rampage great_weapon_fighting no_sleep concentration_while_asleep great_weapon_master sharpshooter war_caster alert".split()) | CLASS_FLAGS)
+        v.obj(f, "features", "", set("pack_tactics magic_resistance sunlight_sensitivity bloodied_frenzy evasion parry regeneration undead_fortitude life_drain redirect_attack authority_aura grapple_damage rampage great_weapon_fighting no_sleep concentration_while_asleep great_weapon_master sharpshooter war_caster alert polearm_master resilient lucky tough".split()) | CLASS_FLAGS)
         for key, value in f.items():
             if key in {"parry", "undead_fortitude", "improved_critical"}: v.number(value, "features." + key, 1, True)
             elif key in {"sneak_attack", "divine_strike"}: v.dice(value, "features." + key)

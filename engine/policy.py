@@ -88,6 +88,10 @@ class Policy:
         elif points and actor.features.get("extended_spell") and spec["concentration"] and spec["duration"]["type"] in {"minutes","hours","days"}: option="extended_spell"
         return combat.cast(actor,name,metamagic=option)
 
+    def use_luck(self, combat, actor, kind):
+        """Lucky: saves and death saves always; attack rolls and checks only while a point stays in reserve for saves."""
+        return kind in {"save", "death"} or actor.limited_uses.get("luck", 0) > 1
+
     def focus_allowed(self, combat, actor):
         points=actor.limited_uses.get("focus",0)
         if not points: return False

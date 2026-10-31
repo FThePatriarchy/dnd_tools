@@ -33,7 +33,7 @@ allow-list, not silently asserted to have come from class prose.
 ## Scope
 
 Species, backgrounds, multiclassing and equipment purchases are outside scope.
-Feats are limited to the four listed under "Feats" below (2026-10-26); any other
+Feats are limited to the eight listed under "Feats" below (2026-10-26, extended 2026-10-31); any other
 feat is rejected. Fighting Style choices implement
 the referenced styles rather than general feat machinery. Ability input is
 pre-ASI; HP uses maximum hit die at first level and fixed average thereafter.
@@ -74,18 +74,23 @@ claimed as extracted class-file numbers.
 A General feat replaces an earned ASI: `asis: {4: {feat: great_weapon_master,
 ability: str}}`. The feat's +1 goes to one of its listed abilities (capped at
 20), its prerequisite is checked against the scores at that level, and a feat
-cannot be taken twice. Alert is an Origin feat: `origin_feat: alert`, at any
-level. Each feat becomes a sheet feature flag.
+cannot be taken twice. Alert, Lucky and Tough are Origin feats: `origin_feat: alert`, at any
+level; a build has at most one. Each feat becomes a sheet feature flag.
 
 | Feat | +1 to | Prerequisite | Simulated | Not simulated (no grid) |
 |---|---|---|---|---|
 | Great Weapon Master | Str | Str 13 | +PB damage on a hit with a Heavy weapon (greatsword, longbow) made in the Attack action on the attacker's turn; Hew: after a critical hit or a kill with a melee weapon, one attack with the same weapon as a Bonus Action (once per Bonus Action) | — |
 | Sharpshooter | Dex | Dex 13 | the +1 only | ignoring half and three-quarters cover; no disadvantage in melee or at long range. Cover, range bands and melee adjacency are not modelled, so Sharpshooter is valued here as +1 Dex. |
 | War Caster | Int, Wis or Cha | Spellcasting | advantage on Constitution saves to maintain Concentration | Reactive Spell (no opportunity attacks); somatic components with full hands |
+| Polearm Master | Str or Dex | Str or Dex 13 | Pole Strike: after the Attack action with a Quarterstaff, Spear or Heavy and Reach weapon (the glaive), one attack with the same weapon as a Bonus Action, d4 Bludgeoning plus the usual modifier. Great Weapon Master's +PB does not apply to it (it is not part of the Attack action). | Reactive Strike (no movement into reach) |
+| Resilient | the chosen ability | — | +1 and saving-throw proficiency in one ability whose save the class lacks | — |
 | Alert (Origin) | — | — | +PB to initiative; Initiative Swap at initiative: trades places with the slowest ally with spell slots who would act later | — |
+| Lucky (Origin) | — | — | PB Luck Points per long rest. After a failed D20 Test that a 20 would pass, one point rolls another d20 and keeps the higher: Advantage taken once the roll is known, which is how a table usually plays it. Saves and death saves always use a point; attack rolls and checks only while another point stays in reserve. | Imposing Disadvantage on an attack against you |
+| Tough (Origin) | — | — | +2 HP maximum per character level | — |
 
-The greataxe, greatsword, maul and longbow carry the 2024 `heavy` property; sheet attack
-properties accept `heavy`.
+The greataxe, greatsword, maul, glaive and longbow carry the 2024 `heavy` property; the glaive also has
+`reach` (reach 10 ft, Graze mastery; kits `chain_glaive` and `unarmored_glaive`). Sheet attack
+properties accept `heavy` and `reach`.
 
 ## Builder and build recipes
 

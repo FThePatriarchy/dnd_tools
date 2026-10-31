@@ -70,26 +70,29 @@ def spell_profile(base, cls, level, profile):
 
 
 FEAT_OPTIONS = {
-    "druid": [("war_caster","wis",{})],
-    "sorcerer": [("war_caster","cha",{})],
-    "monk": [],
-    "ranger": [("sharpshooter","dex",{})],
-    "warlock": [("war_caster", "cha", {})],
-    "bard": [("war_caster", "cha", {})],  # (feat, +1 ability, changes to the standard recipe)
-    "barbarian": [("great_weapon_master", "str", {})],
-    "paladin": [("great_weapon_master", "str", {"equipment":"chain_greatsword","weapon_masteries":["greatsword"]})],
+    "druid": [("war_caster","wis",{}), ("resilient","con",{})],
+    "sorcerer": [("war_caster","cha",{}), ("resilient","wis",{})],
+    "monk": [("resilient","wis",{})],
+    "ranger": [("sharpshooter","dex",{}), ("resilient","con",{})],
+    "warlock": [("war_caster", "cha", {}), ("resilient","con",{})],
+    "bard": [("war_caster", "cha", {}), ("resilient","con",{})],  # (feat, +1 ability, changes to the standard recipe)
+    "barbarian": [("great_weapon_master", "str", {}), ("polearm_master","str",{"equipment":"unarmored_glaive","weapon_masteries":["glaive"]}), ("resilient","wis",{})],
+    "paladin": [("great_weapon_master", "str", {"equipment":"chain_greatsword","weapon_masteries":["greatsword"]}),
+                ("polearm_master","str",{"equipment":"chain_glaive","weapon_masteries":["glaive"]}), ("resilient","con",{})],
     "fighter": [("great_weapon_master", "str", {}),
-                ("sharpshooter", "dex", {"equipment": "leather_archer", "fighting_style": ["archery"], "weapon_masteries": ["longbow"]})],
-    "rogue": [("sharpshooter", "dex", {"equipment": "studded_shortbow", "weapon_masteries": ["shortbow", "rapier"]})],
-    "cleric": [("war_caster", "wis", {})],
-    "wizard": [("war_caster", "int", {})],
+                ("sharpshooter", "dex", {"equipment": "leather_archer", "fighting_style": ["archery"], "weapon_masteries": ["longbow"]}),
+                ("polearm_master","str",{"equipment":"chain_glaive","weapon_masteries":["glaive"]}), ("resilient","wis",{})],
+    "rogue": [("sharpshooter", "dex", {"equipment": "studded_shortbow", "weapon_masteries": ["shortbow", "rapier"]}), ("resilient","wis",{})],
+    "cleric": [("war_caster", "wis", {}), ("resilient","con",{})],
+    "wizard": [("war_caster", "int", {}), ("resilient","con",{})],
 }
+ORIGIN_OPTIONS = ("alert", "lucky", "tough")
 
 
 def feat_variants(base, cls, level):
-    """The standard build with a General feat in place of its first ASI, plus Alert as an origin feat.
+    """The standard build with a General feat in place of its first ASI, plus each origin feat.
     Illegal combinations (an unmet prerequisite) are dropped later by the builder check."""
-    out = [variant(base, "feat: alert", origin_feat="alert")]
+    out = [variant(base, f"feat: {feat}", origin_feat=feat) for feat in ORIGIN_OPTIONS]
     asis = base["choices"].get("asis") or {}
     if not asis: return out
     first = min(asis)
@@ -98,14 +101,22 @@ def feat_variants(base, cls, level):
         if cls == "fighter" and "fighting_style" in changes and level >= 7: r["choices"]["fighting_style"] = changes["fighting_style"] + ["defense"]
         r["choices"]["asis"] = {**deepcopy(asis), first: {"feat": feat, "ability": ability}}
         out.append(r)
+    options = {feat: (ability, changes) for feat, ability, changes in FEAT_OPTIONS[cls]}
+    if len(asis) >= 2 and {"polearm_master", "great_weapon_master"} <= set(options):
+        # The classic pairing: Pole Strike with the glaive, then Great Weapon Master at the next ASI.
+        second = sorted(asis)[1]
+        r = variant(base, "feat: polearm master + great weapon master", **options["polearm_master"][1])
+        r["choices"]["asis"] = {**deepcopy(asis), first: {"feat": "polearm_master", "ability": "str"}, second: {"feat": "great_weapon_master", "ability": "str"}}
+        out.append(r)
     return out
 
 
-def variants(cls, level):
+def variants(cls, level, feats_only=False):
     """Recipes for a class's main decisions at standard abilities; the first is the standard build."""
     base = standard_recipe(cls, level)
     out = [base]
-    if cls == "fighter":
+    if feats_only: pass
+    elif cls == "fighter":
         out = []
         for kit, equipment, style, masteries in FIGHTER_KITS:
             styles = [[style, "defense"]] if level >= 7 else [[style], ["defense"]]
@@ -246,7 +257,9 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--candidates", nargs="+", help="build names of the same class")
     group.add_argument("--variants", action="store_true", help="generate variants of the class's main decisions")
+    group.add_argument("--feats", action="store_true", help="the standard build and its feat variants only")
     parser.add_argument("--finalists", type=int, default=4, help="variants rated after the screen (plus standard)")
+    parser.add_argument("--only", nargs="+", metavar="NAME", help="keep only the variants with these names (plus standard)")
     parser.add_argument("--references", nargs="+", default=["standard"], choices=["casual", "standard", "optimized"])
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--strategy", default="default")
@@ -255,8 +268,9 @@ def main():
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     screened = None
-    if args.variants:
-        found = variants(args.cls, args.level)
+    if args.variants or args.feats:
+        found = variants(args.cls, args.level, feats_only=args.feats)
+        if args.only: found = found[:1] + [v for v in found[1:] if v["name"] in args.only]
         scores = [(v, screen_score(v, args.level)) for v in found]
         ranked = sorted(scores[1:], key=lambda vs: -vs[1])[:max(0, args.finalists)]
         candidates = [found[0]] + [v for v, _ in ranked]

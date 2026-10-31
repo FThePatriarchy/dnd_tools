@@ -60,14 +60,17 @@ WEAPONS = {
     "longbow": ("1d8", "piercing", "ranged", "slow", ["two_handed", "heavy"]),
     "mace": ("1d6", "bludgeoning", "melee", "sap", []),
     "quarterstaff": ("1d6", "bludgeoning", "melee", "topple", ["versatile"]),
+    "glaive": ("1d10", "slashing", "melee", "graze", ["two_handed", "heavy", "reach"]),
 }
 EQUIPMENT = {
     "scale_sword_shield": ("scale", True, ["longsword"]),
     "unarmored_greataxe": ("none", False, ["greataxe"]),
     "unarmored_greatsword": ("none", False, ["greatsword"]),
+    "unarmored_glaive": ("none", False, ["glaive"]),
     "unarmored_maul": ("none", False, ["maul"]),
     "scale_greataxe": ("scale", False, ["greataxe"]),
     "chain_greatsword": ("chain", False, ["greatsword"]),
+    "chain_glaive": ("chain", False, ["glaive"]),
     "chain_sword_shield": ("chain", True, ["longsword"]),
     "leather_archer": ("studded", False, ["longbow"]),
     "studded_rapier": ("studded", False, ["rapier", "shortbow"]),
@@ -85,8 +88,10 @@ FEATS = {
     "great_weapon_master": {"abilities": {"str"}, "requires": ("str", 13)},
     "sharpshooter": {"abilities": {"dex"}, "requires": ("dex", 13)},
     "war_caster": {"abilities": {"int", "wis", "cha"}, "requires": "spellcasting"},
+    "polearm_master": {"abilities": {"str", "dex"}, "requires": ("str|dex", 13)},
+    "resilient": {"abilities": set(ABILITIES), "requires": None},  # +1 goes to the ability whose save it grants
 }
-ORIGIN_FEATS = {"alert"}
+ORIGIN_FEATS = {"alert", "lucky", "tough"}
 
 
 @lru_cache(None)
@@ -189,7 +194,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     asis=choices.get("asis",default_asis(class_name,level,abilities))
     v.check(isinstance(asis,dict) and all(type(k) is int for k in asis),"choices.asis","expected level mapping")
     v.check(set(asis)=={n for n in c["asi_levels"] if n<=level},"choices.asis","must choose each earned ASI exactly once")
-    feats=[]
+    feats=[]; resilient=None
     for n,add in sorted(asis.items()):
         if isinstance(add,dict) and "feat" in add:
             # A General feat in place of the ASI: its +1 goes to one of the feat's abilities.
@@ -200,7 +205,9 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
             v.check(add["feat"] not in feats,f"choices.asis.{n}.feat","feat already taken")
             need=feat["requires"]
             if need=="spellcasting": v.check(class_name in SPELL_LISTS,f"choices.asis.{n}.feat","requires the Spellcasting feature")
-            else: v.check(abilities[need[0]]>=need[1],f"choices.asis.{n}.feat",f"requires {need[0].title()} {need[1]}")
+            elif need is None: v.check(add["ability"] not in c["saves"],f"choices.asis.{n}.ability","Resilient needs a save without proficiency")
+            else: v.check(any(abilities[a]>=need[1] for a in need[0].split("|")),f"choices.asis.{n}.feat",f"requires {' or '.join(a.title() for a in need[0].split('|'))} {need[1]}")
+            if add["feat"]=="resilient": resilient=add["ability"]
             feats.append(add["feat"])
             unboosted[add["ability"]] += 1
             abilities[add["ability"]] = min(20, abilities[add["ability"]] + 1)
@@ -254,6 +261,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     if class_name=="sorcerer" and level>=3 and armor=="none": ac += mod("cha")
     faces=int(c["hit_die"][1:]); hp=max(1,faces+mod("con"))+(level-1)*max(1,faces//2+1+mod("con"))
     if class_name=="sorcerer" and level>=3: hp += level
+    if choices.get("origin_feat")=="tough": hp += 2*level
     sheet={"name":f"{class_name.title()} {level} ({subclass.title()})", "source":"XPHB", "level":level,
            "hit_dice":{"die":c["hit_die"],"count":level}, "max_hp":hp,"ac":ac,"abilities":abilities,
            "speed":20 if armor=="chain" and abilities["str"]<13 else 30,"creature_type":"humanoid","proficiency_bonus":row["proficiency_bonus"],
@@ -308,11 +316,13 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         if level>=2: sheet["initiative_bonus"]=row["proficiency_bonus"]//2
     if "great_weapon_fighting" in styles: sheet["features"]["great_weapon_fighting"]=True
     for feat in feats: sheet["features"][feat]=True
+    if resilient: sheet["save_proficiencies"].append(resilient)
     origin=choices.get("origin_feat")
     if origin is not None:
         v.enum(origin,ORIGIN_FEATS,"choices.origin_feat")
         sheet["features"][origin]=True
         if origin=="alert": sheet["initiative_bonus"]=sheet.get("initiative_bonus",0)+row["proficiency_bonus"]
+        if origin=="lucky": sheet["limited_uses"]["luck"]={"max":row["proficiency_bonus"],"long_rest":"all"}
     if class_name in {"fighter","barbarian","paladin","monk","ranger"} and level>=5: sheet["extra_attack"]=2
     for weapon in weapons:
         ds,dt,kind,mastery,properties=WEAPONS[weapon]
@@ -324,7 +334,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
             if level>=5: ds="1d8"
         bonus=mod(ability)+(2 if "dueling" in styles and kind=="melee" and "two_handed" not in properties and shield else 0)
         attack={"name":weapon.title(),"kind":kind,"ability":ability,"properties":properties.copy(),"to_hit":row["proficiency_bonus"]+mod(ability)+(2 if "archery" in styles and kind=="ranged" else 0),"effects":[{"damage":{"dice":ds,"bonus":bonus,"type":dt}}]}
-        if kind=="melee": attack["reach_ft"]=5
+        if kind=="melee": attack["reach_ft"]=10 if "reach" in properties else 5
         else: attack["range_ft"]=80 if weapon=="shortbow" else 150
         if weapon in masteries: attack["mastery"]=mastery
         sheet["attacks"].append(attack)

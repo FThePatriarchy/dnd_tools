@@ -278,7 +278,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         reliable = skill in target.skill_proficiencies and target.features.get("reliable_talent")
         bonus = self.modifier(target, "ability_check", target.mod(ability), (ability, skill)) - self.exhaustion_penalty(target)
         if skill in target.skill_proficiencies: bonus += target.proficiency_bonus * (2 if skill in target.expertise else 1)
-        natural = self.heroic_reroll(target, natural, lambda n: (max(10,n) if reliable else n) + bonus >= dc)
+        natural = self.heroic_reroll(target, natural, lambda n: (max(10,n) if reliable else n) + bonus >= dc, "check")
         if reliable: natural = max(10,natural)
         return self.class_check(target, ability, skill, natural, bonus, dc)
 
@@ -306,7 +306,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             attacker.statuses["brutal_turn"] = self.turn_index
         self.duel_activity(attacker, defender)
         natural = dice.d20(self.rng, adv, dis)
-        natural = self.heroic_reroll(attacker, natural, lambda n: n != 1 and (n >= (attacker.features.get("improved_critical",20) if weapon else 20) or n + bonus >= self.armor_class(defender)))
+        natural = self.heroic_reroll(attacker, natural, lambda n: n != 1 and (n >= (attacker.features.get("improved_critical",20) if weapon else 20) or n + bonus >= self.armor_class(defender)), "attack")
         total = natural + self.modifier(attacker, "attack_roll", bonus, against=defender, consume=True)
         total -= self.exhaustion_penalty(attacker)
         critical_roll = natural >= (attacker.features.get("improved_critical", 20) if weapon else 20)
@@ -1351,7 +1351,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             frame = {"attacker": actor, "defender": target, "attack": roll, "critical": critical, "weapon_properties": attack.get("properties", [])}
             self.execute(instance, target, attack["effects"], self.context(instance, target, "on_attack_hit", frame, **frame), "weapon")
             if (actor.features.get("great_weapon_master") and "heavy" in attack.get("properties", [])
-                    and self.current is actor and not actor.statuses.get("hew_attack")):
+                    and self.current is actor and not actor.statuses.get("hew_attack") and not actor.statuses.get("pole_strike")):
                 # Heavy Weapon Mastery: +PB damage on a hit with a Heavy weapon as part of the Attack action.
                 self.damage(target, actor.proficiency_bonus, attack["effects"][0]["damage"]["type"], actor)
                 self.feature_log(actor, "Great Weapon Master")
@@ -1420,6 +1420,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 self.feature_log(actor,"Sacred Weapon")
         self.record("action", actor=actor.id, name="Attack", granted=bool(granted))
         names = self.routine(actor, self.enemies(actor)[0]) if self.enemies(actor) else []
+        pole = None
         if not granted and actor.replacements:
             names = self.policy_for(actor).monster_replacements(self, actor, names)
         if granted: names = names[:granted.get("attack_limit", 1)]
@@ -1431,6 +1432,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             if not enemies: break
             target = self.policy_for(actor).weapon_target(self, actor, enemies)
             self.perform_option(actor, name, [target])
+            if attack and (attack["name"] in {"Quarterstaff", "Spear"} or {"heavy", "reach"} <= set(attack.get("properties", []))): pole = attack
+        if not granted and pole is not None: self.pole_strike(actor, pole)
         return True
 
     def action_available(self, actor, action):

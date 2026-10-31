@@ -106,6 +106,19 @@ class ClassMechanics:
         finally:
             if penalty in target.effects: target.effects.remove(penalty)
 
+    def pole_strike(self, actor, attack):
+        """Polearm Master: after the Attack action with a qualifying weapon, a d4 Bludgeoning butt-end attack as a Bonus Action."""
+        if not actor.features.get("polearm_master") or self.current is not actor or actor.bonus_action < 1 or not actor.alive or actor.has_condition("incapacitated"): return False
+        enemies = self.reachable(actor, self.enemies(actor), attack)
+        if not enemies or self.turn_rules(actor).get("no_bonus_action"): return False
+        strike = {**deepcopy(attack), "name": attack["name"]}
+        strike["effects"][0]["damage"].update(dice="1d4", type="bludgeoning")
+        self.spend_economy(actor, "bonus_action")
+        self.feature_log(actor, "Pole Strike")
+        actor.statuses["pole_strike"] = True
+        try: return self.weapon_attack(actor, self.policy_for(actor).weapon_target(self, actor, enemies), strike)
+        finally: actor.statuses.pop("pole_strike", None)
+
     def martial_die(self, actor):
         return "1d10" if actor.level>=11 else "1d8" if actor.level>=5 else "1d6"
 
@@ -548,10 +561,15 @@ class ClassMechanics:
             dis |= against.features.get("multiattack_defense",False) and against.statuses.get("multiattack_defense",{}).get(actor.id)==self.turn_index
         return adv, dis
 
-    def heroic_reroll(self, actor, natural, succeeds):
+    def heroic_reroll(self, actor, natural, succeeds, kind="save"):
         if not succeeds(natural) and actor.statuses.pop("heroic_inspiration", None) is not None:
             self.feature_log(actor, "Heroic Inspiration")
-            return dice.reroll(self.rng, natural, self.policy_for(actor).reroll_die(self, actor, natural))
+            natural = dice.reroll(self.rng, natural, self.policy_for(actor).reroll_die(self, actor, natural))
+        if not succeeds(natural) and actor.features.get("lucky") and actor.limited_uses.get("luck") and succeeds(20) and self.policy_for(actor).use_luck(self, actor, kind):
+            # Lucky: Advantage on the roll, taken once the roll is known, so a second d20 keeps the higher.
+            actor.limited_uses["luck"] -= 1; actor.spend("luck")
+            natural = max(natural, dice.d20(self.rng))
+            self.feature_log(actor, "Lucky", roll=kind)
         return natural
 
     def class_failed_save(self, actor, ability, dc, bonus, natural, success):

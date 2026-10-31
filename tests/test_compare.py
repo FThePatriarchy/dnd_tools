@@ -28,7 +28,7 @@ def test_fighter_variants_cover_kits_and_styles():
     assert names[0] == "standard" and len(kits) == 6
     assert "sword and shield + dueling" in names and "archer + archery" in names
     # Sharpshooter is dropped: the standard fighter's 12 Dex misses its prerequisite
-    assert [n for n in names if n.startswith("feat:")] == ["feat: alert", "feat: great weapon master"]
+    assert [n for n in names if n.startswith("feat:")] == ["feat: alert", "feat: lucky", "feat: tough", "feat: great weapon master", "feat: polearm master", "feat: resilient"]
     level7 = [v["name"] for v in variants("fighter", 7)]
     assert len([n for n in level7 if not n.startswith("feat:")]) == 3  # two styles from level 7: one combination per kit
 

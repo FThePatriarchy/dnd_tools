@@ -161,6 +161,12 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
   - War Caster: +2% on the cleric (+13% against control, from holding concentration) and exactly +0% on the wizard.
   - Sharpshooter: identical to the plain shortbow-first rogue. With no cover or long range modelled it is only +1 Dex, and 19 and 18 Dex give the same modifier.
   - A feat replaces a +2 ASI, so where that +2 does not change a modifier (odd starting scores) the feat is free; with even scores it would cost a point of attack and damage.
+- **More feats (2026-10-31):** Tough and Lucky (Origin, like Alert), Resilient and Polearm Master (General), and a glaive kit (`chain_glaive`, `unarmored_glaive`). `python -m engine.compare --feats` rates only the standard build and its feat variants; `--only NAME…` narrows them further. Rules and approximations are in `data/handwritten/CLASS_FORMAT.md`. Reports `compare_L5_{fighter,rogue,cleric,wizard}_feats.md` and `compare_L10_fighter_feats.md` were rerun with every feat; the earlier rows reproduce exactly. In the standard party:
+  - Tough: +6% fighter, +5% cleric, +4% rogue, +3% wizard at level 5, but only +1% on the level 10 fighter. Extra HP matters most while HP pools are small.
+  - Lucky: +4% to +6% at level 5 on the fighter, rogue and wizard (+2% on the cleric) and +3% on the level 10 fighter. Together with Tough it is the best feat on every class at level 5 except the cleric.
+  - Resilient (Wisdom on martials, Constitution on casters) is within noise everywhere: -1% to +2%. The +1 it gives seldom changes a modifier, and one more save proficiency rarely decides a fight.
+  - Polearm Master: +2% at level 5, -1% at level 10. Paired with Great Weapon Master at level 10 it is +1%, below Great Weapon Master alone with the greatsword (+4%). The glaive's d10 is weaker than the greatsword's 2d6 under Great Weapon Fighting, the Pole Strike's d4 takes the Bonus Action that Hew would use, and two feats leave Str at 19, not 20.
+  - At level 5 almost every candidate, Resilient included, rates +11% to +17% against control. The level 5 control crossing is sensitive to any change in the random stream, so per-type control values there are weak evidence (feat-specific claims such as Alert's against control above included).
 - **Barbarian and Paladin in the fighter's slot** (`compare_L{5,10}_{barbarian,paladin}_variants.md`, standard party; the change is against the standard fighter):
   - Barbarian: +3% at level 5 (Great Weapon Master or Alert +4%), but -5% at level 10 (-13% against ranged, -10% against swarms). Great Weapon Master brings level 10 back to +0%. The greataxe (Cleave mastery) beats the greatsword kit by 5% overall; the greatsword kit is -17% against casters.
   - Paladin, with in-combat buff valuation: -2% at level 5 (within noise for the standard kit, both spell profiles and Great Weapon Master; -7% against casters, -6% against control), and -5% at level 10 (-16% against swarms, -14% against control). The sword-and-shield kits are -3% to -4% at level 5 (-18% against casters).
@@ -178,7 +184,7 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 - **Not yet done:**
   - Searching ability-score and ASI choices.
   - The optimized and casual reference parties for every class.
-  - More feats (Lucky, Tough, Polearm Master, Resilient), and cover and range so Sharpshooter has something to remove.
+  - Cover and range so Sharpshooter has something to remove; the remaining classes' feat reports with the new feats.
 
 - **Build value** = the change in party outcomes (wipe chance, someone going down, resources spent) when the build replaces a reference member, measured across the benchmark set. This values healers and controllers by their effect on the party, not by their damage per round.
 - Report the result as a grid: build × opponent type × party composition.
