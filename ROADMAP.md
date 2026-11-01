@@ -167,6 +167,15 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
   - Resilient (Wisdom on martials, Constitution on casters) is within noise everywhere: -1% to +2%. The +1 it gives seldom changes a modifier, and one more save proficiency rarely decides a fight.
   - Polearm Master: +2% at level 5, -1% at level 10. Paired with Great Weapon Master at level 10 it is +1%, below Great Weapon Master alone with the greatsword (+4%). The glaive's d10 is weaker than the greatsword's 2d6 under Great Weapon Fighting, the Pole Strike's d4 takes the Bonus Action that Hew would use, and two feats leave Str at 19, not 20.
   - At level 5 almost every candidate, Resilient included, rates +11% to +17% against control. The level 5 control crossing is sensitive to any change in the random stream, so per-type control values there are weak evidence (feat-specific claims such as Alert's against control above included).
+- **Feats on the other eight classes (2026-11-01)** (`compare_L5_{barbarian,paladin,monk,ranger,warlock,bard,druid,sorcerer}_feats.md`, standard party, level 5). The reports give each value against the reference member the class replaces; the gains below are against the class's own standard build:
+  - Lucky is the best or tied best feat on every class: +6% monk, +3% barbarian, druid and sorcerer, +2% paladin and warlock, +1% ranger, +0% bard. Tough is close behind (+3% barbarian and druid, +2% sorcerer and paladin, +1% elsewhere), as on the reference classes.
+  - Great Weapon Master: +1% on the barbarian and paladin, below its +4% on the fighter. Its +3 damage per hit is a smaller share of a turn that already carries Rage damage or Divine Smite.
+  - Polearm Master costs 5% on the barbarian and 1% on the paladin (-17% against casters on both). The glaive kit gives up the greataxe's Cleave or the greatsword, and the Pole Strike competes for the Bonus Action with Rage's turn and the paladin's bonus-action spells.
+  - War Caster: +1% on the sorcerer and druid, exactly +0% on the warlock and bard (the same as the wizard).
+  - Resilient: -4% to +1%. On the barbarian it is -15% against casters, and on the sorcerer -4% overall, because the +1 lands on an even score where the +2 ASI it replaces would have raised a modifier.
+  - Alert: -2% to +1% on these classes, unlike its +1% to +4% on the reference four. The bard gains +7% against control with it, but the druid loses 10% against casters.
+  - Sharpshooter matches the plain ranger exactly, as on the rogue; the warlock's solo ladder (-77% to -78% for every feat) still sets its overall value.
+  - Across all twelve classes at level 5, no feat moves a class more than 6%. Class, kit and spell choice dominate.
 - **Barbarian and Paladin in the fighter's slot** (`compare_L{5,10}_{barbarian,paladin}_variants.md`, standard party; the change is against the standard fighter):
   - Barbarian: +3% at level 5 (Great Weapon Master or Alert +4%), but -5% at level 10 (-13% against ranged, -10% against swarms). Great Weapon Master brings level 10 back to +0%. The greataxe (Cleave mastery) beats the greatsword kit by 5% overall; the greatsword kit is -17% against casters.
   - Paladin, with in-combat buff valuation: -2% at level 5 (within noise for the standard kit, both spell profiles and Great Weapon Master; -7% against casters, -6% against control), and -5% at level 10 (-16% against swarms, -14% against control). The sword-and-shield kits are -3% to -4% at level 5 (-18% against casters).
@@ -189,7 +198,7 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 - **Not yet done:**
   - Ability and ASI searches at level 10 and for the other eight classes.
   - The optimized and casual reference parties for every class.
-  - Cover and range so Sharpshooter has something to remove; the remaining classes' feat reports with the new feats.
+  - Cover and range so Sharpshooter has something to remove.
 
 - **Build value** = the change in party outcomes (wipe chance, someone going down, resources spent) when the build replaces a reference member, measured across the benchmark set. This values healers and controllers by their effect on the party, not by their damage per round.
 - Report the result as a grid: build × opponent type × party composition.
