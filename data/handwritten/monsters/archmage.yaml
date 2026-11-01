@@ -1,0 +1,117 @@
+name: Archmage
+source: XMM
+cr: '12'
+ac: 17
+max_hp: 170
+hp_formula: 31d8 + 31
+abilities:
+  str: 10
+  dex: 14
+  con: 12
+  int: 20
+  wis: 15
+  cha: 16
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 4
+save_bonuses:
+  int: 9
+  wis: 6
+save_proficiencies:
+- int
+- wis
+initiative_bonus: 4
+resistances: []
+immunities:
+- psychic
+vulnerabilities: []
+condition_immunities:
+- charmed
+attacks:
+- name: Arcane Burst
+  kind: melee
+  to_hit: 9
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 4d10
+      bonus: 5
+      type: force
+multiattack:
+- Arcane Burst
+- Arcane Burst
+- Arcane Burst
+- Arcane Burst
+actions: []
+traits: []
+unsupported:
+- Mind Blank is cast before combat, so the archmage starts immune to Psychic damage and the Charmed condition; Scrying,
+  Teleport, Detect Thoughts and Disguise Self are out of combat.
+spell_ability: int
+spell_dc: 17
+spell_attack_bonus: 9
+spells:
+- Detect Magic
+- Disguise Self
+- Invisibility
+- Light
+- Mage Armor
+- Mage Hand
+- Prestidigitation
+- Fly
+- Lightning Bolt
+- Cone of Cold
+- Mind Blank
+- Misty Step
+- Counterspell
+- Shield
+spell_levels:
+  Detect Magic: 1
+  Disguise Self: 1
+  Invisibility: 2
+  Light: 0
+  Mage Armor: 1
+  Mage Hand: 0
+  Prestidigitation: 0
+  Fly: 3
+  Lightning Bolt: 7
+  Cone of Cold: 9
+  Mind Blank: 8
+  Misty Step: 2
+  Counterspell: 3
+  Shield: 1
+spell_costs:
+  Detect Magic: action
+  Disguise Self: action
+  Invisibility: action
+  Light: action
+  Mage Armor: action
+  Mage Hand: action
+  Prestidigitation: action
+  Fly: action
+  Lightning Bolt: action
+  Cone of Cold: action
+  Mind Blank: action
+  Misty Step: bonus_action
+  Counterspell: reaction
+  Shield: reaction
+limited_uses:
+  Fly: 2
+  Lightning Bolt: 2
+  Cone of Cold: 1
+  Mind Blank: 1
+  Misty Step: 3
+  Protective Magic: 3
+spell_resources:
+  Fly: Fly
+  Lightning Bolt: Lightning Bolt
+  Cone of Cold: Cone of Cold
+  Mind Blank: Mind Blank
+  Misty Step: Misty Step
+  Counterspell: Protective Magic
+  Shield: Protective Magic
+features:
+  magic_resistance: true

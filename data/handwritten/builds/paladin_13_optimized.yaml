@@ -1,0 +1,41 @@
+class: paladin
+level: 13
+subclass: devotion
+abilities:
+  str: 15
+  dex: 8
+  con: 14
+  int: 8
+  wis: 10
+  cha: 15
+equipment: chain_greatsword
+choices:
+  ability_method: point_buy
+  background:
+    str: 2
+    con: 1
+  asis:
+    4:
+      str: 2
+    8:
+      str: 1
+      con: 1
+    12:
+      con: 2
+  fighting_style:
+  - great_weapon_fighting
+  weapon_masteries:
+  - greatsword
+  cantrips: []
+  prepared_spells:
+  - Bless
+  - Command
+  - Cure Wounds
+  - Heroism
+  - Magic Weapon
+  - Revivify
+  - Lesser Restoration
+  - Aura of Vitality
+  - Blinding Smite
+  - Daylight
+  - Protection from Poison

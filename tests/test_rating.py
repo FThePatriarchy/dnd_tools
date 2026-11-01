@@ -13,7 +13,7 @@ TYPES = {"brute", "ranged", "caster", "swarm", "control", "solo"}
 def test_benchmark_v1_is_complete_and_rising():
     b = load_benchmark(1)
     assert b["version"] == 1 and b["party_size"] == 4 and set(b["types"]) == TYPES
-    assert set(b["levels"]) == set(BUDGETS)
+    assert set(b["levels"]) == {level for level in BUDGETS if level <= 10}
     for level, ladders in b["levels"].items():
         assert set(ladders) == TYPES
         high_total = BUDGETS[level][2] * 4

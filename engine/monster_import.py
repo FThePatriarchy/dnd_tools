@@ -231,7 +231,9 @@ def parse_monster(raw: dict) -> dict:
             option = {"name": entry["name"], "cost": int(count[1]) if count else 1}
             attack = re.search(r"makes one (.+?) attack", text)
             spell = re.search(r"\{@spell ([^|}]+)", text)
-            if attack: option["attacks"] = [attack[1]]
+            if attack:
+                # "Grave Strike" names the attack printed as "Grave Strike (Vampire Form Only)".
+                option["attacks"] = [next((a["name"] for a in result["attacks"] if a["name"].split(" (")[0] == attack[1]), attack[1])]
             elif spell and spell[1] in metadata: option["spell"] = spell[1]
             else: continue
             result["legendary"]["options"].append(option)
@@ -260,6 +262,9 @@ def check_finished_numbers(sheet, raw):
     errors = []
     entries = {f"{kind}:{e['name']}": entries_text(e.get("entries", []))
                for kind in ("action", "trait", "reaction", "bonus", "legendary") for e in raw.get(kind, [])}
+    # Spellcasting entries shown among the legendary actions (the vampire's Beguile).
+    entries.update({f"legendary:{e['name']}": entries_text(e.get("headerEntries", []))
+                    for e in raw.get("spellcasting", []) if e.get("displayAs") == "legendary"})
 
     def source(ref, path):
         if ref not in entries:
@@ -303,7 +308,7 @@ def check_finished_numbers(sheet, raw):
             if isinstance(node.get("target"), dict):
                 target = node["target"]
                 if "size_ft" in target:
-                    sizes = [int(n) for n in re.findall(r"(\d+)-foot(?:-long, \d+-foot-wide)?\s+\{@variantrule (?:Cone|Line|Emanation|Sphere|Cube)", text, re.I)]
+                    sizes = [int(n) for n in re.findall(r"(\d+)-foot(?:-long, \d+-foot-wide|-radius)?\s+\{@variantrule (?:Cone|Line|Emanation|Sphere|Cube)", text, re.I)]
                     if target["size_ft"] not in sizes: errors.append(f"{path}.target.size_ft: absent from source entry")
                 if "n" in target and target["n"] != declared_capacity(text):
                     errors.append(f"{path}.target.n: absent from source entry")
@@ -376,7 +381,11 @@ def check_sheet(sheet, raw=None):
             for key, value in expected.items(): compare(value, actual.get(key) if isinstance(actual, dict) else None, path + "." + key)
         elif expected != actual: errors.append(f"{path}: source={expected!r}, YAML={actual!r}")
     for key in ("source", "cr", "ac", "max_hp", "hp_formula", "abilities", "speed", "movement_modes", "creature_type", "proficiency_bonus", "save_bonuses", "save_proficiencies", "initiative_bonus", "resistances", "immunities", "vulnerabilities", "condition_immunities"):
-        compare(base[key], sheet.get(key), key)
+        expected = base[key]
+        if key in {"condition_immunities", "immunities", "resistances"} and isinstance(expected, list):
+            # Conditional entries ("with Mind Blank") are reviewed as their listed names.
+            expected = [x for e in expected for x in (e.get("conditionImmune", e.get("immune", [])) if isinstance(e, dict) else [e])]
+        compare(expected, sheet.get(key), key)
     for key in ("spell_dc", "spell_ability", "spell_attack_bonus"):
         if key in base: compare(base[key], sheet.get(key), key)
     if base["multiattack"]: compare(base["multiattack"], sheet.get("multiattack"), "multiattack")

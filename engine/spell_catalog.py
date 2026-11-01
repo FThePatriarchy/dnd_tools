@@ -107,7 +107,7 @@ def base(s):
         duration = {"type": {"round": "rounds", "minute": "minutes", "hour": "hours", "day": "hours"}[unit], "n": d["duration"]["amount"] * (24 if unit == "day" else 1)}
     distance = s["range"].get("distance", {})
     kind = distance.get("type", s["range"]["type"])
-    ran = {"type": "point", "feet": distance["amount"]} if kind == "feet" else {"type": kind if kind in {"self", "touch", "sight", "unlimited"} else "self"}
+    ran = {"type": "point", "feet": distance["amount"] * (5280 if kind == "miles" else 1)} if kind in {"feet", "miles"} else {"type": kind if kind in {"self", "touch", "sight", "unlimited"} else "self"}
     if s["range"]["type"] != "point": ran = {"type": "self"}
     c = s.get("components", {})
     m = c.get("m")

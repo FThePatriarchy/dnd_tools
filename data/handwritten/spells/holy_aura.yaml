@@ -1,0 +1,53 @@
+name: Holy Aura
+source: XPHB
+level: 8
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a reliquary worth 1,000+ GP
+  m_consumed: false
+  m_cost_gp: 1000.0
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: all
+    distinct: true
+    up_to: true
+    filter:
+    - creature
+    affects: ally
+    within_ft: 30
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - advantage:
+      'on': saves
+      scope: all
+      against: null
+  - disadvantage:
+      'on': attack_rolls
+      scope: all
+      against: target
+      recipient: any_attacker
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- The Constitution save that leaves a Fiend or Undead attacker Blinded is not modeled; creatures that move out of
+  the aura keep its benefit.

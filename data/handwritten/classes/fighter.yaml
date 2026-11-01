@@ -10,6 +10,9 @@ asi_levels:
 - 4
 - 6
 - 8
+- 12
+- 14
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -205,6 +208,230 @@ levels:
     cantrips: 0
     prepared: 0
     slots: {}
+  11:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Two Extra Attacks
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 5
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  12:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 5
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  13:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Indomitable
+    - Studied Attacks
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 2
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 5
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  14:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 2
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 5
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  15:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Subclass Feature
+    - Superior Critical
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 2
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 5
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  16:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 1
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 2
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 6
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  17:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Action Surge
+    - Indomitable
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 2
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 3
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 6
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  18:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Subclass Feature
+    - Survivor
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 2
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 3
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 6
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  19:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Epic Boon
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 2
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 3
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 6
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  20:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Three Extra Attacks
+    resources:
+      second_wind:
+        max: 4
+        short_rest: 1
+        long_rest: all
+      action_surge:
+        max: 2
+        short_rest: all
+        long_rest: all
+      indomitable:
+        max: 3
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 6
+    cantrips: 0
+    prepared: 0
+    slots: {}
 features:
 - name: Fighting Style
   level: 1
@@ -303,6 +530,62 @@ features:
   origin: class
   mechanics:
     builder: true
+- name: Two Extra Attacks
+  level: 11
+  origin: class
+  mechanics:
+    progression: true
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Indomitable
+  level: 13
+  origin: class
+  mechanics: &id002
+    progression: true
+- name: Studied Attacks
+  level: 13
+  origin: class
+  mechanics:
+    studied_attacks: true
+- name: Ability Score Improvement
+  level: 14
+  origin: class
+  mechanics: *id001
+- name: Subclass Feature
+  level: 15
+  origin: class
+  mechanics: &id003
+    builder: true
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id001
+- name: Action Surge
+  level: 17
+  origin: class
+  mechanics:
+    progression: true
+- name: Indomitable
+  level: 17
+  origin: class
+  mechanics: *id002
+- name: Subclass Feature
+  level: 18
+  origin: class
+  mechanics: *id003
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Three Extra Attacks
+  level: 20
+  origin: class
+  mechanics:
+    progression: true
 - name: Champion
   level: 3
   origin: subclass
@@ -330,3 +613,13 @@ features:
   origin: subclass
   mechanics:
     heroic_warrior: true
+- name: Superior Critical
+  level: 15
+  origin: subclass
+  mechanics:
+    improved_critical: 18
+- name: Survivor
+  level: 18
+  origin: subclass
+  mechanics:
+    survivor: true

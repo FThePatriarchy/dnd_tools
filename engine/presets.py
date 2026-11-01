@@ -23,8 +23,8 @@ import argparse
 
 import yaml
 
-from .builder import (_class, ABILITIES, build, default_asis, spell_options, spell_order,
-                      validate_book)
+from .builder import (_class, ABILITIES, PRESET_LEVELS, SAVANT_LEVELS, asi_levels, build, default_asis, high_first,
+                      spell_options, spell_order, validate_book)
 from .classes import SUBCLASSES
 from .loader import ROOT, Validator
 
@@ -48,14 +48,17 @@ PROFILES = {
                    "spells": ["Shield", "Sleep", "Magic Missile", "Mage Armor", "Web", "Hold Person", "Misty Step",
                               "Hypnotic Pattern", "Fireball", "Haste", "Slow", "Counterspell", "Synaptic Static",
                               "Wall of Force", "Cone of Cold", "Evard's Black Tentacles", "Polymorph",
-                              "Greater Invisibility", "Wall of Fire", "Scorching Ray", "Thunderwave", "Mirror Image"]},
+                              "Greater Invisibility", "Wall of Fire", "Scorching Ray", "Thunderwave", "Mirror Image",
+                              "Disintegrate", "Otto's Irresistible Dance", "Chain Lightning", "Flesh to Stone", "Power Word Stun",
+                              "Sunburst", "Foresight", "Power Word Kill", "Meteor Swarm", "Weird", "Finger of Death"]},
         "cleric": {"method": "point_buy", "abilities": dict(str=13, dex=10, con=15, int=8, wis=15, cha=10),
                    "equipment": "chain_shield", "order": "protector", "strike": "potent_spellcasting",
                    "cantrips": ["Sacred Flame", "Toll the Dead", "Word of Radiance", "Guidance", "Resistance"],
                    "spells": ["Bless", "Healing Word", "Guiding Bolt", "Shield of Faith", "Spirit Guardians",
                               "Spiritual Weapon", "Hold Person", "Command", "Aid", "Banishment", "Guardian of Faith",
                               "Death Ward", "Revivify", "Mass Healing Word", "Bane", "Beacon of Hope",
-                              "Freedom of Movement", "Flame Strike", "Greater Restoration", "Summon Celestial"]},
+                              "Freedom of Movement", "Flame Strike", "Greater Restoration", "Summon Celestial",
+                              "Heal", "Divine Word", "Power Word Fortify", "Holy Aura", "Regenerate", "Mass Heal", "Power Word Heal", "Harm", "Fire Storm", "Sunburst"]},
     },
     "casual": {
         "barbarian": {"method":"standard_array", "abilities":dict(str=14,dex=12,con=13,int=8,wis=10,cha=15),
@@ -73,7 +76,8 @@ PROFILES = {
                    "spells": ["Magic Missile", "Burning Hands", "Chromatic Orb", "Charm Person", "Thunderwave",
                               "Witch Bolt", "Scorching Ray", "Melf's Acid Arrow", "Gust of Wind", "Darkness",
                               "Lightning Bolt", "Fireball", "Fly", "Vampiric Touch", "Ice Storm", "Fire Shield",
-                              "Cone of Cold", "Mage Armor", "Misty Step"],
+                              "Cone of Cold", "Mage Armor", "Misty Step",
+                              "Chain Lightning", "Delayed Blast Fireball", "Sunburst", "Meteor Swarm"],
                    "exclude": ["Shield", "Counterspell"]},
         "cleric": {"method": "standard_array", "abilities": dict(str=15, dex=10, con=13, int=8, wis=14, cha=12),
                    "flavour": "str", "equipment": "chain_shield", "order": "protector", "strike": "divine_strike",
@@ -81,7 +85,8 @@ PROFILES = {
                    "spells": ["Cure Wounds", "Healing Word", "Sanctuary", "Protection from Evil and Good", "Bless",
                               "Detect Magic", "Command", "Lesser Restoration", "Aid", "Warding Bond", "Revivify",
                               "Mass Healing Word", "Beacon of Hope", "Spiritual Weapon", "Spirit Guardians",
-                              "Death Ward", "Mass Cure Wounds", "Greater Restoration", "Flame Strike"]},
+                              "Death Ward", "Mass Cure Wounds", "Greater Restoration", "Flame Strike",
+                              "Heal", "Regenerate", "Sunburst", "Mass Heal", "Power Word Heal"]},
     },
 }
 
@@ -127,12 +132,12 @@ def book_for(level, options, order):
     """A legal Wizard spellbook that learns spells in the given order (default_book's acquisition rules)."""
     book = []
     for at in range(1, level + 1):
-        eligible = {n: s for n, s in options.items() if 0 < s["level"] <= (at + 1) // 2}
+        eligible = {n: s for n, s in options.items() if 0 < s["level"] <= min(9, (at + 1) // 2)}
         picks = [n for n in order if n in eligible and n not in book]
         book += picks[:6 if at == 1 else 2]
         savant = [n for n in order if n in eligible and n not in book and eligible[n]["school"] == "evocation"]
         if at == 3: book += savant[:2]
-        elif at in {5, 7, 9}: book += savant[:1]
+        elif at in SAVANT_LEVELS: book += savant[:1]
     return book
 
 
@@ -140,7 +145,7 @@ def asis_for(name, level, profile, scores):
     if profile["method"] == "point_buy" or "flavour" not in profile:
         return default_asis(name, level, scores)
     result, scores = {}, scores.copy()
-    for n in _class(name)["asi_levels"]:
+    for n in asi_levels(_class(name)):
         if n > level: continue
         add = {}
         for a in (PRIMARY[name], profile["flavour"]):
@@ -163,7 +168,7 @@ def recipe(name, level, profile_name):
     if name in {"fighter", "rogue", "barbarian", "paladin", "ranger"}:
         choices["weapon_masteries"] = p["masteries"][:row["weapon_masteries"]]
     if name == "rogue" and level >= 5:
-        choices["cunning_strike"] = p["cunning"]
+        choices["cunning_strike"] = p["cunning"] + ([("obscure" if profile_name == "optimized" else "daze")] if level >= 14 else [])
     if name == "cleric":
         choices.update(divine_order=p["order"], blessed_strikes=p["strike"])
     if name in {"wizard", "cleric", "paladin", "warlock", "bard", "ranger", "druid", "sorcerer"}:
@@ -184,7 +189,7 @@ def recipe(name, level, profile_name):
             probe = build(name, level, None, p["abilities"], p["equipment"], {k: v for k, v in choices.items() if k != "cantrips"} | {"cantrips": choices["cantrips"]})
             domain = set(probe["spells"]) - set(probe["prepared_spells"]) - set(choices["cantrips"])
             available = set(leveled) - domain
-        choices["prepared_spells"] = [n for n in order if n in available][:row["prepared"]]
+        choices["prepared_spells"] = high_first(name, [n for n in order if n in available], options, level)[:row["prepared"]]
     return {"class": name, "level": level, "subclass": SUBCLASSES[name], "abilities": dict(p["abilities"]),
             "equipment": p["equipment"], "choices": choices}
 
@@ -202,7 +207,7 @@ def write():
     folder = ROOT / "builds"
     for profile in PROFILES:
         for name in SUBCLASSES:
-            for level in LEVELS:
+            for level in PRESET_LEVELS.get(name, LEVELS):
                 d = recipe(name, level, profile)
                 build(d["class"], d["level"], d["subclass"], d["abilities"], d["equipment"], d["choices"])
                 (folder / f"{preset_name(name, level, profile)}.yaml").write_text(yaml.safe_dump(d, sort_keys=False), encoding="utf-8")
@@ -214,7 +219,7 @@ def main():
     args = parser.parse_args()
     if not args.write: parser.error("nothing to do; pass --write")
     write()
-    print("wrote", sum(len(SUBCLASSES) * len(LEVELS) for _ in PROFILES), "builds")
+    print("wrote", sum(len(PRESET_LEVELS.get(name, LEVELS)) for name in SUBCLASSES for _ in PROFILES), "builds")
 
 
 if __name__ == "__main__": main()

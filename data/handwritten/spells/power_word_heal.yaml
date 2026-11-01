@@ -1,0 +1,52 @@
+name: Power Word Heal
+source: XPHB
+level: 9
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - heal:
+      amount: full
+  - remove_condition:
+      condition: charmed
+  - remove_condition:
+      condition: frightened
+  - remove_condition:
+      condition: paralyzed
+  - remove_condition:
+      condition: poisoned
+  - remove_condition:
+      condition: stunned
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Standing up from Prone with a Reaction is not modeled.

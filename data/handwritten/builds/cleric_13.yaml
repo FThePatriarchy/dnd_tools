@@ -1,0 +1,49 @@
+class: cleric
+level: 13
+subclass: life
+abilities:
+  str: 13
+  dex: 10
+  con: 14
+  int: 12
+  wis: 15
+  cha: 8
+equipment: chain_shield
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      wis: 2
+    8:
+      wis: 2
+    12:
+      wis: 1
+      con: 1
+  weapon_masteries: []
+  cantrips:
+  - Sacred Flame
+  - Toll the Dead
+  - Guidance
+  - Word of Radiance
+  - Resistance
+  prepared_spells:
+  - Heal
+  - Harm
+  - Divine Word
+  - Fire Storm
+  - Regenerate
+  - Power Word Fortify
+  - Spirit Guardians
+  - Healing Word
+  - Guiding Bolt
+  - Spiritual Weapon
+  - Hold Person
+  - Shield of Faith
+  - Bane
+  - Sanctuary
+  - Command
+  - Inflict Wounds
+  - Silence
+  expertise: []
+  divine_order: protector
+  blessed_strikes: potent_spellcasting

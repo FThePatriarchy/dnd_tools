@@ -1,0 +1,48 @@
+name: Heal
+source: XPHB
+level: 6
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - heal:
+      amount: 70
+  - remove_condition:
+      condition: blinded
+  - remove_condition:
+      condition: deafened
+  - remove_condition:
+      condition: poisoned
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- The extra healing from a higher spell slot is not modeled.

@@ -1,0 +1,57 @@
+name: Foresight
+source: XPHB
+level: 9
+school: divination
+casting_time: minute
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a hummingbird feather
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 8
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - advantage:
+      'on': attack_rolls
+      scope: all
+      against: null
+  - advantage:
+      'on': saves
+      scope: all
+      against: null
+  - advantage:
+      'on': ability_checks
+      scope: all
+      against: null
+  - disadvantage:
+      'on': attack_rolls
+      scope: all
+      against: target
+      recipient: any_attacker
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []
+casting_time_n: 1

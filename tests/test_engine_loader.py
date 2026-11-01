@@ -15,9 +15,10 @@ def spells():
 
 
 def test_all_reviewed_assets_validate(spells):
-    assert len(spells) == 245
+    assert len(spells) == 273  # 245 level 0-5 plus 28 level 6-9 (engine/spell_high.py)
     from engine.monster_import import ORIGINAL, STEP2, slug
-    assert {p.stem for p in (ROOT / "monsters").glob("*.yaml")} == {slug(n) for n in ORIGINAL + STEP2}
+    from engine.monster_high import DRAGONS, OTHERS
+    assert {p.stem for p in (ROOT / "monsters").glob("*.yaml")} == {slug(n) for n in ORIGINAL + STEP2 + DRAGONS + OTHERS}
     assert len(list((ROOT / "characters").glob("*.yaml"))) == 2
     for folder in ("monsters", "characters"):
         for path in (ROOT / folder).glob("*.yaml"):

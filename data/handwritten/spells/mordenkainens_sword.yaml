@@ -1,0 +1,47 @@
+name: Mordenkainen's Sword
+source: XPHB
+level: 7
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 90
+components:
+  v: true
+  s: true
+  m: a miniature sword worth 250+ GP
+  m_consumed: false
+  m_cost_gp: 250.0
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: sword
+  event: on_cast or bonus_action_command
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack:
+    type: melee_spell
+  save: null
+  on_hit:
+  - damage:
+      dice: 4d12
+      bonus: spell_mod
+      type: force
+  on_fail: []
+  on_success: []
+  apply: []
+  limit: null
+  if: event == on_cast or turn.index > spell.cast_turn
+  optional: true
+scaling: null
+ends_on: []
+unsupported:
+- Moving the sword is not simulated; the target is assumed to be in reach.

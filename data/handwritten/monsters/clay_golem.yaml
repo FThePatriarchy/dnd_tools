@@ -1,0 +1,63 @@
+name: Clay Golem
+source: XMM
+cr: '9'
+ac: 14
+max_hp: 123
+hp_formula: 13d10 + 52
+abilities:
+  str: 20
+  dex: 9
+  con: 18
+  int: 3
+  wis: 8
+  cha: 1
+speed: 20
+movement_modes:
+  walk: 20
+creature_type: construct
+alignment: neutral
+proficiency_bonus: 4
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 4
+resistances:
+- bludgeoning
+- piercing
+- slashing
+immunities:
+- acid
+- poison
+- psychic
+vulnerabilities: []
+condition_immunities:
+- charmed
+- exhaustion
+- frightened
+- paralyzed
+- petrified
+- poisoned
+attacks:
+- name: Slam
+  kind: melee
+  to_hit: 9
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 5
+      type: bludgeoning
+  - damage:
+      dice: 1d12
+      bonus: 0
+      type: acid
+multiattack:
+- Slam
+- Slam
+actions: []
+traits: []
+unsupported:
+- Acid Absorption is modeled as Acid immunity; the healing from Acid damage is not.
+- Berserk, Immutable Form and Hasten (with its third Slam) are not modeled.
+- The Slam's Hit Point maximum reduction is not modeled.
+features:
+  magic_resistance: true

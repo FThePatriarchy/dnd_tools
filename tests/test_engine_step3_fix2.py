@@ -241,7 +241,7 @@ def test_step3_fix2_F_continuous_source_specific_condition_riders(monkeypatch):
                     for index, primitive in enumerate(block[branch]):
                         if primitive.get('requires_condition'):
                             dependencies[(name, block['id'], branch, index)] = primitive['requires_condition']
-        assert len(spell_specs()) == 245
+        assert len(spell_specs()) == 273  # 245 level 0-5 specs plus the level 6-9 batch (engine/spell_high.py)
         assert dependencies == {
             ('Contagion', 'main', 'on_fail', 2): 'poisoned',
             ('Stinking Cloud', 'main', 'on_fail', 1): 'poisoned',
@@ -253,6 +253,9 @@ def test_step3_fix2_F_continuous_source_specific_condition_riders(monkeypatch):
             ('Hypnotic Pattern', 'main', 'on_fail', 1): 'charmed',
             ('Hypnotic Pattern', 'main', 'on_fail', 2): 'charmed',
             ('Modify Memory', 'main', 'on_fail', 1): 'charmed',
+            ("Otto's Irresistible Dance", 'main', 'on_fail', 1): 'charmed',
+            ("Otto's Irresistible Dance", 'main', 'on_fail', 2): 'charmed',
+            ("Otto's Irresistible Dance", 'main', 'on_fail', 3): 'charmed',
         }
         # The remaining condition predicate in embedded spell stat blocks is
         # Putrid Spirit's paralysis *application* prerequisite, not its duration.

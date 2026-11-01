@@ -7,6 +7,19 @@ from copy import copy, deepcopy
 SKILLS = {"acrobatics", "animal handling", "arcana", "athletics", "deception", "history", "insight", "intimidation", "investigation", "medicine", "nature", "perception", "performance", "persuasion", "religion", "sleight of hand", "stealth", "survival", "thieves' tools", "poisoner's kit", "disguise kit"}
 
 
+CUNNING_COST = {"poison": 1, "trip": 1, "withdraw": 1, "daze": 2, "obscure": 3, "knock_out": 6}
+# Devious Strikes: save ability, failed-save effect and duration.
+DEVIOUS = {
+    "daze": ("con", {"turn_rules": {"action_or_bonus": True}, "until": "end_of_turn(target.next_turn)"}, {"type": "special"}),
+    "obscure": ("dex", {"apply_condition": {"condition": "blinded"}, "until": "end_of_turn(target.next_turn)"}, {"type": "special"}),
+    "knock_out": ("con", {"apply_condition": {"condition": "unconscious", "ends_on_damage": "any", "repeat_save": {"ability": "con", "timing": "end_of_turn", "on_success": "end"}}}, {"type": "minutes", "n": 1}),
+}
+
+
+def free_key(name):
+    return "free_" + name.lower().replace(" ", "_").replace("'", "")
+
+
 class ClassMechanics:
     def class_bonus_available(self, actor):
         return self.current is actor and actor.alive and not actor.has_condition("incapacitated") and actor.bonus_action>0 and not self.turn_rules(actor).get("no_bonus_action")
@@ -120,7 +133,7 @@ class ClassMechanics:
         finally: actor.statuses.pop("pole_strike", None)
 
     def martial_die(self, actor):
-        return "1d10" if actor.level>=11 else "1d8" if actor.level>=5 else "1d6"
+        return "1d12" if actor.level>=17 else "1d10" if actor.level>=11 else "1d8" if actor.level>=5 else "1d6"
 
     def free_mark(self, actor, name, slot=None):
         return name=="Hunter's Mark" and actor.features.get("favored_enemy") and actor.limited_uses.get("favored_enemy",0)>0 and slot in {None,1}
@@ -128,9 +141,38 @@ class ClassMechanics:
     def monk_initiative(self, actor):
         if actor.alive and actor.features.get("uncanny_metabolism") and actor.limited_uses.get("uncanny_metabolism") and (actor.limited_uses.get("focus",0)<actor.max_limited_uses["focus"] or actor.hp<actor.max_hp):
             actor.limited_uses["uncanny_metabolism"]-=1; actor.spend("uncanny_metabolism")
+            actor.statuses["used_metabolism"]=True
             actor.limited_uses["focus"]=actor.max_limited_uses["focus"]
             self.heal(actor,dice.roll(self.rng,self.martial_die(actor))+actor.level)
             self.feature_log(actor,"Uncanny Metabolism")
+
+    def class_initiative(self, actor):
+        if not actor.alive: return
+        used = actor.statuses.pop("used_metabolism", False)
+        if actor.features.get("persistent_rage") and not actor.statuses.get("persistent_rage_used") and actor.limited_uses.get("rage", 0) < actor.max_limited_uses.get("rage", 0):
+            actor.statuses["persistent_rage_used"] = True
+            actor.limited_uses["rage"] = actor.max_limited_uses["rage"]
+            self.feature_log(actor, "Persistent Rage")
+        if actor.features.get("perfect_focus") and not used and actor.limited_uses.get("focus", 0) <= 3:
+            actor.limited_uses["focus"] = 4
+            self.feature_log(actor, "Perfect Focus")
+        if actor.features.get("superior_inspiration") and actor.limited_uses.get("bardic_inspiration", 0) < 2:
+            actor.limited_uses["bardic_inspiration"] = 2
+            self.feature_log(actor, "Superior Inspiration")
+        if actor.features.get("archdruid") and actor.max_limited_uses.get("wild_shape") and not actor.limited_uses.get("wild_shape"):
+            actor.limited_uses["wild_shape"] = 1
+            self.feature_log(actor, "Evergreen Wild Shape")
+        if actor.features.get("holy_nimbus") and actor.limited_uses.get("holy_nimbus"):
+            actor.limited_uses["holy_nimbus"] -= 1; actor.spend("holy_nimbus")
+            actor.statuses["holy_nimbus"] = {"expires": self.time_rounds + 100}
+            self.feature_log(actor, "Holy Nimbus")
+
+    def holy_nimbus_damage(self, actor):
+        """An enemy of an active Holy Nimbus takes Radiant damage at the start of its turn."""
+        for paladin in self.combatants:
+            nimbus = paladin.statuses.get("holy_nimbus")
+            if nimbus and paladin.team != actor.team and paladin.aura_active() and self.time_rounds < nimbus["expires"] and actor.alive:
+                self.damage(actor, paladin.mod("cha") + paladin.proficiency_bonus, "radiant", paladin)
 
     def spend_focus(self, actor):
         actor.limited_uses["focus"]-=1; actor.spend("focus")
@@ -184,6 +226,12 @@ class ClassMechanics:
                 target.effects.append(Effect("apply_condition",{"condition":"stunned"},0,"stunning_strike",until))
                 if target.concentration is not None: self.end_spell(target.concentration)
             self.feature_log(actor,"Stunning Strike",target=target.id,success=success)
+        if actor.features.get("quivering_palm") and attack["name"]=="Unarmed Strike" and actor.limited_uses.get("focus",0)>=4 and target.alive and target.hp>=40 and not target.statuses.get("quivering"):
+            for _ in range(4): self.spend_focus(actor)
+            target.statuses["quivering"]=True
+            success=self.saving_throw(target,"con",dc)
+            self.damage(target,dice.roll(self.rng,"10d12"),"force",actor,half=success)
+            self.feature_log(actor,"Quivering Palm",target=target.id,success=success)
         if actor.statuses.get("flurry") and actor.features.get("open_hand_technique"):
             # Addle only stops Opportunity Attacks, which need a grid; it is a no-op unless chosen.
             addle=bool(actor.features.get("open_hand_addle"))
@@ -197,7 +245,7 @@ class ClassMechanics:
         attacker,target,attack=attack_context
         if not target.features.get("deflect_attacks") or not target.alive or not target.reaction or target.has_condition("incapacitated") or self.turn_rules(target).get("no_reactions"): return
         entries=[(k,n) for k,n in typed.items() if k[0] is target]
-        if not any(k[1] in {"bludgeoning","piercing","slashing"} and n>0 for k,n in entries): return
+        if not any((k[1] in {"bludgeoning","piercing","slashing"} or target.features.get("deflect_energy")) and n>0 for k,n in entries): return
         target.reaction-=1
         reduction=dice.roll(self.rng,"1d10")+target.mod("dex")+target.level
         for k,n in entries:
@@ -226,7 +274,7 @@ class ClassMechanics:
             self.feature_log(actor,"Self-Restoration",condition=condition)
 
     def bardic_die(self, actor):
-        return 10 if actor.level>=10 else 8 if actor.level>=5 else 6
+        return 12 if actor.level>=15 else 10 if actor.level>=10 else 8 if actor.level>=5 else 6
 
     def inspire(self, actor, target):
         if not actor.features.get("bardic_inspiration") or not actor.alive or actor.has_condition("incapacitated") or not actor.bonus_action or self.turn_rules(actor).get("no_bonus_action") or not actor.limited_uses.get("bardic_inspiration"): return False
@@ -240,6 +288,12 @@ class ClassMechanics:
         return True
 
     def failed_test_bonus(self, actor, total, dc, *, luck=True):
+        if actor.features.get("peerless_skill") and actor.limited_uses.get("bardic_inspiration") and 0 < dc - total <= self.bardic_die(actor):
+            roll = self.rng.randint(1, self.bardic_die(actor))
+            if total + roll >= dc:
+                actor.limited_uses["bardic_inspiration"] -= 1; actor.spend("bardic_inspiration")
+                self.feature_log(actor, "Peerless Skill", total=total + roll, dc=dc)
+                return total + roll
         inspiration=actor.statuses.get("bardic_inspiration",{})
         if inspiration.get("expires",0)<=self.time_rounds:
             actor.statuses.pop("bardic_inspiration",None); inspiration={}
@@ -416,6 +470,10 @@ class ClassMechanics:
         self.feature_log(instance.caster,"Sear Undead",target=target.id)
 
     def class_scale(self, actor, spec):
+        if actor.features.get("foe_slayer") and spec["name"] == "Hunter's Mark":
+            for b in spec["effects"]:
+                for p in b["apply"]:
+                    if "damage" in p: p["damage"]["dice"] = p["damage"]["dice"].replace("d6", "d10")
         if actor.features.get("agonizing_blast") and spec["name"]=="Eldritch Blast":
             for b in spec["effects"]:
                 for p in b["on_hit"]:
@@ -448,6 +506,11 @@ class ClassMechanics:
         if spec["level"] == 0 and caster.features.get("potent_spellcasting"):
             amount += caster.spell_mod
             self.feature_log(caster, "Potent Spellcasting")
+            if caster.features.get("improved_potent_spellcasting") and "_potent_temp" not in instance.choices:
+                instance.choices["_potent_temp"] = True
+                allies = [c for c in self.combatants if c.team == caster.team and c.alive and not c.removed]
+                ally = min(allies, key=lambda c: (c.temp_hp > 0, c.hp / max(1, c.max_hp), c.id), default=None)
+                if ally: ally.temp_hp = max(ally.temp_hp, 2 * caster.spell_mod)
         if caster.features.get("empowered_evocation") and spec["school"] == "evocation":
             # One roll, not one target: shared-roll spells reuse this augmented value.
             if "_empowered_roll" not in instance.choices:
@@ -482,7 +545,7 @@ class ClassMechanics:
             self.damage(target,dice.roll(self.rng,"1d8",critical),attack["effects"][0]["damage"]["type"],actor)
             self.feature_log(actor,"Colossus Slayer")
         if actor.raging and attack.get("ability", "str") == "str":
-            bonus = 2 if actor.level < 9 else 3
+            bonus = 2 if actor.level < 9 else 3 if actor.level < 16 else 4
             dtype = attack["effects"][0]["damage"]["type"]
             self.damage(target,bonus,dtype,actor)
             self.feature_log(actor,"Rage Damage",amount=bonus)
@@ -491,21 +554,51 @@ class ClassMechanics:
                 self.damage(target,dice.roll(self.rng,f"{bonus}d6",critical),dtype,actor)
                 self.feature_log(actor,"Frenzy",dice=f"{bonus}d6")
         if actor.statuses.pop("brutal_attack",False):
-            self.damage(target,dice.roll(self.rng,"1d10",critical),attack["effects"][0]["damage"]["type"],actor)
-            target.effects = [e for e in target.effects if e.block != "hamstring_blow"]
-            target.effects.append(Effect("modify", {"stat":"speed","op":"sub","value":15,"scope":"all"},0,"hamstring_blow",("start_of_turn",actor.id,actor.turns_taken+1)))
-            self.feature_log(actor,"Brutal Strike",option="Hamstring Blow")
+            self.damage(target,dice.roll(self.rng,"2d10" if actor.level>=17 else "1d10",critical),attack["effects"][0]["damage"]["type"],actor)
+            until=("start_of_turn",actor.id,actor.turns_taken+1)
+            if actor.features.get("improved_brutal_strike"):
+                # Staggering Blow (and from 17 also Sundering Blow) instead of the movement-only Hamstring Blow.
+                target.effects.append(Effect("disadvantage",{"on":"saves","scope":"all","against":None},0,"staggering_blow",until,uses=1))
+                self.feature_log(actor,"Brutal Strike",option="Staggering Blow")
+                if actor.level>=17:
+                    target.effects.append(Effect("modify",{"stat":"attack_roll","op":"add","value":5,"scope":"all","recipient":"any_attacker"},0,"sundering_blow",until,uses=1))
+                    self.feature_log(actor,"Brutal Strike",option="Sundering Blow")
+            else:
+                target.effects = [e for e in target.effects if e.block != "hamstring_blow"]
+                target.effects.append(Effect("modify", {"stat":"speed","op":"sub","value":15,"scope":"all"},0,"hamstring_blow",until))
+                self.feature_log(actor,"Brutal Strike",option="Hamstring Blow")
         self.paladin_smite(actor,target,critical,roll)
+        if actor.features.get("radiant_strikes") and attack.get("kind","melee")=="melee":
+            self.damage(target,dice.roll(self.rng,"1d8",critical),"radiant",actor)
+        if actor.features.get("lunar_form") and actor.has_status("wild_shape") and actor.statuses.get("lunar_turn")!=self.turn_index:
+            actor.statuses["lunar_turn"]=self.turn_index
+            self.damage(target,dice.roll(self.rng,"2d10",critical),"radiant",actor)
+            self.feature_log(actor,"Lunar Form")
+        if actor.features.get("superior_hunters_prey") and actor.statuses.get("prey_turn")!=self.turn_index and self.marked_by(target,actor):
+            others=[e for e in self.enemies(actor) if e is not target and e.alive]
+            if others:
+                actor.statuses["prey_turn"]=self.turn_index
+                other=min(others,key=lambda e:(e.hp,e.id))
+                self.damage(other,dice.roll(self.rng,"1d10" if actor.features.get("foe_slayer") else "1d6"),"force",actor)
+                self.feature_log(actor,"Superior Hunter's Prey",target=other.id)
         if self.sneak_eligible(actor, target, attack, roll):
             dtype = next((p["damage"]["type"] for p in attack["effects"] if "damage" in p), "piercing")
             actor.statuses["sneak_turn"] = self.turn_index
             n, sides, flat = dice.parts(actor.features["sneak_attack"])
             options = [o for o in actor.cunning_strike if o != "poison" or actor.features.get("poisoners_kit")]
-            option = self.policy_for(actor).cunning_strike(self, actor, target, options)
+            option = self.policy_for(actor).cunning_strike(self, actor, target, [o for o in options if CUNNING_COST[o] <= n])
             if option not in options and option is not None: raise ValueError("invalid Cunning Strike choice")
-            if option: n -= 1
+            option = [option] if option else []
+            if option and actor.features.get("improved_cunning_strike"):
+                # Improved Cunning Strike: a second, different effect on the same Sneak Attack.
+                second = self.policy_for(actor).cunning_strike(self, actor, target, [o for o in options if o not in option and CUNNING_COST[o] + CUNNING_COST[option[0]] <= n])
+                if second: option.append(second)
+            n -= sum(CUNNING_COST[o] for o in option)
             amount = dice.roll(self.rng, f"{n}d{sides}", critical) + flat if n else flat
             if actor.features.get("assassinate") and self.round == 1: amount += actor.level
+            if actor.features.get("death_strike") and self.round == 1 and not self.saving_throw(target, "con", 8 + actor.mod("dex") + actor.proficiency_bonus):
+                amount *= 2  # Death Strike, approximated as doubling the Sneak Attack damage
+                self.feature_log(actor, "Death Strike")
             self.damage(target, amount, dtype, actor)
             self.feature_log(actor, "Sneak Attack", dice=f"{n}d{sides}", critical=critical)
         if actor.features.get("divine_strike") and self.current is actor and actor.statuses.get("strike_turn") != self.turn_index:
@@ -514,9 +607,36 @@ class ClassMechanics:
             self.feature_log(actor, "Divine Strike")
         return option
 
-    def class_after_hit(self, actor, target, option):
-        if option is None or not target.alive: return
+    def marked_by(self, target, actor):
+        return any(e.kind == "status" and e.data.get("id") == "hunters_marked" and e.source in self.instances and self.instances[e.source].caster is actor for e in target.active_effects)
+
+    def hurl_through_hell(self, attacker, defender):
+        if not attacker.features.get("hurl_through_hell") or not attacker.limited_uses.get("hurl_through_hell") or self.current is not attacker or not defender.alive or defender.hp < 30: return
+        attacker.limited_uses["hurl_through_hell"] -= 1; attacker.spend("hurl_through_hell")
+        success = self.saving_throw(defender, "cha", attacker.spell_dc)
+        self.feature_log(attacker, "Hurl Through Hell", target=defender.id, success=success)
+        if success: return
+        if defender.creature_type != "fiend": self.damage(defender, dice.roll(self.rng, "8d10"), "psychic", attacker)
+        if defender.alive:
+            defender.effects.append(Effect("apply_condition", {"condition": "incapacitated"}, 0, "hurl_through_hell", ("end_of_turn", attacker.id, attacker.turns_taken + 1)))
+            if defender.concentration is not None: self.end_spell(defender.concentration)
+
+    def class_after_hit(self, actor, target, options):
+        for option in options or []: self.cunning_effect(actor, target, option)
+
+    def cunning_effect(self, actor, target, option):
+        if not target.alive: return
         self.feature_log(actor, "Cunning Strike", option=option)
+        if option == "poison" and actor.features.get("envenom_weapons"):
+            self.damage(target, dice.roll(self.rng, "2d6"), "poison", actor)
+            self.feature_log(actor, "Envenom Weapons")
+            if not target.alive: return
+        if option in DEVIOUS:
+            ability, effect, duration = DEVIOUS[option]
+            block = effect_block("devious_strike", target={"select": "single", "filter": ["creature"], "affects": "any"}, save={"ability": ability, "dc": 8 + actor.mod("dex") + actor.proficiency_bonus, "on_success": "negate"}, on_fail=[deepcopy(effect)])
+            inst = self.monster_instance(actor, "Devious Strike", [block], duration)
+            self.resolve_block(inst, block, "on_cast", {}, [target])
+            return
         if option == "withdraw":
             actor.statuses["withdraw"] = {"turn": self.turn_index}
             return
@@ -550,6 +670,8 @@ class ClassMechanics:
         if on == "attack_rolls" and against is not None and actor.features.get("assassinate") and self.round == 1 and against.turns_taken == 0:
             adv = True
         adv |= on in {"saves", "ability_checks"} and scope == "str" and actor.raging
+        adv |= on == "saves" and scope == "death" and actor.features.get("survivor", False)
+        adv |= on == "attack_rolls" and against is not None and actor.features.get("precise_hunter", False) and self.marked_by(against, actor)
         adv |= on == "saves" and scope == "dex" and actor.features.get("danger_sense",False) and not actor.has_condition("incapacitated")
         adv |= on == "attack_rolls" and scope == "str" and bool(actor.statuses.get("reckless"))
         adv |= on == "attack_rolls" and against is not None and bool(against.statuses.get("reckless"))
@@ -573,6 +695,19 @@ class ClassMechanics:
         return natural
 
     def class_failed_save(self, actor, ability, dc, bonus, natural, success):
+        if not success and ability == "str" and actor.features.get("indomitable_might") and actor.abilities["str"] >= dc:
+            self.feature_log(actor, "Indomitable Might")
+            return True, actor.abilities["str"], natural
+        if not success and ability != "death" and actor.features.get("disciplined_survivor") and actor.limited_uses.get("focus", 0) > 0:
+            self.spend_focus(actor)
+            natural = dice.d20(self.rng)
+            self.feature_log(actor, "Disciplined Survivor")
+            success = natural != 1 and natural + bonus >= dc or natural == 20 and ability == "death"
+        if not success and ability != "death" and actor.limited_uses.get("stroke_of_luck"):
+            # Stroke of Luck: a failed saving throw becomes a 20.
+            actor.limited_uses["stroke_of_luck"] -= 1; actor.spend("stroke_of_luck")
+            self.feature_log(actor, "Stroke of Luck", roll="save")
+            return 20 + bonus >= dc, 20 + bonus, 20
         if not success and not (ability=="death" and natural==1):
             total=self.failed_test_bonus(actor,natural+bonus,dc)
             if total!=natural+bonus: return total>=dc,total,natural
@@ -592,7 +727,30 @@ class ClassMechanics:
         if "rage" in actor.statuses and (not actor.raging or compare_deadline(self.time_rounds,actor.statuses["rage"]["expires"]) >= 0): actor.statuses.pop("rage",None)
         if "sacred_weapon" in actor.statuses and compare_deadline(self.time_rounds,actor.statuses["sacred_weapon"]["expires"]) >= 0: actor.statuses.pop("sacred_weapon",None)
 
+    def signature_free(self, actor, name, slot=None):
+        """The resource for a free casting at the spell's own level (Signature Spells, Mystic Arcanum,
+        Dragon Companion), if one is left."""
+        key = free_key(name)
+        return key if actor.limited_uses.get(key, 0) > 0 and slot in {None, self.spells[name]["level"]} else None
+
+    def overchannel(self, caster, spec, instance):
+        if not caster.limited_uses.get("overchannel") or not 1 <= spec.get("level", 0) <= 5: return
+        if not any("damage" in p for b in spec["effects"] for k in ("on_hit", "on_fail", "apply") for p in b[k]): return
+        if not self.policy_for(caster).overchannel(self, caster, spec): return
+        caster.limited_uses["overchannel"] -= 1; caster.spend("overchannel")
+        instance.choices["_overchannel"] = True
+        self.feature_log(caster, "Overchannel", spell=spec["name"])
+
     def class_start_turn(self, actor):
+        self.holy_nimbus_damage(actor)
+        if actor.features.get("superior_defense") and actor.alive and not actor.has_status("superior_defense") and actor.limited_uses.get("focus",0)>=3 and actor.hp<.75*actor.max_hp:
+            for _ in range(3): self.spend_focus(actor)
+            actor.effects.append(Effect("status",{"id":"superior_defense","data":{}},0,"superior_defense",None))
+            actor.effects[-1].expires_at=self.time_rounds+10
+            self.feature_log(actor,"Superior Defense")
+        if actor.features.get("survivor") and actor.alive and 0 < actor.hp <= actor.max_hp // 2:
+            self.heal(actor, 5 + actor.mod("con"))  # Heroic Rally
+            self.feature_log(actor, "Heroic Rally")
         if actor.features.get("horde_breaker"): actor.statuses["hunter_targets"]=set()
         if actor.features.get("lay_on_hands"): actor.statuses["weapon_hits"] = 0
         actor.statuses.pop("reckless",None)

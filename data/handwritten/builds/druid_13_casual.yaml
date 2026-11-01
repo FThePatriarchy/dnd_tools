@@ -1,0 +1,50 @@
+class: druid
+level: 13
+subclass: moon
+abilities:
+  str: 8
+  dex: 12
+  con: 13
+  int: 15
+  wis: 14
+  cha: 10
+equipment: scale_shield
+choices:
+  ability_method: standard_array
+  background:
+    wis: 1
+    con: 1
+    int: 1
+  asis:
+    4:
+      wis: 1
+      int: 1
+    8:
+      wis: 1
+      int: 1
+    12:
+      wis: 1
+      int: 1
+  cantrips:
+  - Thorn Whip
+  - Produce Flame
+  - Guidance
+  - Poison Spray
+  prepared_spells:
+  - Heal
+  - Sunbeam
+  - Flesh to Stone
+  - Fire Storm
+  - Regenerate
+  - Thunderwave
+  - Faerie Fire
+  - Flaming Sphere
+  - Call Lightning
+  - Ice Storm
+  - Healing Word
+  - Entangle
+  - Spike Growth
+  - Heat Metal
+  - Wall of Fire
+  - Conjure Woodland Beings
+  - Animal Friendship

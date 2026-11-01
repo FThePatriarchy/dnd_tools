@@ -1,0 +1,53 @@
+name: Power Word Stun
+source: XPHB
+level: 8
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - apply_condition:
+      condition: stunned
+      repeat_save:
+        ability: con
+        timing: end_of_turn
+        on_success: end
+    if: target.hp <= 150
+  - modify:
+      stat: speed
+      op: set
+      value: 0
+      scope: all
+    until: start_of_turn(caster.next_turn)
+    if: target.hp > 150
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

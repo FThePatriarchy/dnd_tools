@@ -1,0 +1,53 @@
+name: Sunburst
+source: XPHB
+level: 8
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 150
+components:
+  v: true
+  s: true
+  m: a piece of sunstone
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: sphere
+    size_ft: 60
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: con
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 12d6
+      bonus: 0
+      type: radiant
+  - apply_condition:
+      condition: blinded
+      repeat_save:
+        ability: con
+        timing: end_of_turn
+        on_success: end
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Dispelling magical Darkness is not modeled.

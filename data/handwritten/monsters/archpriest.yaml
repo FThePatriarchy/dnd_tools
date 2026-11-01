@@ -1,0 +1,129 @@
+name: Archpriest
+source: XMM
+cr: '12'
+ac: 16
+max_hp: 240
+hp_formula: 32d8 + 96
+abilities:
+  str: 16
+  dex: 12
+  con: 17
+  int: 14
+  wis: 21
+  cha: 14
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: humanoid
+alignment: neutral
+proficiency_bonus: 4
+save_bonuses:
+  str: 7
+  con: 7
+  int: 6
+  wis: 9
+save_proficiencies:
+- str
+- con
+- int
+- wis
+initiative_bonus: 4
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Radiant Burst
+  kind: melee
+  to_hit: 9
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 4d10
+      bonus: 5
+      type: radiant
+multiattack:
+- Radiant Burst
+- Radiant Burst
+- Radiant Burst
+actions:
+- name: Holy Word
+  cost: action
+  recharge: 4
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: emanation
+      size_ft: 20
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: wis
+      dc: 17
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 6d6
+        bonus: 0
+        type: radiant
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- Raise Dead and Zone of Truth are out of combat.
+spell_ability: wis
+spell_dc: 17
+spell_attack_bonus: 9
+spells:
+- Light
+- Thaumaturgy
+- Flame Strike
+- Greater Restoration
+- Bless
+- Dispel Magic
+- Healing Word
+- Lesser Restoration
+spell_levels:
+  Light: 0
+  Thaumaturgy: 0
+  Flame Strike: 6
+  Greater Restoration: 5
+  Bless: 1
+  Dispel Magic: 3
+  Healing Word: 1
+  Lesser Restoration: 2
+spell_costs:
+  Light: action
+  Thaumaturgy: action
+  Flame Strike: action
+  Greater Restoration: action
+  Bless: bonus_action
+  Dispel Magic: bonus_action
+  Healing Word: bonus_action
+  Lesser Restoration: bonus_action
+spell_components:
+  Light:
+    m: false
+  Thaumaturgy:
+    m: false
+  Flame Strike:
+    m: false
+  Greater Restoration:
+    m: false
+limited_uses:
+  Flame Strike: 1
+  Greater Restoration: 1
+  Divine Aid: 3
+spell_resources:
+  Flame Strike: Flame Strike
+  Greater Restoration: Greater Restoration
+  Bless: Divine Aid
+  Dispel Magic: Divine Aid
+  Healing Word: Divine Aid
+  Lesser Restoration: Divine Aid

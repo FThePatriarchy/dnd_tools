@@ -1,0 +1,98 @@
+name: Purple Worm
+source: XMM
+cr: '15'
+ac: 18
+max_hp: 247
+hp_formula: 15d20 + 90
+abilities:
+  str: 28
+  dex: 7
+  con: 22
+  int: 1
+  wis: 8
+  cha: 4
+speed: 50
+movement_modes:
+  walk: 50
+  burrow: 50
+creature_type: monstrosity
+alignment: neutral
+proficiency_bonus: 5
+save_bonuses:
+  con: 11
+  wis: 4
+save_proficiencies:
+- con
+- wis
+initiative_bonus: 5
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 14
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 3d8
+      bonus: 9
+      type: piercing
+  - apply_condition:
+      condition: grappled
+      escape_dc: 19
+      max_size: L
+      linked: true
+  - apply_condition:
+      condition: restrained
+      max_size: L
+      linked: true
+- name: Tail Stinger
+  kind: melee
+  to_hit: 14
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 9
+      type: piercing
+  - damage:
+      dice: 10d6
+      bonus: 0
+      type: poison
+multiattack:
+- Bite
+- Tail Stinger
+actions:
+- name: Swallow
+  cost: bonus_action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+      eligible_if: target.has_condition_from(grappled, caster)
+    attack: null
+    save:
+      ability: str
+      dc: 19
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 5d6
+        bonus: 0
+        type: acid
+    on_success: []
+    apply: []
+    limit: null
+    if: target.has_condition_from(grappled, caster)
+traits: []
+unsupported:
+- Swallow deals its Acid damage once, to a creature the worm has grappled, which stays grappled and restrained;
+  being inside the worm (Blinded, Cover, Acid each turn, regurgitation) is not modeled.
+- Tunneler and burrowing need a grid.

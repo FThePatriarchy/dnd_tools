@@ -1,0 +1,48 @@
+name: Befuddlement
+source: XPHB
+level: 8
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 150
+components:
+  v: true
+  s: true
+  m: a key ring with no keys
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: int
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 10d12
+      bonus: 0
+      type: psychic
+  - turn_rules:
+      no_spells: true
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- 'The monthly repeat save is not tracked: a failed save stops spellcasting for the fight.'

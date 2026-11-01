@@ -17,7 +17,7 @@ def damage_cases():
     for name, s in new_spells().items():
         for block in s["effects"]:
             if not any("damage" in p for branch in ("apply", "on_hit", "on_fail") for p in block[branch]): continue
-            configurations = [(0, level) for level in (1, 5, 11, 17)] if s["level"] == 0 else [(slot, 9) for slot in sorted({s["level"], 5})]
+            configurations = [(0, level) for level in (1, 5, 11, 17)] if s["level"] == 0 else [(slot, 9) for slot in sorted({s["level"], max(5, s["level"])})]
             for slot, level in configurations:
                 for success in ([False, True] if block["save"] else [False]):
                     yield name, block["id"], slot, level, success
@@ -53,6 +53,8 @@ def oracle(name, block, slot, level, success, spell_mod, moments=False):
     if name == "Divine Smite": expressions = expressions[:1]
     if name == "Lightning Arrow": expressions = expressions[:1] if block["id"] == "main" else expressions[1:2]
     if name == "Fire Shield": expressions = expressions[:1]
+    # The growing bead and Weird's repeat-save damage are later clauses, not the initial blast.
+    if name in {"Delayed Blast Fireball", "Weird"}: expressions = expressions[:1]
     if name == "Conjure Elemental": expressions = expressions[:1] if block["id"] == "catch" else expressions[1:]
     if name == "Hunger of Hadar":
         source_type = "cold" if "start_of_turn" in block["event"] else "acid"

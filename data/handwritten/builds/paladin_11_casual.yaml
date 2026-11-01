@@ -1,0 +1,40 @@
+class: paladin
+level: 11
+subclass: devotion
+abilities:
+  str: 14
+  dex: 10
+  con: 13
+  int: 8
+  wis: 12
+  cha: 15
+equipment: chain_sword_shield
+choices:
+  ability_method: standard_array
+  background:
+    str: 1
+    con: 1
+    cha: 1
+  asis:
+    4:
+      str: 1
+      cha: 1
+    8:
+      str: 1
+      cha: 1
+  fighting_style:
+  - defense
+  weapon_masteries:
+  - longsword
+  cantrips: []
+  prepared_spells:
+  - Heroism
+  - Cure Wounds
+  - Command
+  - Bless
+  - Lesser Restoration
+  - Revivify
+  - Magic Weapon
+  - Aura of Vitality
+  - Blinding Smite
+  - Daylight

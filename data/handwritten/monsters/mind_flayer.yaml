@@ -1,0 +1,131 @@
+name: Mind Flayer
+source: XMM
+cr: '7'
+ac: 15
+max_hp: 99
+hp_formula: 18d8 + 18
+abilities:
+  str: 11
+  dex: 12
+  con: 12
+  int: 19
+  wis: 17
+  cha: 17
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: aberration
+alignment: evil
+proficiency_bonus: 3
+save_bonuses:
+  dex: 4
+  int: 7
+  wis: 6
+  cha: 6
+save_proficiencies:
+- dex
+- int
+- wis
+- cha
+initiative_bonus: 3
+resistances:
+- psychic
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Tentacles
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 4d8
+      bonus: 4
+      type: psychic
+  - apply_condition:
+      condition: grappled
+      escape_dc: 14
+      max_size: M
+      linked: true
+  - apply_condition:
+      condition: stunned
+      max_size: M
+      linked: true
+multiattack: []
+actions:
+- name: Extract Brain
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: con
+      dc: 15
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 10d10
+        bonus: 0
+        type: piercing
+    on_success: []
+    apply: []
+    limit: null
+- name: Mind Blast
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 60
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: int
+      dc: 15
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 6d8
+        bonus: 4
+        type: psychic
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- Extract Brain killing and devouring is modeled by its damage only; Plane Shift and Detect Thoughts are out of
+  combat.
+spell_ability: int
+spell_dc: 15
+spell_attack_bonus: 7
+spells:
+- Dominate Monster
+spell_levels:
+  Dominate Monster: 8
+spell_costs:
+  Dominate Monster: action
+spell_components:
+  Dominate Monster:
+    v: false
+    s: false
+    m: false
+limited_uses:
+  Dominate Monster: 1
+spell_resources:
+  Dominate Monster: Dominate Monster
+features:
+  magic_resistance: true

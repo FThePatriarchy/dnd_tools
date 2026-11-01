@@ -10,6 +10,8 @@ asi_levels:
 - 4
 - 8
 - 10
+- 12
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -134,6 +136,121 @@ levels:
     prepared: 0
     slots: {}
     sneak_attack: 5d6
+  11:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Improved Cunning Strike
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 6d6
+  12:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 6d6
+  13:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Envenom Weapons
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 7d6
+  14:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - 'Daze (Cost: 2d6)'
+    - Devious Strikes
+    - 'Knock Out (Cost: 6d6)'
+    - 'Obscure (Cost: 3d6)'
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 7d6
+  15:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Slippery Mind
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 8d6
+  16:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 8d6
+  17:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Death Strike
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 9d6
+  18:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Elusive
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 9d6
+  19:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Epic Boon
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 10d6
+  20:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Stroke of Luck
+    resources: {}
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 0
+    slots: {}
+    sneak_attack: 10d6
 features:
 - name: Expertise
   level: 1
@@ -275,6 +392,69 @@ features:
   origin: class
   mechanics:
     builder: true
+- name: Improved Cunning Strike
+  level: 11
+  origin: class
+  mechanics:
+    improved_cunning_strike: true
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Subclass Feature
+  level: 13
+  origin: class
+  mechanics: &id002
+    builder: true
+- name: 'Daze (Cost: 2d6)'
+  level: 14
+  origin: class
+  mechanics:
+    builder: true
+- name: Devious Strikes
+  level: 14
+  origin: class
+  mechanics:
+    builder: true
+- name: 'Knock Out (Cost: 6d6)'
+  level: 14
+  origin: class
+  mechanics:
+    builder: true
+- name: 'Obscure (Cost: 3d6)'
+  level: 14
+  origin: class
+  mechanics:
+    builder: true
+- name: Slippery Mind
+  level: 15
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id001
+- name: Subclass Feature
+  level: 17
+  origin: class
+  mechanics: *id002
+- name: Elusive
+  level: 18
+  origin: class
+  mechanics:
+    elusive: true
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Stroke of Luck
+  level: 20
+  origin: class
+  mechanics:
+    builder: true
 - name: Assassin
   level: 3
   origin: subclass
@@ -297,3 +477,13 @@ features:
   mechanics:
     roving_aim: true
   unsupported: Mimicry is social/exploration only; Roving Aim executes.
+- name: Envenom Weapons
+  level: 13
+  origin: subclass
+  mechanics:
+    envenom_weapons: true
+- name: Death Strike
+  level: 17
+  origin: subclass
+  mechanics:
+    death_strike: true

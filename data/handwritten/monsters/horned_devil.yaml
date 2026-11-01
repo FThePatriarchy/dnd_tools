@@ -1,0 +1,102 @@
+name: Horned Devil
+source: XMM
+cr: '11'
+ac: 18
+max_hp: 199
+hp_formula: 19d10 + 95
+abilities:
+  str: 22
+  dex: 17
+  con: 21
+  int: 12
+  wis: 16
+  cha: 18
+speed: 30
+movement_modes:
+  walk: 30
+  fly: 60
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 4
+save_bonuses:
+  str: 10
+  dex: 7
+  wis: 7
+  cha: 8
+save_proficiencies:
+- str
+- dex
+- wis
+- cha
+initiative_bonus: 4
+resistances: []
+immunities:
+- fire
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Searing Fork
+  kind: melee
+  to_hit: 10
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 6
+      type: piercing
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: fire
+- name: Hurl Flame
+  kind: ranged
+  to_hit: 8
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 5d8
+      bonus: 4
+      type: fire
+multiattack: []
+actions:
+- name: Infernal Tail
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: dex
+      dc: 17
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 1d8
+        bonus: 6
+        type: necrotic
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- The Infernal Tail's lingering wound (Hit Point loss each turn until stanched or healed) is not modeled.
+- Diabolical Restoration happens after death and does not affect the fight.
+features:
+  magic_resistance: true
+routines:
+- - Searing Fork
+  - Searing Fork
+  - Searing Fork
+- - Hurl Flame
+  - Hurl Flame
+  - Hurl Flame
+replacements:
+- Infernal Tail

@@ -1,0 +1,57 @@
+name: Regenerate
+source: XPHB
+level: 7
+school: transmutation
+casting_time: minute
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: a prayer wheel
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 1
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - heal:
+      dice: 4d8
+      bonus: 15
+  limit: null
+- id: regrow
+  event: start_of_turn(target)
+  target:
+    select: ref
+    ref: main
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - heal:
+      amount: 1
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Regrowing severed body parts is not modeled.
+casting_time_n: 1

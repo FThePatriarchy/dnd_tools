@@ -1,0 +1,137 @@
+name: Vampire
+source: XMM
+cr: '13'
+ac: 16
+max_hp: 195
+hp_formula: 23d8 + 92
+abilities:
+  str: 18
+  dex: 18
+  con: 18
+  int: 17
+  wis: 15
+  cha: 18
+speed: 40
+movement_modes:
+  walk: 40
+  climb: 40
+creature_type: undead
+alignment: evil
+proficiency_bonus: 5
+save_bonuses:
+  dex: 9
+  con: 9
+  wis: 7
+  cha: 9
+save_proficiencies:
+- dex
+- con
+- wis
+- cha
+initiative_bonus: 10
+resistances:
+- necrotic
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Grave Strike (Vampire Form Only)
+  kind: melee
+  to_hit: 9
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 4
+      type: bludgeoning
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: necrotic
+  - apply_condition:
+      condition: grappled
+      escape_dc: 14
+      max_size: L
+      linked: true
+multiattack: []
+actions:
+- name: Bite (Bat or Vampire Form Only)
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+      eligible_if: target.has_condition(grappled) or target.has_condition(incapacitated) or target.has_condition(restrained)
+    attack: null
+    save:
+      ability: con
+      dc: 17
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 1d4
+        bonus: 4
+        type: piercing
+    - damage:
+        dice: 3d8
+        bonus: 0
+        type: necrotic
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- Shape-Shift, Misty Escape, Spider Climb and Vampire Weakness are not modeled (no sunlight, running water or mist
+  form).
+- Each hand grapples separately, but the second-hand limit is not tracked.
+spell_ability: cha
+spell_dc: 17
+spell_attack_bonus: 9
+spells:
+- Charm Person
+- Command
+spell_levels:
+  Charm Person: 1
+  Command: 1
+spell_costs:
+  Charm Person: bonus_action
+  Command: action
+spell_components:
+  Charm Person:
+    v: false
+    s: false
+    m: false
+  Command:
+    v: false
+    s: false
+    m: false
+spell_recharge:
+  Charm Person: 5
+limited_uses:
+  legendary_resistance: 3
+legendary:
+  uses: 3
+  options:
+  - name: Deathless Strike
+    cost: 1
+    attacks:
+    - Grave Strike (Vampire Form Only)
+  - name: Beguile
+    cost: 1
+    spell: Command
+    once_per_round: true
+routines:
+- - Grave Strike (Vampire Form Only)
+  - Grave Strike (Vampire Form Only)
+  - Bite (Bat or Vampire Form Only)
+features:
+  life_drain:
+    attacks:
+    - Bite (Bat or Vampire Form Only)
+    type: necrotic
+    heal: true

@@ -1,0 +1,54 @@
+name: Weird
+source: XPHB
+level: 9
+school: illusion
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 120
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: sphere
+    size_ft: 30
+    affects: enemy
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: wis
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 10d10
+      bonus: 0
+      type: psychic
+  - apply_condition:
+      condition: frightened
+      repeat_save:
+        ability: wis
+        timing: end_of_turn
+        on_success: end
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- The psychic damage on each failed repeat save is not modeled.

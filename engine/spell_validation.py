@@ -59,7 +59,7 @@ def source_errors(spec, raw=None, *, validate=True):
     higher = text_entries(raw.get("entriesHigherLevel", []))
     distance_type = raw["range"].get("distance", {}).get("type")
     if raw["range"]["type"] != "point": expected_range = "self"
-    else: expected_range = "point" if distance_type == "feet" else distance_type
+    else: expected_range = "point" if distance_type in {"feet", "miles"} else distance_type
     if spec["range"]["type"] != expected_range:
         errors.append(f"range.type: expected {expected_range!r} from XPHB, got {spec['range']['type']!r}")
     if expected_range != "point" and "feet" in spec["range"]:
@@ -143,7 +143,7 @@ def source_errors(spec, raw=None, *, validate=True):
         elif path == ("level",): expected = raw["level"]
         elif path == ("casting_time_n",): expected = raw["time"][0]["number"]
         elif path == ("range", "feet"):
-            if expected_range == "point": expected = raw["range"].get("distance", {}).get("amount")
+            if expected_range == "point": expected = raw["range"].get("distance", {}).get("amount") * (5280 if distance_type == "miles" else 1)
         elif path == ("components", "m_cost_gp"):
             m = raw.get("components", {}).get("m", {})
             expected = m.get("cost", 0) / 100 if isinstance(m, dict) and "cost" in m else None
@@ -392,6 +392,8 @@ def expected_numeric_text(spec, path, raw):
         if anchor:
             return next((f'entries.{i}' for i,e in enumerate(raw['entries']) if anchor in text_entries(e)), '')
     if path[-1] == 'eligible_if' and raw['name'] in {'Aura of Life','Spare the Dying'}: return 'target.hp == 0'
+    high = high_level_anchor(spec, path, raw)
+    if high is not None: return high
     if path[-1] == 'if' and raw['name'] == 'Banishing Smite':
         number=re.search(r'reduces the target to (\d+)',text_entries(raw['entries']))
         return f'target.hp <= {number[1]}' if number else ''
@@ -401,6 +403,46 @@ def expected_numeric_text(spec, path, raw):
     if path == ('reaction_trigger',) and raw['name'] == 'Counterspell':
         n=raw['range']['distance']['amount']
         return f'on_spell_cast_nearby({n}) and trigger.caster.visible_to(caster) and trigger.spell.has_any_component(v, s, m)'
+    return None
+
+
+def high_level_anchor(spec, path, raw):
+    """Level 6-9 numbers whose source is a table, a total or a count in words."""
+    text = text_entries(raw['entries']); higher = text_entries(raw.get('entriesHigherLevel', []))
+    name, key = raw['name'], path[-1]
+    words = {'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6}
+    def number(pattern, source=text):
+        m = re.search(pattern, source)
+        return int(m[1]) if m else ''
+    if name == 'Chain Lightning' and key == 'n':
+        m = re.search(r'(\w+) bolts then leap', text)
+        return 1 + words[m[1].lower()] if m else ''
+    if name == 'Chain Lightning' and key == 'target_n_add': return 1 if 'One additional bolt' in higher else ''
+    if name == 'Heal' and key == 'amount': return number(r'restoring (\d+) ')
+    if name == 'Mass Heal' and key == 'amount': return number(r'restore up to (\d+) ')
+    if name == 'Power Word Fortify' and key == 'amount':
+        total, m = number(r'bestows (\d+) '), re.search(r'up to (\w+) creatures', text)
+        return total // words[m[1]] if total and m else ''
+    if name == 'Power Word Fortify' and key == 'n':
+        m = re.search(r'up to (\w+) creatures', text)
+        return words[m[1]] if m else ''
+    if name == 'Fire Storm' and key == 'size_ft':
+        # Ten contiguous 10-foot cubes cover about the area of one 30-foot cube.
+        m = re.search(r'up to (\w+) (\d+)-foot Cubes', text)
+        return int((({'ten': 10}[m[1]]) ** .5) * int(m[2])) // 10 * 10 if m else ''
+    if name in {'Power Word Kill', 'Power Word Stun'} and key == 'if':
+        n = number(r'has (\d+) (?:\{@variantrule )?Hit Points')
+        return {0: f'target.hp <= {n}', 1: f'target.hp > {n}'}.get(path[-2]) if n else ''
+    if name == 'Divine Word' and key == 'if':
+        table = next(e for e in raw['entries'] if isinstance(e, dict) and e.get('type') == 'table')
+        rows = [tuple(int(x) for x in r[0].split('-')) for r in table['rows']]
+        kinds = {'dies': None, 'Stunned': 'stunned', 'Blinded': 'blinded', 'Deafened': 'deafened'}
+        primitive = get(spec, path[:-1])
+        if 'kill' in primitive:
+            return f'target.hp <= {rows[0][1]}' if 'dies' in table['rows'][0][1] else ''
+        condition = primitive.get('apply_condition', {}).get('condition')
+        covering = [rows[i][1] for i, r in enumerate(table['rows']) if condition and condition.title() in r[1]]
+        return f'target.hp > {rows[0][1]} and target.hp <= {max(covering)}' if covering and rows[0][1] + 1 == rows[1][0] else ''
     return None
 
 

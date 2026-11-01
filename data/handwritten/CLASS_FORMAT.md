@@ -1,4 +1,4 @@
-# Single-class progression (XPHB, levels 1–10)
+# Single-class progression (XPHB, levels 1–20)
 
 `classes/{fighter,rogue,wizard,cleric,barbarian,paladin,warlock,bard,monk,ranger,druid,sorcerer}.yaml` is strictly validated by
 `engine.classes.load_class`. Only the named XPHB class and subclass are allowed.
@@ -12,8 +12,10 @@ level, recoverable `resources` (CHARACTER_FORMAT convention), weapon mastery
 count, cantrips, prepared spell count, and integer-keyed `slots`. Rogue also has
 Sneak Attack dice. Subclass/ASI levels are explicit. Spell counts are the 2024
 fixed table, **not** ability modifier + level. Always-prepared domain spells do
-not consume this count. No feature above level 10 is backported (notably Fighter
-Studied Attacks is level 13, not within this milestone).
+not consume this count. Rows cover levels 1–20 (2026-11-01). A feature above
+level 10 is implemented, a builder choice, a progression repeat, or
+`unsupported` with the reason "Not implemented yet (high-level features are in
+progress)" until its class is done; see "Levels 11–20" below.
 
 `actions` reuse complete existing creature actions and effect blocks. Two
 substitution symbols needed by Second Wind/Divine Spark are `class_level`
@@ -267,3 +269,64 @@ Sorcerer replaces Wizard. Both new classes use `values_buffs`.
 | Sorcerous Restoration | L5+: on a short rest regain up to floor(level/2) missing points, once per long rest; does not spend the entitlement at full points. | XPHB once-per-long-rest restriction is retained rather than granting points on every short rest. |
 | Draconic Spells / Elemental Affinity | Existing Draconic spells always prepared separately. L6 Fire affinity: permanent Fire resistance, Cha added to one Fire damage roll per spell (shared rolls reuse the augmented roll; separate rays do not each gain Cha). EV includes the bonus. | Missing Arcane Eye and Legend Lore specs are reported by the builder. Fire is fixed, not adaptive. Dragon Wings is beyond supported levels. |
 | Comparison | Spell-profile and War Caster/Alert variants for both; alternative Heightened/Extended Metamagic at levels before L10. | No reference-party change, ratings or comparison batches. |
+
+## Levels 11–20 (2026-11-01)
+
+Class rows, slots, prepared counts and resources run to level 20 for all twelve
+classes and are checked against the XPHB tables. The level 19 Epic Boon is an
+extra ASI or feat level (default: an ASI); `boon_of_fortitude` (+40 HP and +1
+to any ability, up to 30) is the one Epic Boon feat modeled. All twelve classes
+have their level 11–20 features and presets at 11/13/15/17/20 in all three
+profiles. Scaling already in the engine was
+extended: Monk Martial Arts die d10/d12 at 11/17 and Unarmored Movement to +30,
+Bardic Inspiration d12 at 15, Rage Damage +4 at 16, Sorcerer Metamagic count 6
+at 17 (only the four modeled options are selectable).
+
+| Feature | Simulated | Deliberate omissions / choices |
+|---|---|---|
+| Fighter: Two/Three Extra Attacks | Three attacks at 11, four at 20. | — |
+| Studied Attacks (13) | After a weapon attack misses, this fighter's next attack roll against that creature, before the end of its next turn, has Advantage. | — |
+| Superior Critical (15) | Critical hits on 18–20 with weapons. | — |
+| Survivor (18) | Heroic Rally: at the start of each turn while Bloodied and above 0 HP, regain 5 + Con modifier HP. Defy Death: Advantage on death saves, and 18–20 counts as a 20. | — |
+| Indomitable / Action Surge | Two Indomitable uses at 13, three at 17; two Action Surge uses at 17 (still one per turn). | — |
+| Rogue: Improved Cunning Strike (11) | A second, different Cunning Strike effect on the same Sneak Attack, if the dice can pay for both. | — |
+| Devious Strikes (14) | `cunning_strike` may add `daze` (2d6: Con save or only one of action/Bonus Action on its next turn), `obscure` (3d6: Dex save or Blinded until the end of its next turn) and `knock_out` (6d6: Con save or Unconscious for a minute, ending on damage or a successful end-of-turn save). Default and optimized builds add Obscure; casual adds Daze. The AI picks Poison, then Trip, then Obscure. | The AI never chooses Knock Out. |
+| Envenom Weapons (13) | Poison Cunning Strike also deals 2d6 Poison damage. | The damage does not ignore Poison Resistance. |
+| Slippery Mind (15), Elusive (18) | Wisdom and Charisma save proficiency; no attack roll against the rogue has Advantage unless it is Incapacitated. | — |
+| Death Strike (17) | On a Sneak Attack hit in the first round, a failed Con save (DC 8 + Dex + PB) doubles the Sneak Attack damage. | Approximation: only the Sneak Attack dice are doubled, not the whole attack's damage. |
+| Stroke of Luck (20) | Once per Short Rest, a failed saving throw becomes a 20. | Not used on missed attacks or ability checks. |
+| Wizard: Overchannel (14) | Once per Long Rest, the first damaging Wizard spell of level 3–5 deals maximum damage. | Later uses, with their escalating Necrotic backlash, are never taken. |
+| Spell Mastery (18) | A level 1 and a level 2 action spell from the spellbook (default Magic Missile and Scorching Ray) cast at will at their base level. | Not upcast with slots. |
+| Signature Spells (20) | Two level 3 spells (default Fireball and Counterspell, else the next listed) always prepared, each cast once per Short Rest at level 3 without a slot. | — |
+| Evocation Savant | One free evocation spell at 11, 13, 15 and 17 as well. | — |
+| Cleric: Improved Blessed Strikes (14) | Divine Strike 2d8; with Potent Spellcasting, a damaging cantrip also gives 2 × Wis modifier Temporary HP to the ally with the lowest HP fraction. | — |
+| Supreme Healing (17) | Healing dice from the cleric's spells are maximized. | — |
+| Greater Divine Intervention (20) | — | Wish is not modeled. |
+
+| Barbarian: Relentless Rage (11) | Dropping to 0 HP while raging: Con save (DC 10, +5 per use) to return at twice the Barbarian level in HP. | The DC resets each fight, not on a rest. |
+| Improved Brutal Strike (13, 17) | Staggering Blow (Disadvantage on the target's next save) replaces Hamstring Blow; from 17 the die is 2d10 and Sundering Blow (+5 to the next attack roll against the target) is added. | Hamstring Blow's Speed loss and Sundering's "another creature" limit are not modeled. |
+| Intimidating Presence (14) | Bonus Action, once per Long Rest: enemies make a Wis save (DC 8 + Str + PB) or are Frightened, repeating the save each turn. | Restoring it with a Rage use is not modeled. |
+| Persistent Rage (15), Indomitable Might (18), Primal Champion (20) | Regain all Rages on initiative once per Long Rest; a Strength save below the Strength score uses the score; +4 Str and Con (max 25). | — |
+| Paladin: Radiant Strikes (11) | Melee weapon hits deal an extra 1d8 Radiant. | — |
+| Holy Nimbus (20) | Once per Long Rest, active from the start of a fight for 10 minutes: enemies take Cha + PB Radiant damage at the start of their turns. | No Bonus Action spent; every enemy is assumed in the aura. Fiend/Undead save Advantage not modeled. Restoring Touch and Smite of Protection (Cover) are not modeled. |
+| Monk: Deflect Energy (13), Disciplined Survivor (14) | Deflect Attacks works on any damage type; proficiency in all saves and a 1-Focus reroll of a failed save. | — |
+| Perfect Focus (15), Superior Defense (18), Body and Mind (20) | Focus back to 4 on initiative if Uncanny Metabolism was not used; 3 Focus at the start of a turn below 75% HP for Resistance to all but Force for a minute; +4 Dex and Wis (max 25). | — |
+| Quivering Palm (17) | 4 Focus on an Unarmed Strike hit against a creature with 40+ HP: Con save or 10d12 Force (half on success). | Approximation: the vibrations end at once, without spending a later action or attack. |
+| Ranger: Superior Hunter's Prey (11) | Once per turn, a weapon hit on the marked creature also deals the Hunter's Mark die to the lowest-HP other enemy. | — |
+| Relentless Hunter (13), Precise Hunter (17), Foe Slayer (20) | Damage can't break Concentration on Hunter's Mark; Advantage against the marked creature; the mark's die becomes a d10. | — |
+| Nature's Veil (14), Superior Hunter's Defense (15) | Bonus Action Invisible until the end of the next turn (Wis-mod uses); a Reaction halves the damage of a hit. | Superior Hunter's Defense covers attack damage only. Feral Senses is not modeled. |
+| Warlock: Mystic Arcanum (11–17) | One spell of each level 6–9 (default Circle of Death, Finger of Death, Power Word Stun, Power Word Kill), cast once per Long Rest without a slot. | — |
+| Hurl Through Hell (14) | Once per Long Rest, on its first hit against a creature with 30+ HP: Cha save or 8d10 Psychic (not Fiends) and Incapacitated until the end of the warlock's next turn. | Eldritch Master needs Magical Cunning, which is not automated. |
+| Bard: Peerless Skill (14), Superior Inspiration (18) | A missed attack can add the bard's Bardic Inspiration die (spent only if it turns the miss into a hit); uses back to 2 on initiative. | Peerless Skill on ability checks is not modeled. |
+| Words of Creation (20) | Power Word Heal and Power Word Kill always prepared. | The second target is not modeled. |
+| Druid: Lunar Form (14), Beast Spells (18), Archdruid (20) | Once per turn +2d10 Radiant on a Wild Shape hit; any spell without a costly or consumed component can be cast in Wild Shape; regain a Wild Shape use on initiative when none are left. | Improved Elemental Fury (range), Nature Magician and Longevity are not modeled. |
+| Sorcerer: Dragon Companion (18), Arcane Apotheosis (20) | Summon Dragon once per Long Rest without a slot; one Metamagic per turn costs no points while Innate Sorcery is active. | Dragon Wings and the no-Concentration Summon Dragon are not modeled. |
+
+Free castings (Signature Spells, Mystic Arcanum, Dragon Companion) share one
+mechanism: a `free_<spell>` counter that pays for the spell at its own level.
+Warlock, Bard and Druid spell lists gained their XPHB level 6–9 spells.
+
+From level 11, default and preset characters prepare their class's listed
+spells of level 6+ before lower-level ones (`builder.high_first`); levels 1–10
+are unchanged. The level 6–9 spells are in `engine/spell_high.py`, which lists
+the omitted ones and why.

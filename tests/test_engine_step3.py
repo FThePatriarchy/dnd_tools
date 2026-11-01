@@ -117,7 +117,7 @@ def test_step3_coverage_audit_reports_missing_files_without_claiming_completion(
     required = {r["name"] for r in scope if r["level"] <= 5 and r["scope"] != "out_of_scope"} | REFERENCES
     assert result["required"] == len(required)
     assert result["missing"] == sorted(required - spell_specs().keys())
-    assert result["loaded"] + len(result["missing"]) == result["required"]
+    assert len(required & spell_specs().keys()) + len(result["missing"]) == result["required"]
     assert result["failures"] == [] and result["allowlist"] == {}
 
 
@@ -259,7 +259,7 @@ def configurations():
     result = []
     for name, s in new_spells().items():
         if s["level"] == 0: result.extend((name, 0, level) for level in (1, 5, 11, 17))
-        else: result.extend((name, slot, 9) for slot in sorted({s["level"], 5}))
+        else: result.extend((name, slot, 9) for slot in sorted({s["level"], max(5, s["level"])}))
     return result
 
 

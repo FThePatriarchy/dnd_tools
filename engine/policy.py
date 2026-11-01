@@ -143,7 +143,7 @@ class Policy:
         values = getattr(natural, "values", (natural,))
         return min(range(len(values)), key=values.__getitem__)
 
-    def healing_pool(self, combat, instance, targets, amount):
+    def healing_pool(self, combat, instance, targets, amount, cap="half"):
         allocations = dict.fromkeys((t.id for t in targets), 0)
         ordered = sorted(targets, key=lambda t: (t.hp != 0, t.hp / max(1, t.max_hp), t.id))
         # First buy as many revivals as possible; then spread the remaining pool.
@@ -152,7 +152,8 @@ class Policy:
                 allocations[t.id] += 1
                 amount -= 1
         while amount:
-            eligible = [t for t in ordered if t.hp + allocations[t.id] < t.max_hp // 2]
+            limit = {t.id: t.max_hp if cap == "full" else t.max_hp // 2 for t in ordered}
+            eligible = [t for t in ordered if t.hp + allocations[t.id] < limit[t.id]]
             if not eligible: break
             t = min(eligible, key=lambda t: ((t.hp + allocations[t.id]) / t.max_hp, t.id))
             allocations[t.id] += 1
@@ -191,6 +192,10 @@ class Policy:
     def indomitable(self, combat, actor, ability, dc):
         return True
 
+    def overchannel(self, combat, actor, spec):
+        # Spend the free use on the first damaging spell of level 3 or higher.
+        return spec["level"] >= 3
+
     def tactical_mind(self, combat, actor, ability, dc):
         return True
 
@@ -201,6 +206,12 @@ class Policy:
         return "sap" if prevented>lost_graze and target.attacks else None
 
     def cunning_strike(self, combat, actor, target, options):
+        choice = self.basic_cunning_strike(combat, actor, target, options)
+        if choice is None and "obscure" in options and "blinded" not in target.condition_immunities and not target.has_condition("blinded") and target.hp > 20 and target.attacks:
+            return "obscure"
+        return choice
+
+    def basic_cunning_strike(self, combat, actor, target, options):
         if "poison" in options and "poisoned" not in target.condition_immunities and not target.has_condition("poisoned") and target.hp > 12 and target.attacks:
             return "poison"
         if "trip" in options and target.size in {"T", "S", "M", "L"} and not target.has_condition("prone") and sum(c.team == actor.team and c.alive and any(a["kind"] == "melee" for a in c.attacks) for c in combat.combatants) >= 2:

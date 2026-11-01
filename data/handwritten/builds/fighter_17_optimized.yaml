@@ -1,0 +1,36 @@
+class: fighter
+level: 17
+subclass: champion
+abilities:
+  str: 15
+  dex: 14
+  con: 15
+  int: 8
+  wis: 10
+  cha: 8
+equipment: chain_greatsword
+choices:
+  ability_method: point_buy
+  background:
+    str: 2
+    con: 1
+  asis:
+    4:
+      str: 2
+    6:
+      str: 1
+      con: 1
+    8:
+      con: 2
+    12:
+      con: 1
+      dex: 1
+    14:
+      dex: 2
+    16:
+      dex: 2
+  fighting_style:
+  - great_weapon_fighting
+  - defense
+  weapon_masteries:
+  - greatsword

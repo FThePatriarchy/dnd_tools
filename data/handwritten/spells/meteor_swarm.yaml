@@ -1,0 +1,52 @@
+name: Meteor Swarm
+source: XPHB
+level: 9
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 5280
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: area
+    shape: sphere
+    size_ft: 40
+    affects: all
+    filter:
+    - creature
+  attack: null
+  save:
+    ability: dex
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 20d6
+      bonus: 0
+      type: fire
+  - damage:
+      dice: 20d6
+      bonus: 0
+      type: bludgeoning
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- The four spheres are approximated by one; a creature is affected only once either way. Igniting objects is not
+  modeled.

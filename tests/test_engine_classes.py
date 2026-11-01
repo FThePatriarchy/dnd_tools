@@ -40,10 +40,10 @@ def test_class_unknown_keys_rejected():
 
 def test_fighter_2024_progression():
     c = load_class("fighter")
-    assert c["asi_levels"] == [4, 6, 8]
-    assert [x["resources"]["second_wind"]["max"] for x in c["levels"].values()] == [2,2,2,3,3,3,3,3,3,4]
-    assert [x["weapon_masteries"] for x in c["levels"].values()] == [3,3,3,4,4,4,4,4,4,5]
-    assert not any(f["name"] == "Studied Attacks" for f in c["features"])
+    assert c["asi_levels"] == [4, 6, 8, 12, 14, 16]
+    assert [x["resources"]["second_wind"]["max"] for x in c["levels"].values()] == [2,2,2,3,3,3,3,3,3]+[4]*11
+    assert [x["weapon_masteries"] for x in c["levels"].values()] == [3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6]
+    assert next(f for f in c["features"] if f["name"] == "Studied Attacks")["level"] == 13
 
 
 def test_champion_critical_is_weapon_only_and_automatic_hit(spells, monkeypatch):
@@ -319,6 +319,8 @@ def test_every_preset_builder_math(path):
     abilities=spec["abilities"].copy()
     for add in spec["choices"]["asis"].values():
         for a,n in add.items(): abilities[a]+=n
+    if level>=20 and name in {"barbarian","monk"}:
+        for a in (("str","con") if name=="barbarian" else ("dex","wis")): abilities[a]=min(25,abilities[a]+4)
     mod=lambda a:(abilities[a]-10)//2
     assert sheet["abilities"]==abilities
     assert sheet["max_hp"]==faces+(level-1)*(faces//2+1)+level*mod("con")+(level if name=="sorcerer" and level>=3 else 0)
@@ -336,9 +338,13 @@ def test_every_preset_builder_math(path):
         ability="int" if name=="wizard" else "wis"
         assert sheet["spell_dc"]==8+sheet["proficiency_bonus"]+mod(ability)
         assert sheet["spell_attack_bonus"]==sheet["spell_dc"]-8
-        expected=[[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2]][level-1]
+        expected=[[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],
+                  [4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],
+                  [4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]][level-1]
         assert sheet["spell_slots"]==dict(enumerate(expected,1))
-        assert len(sheet["prepared_spells"])==[4,5,6,7,9,10,11,12,14,15][level-1]
+        prepared=[4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22]
+        if name=="wizard": prepared=prepared[:13]+[18,19,21,22,23,24,25]
+        assert len(sheet["prepared_spells"])==prepared[level-1]
         assert len(spec["choices"]["cantrips"])==(3 if level<4 else 4 if level<10 else 5)
 
 
@@ -354,7 +360,7 @@ def test_fixed_sheet_numeric_regression(name,sub,equipment):
 
 
 @pytest.mark.parametrize("kwargs",[
-    {"level":0},{"level":11},{"level":True},{"subclass":"battle_master"},
+    {"level":0},{"level":21},{"level":True},{"subclass":"battle_master"},
     {"choices":{"feats":["Alert"]}},{"choices":{"asis":{4:{"str":3}}}},
     {"choices":{"asis":{}}},{"choices":{"weapon_masteries":["greatsword"]*5}},
     {"choices":{"fighting_style":"blind_fighting"}},{"choices":{"cunning_strike":["trip"]}},
@@ -406,7 +412,7 @@ def test_memorize_spell_default_policy_on_short_rest():
 def test_all_class_numeric_mutants_killed():
     from engine.step4_report import source_audit
     report=source_audit()
-    assert report["numeric_fields"]==557 and report["mutants"]>=report["numeric_fields"]
+    assert report["numeric_fields"]==1288 and report["mutants"]>=report["numeric_fields"]
     assert report["survivors"]==[]
 
 

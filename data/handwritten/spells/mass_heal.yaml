@@ -1,0 +1,51 @@
+name: Mass Heal
+source: XPHB
+level: 9
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: all
+    distinct: true
+    up_to: true
+    filter:
+    - creature
+    - visible
+    affects: ally
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - heal_pool:
+      amount: 700
+      cap: full
+  - remove_condition:
+      condition: blinded
+  - remove_condition:
+      condition: deafened
+  - remove_condition:
+      condition: poisoned
+  limit: null
+scaling: null
+ends_on: []
+unsupported: []

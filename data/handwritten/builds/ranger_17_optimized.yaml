@@ -1,0 +1,47 @@
+class: ranger
+level: 17
+subclass: hunter
+abilities:
+  str: 8
+  dex: 15
+  con: 15
+  int: 8
+  wis: 14
+  cha: 10
+equipment: leather_archer
+choices:
+  ability_method: point_buy
+  background:
+    dex: 2
+    con: 1
+  asis:
+    4:
+      dex: 2
+    8:
+      dex: 1
+      con: 1
+    12:
+      con: 2
+    16:
+      con: 1
+      str: 1
+  fighting_style:
+  - archery
+  weapon_masteries:
+  - longbow
+  cantrips: []
+  prepared_spells:
+  - Cure Wounds
+  - Entangle
+  - Aid
+  - Spike Growth
+  - Summon Beast
+  - Magic Weapon
+  - Lightning Arrow
+  - Revivify
+  - Hail of Thorns
+  - Animal Friendship
+  - Barkskin
+  - Conjure Animals
+  - Conjure Barrage
+  - Cordon of Arrows

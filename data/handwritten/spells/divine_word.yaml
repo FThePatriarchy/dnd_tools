@@ -1,0 +1,59 @@
+name: Divine Word
+source: XPHB
+level: 7
+school: evocation
+casting_time: bonus_action
+reaction_trigger: null
+range:
+  type: point
+  feet: 30
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: all
+    distinct: true
+    up_to: true
+    filter:
+    - creature
+    affects: enemy
+  attack: null
+  save:
+    ability: cha
+    on_success: negate
+  on_hit: []
+  on_fail:
+  - kill: {}
+    if: target.hp <= 20
+  - apply_condition:
+      condition: stunned
+    if: target.hp > 20 and target.hp <= 30
+  - apply_condition:
+      condition: blinded
+    if: target.hp > 20 and target.hp <= 40
+  - apply_condition:
+      condition: deafened
+    if: target.hp > 20 and target.hp <= 50
+  - remove_from_combat:
+      until: spell_ends
+      returns: 'false'
+    if: target.creature_type in [celestial, elemental, fey, fiend]
+  on_success: []
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- 'The condition durations from the effects table are not tracked: conditions last for the fight.'

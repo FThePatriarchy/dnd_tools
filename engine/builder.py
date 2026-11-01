@@ -4,7 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 import re
 
-from .classes import load_class, substitute, SUBCLASSES
+from .classes import MAX_LEVEL, load_class, substitute, SUBCLASSES
 from .class_source import source
 from .loader import ROOT, Validator, ValidationError, load_spells, read_yaml
 from .sheets import validate_sheet
@@ -21,15 +21,24 @@ SPELL_LISTS["druid"] = set("Guidance; Resistance; Starry Wisp; Thorn Whip; Shill
 SPELL_LISTS["druid"].update("Animal Friendship; Charm Person; Create or Destroy Water; Detect Magic; Detect Poison and Disease; Fog Cloud; Jump; Longstrider; Protection from Evil and Good; Purify Food and Drink; Speak with Animals; Animal Messenger; Augury; Beast Sense; Continual Flame; Darkvision; Enhance Ability; Enlarge/Reduce; Find Traps; Flame Blade; Flaming Sphere; Gust of Wind; Hold Person; Lesser Restoration; Locate Animals or Plants; Locate Object; Protection from Poison; Summon Beast; Aura of Vitality; Conjure Minor Elementals; Conjure Elemental; Daylight; Dispel Magic; Elemental Weapon; Feign Death; Meld into Stone; Protection from Energy; Revivify; Speak with Plants; Summon Fey; Water Breathing; Water Walk; Wind Wall; Blight; Charm Monster; Confusion; Divination; Dominate Beast; Fire Shield; Freedom of Movement; Giant Insect; Grasping Vine; Hallucinatory Terrain; Locate Creature; Polymorph; Stone Shape; Stoneskin; Summon Elemental; Awaken; Commune with Nature; Contagion; Geas; Greater Restoration; Planar Binding; Reincarnate; Scrying; Tree Stride; Druidcraft; Elementalism; Mending; Poison Spray; Thunderclap".split("; "))
 SPELL_LISTS["ranger"] = set("Hunter's Mark; Cure Wounds; Entangle; Ensnaring Strike; Hail of Thorns; Fog Cloud; Longstrider; Jump; Goodberry; Detect Magic; Detect Poison and Disease; Speak with Animals; Animal Friendship; Alarm; Protection from Poison; Lesser Restoration; Aid; Enhance Ability; Gust of Wind; Magic Weapon; Pass without Trace; Silence; Spike Growth; Summon Beast; Barkskin; Beast Sense; Cordon of Arrows; Darkvision; Find Traps; Locate Animals or Plants; Locate Object; Animal Messenger; Conjure Animals; Conjure Barrage; Daylight; Dispel Magic; Elemental Weapon; Lightning Arrow; Meld into Stone; Nondetection; Plant Growth; Protection from Energy; Revivify; Speak with Plants; Summon Fey; Water Breathing; Water Walk; Wind Wall".split("; "))
 SPELL_LISTS["sorcerer"] = set("Acid Splash; Alter Self; Animate Objects; Arcane Gate; Arcane Vigor; Banishment; Bigby's Hand; Blade Ward; Blight; Blindness/Deafness; Blink; Blur; Burning Hands; Chain Lightning; Charm Monster; Charm Person; Chill Touch; Chromatic Orb; Circle of Death; Clairvoyance; Cloud of Daggers; Cloudkill; Color Spray; Comprehend Languages; Cone of Cold; Confusion; Counterspell; Creation; Crown of Madness; Dancing Lights; Darkness; Darkvision; Daylight; Delayed Blast Fireball; Demiplane; Detect Magic; Detect Thoughts; Dimension Door; Disguise Self; Disintegrate; Dispel Magic; Dominate Beast; Dominate Monster; Dominate Person; Dragon's Breath; Earthquake; Elementalism; Enhance Ability; Enlarge/Reduce; Etherealness; Expeditious Retreat; Eyebite; False Life; Fear; Feather Fall; Finger of Death; Fire Bolt; Fire Shield; Fire Storm; Fireball; Flame Blade; Flaming Sphere; Flesh to Stone; Fly; Fog Cloud; Friends; Gaseous Form; Gate; Globe of Invulnerability; Grease; Greater Invisibility; Gust of Wind; Haste; Hold Monster; Hold Person; Hypnotic Pattern; Ice Knife; Ice Storm; Incendiary Cloud; Insect Plague; Invisibility; Jump; Knock; Levitate; Light; Lightning Bolt; Mage Armor; Mage Hand; Magic Missile; Magic Weapon; Major Image; Mass Suggestion; Mending; Message; Meteor Swarm; Mind Sliver; Mind Spike; Minor Illusion; Mirror Image; Misty Step; Move Earth; Otiluke's Freezing Sphere; Phantasmal Force; Plane Shift; Poison Spray; Polymorph; Power Word Kill; Power Word Stun; Prestidigitation; Prismatic Spray; Protection from Energy; Ray of Frost; Ray of Sickness; Reverse Gravity; Scorching Ray; See Invisibility; Seeming; Shatter; Shield; Shocking Grasp; Silent Image; Sleep; Sleet Storm; Slow; Sorcerous Burst; Spider Climb; Stinking Cloud; Stoneskin; Suggestion; Sunbeam; Sunburst; Synaptic Static; Telekinesis; Teleport; Teleportation Circle; Thunderclap; Thunderwave; Time Stop; Tongues; True Seeing; True Strike; Vampiric Touch; Vitriolic Sphere; Wall of Fire; Wall of Stone; Water Breathing; Water Walk; Web; Wish; Witch Bolt".split("; "))
+HIGH_SPELLS = {
+    "warlock": "Circle of Death; Eyebite; Create Undead; Mass Suggestion; Summon Fiend; True Seeing; Arcane Gate; Etherealness; Finger of Death; Forcecage; Plane Shift; Befuddlement; Demiplane; Dominate Monster; Glibness; Power Word Stun; Astral Projection; Foresight; Gate; Imprisonment; Power Word Kill; True Polymorph; Weird",
+    "bard": "Eyebite; Find the Path; Guards and Wards; Heroes' Feast; Mass Suggestion; Otto's Irresistible Dance; Programmed Illusion; True Seeing; Etherealness; Forcecage; Mirage Arcane; Mordenkainen's Magnificent Mansion; Mordenkainen's Sword; Power Word Fortify; Prismatic Spray; Project Image; Regenerate; Resurrection; Symbol; Teleport; Antipathy/Sympathy; Befuddlement; Dominate Monster; Glibness; Mind Blank; Power Word Stun; Foresight; Power Word Heal; Power Word Kill; Prismatic Wall; True Polymorph",
+    "druid": "Conjure Fey; Find the Path; Flesh to Stone; Heal; Heroes' Feast; Move Earth; Sunbeam; Transport via Plants; Wall of Thorns; Wind Walk; Fire Storm; Mirage Arcane; Plane Shift; Regenerate; Reverse Gravity; Symbol; Animal Shapes; Antipathy/Sympathy; Befuddlement; Control Weather; Earthquake; Incendiary Cloud; Sunburst; Tsunami; Foresight; Shapechange; Storm of Vengeance; True Resurrection",
+}
+# XPHB level 6-9 spells of the classes whose lists above stop at level 5.
+for _name, _spells_text in HIGH_SPELLS.items(): SPELL_LISTS[_name].update(_spells_text.split("; "))
 PRIORITY = {
-    "druid": ["Healing Word","Entangle","Faerie Fire","Thunderwave","Spike Growth","Heat Metal","Call Lightning","Conjure Animals","Wall of Fire","Conjure Woodland Beings","Mass Cure Wounds"],
-    "sorcerer": ["Shield","Magic Missile","Fireball","Web","Scorching Ray","Counterspell","Hypnotic Pattern","Wall of Fire","Cone of Cold","Burning Hands","Sleep"],
+    "druid": ["Healing Word","Entangle","Faerie Fire","Thunderwave","Spike Growth","Heat Metal","Call Lightning","Conjure Animals","Wall of Fire","Conjure Woodland Beings","Mass Cure Wounds", "Heal","Sunbeam","Flesh to Stone","Fire Storm","Regenerate","Sunburst","Foresight"],
+    "sorcerer": ["Shield","Magic Missile","Fireball","Web","Scorching Ray","Counterspell","Hypnotic Pattern","Wall of Fire","Cone of Cold","Burning Hands","Sleep", "Chain Lightning","Disintegrate","Circle of Death","Sunbeam","Finger of Death","Delayed Blast Fireball","Fire Storm","Sunburst","Power Word Stun","Meteor Swarm","Power Word Kill"],
     "ranger": ["Cure Wounds","Entangle","Hail of Thorns","Aid","Spike Growth","Magic Weapon","Summon Beast","Revivify","Lightning Arrow"],
     "warlock": ["Hex", "Armor of Agathys", "Hellish Rebuke", "Hold Person", "Mirror Image", "Hypnotic Pattern", "Counterspell", "Hunger of Hadar", "Banishment", "Synaptic Static"],
-    "bard": ["Healing Word", "Fireball", "Wall of Force", "Dissonant Whispers", "Sleep", "Faerie Fire", "Shatter", "Hold Person", "Hypnotic Pattern", "Slow", "Aid", "Polymorph", "Synaptic Static", "Mass Cure Wounds", "Lesser Restoration"],
+    "bard": ["Healing Word", "Fireball", "Wall of Force", "Dissonant Whispers", "Sleep", "Faerie Fire", "Shatter", "Hold Person", "Hypnotic Pattern", "Slow", "Aid", "Polymorph", "Synaptic Static", "Mass Cure Wounds", "Lesser Restoration", "Otto's Irresistible Dance","Power Word Fortify","Mordenkainen's Sword","Regenerate","Mind Blank","Power Word Stun","Dominate Monster","Power Word Heal","Foresight","Power Word Kill"],
     "paladin": ["Bless", "Cure Wounds", "Heroism", "Command", "Shield of Faith", "Aid", "Lesser Restoration", "Magic Weapon", "Revivify", "Dispel Magic"],
-    "wizard": ["Fireball", "Shield", "Mage Armor", "Magic Missile", "Counterspell", "Scorching Ray", "Thunderwave", "Mirror Image", "Misty Step", "Haste", "Web", "Cone of Cold", "Ice Storm", "Wall of Fire", "Fire Shield", "Slow", "Sleep", "Chromatic Orb", "Burning Hands", "Lightning Bolt"],
-    "cleric": ["Spirit Guardians", "Healing Word", "Guiding Bolt", "Spiritual Weapon", "Hold Person", "Shield of Faith", "Bless", "Cure Wounds", "Aid", "Lesser Restoration", "Mass Healing Word", "Bane", "Sanctuary", "Command", "Inflict Wounds", "Silence", "Warding Bond", "Death Ward", "Mass Cure Wounds", "Flame Strike"],
+    "wizard": ["Fireball", "Shield", "Mage Armor", "Magic Missile", "Counterspell", "Scorching Ray", "Thunderwave", "Mirror Image", "Misty Step", "Haste", "Web", "Cone of Cold", "Ice Storm", "Wall of Fire", "Fire Shield", "Slow", "Sleep", "Chromatic Orb", "Burning Hands", "Lightning Bolt",
+               "Disintegrate", "Chain Lightning", "Circle of Death", "Finger of Death", "Delayed Blast Fireball", "Power Word Stun", "Sunburst", "Meteor Swarm", "Power Word Kill", "Otto's Irresistible Dance", "Flesh to Stone", "Otiluke's Freezing Sphere", "Mordenkainen's Sword", "Foresight", "Weird"],
+    "cleric": ["Spirit Guardians", "Healing Word", "Guiding Bolt", "Spiritual Weapon", "Hold Person", "Shield of Faith", "Bless", "Cure Wounds", "Aid", "Lesser Restoration", "Mass Healing Word", "Bane", "Sanctuary", "Command", "Inflict Wounds", "Silence", "Warding Bond", "Death Ward", "Mass Cure Wounds", "Flame Strike",
+               "Heal", "Harm", "Divine Word", "Fire Storm", "Regenerate", "Power Word Fortify", "Holy Aura", "Sunburst", "Mass Heal", "Power Word Heal"],
 }
 CANTRIPS = {"druid": ["Thorn Whip","Produce Flame","Guidance","Poison Spray","Resistance"], "sorcerer": ["Fire Bolt","Ray of Frost","Shocking Grasp","Acid Splash","Mind Sliver","Light"], "ranger": [], "warlock": ["Eldritch Blast", "Mind Sliver", "Mage Hand", "Minor Illusion"], "bard": ["Vicious Mockery", "Starry Wisp", "Mage Hand", "Minor Illusion"],"paladin": [], "wizard": ["Fire Bolt", "Ray of Frost", "Toll the Dead", "Shocking Grasp", "Acid Splash"],
             "cleric": ["Sacred Flame", "Toll the Dead", "Guidance", "Word of Radiance", "Resistance", "Thaumaturgy"]}
@@ -90,8 +99,12 @@ FEATS = {
     "war_caster": {"abilities": {"int", "wis", "cha"}, "requires": "spellcasting"},
     "polearm_master": {"abilities": {"str", "dex"}, "requires": ("str|dex", 13)},
     "resilient": {"abilities": set(ABILITIES), "requires": None},  # +1 goes to the ability whose save it grants
+    # Epic Boon (level 19 only): +1 to any ability, which may go up to 30.
+    "boon_of_fortitude": {"abilities": set(ABILITIES), "requires": "epic"},
 }
 ORIGIN_FEATS = {"alert", "lucky", "tough"}
+ARCANUM = {6: ["Circle of Death"], 7: ["Finger of Death"], 8: ["Power Word Stun", "Dominate Monster"], 9: ["Power Word Kill", "Foresight"]}
+MARTIAL_DIE = {level: "1d6" if level < 5 else "1d8" if level < 11 else "1d10" if level < 17 else "1d12" for level in range(1, MAX_LEVEL + 1)}
 
 
 @lru_cache(None)
@@ -105,7 +118,7 @@ def _class(name): return load_class(name)
 @lru_cache(None)
 def spell_options(name, level):
     spells = _spells()
-    cap = max(_class(name)["levels"][level]["slots"], default=0) if name in {"paladin", "warlock", "ranger"} else (level + 1)//2
+    cap = max(_class(name)["levels"][level]["slots"], default=0) if name in {"paladin", "warlock", "ranger"} else min(9, (level + 1)//2)
     names = SPELL_LISTS.get(name, set())
     if name=="bard" and level>=10: names = names | {n for n in SPELL_LISTS["cleric"] | SPELL_LISTS["druid"] | SPELL_LISTS["wizard"] if n in spells and spells[n]["level"]>0}
     return {n: spells[n] for n in names if n in spells and spells[n]["level"] <= cap}
@@ -115,10 +128,22 @@ def spell_order(name, options):
     return [n for n in PRIORITY[name] if n in options] + sorted(set(options) - set(PRIORITY[name]))
 
 
+def high_first(name, order, options, level):
+    """From level 11, prepare the class's listed spells of level 6+ before everything else."""
+    if level < 11: return order
+    first = [n for n in order if n in PRIORITY[name] and options[n]["level"] >= 6]
+    return first + [n for n in order if n not in first]
+
+
+def asi_levels(c):
+    """Levels that grant an ASI or feat: Ability Score Improvement, plus the level 19 Epic Boon."""
+    return c["asi_levels"] + [f["level"] for f in c["features"] if f["name"] == "Epic Boon"]
+
+
 def default_asis(name, level, abilities):
     c = _class(name); result={}; scores=abilities.copy()
     primary = {"fighter":"str", "rogue":"dex", "wizard":"int", "cleric":"wis", "barbarian":"str", "paladin":"str", "warlock":"cha", "bard":"cha", "monk":"dex", "ranger":"dex", "druid":"wis", "sorcerer":"cha"}[name]
-    for n in c["asi_levels"]:
+    for n in asi_levels(c):
         if n > level: continue
         add={}
         for _ in range(2):
@@ -129,14 +154,17 @@ def default_asis(name, level, abilities):
     return result
 
 
+SAVANT_LEVELS = {5,7,9,11,13,15,17}  # Evocation Savant: one free evocation per new spell slot level
+
+
 def default_book(level, options):
     book=[]
     for at in range(1,level+1):
-        eligible = {n:v for n,v in options.items() if 0 < v["level"] <= (at+1)//2}
+        eligible = {n:v for n,v in options.items() if 0 < v["level"] <= min(9,(at+1)//2)}
         for n in [n for n in spell_order("wizard", eligible) if n not in book][:6 if at==1 else 2]: book.append(n)
         if at==3:
             book += [n for n in spell_order("wizard",eligible) if n not in book and eligible[n]["school"]=="evocation"][:2]
-        elif at in {5,7,9}:
+        elif at in SAVANT_LEVELS:
             book += [n for n in spell_order("wizard",eligible) if n not in book and eligible[n]["school"]=="evocation"][:1]
     return book
 
@@ -146,9 +174,9 @@ def validate_book(book, level, options, v):
     # Evocation-only free slots, rather than merely counting the final book.
     slots=[]
     for at in range(1,level+1):
-        slots.extend([((at+1)//2,False)]*(6 if at==1 else 2))
+        slots.extend([(min(9,(at+1)//2),False)]*(6 if at==1 else 2))
         if at==3: slots.extend([(2,True)]*2)
-        elif at in {5,7,9}: slots.append(((at+1)//2,True))
+        elif at in SAVANT_LEVELS: slots.append(((at+1)//2,True))
     v.check(len(book)==len(slots),"choices.spellbook","wrong learned/Savant spell count; purchased copies are out of scope")
     owners={}
     def place(name,seen):
@@ -164,12 +192,12 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     """Return a validated combat sheet; input abilities are pre-ASI scores."""
     v=Validator("<build>")
     v.enum(class_name,SUBCLASSES,"class")
-    v.number(level,"level",1,True); v.check(level<=10,"level","supported levels are 1..10")
+    v.number(level,"level",1,True); v.check(level<=MAX_LEVEL,"level",f"supported levels are 1..{MAX_LEVEL}")
     c=_class(class_name); row=c["levels"][level]
     subclass = c["subclass"] if subclass is None else subclass
     v.enum(subclass,{c["subclass"]},"subclass")
     choices=deepcopy(choices) if choices is not None else {}
-    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat invocations magical_discoveries hunters_prey open_hand stunning_budget primal_order metamagic")
+    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat invocations magical_discoveries hunters_prey open_hand stunning_budget primal_order metamagic spell_mastery signature_spells mystic_arcanum")
     v.check(class_name=="bard" or "magical_discoveries" not in choices,"choices.magical_discoveries","Bard choice only")
     v.check(type(background) is bool,"background","expected boolean")
     abilities=deepcopy(abilities if abilities is not None else DEFAULT_ABILITIES[class_name])
@@ -193,7 +221,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
             abilities[a] = min(20, abilities[a]+n)
     asis=choices.get("asis",default_asis(class_name,level,abilities))
     v.check(isinstance(asis,dict) and all(type(k) is int for k in asis),"choices.asis","expected level mapping")
-    v.check(set(asis)=={n for n in c["asi_levels"] if n<=level},"choices.asis","must choose each earned ASI exactly once")
+    v.check(set(asis)=={n for n in asi_levels(c) if n<=level},"choices.asis","must choose each earned ASI exactly once")
     feats=[]; resilient=None
     for n,add in sorted(asis.items()):
         if isinstance(add,dict) and "feat" in add:
@@ -206,11 +234,12 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
             need=feat["requires"]
             if need=="spellcasting": v.check(class_name in SPELL_LISTS,f"choices.asis.{n}.feat","requires the Spellcasting feature")
             elif need is None: v.check(add["ability"] not in c["saves"],f"choices.asis.{n}.ability","Resilient needs a save without proficiency")
+            elif need=="epic": v.check(n==19,f"choices.asis.{n}.feat","Epic Boons are taken at level 19")
             else: v.check(any(abilities[a]>=need[1] for a in need[0].split("|")),f"choices.asis.{n}.feat",f"requires {' or '.join(a.title() for a in need[0].split('|'))} {need[1]}")
             if add["feat"]=="resilient": resilient=add["ability"]
             feats.append(add["feat"])
             unboosted[add["ability"]] += 1
-            abilities[add["ability"]] = min(20, abilities[add["ability"]] + 1)
+            abilities[add["ability"]] = min(30 if need=="epic" else max(20, abilities[add["ability"]]), abilities[add["ability"]] + 1)
             continue
         v.obj(add,f"choices.asis.{n}","",ABILITIES)
         for a,count in add.items(): v.number(count,f"choices.asis.{n}.{a}",1,True)
@@ -225,6 +254,9 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
                     v.check(selected is not None, f"choices.asis.{n}.{a}", "no ability can receive reallocated ASI")
                 abilities[selected] += 1
                 v.check(abilities[selected] <= 20, f"choices.asis.{n}.{a}", "ASI exceeds ability cap")
+    if level>=20 and class_name in {"barbarian","monk"}:
+        # Primal Champion / Body and Mind: +4 to two scores, to a maximum of 25.
+        for a in (("str","con") if class_name=="barbarian" else ("dex","wis")): abilities[a]=min(25,abilities[a]+4)
     mod=lambda a:(abilities[a]-10)//2
     equipment=DEFAULT_EQUIPMENT[class_name] if equipment is None else equipment
     v.enum(equipment,EQUIPMENT,"equipment")
@@ -262,6 +294,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     faces=int(c["hit_die"][1:]); hp=max(1,faces+mod("con"))+(level-1)*max(1,faces//2+1+mod("con"))
     if class_name=="sorcerer" and level>=3: hp += level
     if choices.get("origin_feat")=="tough": hp += 2*level
+    if "boon_of_fortitude" in feats: hp += 40
     sheet={"name":f"{class_name.title()} {level} ({subclass.title()})", "source":"XPHB", "level":level,
            "hit_dice":{"die":c["hit_die"],"count":level}, "max_hp":hp,"ac":ac,"abilities":abilities,
            "speed":20 if armor=="chain" and abilities["str"]<13 else 30,"creature_type":"humanoid","proficiency_bonus":row["proficiency_bonus"],
@@ -280,6 +313,24 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         if "unsupported" in f: sheet["unsupported"].append(f["name"]+": "+f["unsupported"])
     # Do not enable for cleric/wizard: their published results must stay bit-identical.
     if class_name in {"paladin","warlock","bard","monk","ranger","druid","sorcerer"}: sheet["features"]["values_buffs"]=True
+    if class_name=="barbarian" and level>=14:
+        sheet["limited_uses"]["intimidating_presence"]={"max":1,"long_rest":"all"}
+        sheet["actions"].append({"name":"Intimidating Presence","cost":"bonus_action","resource":"intimidating_presence","duration":{"type":"minutes","n":1},
+            "effects":[{"id":"main","event":"on_cast","target":{"select":"n_targets","n":"all","distinct":True,"up_to":True,"filter":["creature"],"affects":"enemy","within_ft":30},
+                        "attack":None,"save":{"ability":"wis","dc":8+mod("str")+row["proficiency_bonus"],"on_success":"negate"},"on_hit":[],
+                        "on_fail":[{"apply_condition":{"condition":"frightened","repeat_save":{"ability":"wis","timing":"end_of_turn","on_success":"end"}}}],"on_success":[],"apply":[],"limit":None}]})
+    if class_name=="ranger" and level>=14:
+        sheet["limited_uses"]["natures_veil"]={"max":max(1,mod("wis")),"long_rest":"all"}
+        sheet["actions"].append({"name":"Nature's Veil","cost":"bonus_action","resource":"natures_veil",
+            "effects":[{"id":"main","event":"on_cast","target":{"select":"self"},"attack":None,"save":None,"on_hit":[],"on_fail":[],"on_success":[],
+                        "apply":[{"apply_condition":{"condition":"invisible"},"until":"end_of_turn(caster.next_turn)"}],"limit":None}]})
+    if class_name=="paladin" and level>=20: sheet["limited_uses"]["holy_nimbus"]={"max":1,"long_rest":"all"}
+    if class_name=="warlock" and level>=14: sheet["limited_uses"]["hurl_through_hell"]={"max":1,"long_rest":"all"}
+    if class_name=="monk" and level>=14: sheet["save_proficiencies"]=list(ABILITIES)
+    if class_name=="cleric" and level>=14:
+        # Improved Blessed Strikes: Divine Strike becomes 2d8; Potent Spellcasting also grants Temporary Hit Points.
+        if selected_strike=="divine_strike": sheet["features"]["divine_strike"]="2d8"
+        else: sheet["features"]["improved_potent_spellcasting"]=True
     for key,owner,minimum,options,default in (("hunters_prey","ranger",3,{"colossus_slayer","horde_breaker"},"colossus_slayer"),("open_hand","monk",3,{"topple","addle"},"topple"),("stunning_budget","monk",5,{"balanced","reserve"},"balanced")):
         if key in choices: v.check(class_name==owner and level>=minimum,"choices."+key,"choice not available")
         if class_name==owner and level>=minimum:
@@ -290,14 +341,16 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
             else: sheet["features"]["open_hand_addle" if key=="open_hand" else "stunning_reserve"]=chosen!=default
     if class_name=="sorcerer" and level>=6: sheet["resistances"]=["fire"]
     metamagic=choices.get("metamagic",["quickened_spell","heightened_spell"]+(["careful_spell","extended_spell"] if level>=10 else []) if class_name=="sorcerer" and level>=2 else [])
+    metamagic_count=(2 if level<10 else 4 if level<17 else 6) if class_name=="sorcerer" and level>=2 else 0
     v.sequence(metamagic,"choices.metamagic")
-    v.check(len(metamagic)==len(set(metamagic))==((4 if level>=10 else 2) if class_name=="sorcerer" and level>=2 else 0),"choices.metamagic","wrong number of distinct Metamagic choices")
+    # Only four Metamagic options are modeled, so the fifth and sixth (level 17) stay unused.
+    v.check(len(metamagic)==len(set(metamagic))==min(4,metamagic_count),"choices.metamagic","wrong number of distinct Metamagic choices")
     for option in metamagic:
         v.enum(option,{"quickened_spell","heightened_spell","careful_spell","extended_spell"},"choices.metamagic")
         sheet["features"][option]=True
     if class_name=="monk":
         sheet.update(spell_ability="wis",spell_dc=8+row["proficiency_bonus"]+mod("wis"))
-        sheet["speed"]+=0 if level<2 else 10 if level<6 else 15 if level<10 else 20
+        sheet["speed"]+=0 if level<2 else 10 if level<6 else 15 if level<10 else 20 if level<14 else 25 if level<18 else 30
         if level>=6: sheet["limited_uses"]["wholeness_of_body"]={"max":max(1,mod("wis")),"long_rest":"all"}
     if class_name=="warlock":
         invocations=choices.get("invocations",["armor_of_shadows"] + (["agonizing_blast","eldritch_mind"] if level>=2 else []))
@@ -324,6 +377,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         if origin=="alert": sheet["initiative_bonus"]=sheet.get("initiative_bonus",0)+row["proficiency_bonus"]
         if origin=="lucky": sheet["limited_uses"]["luck"]={"max":row["proficiency_bonus"],"long_rest":"all"}
     if class_name in {"fighter","barbarian","paladin","monk","ranger"} and level>=5: sheet["extra_attack"]=2
+    if class_name=="fighter" and level>=11: sheet["extra_attack"]=3 if level<20 else 4
     for weapon in weapons:
         ds,dt,kind,mastery,properties=WEAPONS[weapon]
         ability="dex" if kind=="ranged" or "finesse" in properties and mod("dex")>mod("str") else "str"
@@ -331,7 +385,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         if "versatile" in properties and not shield: properties=[*properties,"two_handed"]
         if class_name=="monk":
             ability="dex" if mod("dex")>=mod("str") else "str"
-            if level>=5: ds="1d8"
+            if level>=5: ds=MARTIAL_DIE[level]
         bonus=mod(ability)+(2 if "dueling" in styles and kind=="melee" and "two_handed" not in properties and shield else 0)
         attack={"name":weapon.title(),"kind":kind,"ability":ability,"properties":properties.copy(),"to_hit":row["proficiency_bonus"]+mod(ability)+(2 if "archery" in styles and kind=="ranged" else 0),"effects":[{"damage":{"dice":ds,"bonus":bonus,"type":dt}}]}
         if kind=="melee": attack["reach_ft"]=10 if "reach" in properties else 5
@@ -340,7 +394,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         sheet["attacks"].append(attack)
     if class_name=="monk":
         ability="dex" if mod("dex")>=mod("str") else "str"
-        sheet["attacks"].append({"name":"Unarmed Strike","kind":"melee","ability":ability,"properties":[],"to_hit":row["proficiency_bonus"]+mod(ability),"reach_ft":5,"effects":[{"damage":{"dice":"1d8" if level>=5 else "1d6","bonus":mod(ability),"type":"force" if level>=6 else "bludgeoning"}}]})
+        sheet["attacks"].append({"name":"Unarmed Strike","kind":"melee","ability":ability,"properties":[],"to_hit":row["proficiency_bonus"]+mod(ability),"reach_ft":5,"effects":[{"damage":{"dice":MARTIAL_DIE[level],"bonus":mod(ability),"type":"force" if level>=6 else "bludgeoning"}}]})
     skills=choices.get("skills",SKILLS[class_name]); v.sequence(skills,"choices.skills")
     if class_name=="barbarian" and level<3 and "skills" not in choices: skills=skills[:2]
     expected=4 if class_name=="rogue" else 3 if class_name=="barbarian" and level>=3 else 3 if class_name in {"bard","ranger"} else 2
@@ -356,10 +410,15 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     if class_name=="rogue":
         sheet["skill_proficiencies"].append("thieves' tools")
         if level>=3: sheet["skill_proficiencies"] += ["poisoner's kit","disguise kit"]
-    cunning=choices.get("cunning_strike",["poison","trip"] if class_name=="rogue" and level>=5 else [])
+    cunning=choices.get("cunning_strike",(["poison","trip"]+(["obscure"] if level>=14 else [])) if class_name=="rogue" and level>=5 else [])
     v.sequence(cunning,"choices.cunning_strike")
     v.check(not cunning or class_name=="rogue" and level>=5,"choices.cunning_strike","requires Rogue 5")
-    for x in cunning: v.enum(x,{"poison","trip","withdraw"},"choices.cunning_strike")
+    for x in cunning:
+        v.enum(x,{"poison","trip","withdraw","daze","knock_out","obscure"},"choices.cunning_strike")
+        v.check(x in {"poison","trip","withdraw"} or level>=14,"choices.cunning_strike","Devious Strikes require Rogue 14")
+    if class_name=="rogue" and level>=15:
+        sheet["save_proficiencies"]+=[a for a in ("wis","cha") if a not in sheet["save_proficiencies"]]
+    if class_name=="rogue" and level>=20: sheet["limited_uses"]["stroke_of_luck"]={"max":1,"short_rest":"all","long_rest":"all"}
     sheet["cunning_strike"]=cunning.copy()
     if class_name in SPELL_LISTS:
         ability="int" if class_name=="wizard" else "cha" if class_name in {"paladin","warlock","bard","sorcerer"} else "wis"
@@ -385,6 +444,20 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         for n in discoveries:
             v.check(n in _spells() and n in SPELL_LISTS["cleric"] | SPELL_LISTS["druid"] | SPELL_LISTS["wizard"] and _spells()[n]["level"]<=max(row["slots"]),"choices.magical_discoveries","illegal discovery")
         domain += discoveries
+        if class_name=="bard" and level>=20: domain += [n for n in ("Power Word Heal","Power Word Kill") if n in _spells()]
+        if class_name=="warlock":
+            # Mystic Arcanum: one spell of each level 6-9 by 11/13/15/17, cast once per Long Rest without a slot.
+            arcanum=choices.get("mystic_arcanum",[next(n for n in ARCANUM[k] if n in _spells()) for k,at in ((6,11),(7,13),(8,15),(9,17)) if level>=at])
+            v.sequence(arcanum,"choices.mystic_arcanum")
+            v.check(sorted(_spells()[n]["level"] for n in arcanum if n in _spells())==[k for k,at in ((6,11),(7,13),(8,15),(9,17)) if level>=at],"choices.mystic_arcanum","one Warlock spell of each arcanum level")
+            for n in arcanum:
+                v.check(n in SPELL_LISTS["warlock"],"choices.mystic_arcanum",f"not a Warlock spell: {n}")
+                sheet["limited_uses"]["free_"+n.lower().replace(" ","_").replace("'","")]={"max":1,"long_rest":"all"}
+            domain += arcanum
+        else: v.check("mystic_arcanum" not in choices,"choices.mystic_arcanum","Warlock choice only")
+        if class_name=="sorcerer" and level>=18 and "Summon Dragon" in _spells():
+            sheet["limited_uses"]["free_summon_dragon"]={"max":1,"long_rest":"all"}
+            if "Summon Dragon" not in domain: domain.append("Summon Dragon")
         if class_name=="wizard":
             book=choices.get("spellbook",default_book(level,options))
             v.sequence(book,"choices.spellbook"); v.check(len(set(book))==len(book),"choices.spellbook","duplicate spell")
@@ -394,7 +467,32 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         else:
             v.check("spellbook" not in choices,"choices.spellbook","Wizard choice only")
             available={n:v for n,v in options.items() if v["level"]>0 and n not in domain}
-        prepared=choices.get("prepared_spells",spell_order(class_name,available)[:row["prepared"]])
+        prepared=choices.get("prepared_spells",high_first(class_name,spell_order(class_name,available),available,level)[:row["prepared"]])
+        if class_name=="wizard":
+            # Spell Mastery (18): an action spell of level 1 and of level 2, cast at will at that level while prepared.
+            def first(spell_level, preferred, action=True):
+                order=[n for n in preferred if n in available]+spell_order("wizard",available)
+                return [n for n in dict.fromkeys(order) if available[n]["level"]==spell_level and (available[n]["casting_time"]=="action" or not action)]
+            mastery=choices.get("spell_mastery",[first(1,["Magic Missile"])[0],first(2,["Scorching Ray"])[0]] if level>=18 else [])
+            v.sequence(mastery,"choices.spell_mastery")
+            v.check(level>=18 and sorted(available[n]["level"] for n in mastery if n in available)==[1,2] or not mastery and level<18,"choices.spell_mastery","requires a level 1 and a level 2 spellbook spell at Wizard 18")
+            for n in mastery:
+                v.check(n in available and available[n]["casting_time"]=="action","choices.spell_mastery",f"not an action spell in the spellbook: {n}")
+                sheet.setdefault("spell_levels",{})[n]=available.get(n,{}).get("level",1)
+                if n not in prepared: domain.append(n)
+            # Signature Spells (20): two level 3 spells, always prepared, each cast once per Short Rest without a slot.
+            signature=choices.get("signature_spells",first(3,["Fireball","Counterspell"],action=False)[:2] if level>=20 else [])
+            v.sequence(signature,"choices.signature_spells")
+            v.check(len(signature)==(2 if level>=20 else 0) and len(set(signature))==len(signature),"choices.signature_spells","requires two distinct spells at Wizard 20")
+            for n in signature:
+                v.check(n in available and available[n]["level"]==3,"choices.signature_spells",f"not a level 3 spellbook spell: {n}")
+                sheet["limited_uses"]["free_"+n.lower().replace(" ","_").replace("'","")]={"max":1,"short_rest":"all","long_rest":"all"}
+                if n not in prepared: domain.append(n)
+            if level>=14:
+                sheet["features"]["overchannel"]=True
+                sheet["limited_uses"]["overchannel"]={"max":1,"long_rest":"all"}
+        else:
+            v.check("spell_mastery" not in choices and "signature_spells" not in choices,"choices","Wizard choice only")
         v.sequence(prepared,"choices.prepared_spells")
         v.check(len(prepared)==row["prepared"] and len(set(prepared))==len(prepared),"choices.prepared_spells","wrong prepared spell count")
         for n in prepared: v.check(n in available,"choices.prepared_spells",f"illegal prepared spell {n}")
@@ -431,12 +529,16 @@ def load_character(name, *, background=True):
     return load_sheet(fixed) if fixed.is_file() else load_build(name,background=background)
 
 
+# Classes whose level 11-20 features are implemented get high-level presets too.
+PRESET_LEVELS = {name: (1,3,5,7,10,11,13,15,17,20) for name in SUBCLASSES}
+
+
 def write_presets(names=SUBCLASSES):
     import yaml
     folder=ROOT/"builds"; folder.mkdir(exist_ok=True)
     for name in names:
         sub=SUBCLASSES[name]
-        for level in (1,3,5,7,10):
+        for level in PRESET_LEVELS.get(name,(1,3,5,7,10)):
             d={"class":name,"level":level,"subclass":sub,"abilities":DEFAULT_ABILITIES[name],"equipment":DEFAULT_EQUIPMENT[name],"choices":{"ability_method":"standard_array","asis":default_asis(name,level,DEFAULT_ABILITIES[name])}}
             sheet=build(name,level,sub,d["abilities"],d["equipment"],d["choices"])
             d["choices"]["weapon_masteries"]=[n for n in EQUIPMENT[d["equipment"]][2] if name in {"fighter","rogue","barbarian","paladin","ranger"}]
@@ -444,10 +546,11 @@ def write_presets(names=SUBCLASSES):
             if name=="paladin" and level>=2: d["choices"]["fighting_style"]=["defense"]
             if name=="fighter": d["choices"]["fighting_style"]=["defense"]+(["great_weapon_fighting"] if level>=7 else [])
             for k in ("cantrips","prepared_spells","spellbook"):
-                if k=="cantrips" and "spells" in sheet: d["choices"][k]=[n for n in sheet["spells"] if _spells()[n]["level"]==0]
+                # sheet["spells"] is cantrips + prepared + always-prepared, so the leading cantrips are the choices.
+                if k=="cantrips" and "spells" in sheet: d["choices"][k]=[n for n in sheet["spells"][:next((i for i,n in enumerate(sheet["spells"]) if _spells()[n]["level"]),len(sheet["spells"]))]]
                 elif k in sheet: d["choices"][k]=sheet[k]
             d["choices"]["expertise"]=sheet["expertise"]
-            if name=="rogue" and level>=5: d["choices"]["cunning_strike"]=["poison","trip"]
+            if name=="rogue" and level>=5: d["choices"]["cunning_strike"]=sheet["cunning_strike"]
             if name=="cleric": d["choices"].update(divine_order="protector",blessed_strikes="potent_spellcasting")
             (folder/f"{name}_{level}.yaml").write_text(yaml.safe_dump(d,sort_keys=False),encoding="utf-8")
 

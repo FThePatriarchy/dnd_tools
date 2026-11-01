@@ -1,0 +1,45 @@
+name: Mind Blank
+source: XPHB
+level: 8
+school: abjuration
+casting_time: action
+reaction_trigger: null
+range:
+  type: touch
+components:
+  v: true
+  s: true
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: hours
+  n: 24
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - willing
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - defense:
+      immunity:
+      - psychic
+      condition_immunity:
+      - charmed
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- Protection from divination and mind reading is outside combat.

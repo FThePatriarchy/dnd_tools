@@ -1,0 +1,45 @@
+class: cleric
+level: 11
+subclass: life
+abilities:
+  str: 13
+  dex: 10
+  con: 14
+  int: 12
+  wis: 15
+  cha: 8
+equipment: chain_shield
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      wis: 2
+    8:
+      wis: 2
+  weapon_masteries: []
+  cantrips:
+  - Sacred Flame
+  - Toll the Dead
+  - Guidance
+  - Word of Radiance
+  - Resistance
+  prepared_spells:
+  - Heal
+  - Harm
+  - Spirit Guardians
+  - Healing Word
+  - Guiding Bolt
+  - Spiritual Weapon
+  - Hold Person
+  - Shield of Faith
+  - Bane
+  - Sanctuary
+  - Command
+  - Inflict Wounds
+  - Silence
+  - Warding Bond
+  - Flame Strike
+  - Animate Dead
+  expertise: []
+  divine_order: protector
+  blessed_strikes: potent_spellcasting

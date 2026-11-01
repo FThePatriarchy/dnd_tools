@@ -73,7 +73,7 @@
         "out_of_scope": 7
       },
       "required": 0,
-      "loaded": 0
+      "loaded": 9
     },
     {
       "level": 7,
@@ -83,7 +83,7 @@
         "out_of_scope": 6
       },
       "required": 0,
-      "loaded": 0
+      "loaded": 7
     },
     {
       "level": 8,
@@ -93,7 +93,7 @@
         "out_of_scope": 5
       },
       "required": 0,
-      "loaded": 0
+      "loaded": 6
     },
     {
       "level": 9,
@@ -103,17 +103,17 @@
         "partial": 2
       },
       "required": 0,
-      "loaded": 0
+      "loaded": 6
     }
   ],
-  "loaded": 245,
-  "new": 225,
+  "loaded": 273,
+  "new": 253,
   "required": 245,
   "missing": [],
-  "numeric_fields": 2082,
-  "mutations": 2359,
+  "numeric_fields": 2222,
+  "mutations": 2524,
   "failures": [],
-  "rejected": 2359,
+  "rejected": 2524,
   "allowlist": {},
   "per_spell": {
     "Acid Splash": {
@@ -188,6 +188,10 @@
       "numeric_fields": 4,
       "mutations": 4
     },
+    "Befuddlement": {
+      "numeric_fields": 4,
+      "mutations": 5
+    },
     "Bestow Curse": {
       "numeric_fields": 10,
       "mutations": 11
@@ -232,6 +236,10 @@
       "numeric_fields": 4,
       "mutations": 4
     },
+    "Chain Lightning": {
+      "numeric_fields": 7,
+      "mutations": 8
+    },
     "Charm Monster": {
       "numeric_fields": 7,
       "mutations": 7
@@ -247,6 +255,10 @@
     "Chromatic Orb": {
       "numeric_fields": 8,
       "mutations": 10
+    },
+    "Circle of Death": {
+      "numeric_fields": 9,
+      "mutations": 11
     },
     "Circle of Power": {
       "numeric_fields": 3,
@@ -356,6 +368,10 @@
       "numeric_fields": 3,
       "mutations": 3
     },
+    "Delayed Blast Fireball": {
+      "numeric_fields": 8,
+      "mutations": 10
+    },
     "Destructive Wave": {
       "numeric_fields": 6,
       "mutations": 8
@@ -371,6 +387,10 @@
     "Disguise Self": {
       "numeric_fields": 2,
       "mutations": 2
+    },
+    "Disintegrate": {
+      "numeric_fields": 6,
+      "mutations": 8
     },
     "Dispel Evil and Good": {
       "numeric_fields": 2,
@@ -392,9 +412,17 @@
       "numeric_fields": 7,
       "mutations": 10
     },
+    "Divine Word": {
+      "numeric_fields": 6,
+      "mutations": 9
+    },
     "Dominate Beast": {
       "numeric_fields": 14,
       "mutations": 14
+    },
+    "Dominate Monster": {
+      "numeric_fields": 5,
+      "mutations": 5
     },
     "Dominate Person": {
       "numeric_fields": 14,
@@ -460,9 +488,17 @@
       "numeric_fields": 50,
       "mutations": 54
     },
+    "Finger of Death": {
+      "numeric_fields": 4,
+      "mutations": 5
+    },
     "Fire Shield": {
       "numeric_fields": 7,
       "mutations": 9
+    },
+    "Fire Storm": {
+      "numeric_fields": 5,
+      "mutations": 6
     },
     "Flame Blade": {
       "numeric_fields": 5,
@@ -476,11 +512,19 @@
       "numeric_fields": 8,
       "mutations": 10
     },
+    "Flesh to Stone": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
     "Fly": {
       "numeric_fields": 7,
       "mutations": 7
     },
     "Fog Cloud": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Foresight": {
       "numeric_fields": 3,
       "mutations": 3
     },
@@ -544,6 +588,14 @@
       "numeric_fields": 5,
       "mutations": 6
     },
+    "Harm": {
+      "numeric_fields": 4,
+      "mutations": 5
+    },
+    "Heal": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
     "Heat Metal": {
       "numeric_fields": 7,
       "mutations": 9
@@ -559,6 +611,10 @@
     "Hold Monster": {
       "numeric_fields": 7,
       "mutations": 7
+    },
+    "Holy Aura": {
+      "numeric_fields": 5,
+      "mutations": 6
     },
     "Hunger of Hadar": {
       "numeric_fields": 13,
@@ -648,6 +704,10 @@
       "numeric_fields": 6,
       "mutations": 8
     },
+    "Mass Heal": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
     "Mass Healing Word": {
       "numeric_fields": 6,
       "mutations": 8
@@ -659,6 +719,14 @@
     "Melf's Acid Arrow": {
       "numeric_fields": 11,
       "mutations": 16
+    },
+    "Meteor Swarm": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
+    "Mind Blank": {
+      "numeric_fields": 2,
+      "mutations": 2
     },
     "Mind Sliver": {
       "numeric_fields": 10,
@@ -696,11 +764,23 @@
       "numeric_fields": 6,
       "mutations": 7
     },
+    "Mordenkainen's Sword": {
+      "numeric_fields": 6,
+      "mutations": 7
+    },
     "Nystul's Magic Aura": {
       "numeric_fields": 2,
       "mutations": 2
     },
+    "Otiluke's Freezing Sphere": {
+      "numeric_fields": 7,
+      "mutations": 9
+    },
     "Otiluke's Resilient Sphere": {
+      "numeric_fields": 3,
+      "mutations": 3
+    },
+    "Otto's Irresistible Dance": {
       "numeric_fields": 3,
       "mutations": 3
     },
@@ -736,6 +816,22 @@
       "numeric_fields": 56,
       "mutations": 62
     },
+    "Power Word Fortify": {
+      "numeric_fields": 4,
+      "mutations": 4
+    },
+    "Power Word Heal": {
+      "numeric_fields": 2,
+      "mutations": 2
+    },
+    "Power Word Kill": {
+      "numeric_fields": 6,
+      "mutations": 7
+    },
+    "Power Word Stun": {
+      "numeric_fields": 5,
+      "mutations": 5
+    },
     "Prestidigitation": {
       "numeric_fields": 3,
       "mutations": 3
@@ -767,6 +863,10 @@
     "Ray of Sickness": {
       "numeric_fields": 6,
       "mutations": 8
+    },
+    "Regenerate": {
+      "numeric_fields": 6,
+      "mutations": 7
     },
     "Remove Curse": {
       "numeric_fields": 1,
@@ -912,6 +1012,14 @@
       "numeric_fields": 53,
       "mutations": 58
     },
+    "Sunbeam": {
+      "numeric_fields": 5,
+      "mutations": 6
+    },
+    "Sunburst": {
+      "numeric_fields": 5,
+      "mutations": 6
+    },
     "Swift Quiver": {
       "numeric_fields": 5,
       "mutations": 5
@@ -995,6 +1103,10 @@
     "Web": {
       "numeric_fields": 4,
       "mutations": 4
+    },
+    "Weird": {
+      "numeric_fields": 6,
+      "mutations": 7
     },
     "Wind Wall": {
       "numeric_fields": 6,

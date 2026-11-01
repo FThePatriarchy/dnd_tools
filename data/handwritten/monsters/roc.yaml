@@ -1,0 +1,69 @@
+name: Roc
+source: XMM
+cr: '11'
+ac: 15
+max_hp: 248
+hp_formula: 16d20 + 80
+abilities:
+  str: 28
+  dex: 10
+  con: 20
+  int: 3
+  wis: 10
+  cha: 9
+speed: 20
+movement_modes:
+  walk: 20
+  fly: 120
+creature_type: monstrosity
+alignment: neutral
+proficiency_bonus: 4
+save_bonuses:
+  dex: 4
+  wis: 4
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 8
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Beak
+  kind: melee
+  to_hit: 13
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 3d12
+      bonus: 9
+      type: piercing
+- name: Talons
+  kind: melee
+  to_hit: 13
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 4d6
+      bonus: 9
+      type: slashing
+  - apply_condition:
+      condition: grappled
+      escape_dc: 19
+      max_size: H
+      linked: true
+  - apply_condition:
+      condition: restrained
+      max_size: H
+      linked: true
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- Swoop (flying off and dropping a grappled creature) needs a grid.
+routines:
+- - Beak
+  - Beak
+- - Beak
+  - Talons

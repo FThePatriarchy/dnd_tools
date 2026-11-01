@@ -61,8 +61,8 @@ def test_all_builds(name):
 def test_source_and_every_level(name):
     c=load_class(name)
     assert c==declaration(name) and check_class_source(c)>0
-    assert c["asi_levels"]==[4,8]
-    for level in range(1,11): validate_sheet(build(name,level),name)
+    assert c["asi_levels"]==[4,8,12,16]
+    for level in range(1,21): validate_sheet(build(name,level),name)
     mutant=deepcopy(c); mutant["levels"][3]["resources"]["rage" if name=="barbarian" else "channel_divinity"]["max"]+=1
     with pytest.raises(ValidationError): check_class_source(mutant)
 

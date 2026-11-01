@@ -169,7 +169,7 @@ def validate_sheet(data, path, *, summoned=False):
     if "features" in data:
         f = data["features"]
         from .classes import CLASS_FLAGS
-        v.obj(f, "features", "", set("pack_tactics magic_resistance sunlight_sensitivity bloodied_frenzy evasion parry regeneration undead_fortitude life_drain redirect_attack authority_aura grapple_damage rampage great_weapon_fighting no_sleep concentration_while_asleep great_weapon_master sharpshooter war_caster alert polearm_master resilient lucky tough".split()) | CLASS_FLAGS)
+        v.obj(f, "features", "", set("pack_tactics magic_resistance sunlight_sensitivity bloodied_frenzy evasion parry regeneration undead_fortitude life_drain redirect_attack authority_aura grapple_damage rampage great_weapon_fighting no_sleep concentration_while_asleep great_weapon_master sharpshooter war_caster alert polearm_master resilient lucky tough boon_of_fortitude".split()) | CLASS_FLAGS)
         for key, value in f.items():
             if key in {"parry", "undead_fortitude", "improved_critical"}: v.number(value, "features." + key, 1, True)
             elif key in {"sneak_attack", "divine_strike"}: v.dice(value, "features." + key)
@@ -219,5 +219,5 @@ def validate_sheet(data, path, *, summoned=False):
         if key not in data: continue
         v.sequence(data[key], key)
         v.check(len(data[key]) == len(set(data[key])), key, "duplicate choice")
-        for x in data[key]: v.enum(x, {"poison", "trip", "withdraw"} if key == "cunning_strike" else SKILLS, key)
+        for x in data[key]: v.enum(x, {"poison", "trip", "withdraw", "daze", "knock_out", "obscure"} if key == "cunning_strike" else SKILLS, key)
     v.check(set(data.get("expertise", [])) <= set(data.get("skill_proficiencies", [])), "expertise", "Expertise requires proficiency")

@@ -9,6 +9,8 @@ subclass_level: 3
 asi_levels:
 - 4
 - 8
+- 12
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -246,6 +248,268 @@ levels:
       1: 4
       2: 3
       3: 2
+  11:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Radiant Strikes
+    resources:
+      lay_on_hands:
+        max: 55
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 10
+    slots:
+      1: 4
+      2: 3
+      3: 3
+  12:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      lay_on_hands:
+        max: 60
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 10
+    slots:
+      1: 4
+      2: 3
+      3: 3
+  13:
+    proficiency_bonus: 5
+    hit_die: d10
+    features: []
+    resources:
+      lay_on_hands:
+        max: 65
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 11
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 1
+  14:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Restoring Touch
+    resources:
+      lay_on_hands:
+        max: 70
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 11
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 1
+  15:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Subclass Feature
+    - Smite of Protection
+    resources:
+      lay_on_hands:
+        max: 75
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 12
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 2
+  16:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      lay_on_hands:
+        max: 80
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 12
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 2
+  17:
+    proficiency_bonus: 6
+    hit_die: d10
+    features: []
+    resources:
+      lay_on_hands:
+        max: 85
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 14
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 1
+  18:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Aura Expansion
+    resources:
+      lay_on_hands:
+        max: 90
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 14
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 1
+  19:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Epic Boon
+    resources:
+      lay_on_hands:
+        max: 95
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 15
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+  20:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Subclass Feature
+    - Holy Nimbus
+    resources:
+      lay_on_hands:
+        max: 100
+        short_rest: 0
+        long_rest: all
+      paladins_smite:
+        max: 1
+        short_rest: 0
+        long_rest: all
+      channel_divinity:
+        max: 3
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 15
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
 features:
 - name: Lay on Hands
   level: 1
@@ -327,6 +591,43 @@ features:
   origin: class
   mechanics:
     aura_of_courage: true
+- name: Radiant Strikes
+  level: 11
+  origin: class
+  mechanics:
+    radiant_strikes: true
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Restoring Touch
+  level: 14
+  origin: class
+  unsupported: Lay on Hands condition removal has no AI.
+- name: Subclass Feature
+  level: 15
+  origin: class
+  mechanics: &id002
+    builder: true
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id001
+- name: Aura Expansion
+  level: 18
+  origin: class
+  mechanics:
+    progression: true
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Subclass Feature
+  level: 20
+  origin: class
+  mechanics: *id002
 - name: Oath of Devotion
   level: 3
   origin: subclass
@@ -347,3 +648,15 @@ features:
   origin: subclass
   mechanics:
     aura_of_devotion: true
+- name: Smite of Protection
+  level: 15
+  origin: subclass
+  unsupported: Cover from the aura needs positions.
+- name: Holy Nimbus
+  level: 20
+  origin: subclass
+  mechanics:
+    holy_nimbus: true
+  unsupported: Activated at the start of a fight without spending a Bonus Action;
+    every enemy is assumed to start its turn in the aura. The Fiend/Undead save Advantage
+    and slot restoration are not modeled.

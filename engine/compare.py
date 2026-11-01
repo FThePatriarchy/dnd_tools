@@ -27,7 +27,7 @@ import sys
 
 import yaml
 
-from .benchmark import load_benchmark
+from .benchmark import default_version, load_benchmark
 from .calibration import REPORTS
 from .loader import ROOT, load_sheet
 from .presets import PRIMARY, ordered, party, recipe as preset_recipe
@@ -236,7 +236,7 @@ def screen_score(candidate, level):
     from .encounters import party_sheets
     from .loader import load_spells
     sheet = party_sheets([candidate], DayOptions())[0]
-    brute = load_benchmark(1)["levels"][level]["brute"][0].split(" x")[0]
+    brute = load_benchmark(default_version(level))["levels"][level]["brute"][0].split(" x")[0]
     pc = Combatant.from_sheet(sheet, "pc", "party")
     foe = Combatant.from_sheet(load_sheet(ROOT / "monsters" / f"{brute}.yaml"), "foe", "enemy")
     combat = Combat([pc, foe], load_spells(), seed=1)
@@ -278,7 +278,7 @@ def fmt_delta(d, noise=NOISE):
 def markdown(level, cls, results, screened=None):
     out = [f"# Build comparison: {cls}, level {level}", "",
            "Each row swaps the candidate into the reference party in place of its "
-           f"{cls} and re-rates the party against benchmark v1 (5% defeat threshold, same seeds). "
+           f"{cls} and re-rates the party against benchmark v{default_version(level)} (5% defeat threshold, same seeds). "
            f"Values are the change in rating; ≈ marks changes within noise: under {NOISE:.0%} overall and "
            f"under {TYPE_NOISE:.0%} for a single opponent type, whose rating rests on one interpolated crossing.", ""]
     if screened:

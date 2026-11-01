@@ -1,0 +1,47 @@
+class: paladin
+level: 20
+subclass: devotion
+abilities:
+  str: 15
+  dex: 10
+  con: 14
+  int: 8
+  wis: 12
+  cha: 13
+equipment: chain_greatsword
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      str: 2
+    8:
+      str: 2
+    12:
+      str: 1
+      con: 1
+    16:
+      con: 2
+    19:
+      con: 2
+  weapon_masteries:
+  - greatsword
+  fighting_style:
+  - defense
+  cantrips: []
+  prepared_spells:
+  - Bless
+  - Cure Wounds
+  - Heroism
+  - Command
+  - Lesser Restoration
+  - Magic Weapon
+  - Revivify
+  - Aura of Vitality
+  - Blinding Smite
+  - Daylight
+  - Protection from Poison
+  - Remove Curse
+  - Searing Smite
+  - Shining Smite
+  - Thunderous Smite
+  expertise: []

@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import yaml
 
+from .classes import MAX_LEVEL
 from .loader import ROOT
 from .sheets import effect_block
 
@@ -14,17 +15,92 @@ def records(name):
     data = json.loads((RAW / ("class-" + name + ".json")).read_text(encoding="utf-8"))
     base = next(x for x in data["class"] if x["source"] == "XPHB")
     sub = next(x for x in data["subclass"] if x["source"] == "XPHB" and x["shortName"] == SUBS[name])
-    features = [("class", x) for x in data["classFeature"] if x["source"] == "XPHB" and x["level"] <= 10]
-    features += [("subclass", x) for x in data["subclassFeature"] if x["source"] == "XPHB" and x.get("subclassShortName") == SUBS[name] and x["level"] <= 10]
+    features = [("class", x) for x in data["classFeature"] if x["source"] == "XPHB" and x["level"] <= MAX_LEVEL]
+    features += [("subclass", x) for x in data["subclassFeature"] if x["source"] == "XPHB" and x.get("subclassShortName") == SUBS[name] and x["level"] <= MAX_LEVEL]
     return base, sub, features
+
+HALF_PREPARED = [2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15]
+WIZARD_PREPARED = [4,5,6,7,9,10,11,12,14,15,16,16,17,18,19,21,22,23,24,25]
+FULL_PREPARED = [4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22]
 
 
 def action(name, cost, effects, resource=None, **extra):
     return {"name": name, "cost": cost, **({"resource": resource} if resource else {}), "effects": effects, **({"magical":True} if resource=="channel_divinity" else {}), **extra}
 
 
+# Features above level 10: progression repeats and builder choices; anything else
+# above level 10 is declared unsupported until it is implemented.
+HIGH = {"Ability Score Improvement": {"mechanics": {"builder": True}},
+        "Epic Boon": {"mechanics": {"builder": True}},
+        "Subclass Feature": {"mechanics": {"builder": True}},
+        "Indomitable": {"mechanics": {"progression": True}},
+        "Action Surge": {"mechanics": {"progression": True}},
+        "Two Extra Attacks": {"mechanics": {"progression": True}}, "Three Extra Attacks": {"mechanics": {"progression": True}},
+        "Studied Attacks": {"mechanics": {"studied_attacks": True}}, "Superior Critical": {"mechanics": {"improved_critical": 18}},
+        "Survivor": {"mechanics": {"survivor": True}},
+        "Improved Cunning Strike": {"mechanics": {"improved_cunning_strike": True}}, "Devious Strikes": {"mechanics": {"builder": True}},
+        "Daze (Cost: 2d6)": {"mechanics": {"builder": True}}, "Knock Out (Cost: 6d6)": {"mechanics": {"builder": True}},
+        "Obscure (Cost: 3d6)": {"mechanics": {"builder": True}}, "Envenom Weapons": {"mechanics": {"envenom_weapons": True}},
+        "Slippery Mind": {"mechanics": {"builder": True}}, "Elusive": {"mechanics": {"elusive": True}},
+        "Death Strike": {"mechanics": {"death_strike": True}}, "Stroke of Luck": {"mechanics": {"builder": True}},
+        "Overchannel": {"mechanics": {"builder": True}, "unsupported": "Only the first, free use per Long Rest is taken; the escalating Necrotic backlash of later uses is never risked."},
+        "Spell Mastery": {"mechanics": {"builder": True}}, "Signature Spells": {"mechanics": {"builder": True}},
+        "Improved Blessed Strikes": {"mechanics": {"builder": True}}, "Supreme Healing": {"mechanics": {"supreme_healing": True}},
+        "Greater Divine Intervention": {"unsupported": "Divine Intervention casting Wish is not modeled."},
+        # Barbarian
+        "Relentless Rage": {"mechanics": {"relentless_rage": True}, "unsupported": "The rising save DC resets each fight rather than on a rest."},
+        "Improved Brutal Strike": {"mechanics": {"improved_brutal_strike": True}},
+        "Intimidating Presence": {"mechanics": {"builder": True}, "unsupported": "Restoring the use by spending a Rage is not modeled."},
+        "Persistent Rage": {"mechanics": {"persistent_rage": True}},
+        "Indomitable Might": {"mechanics": {"indomitable_might": True}},
+        "Primal Champion": {"mechanics": {"builder": True}},
+        # Paladin
+        "Radiant Strikes": {"mechanics": {"radiant_strikes": True}},
+        "Restoring Touch": {"unsupported": "Lay on Hands condition removal has no AI."},
+        "Smite of Protection": {"unsupported": "Cover from the aura needs positions."},
+        "Aura Expansion": {"mechanics": {"progression": True}},
+        "Holy Nimbus": {"mechanics": {"holy_nimbus": True}, "unsupported": "Activated at the start of a fight without spending a Bonus Action; every enemy is assumed to start its turn in the aura. The Fiend/Undead save Advantage and slot restoration are not modeled."},
+        # Monk
+        "Fleet Step": {"unsupported": "Movement is not simulated."},
+        "Deflect Energy": {"mechanics": {"deflect_energy": True}},
+        "Disciplined Survivor": {"mechanics": {"disciplined_survivor": True}},
+        "Perfect Focus": {"mechanics": {"perfect_focus": True}},
+        "Quivering Palm": {"mechanics": {"quivering_palm": True}, "unsupported": "The vibrations are ended at once on the hit that starts them, instead of by a later action or forgone attack."},
+        "Superior Defense": {"mechanics": {"superior_defense": True}},
+        "Body and Mind": {"mechanics": {"builder": True}},
+        # Ranger
+        "Superior Hunter's Prey": {"mechanics": {"superior_hunters_prey": True}, "unsupported": "Only weapon hits on the marked creature trigger it; the second creature is assumed in range."},
+        "Relentless Hunter": {"mechanics": {"relentless_hunter": True}},
+        "Nature's Veil": {"mechanics": {"builder": True}},
+        "Superior Hunter's Defense": {"mechanics": {"superior_hunters_defense": True}, "unsupported": "Only damage from attacks triggers the Reaction."},
+        "Precise Hunter": {"mechanics": {"precise_hunter": True}},
+        "Feral Senses": {"unsupported": "Blindsight is not modeled."},
+        "Foe Slayer": {"mechanics": {"foe_slayer": True}},
+        # Warlock
+        "Mystic Arcanum": {"mechanics": {"builder": True}},
+        "Hurl Through Hell": {"mechanics": {"hurl_through_hell": True}, "unsupported": "Restoring the use with a Pact Magic slot is not modeled."},
+        "Eldritch Master": {"unsupported": "Magical Cunning is not automated, so neither is this."},
+        # Bard
+        "Peerless Skill": {"mechanics": {"peerless_skill": True}, "unsupported": "Used on failed attack rolls only."},
+        "Superior Inspiration": {"mechanics": {"superior_inspiration": True}},
+        "Words of Creation": {"mechanics": {"builder": True}, "unsupported": "The second target within ten feet is not modeled."},
+        # Druid
+        "Lunar Form": {"mechanics": {"lunar_form": True}, "unsupported": "Shared Moonlight (Moonlight Step) is not modeled."},
+        "Improved Elemental Fury": {"unsupported": "The longer cantrip range does not matter without a grid."},
+        "Beast Spells": {"mechanics": {"beast_spells": True}},
+        "Archdruid": {"mechanics": {"archdruid": True}, "unsupported": "Nature Magician and Longevity are not modeled."},
+        # Sorcerer
+        "Dragon Wings": {"unsupported": "Flight is not simulated."},
+        "Metamagic": {"mechanics": {"progression": True}},
+        "Dragon Companion": {"mechanics": {"builder": True}, "unsupported": "Casting Summon Dragon without Concentration is not modeled."},
+        "Arcane Apotheosis": {"mechanics": {"arcane_apotheosis": True}}}
+PENDING = "Not implemented yet (high-level features are in progress)."
+
+
 def feature_payload(name, feature):
     n = feature["name"]
+    if feature["level"] > 10:
+        return HIGH.get(n, {"unsupported": PENDING})
     flags = {
         "Rage": {"rage": True}, "Reckless Attack": {"reckless_attack": True},
         "Danger Sense": {"danger_sense": True}, "Frenzy": {"frenzy": True},
@@ -123,7 +199,7 @@ def declaration(name):
         if f["name"] in notes: record["unsupported"]=notes[f["name"]]
         result["features"].append(record)
         if origin == "class" and f["name"] == "Ability Score Improvement": result["asi_levels"].append(f["level"])
-    for level in range(1, 11):
+    for level in range(1, MAX_LEVEL + 1):
         row = {"proficiency_bonus": 2 + (level - 1) // 4, "hit_die": result["hit_die"],
                "features": [f["name"] for f in result["features"] if f["level"] == level],
                "resources": {}, "weapon_masteries": 0, "cantrips": 0, "prepared": 0, "slots": {}}
@@ -131,39 +207,39 @@ def declaration(name):
             row["resources"][key] = {"max": maximum, "short_rest": short, "long_rest": "all"}
         if name == "fighter":
             resource("second_wind", 2 if level < 4 else 3 if level < 10 else 4, 1)
-            if level >= 2: resource("action_surge", 1, "all")
-            if level >= 9: resource("indomitable", 1)
-            row["weapon_masteries"] = 3 if level < 4 else 4 if level < 10 else 5
+            if level >= 2: resource("action_surge", 1 if level < 17 else 2, "all")
+            if level >= 9: resource("indomitable", 1 if level < 13 else 2 if level < 17 else 3)
+            row["weapon_masteries"] = 3 if level < 4 else 4 if level < 10 else 5 if level < 16 else 6
         if name == "barbarian":
-            resource("rage", 2 if level < 3 else 3 if level < 6 else 4, 1)
+            resource("rage", 2 if level < 3 else 3 if level < 6 else 4 if level < 12 else 5 if level < 17 else 6, 1)
             row["weapon_masteries"] = 2 if level < 4 else 3 if level < 10 else 4
         if name == "paladin":
             resource("lay_on_hands", 5 * level)
             if level >= 2: resource("paladins_smite", 1)
-            if level >= 3: resource("channel_divinity", 2, 1)
+            if level >= 3: resource("channel_divinity", 2 if level < 11 else 3, 1)
             row["weapon_masteries"] = 2
-            row["prepared"] = [2,3,4,5,6,6,7,7,9,9][level-1]
+            row["prepared"] = HALF_PREPARED[level-1]
             row["slots"] = {i:n for i,n in enumerate(base["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}
         if name == "monk" and level>=2:
             resource("focus",level,"all")
             resource("uncanny_metabolism",1)
         if name == "ranger":
-            resource("favored_enemy",2 if level<5 else 3 if level<9 else 4)
-            row.update(weapon_masteries=2,prepared=[2,3,4,5,6,6,7,7,9,9][level-1])
+            resource("favored_enemy",2 if level<5 else 3 if level<9 else 4 if level<13 else 5 if level<17 else 6)
+            row.update(weapon_masteries=2,prepared=HALF_PREPARED[level-1])
             row["slots"]={i:n for i,n in enumerate(base["classTableGroups"][2]["rowsSpellProgression"][level-1],1) if n}
         if name == "warlock":
             table = base["classTableGroups"][0]["rows"][level-1]
             row.update(cantrips=table[1], prepared=table[2], slots={table[4]:table[3]})
         if name == "bard":
             row.update(cantrips=2 if level<4 else 3 if level<10 else 4,
-                       prepared=[4,5,6,7,9,10,11,12,14,15][level-1])
+                       prepared=FULL_PREPARED[level-1])
             row["slots"] = {i:n for i,n in enumerate(base["classTableGroups"][1]["rowsSpellProgression"][level-1],1) if n}
         if name in {"druid","sorcerer"}:
             groups=base["classTableGroups"]
             counts=groups[0 if name=="druid" else 1]["rows"][level-1]
             row.update(cantrips=counts[-2],prepared=counts[-1])
             row["slots"]={i:n for i,n in enumerate(groups[-1]["rowsSpellProgression"][level-1],1) if n}
-            if name=="druid" and level>=2: resource("wild_shape",2 if level<6 else 3,1)
+            if name=="druid" and level>=2: resource("wild_shape",2 if level<6 else 3 if level<17 else 4,1)
             if name=="sorcerer":
                 resource("innate_sorcery",2)
                 if level>=2: resource("sorcery_points",level)
@@ -173,11 +249,11 @@ def declaration(name):
             row["sneak_attack"] = f"{(level+1)//2}d6"
         if name in {"wizard", "cleric"}:
             row["cantrips"] = 3 if level < 4 else 4 if level < 10 else 5
-            row["prepared"] = [4, 5, 6, 7, 9, 10, 11, 12, 14, 15][level - 1]
+            row["prepared"] = (WIZARD_PREPARED if name == "wizard" else FULL_PREPARED)[level - 1]
             slots = base["classTableGroups"][1]["rowsSpellProgression"][level - 1]
             row["slots"] = {i: n for i, n in enumerate(slots, 1) if n}
             if name == "wizard": resource("arcane_recovery", 1)
-            if name == "cleric" and level >= 2: resource("channel_divinity", 2 if level < 6 else 3, 1)
+            if name == "cleric" and level >= 2: resource("channel_divinity", 2 if level < 6 else 3 if level < 18 else 4, 1)
             if name == "cleric" and level >= 10: resource("divine_intervention", 1)
         result["levels"][level] = row
     return result

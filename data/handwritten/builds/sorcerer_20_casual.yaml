@@ -1,0 +1,63 @@
+class: sorcerer
+level: 20
+subclass: draconic
+abilities:
+  str: 8
+  dex: 12
+  con: 13
+  int: 15
+  wis: 10
+  cha: 14
+equipment: unarmored_staff
+choices:
+  ability_method: standard_array
+  background:
+    cha: 1
+    con: 1
+    int: 1
+  asis:
+    4:
+      cha: 1
+      int: 1
+    8:
+      cha: 1
+      int: 1
+    12:
+      cha: 1
+      int: 1
+    16:
+      cha: 1
+      int: 1
+    19:
+      cha: 1
+      con: 1
+  cantrips:
+  - Fire Bolt
+  - Ray of Frost
+  - Shocking Grasp
+  - Acid Splash
+  - Mind Sliver
+  - Light
+  prepared_spells:
+  - Chain Lightning
+  - Disintegrate
+  - Circle of Death
+  - Sunbeam
+  - Finger of Death
+  - Delayed Blast Fireball
+  - Fire Storm
+  - Sunburst
+  - Power Word Stun
+  - Meteor Swarm
+  - Power Word Kill
+  - Burning Hands
+  - Magic Missile
+  - Thunderwave
+  - Scorching Ray
+  - Lightning Bolt
+  - Fireball
+  - Ice Storm
+  - Web
+  - Hypnotic Pattern
+  - Wall of Fire
+  - Cone of Cold

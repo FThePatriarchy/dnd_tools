@@ -9,6 +9,8 @@ subclass_level: 3
 asi_levels:
 - 4
 - 8
+- 12
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -185,6 +187,221 @@ levels:
       3: 3
       4: 3
       5: 2
+  11:
+    proficiency_bonus: 4
+    hit_die: d6
+    features: []
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 16
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+  12:
+    proficiency_bonus: 4
+    hit_die: d6
+    features:
+    - Ability Score Improvement
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 16
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+  13:
+    proficiency_bonus: 5
+    hit_die: d6
+    features: []
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 17
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+  14:
+    proficiency_bonus: 5
+    hit_die: d6
+    features:
+    - Subclass Feature
+    - Overchannel
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 18
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+  15:
+    proficiency_bonus: 5
+    hit_die: d6
+    features: []
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 19
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+      8: 1
+  16:
+    proficiency_bonus: 5
+    hit_die: d6
+    features:
+    - Ability Score Improvement
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 21
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+      8: 1
+  17:
+    proficiency_bonus: 6
+    hit_die: d6
+    features: []
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 22
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+      8: 1
+      9: 1
+  18:
+    proficiency_bonus: 6
+    hit_die: d6
+    features:
+    - Spell Mastery
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 23
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 3
+      6: 1
+      7: 1
+      8: 1
+      9: 1
+  19:
+    proficiency_bonus: 6
+    hit_die: d6
+    features:
+    - Epic Boon
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 24
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 3
+      6: 2
+      7: 1
+      8: 1
+      9: 1
+  20:
+    proficiency_bonus: 6
+    hit_die: d6
+    features:
+    - Signature Spells
+    resources:
+      arcane_recovery:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 5
+    prepared: 25
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 3
+      6: 2
+      7: 2
+      8: 1
+      9: 1
 features:
 - name: Arcane Recovery
   level: 1
@@ -235,6 +452,35 @@ features:
   origin: class
   mechanics:
     builder: true
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Subclass Feature
+  level: 14
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id001
+- name: Spell Mastery
+  level: 18
+  origin: class
+  mechanics:
+    builder: true
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Signature Spells
+  level: 20
+  origin: class
+  mechanics:
+    builder: true
 - name: Evoker
   level: 3
   origin: subclass
@@ -260,3 +506,10 @@ features:
   origin: subclass
   mechanics:
     empowered_evocation: true
+- name: Overchannel
+  level: 14
+  origin: subclass
+  mechanics:
+    builder: true
+  unsupported: Only the first, free use per Long Rest is taken; the escalating Necrotic
+    backlash of later uses is never risked.

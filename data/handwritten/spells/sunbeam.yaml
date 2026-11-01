@@ -1,0 +1,53 @@
+name: Sunbeam
+source: XPHB
+level: 6
+school: evocation
+casting_time: action
+reaction_trigger: null
+range:
+  type: self
+components:
+  v: true
+  s: true
+  m: a magnifying glass
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast or action_command
+  target:
+    select: area
+    shape: line
+    size_ft: 60
+    affects: all
+    filter:
+    - creature
+    origin: caster
+  attack: null
+  save:
+    ability: con
+    on_success: half
+  on_hit: []
+  on_fail:
+  - damage:
+      dice: 6d8
+      bonus: 0
+      type: radiant
+  - apply_condition:
+      condition: blinded
+    until: start_of_turn(caster.next_turn)
+  on_success: []
+  apply: []
+  limit: null
+  if: event == on_cast or turn.index > spell.cast_turn
+  optional: true
+scaling: null
+ends_on: []
+unsupported:
+- Bright light and the Oozes' save Disadvantage are not modeled.

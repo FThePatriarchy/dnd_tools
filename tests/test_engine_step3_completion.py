@@ -137,7 +137,8 @@ def test_step3_banishing_threshold_sees_damage_and_lightning_replaces_weapon():
 def test_step3_complete_required_inventory():
     from engine.step3_report import audit
     report=audit()
-    assert report["required"]==report["loaded"]==245 and not report["missing"] and not report["failures"]
+    # Required: in-scope spells of level 0-5; loaded adds the 28 reviewed level 6-9 spells.
+    assert report["required"]==245 and report["loaded"]==273 and not report["missing"] and not report["failures"]
 
 
 def test_step3_gaseous_dismissal_zero_hp_and_contagion_resists_restoration():

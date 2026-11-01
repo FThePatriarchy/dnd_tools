@@ -1,0 +1,114 @@
+class: wizard
+level: 20
+subclass: evoker
+abilities:
+  str: 8
+  dex: 14
+  con: 13
+  int: 15
+  wis: 12
+  cha: 10
+equipment: unarmored_staff
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      int: 2
+    8:
+      int: 2
+    12:
+      int: 1
+      con: 1
+    16:
+      con: 2
+    19:
+      con: 2
+  weapon_masteries: []
+  cantrips:
+  - Fire Bolt
+  - Ray of Frost
+  - Toll the Dead
+  - Shocking Grasp
+  - Acid Splash
+  prepared_spells:
+  - Disintegrate
+  - Chain Lightning
+  - Circle of Death
+  - Finger of Death
+  - Delayed Blast Fireball
+  - Power Word Stun
+  - Sunburst
+  - Meteor Swarm
+  - Power Word Kill
+  - Otto's Irresistible Dance
+  - Flesh to Stone
+  - Otiluke's Freezing Sphere
+  - Mordenkainen's Sword
+  - Foresight
+  - Weird
+  - Fireball
+  - Shield
+  - Mage Armor
+  - Magic Missile
+  - Counterspell
+  - Scorching Ray
+  - Thunderwave
+  - Mirror Image
+  - Misty Step
+  - Haste
+  spellbook:
+  - Shield
+  - Mage Armor
+  - Magic Missile
+  - Thunderwave
+  - Sleep
+  - Chromatic Orb
+  - Burning Hands
+  - Charm Person
+  - Scorching Ray
+  - Mirror Image
+  - Continual Flame
+  - Darkness
+  - Misty Step
+  - Web
+  - Fireball
+  - Counterspell
+  - Lightning Bolt
+  - Haste
+  - Slow
+  - Ice Storm
+  - Wall of Fire
+  - Fire Shield
+  - Alter Self
+  - Animate Dead
+  - Cone of Cold
+  - Animate Objects
+  - Bigby's Hand
+  - Arcane Lock
+  - Arcane Vigor
+  - Disintegrate
+  - Chain Lightning
+  - Otiluke's Freezing Sphere
+  - Circle of Death
+  - Otto's Irresistible Dance
+  - Finger of Death
+  - Delayed Blast Fireball
+  - Mordenkainen's Sword
+  - Flesh to Stone
+  - Banishment
+  - Power Word Stun
+  - Sunburst
+  - Gust of Wind
+  - Befuddlement
+  - Bestow Curse
+  - Meteor Swarm
+  - Power Word Kill
+  - Jallarzi's Storm of Radiance
+  - Foresight
+  - Weird
+  - Blight
+  - Blindness/Deafness
+  - Blink
+  - Blur
+  expertise:
+  - arcana

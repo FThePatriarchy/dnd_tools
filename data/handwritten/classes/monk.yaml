@@ -9,6 +9,8 @@ subclass_level: 3
 asi_levels:
 - 4
 - 8
+- 12
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -199,6 +201,188 @@ levels:
     cantrips: 0
     prepared: 0
     slots: {}
+  11:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Fleet Step
+    resources:
+      focus:
+        max: 11
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  12:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources:
+      focus:
+        max: 12
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  13:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Deflect Energy
+    resources:
+      focus:
+        max: 13
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  14:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Disciplined Survivor
+    resources:
+      focus:
+        max: 14
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  15:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Perfect Focus
+    resources:
+      focus:
+        max: 15
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  16:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources:
+      focus:
+        max: 16
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  17:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Quivering Palm
+    resources:
+      focus:
+        max: 17
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  18:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Superior Defense
+    resources:
+      focus:
+        max: 18
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  19:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Epic Boon
+    resources:
+      focus:
+        max: 19
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  20:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Body and Mind
+    resources:
+      focus:
+        max: 20
+        short_rest: all
+        long_rest: all
+      uncanny_metabolism:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 0
+    prepared: 0
+    slots: {}
 features:
 - name: Bonus Unarmed Strike
   level: 1
@@ -317,6 +501,54 @@ features:
   origin: class
   mechanics:
     self_restoration: true
+- name: Subclass Feature
+  level: 11
+  origin: class
+  mechanics: &id002
+    builder: true
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Deflect Energy
+  level: 13
+  origin: class
+  mechanics:
+    deflect_energy: true
+- name: Disciplined Survivor
+  level: 14
+  origin: class
+  mechanics:
+    disciplined_survivor: true
+- name: Perfect Focus
+  level: 15
+  origin: class
+  mechanics:
+    perfect_focus: true
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id001
+- name: Subclass Feature
+  level: 17
+  origin: class
+  mechanics: *id002
+- name: Superior Defense
+  level: 18
+  origin: class
+  mechanics:
+    superior_defense: true
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Body and Mind
+  level: 20
+  origin: class
+  mechanics:
+    builder: true
 - name: Open Hand Technique
   level: 3
   origin: subclass
@@ -332,3 +564,14 @@ features:
   origin: subclass
   mechanics:
     wholeness_of_body: true
+- name: Fleet Step
+  level: 11
+  origin: subclass
+  unsupported: Movement is not simulated.
+- name: Quivering Palm
+  level: 17
+  origin: subclass
+  mechanics:
+    quivering_palm: true
+  unsupported: The vibrations are ended at once on the hit that starts them, instead
+    of by a later action or forgone attack.

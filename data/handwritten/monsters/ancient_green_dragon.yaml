@@ -1,0 +1,159 @@
+name: Ancient Green Dragon
+source: XMM
+cr: '22'
+ac: 21
+max_hp: 402
+hp_formula: 23d20 + 161
+abilities:
+  str: 27
+  dex: 12
+  con: 25
+  int: 20
+  wis: 17
+  cha: 22
+speed: 40
+movement_modes:
+  walk: 40
+  fly: 80
+  swim: 40
+creature_type: dragon
+alignment: evil
+proficiency_bonus: 7
+save_bonuses:
+  dex: 8
+  wis: 10
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 14
+resistances: []
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 15
+  reach_ft: 15
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 8
+      type: slashing
+  - damage:
+      dice: 3d6
+      bonus: 0
+      type: poison
+multiattack: []
+actions:
+- name: Poison Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 90
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 22
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 22d6
+        bonus: 0
+        type: poison
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- Lair actions and the in-lair Legendary Resistance count are excluded.
+- 'Pounce, Cloaked Flight and breath positioning need a grid: Pounce is one Rend, Cloaked Flight is the Invisibility
+  casting.'
+spell_ability: cha
+spell_dc: 21
+spell_attack_bonus: 13
+spells:
+- Detect Magic
+- Mind Spike
+- Modify Memory
+spell_levels:
+  Detect Magic: 1
+  Mind Spike: 5
+  Modify Memory: 5
+spell_costs:
+  Detect Magic: action
+  Mind Spike: action
+  Modify Memory: action
+spell_components:
+  Detect Magic:
+    m: false
+  Mind Spike:
+    m: false
+  Modify Memory:
+    m: false
+limited_uses:
+  Modify Memory: 1
+  legendary_resistance: 4
+spell_resources:
+  Modify Memory: Modify Memory
+legendary:
+  uses: 3
+  options:
+  - name: Mind Invasion
+    cost: 1
+    spell: Mind Spike
+  - name: Noxious Miasma
+    cost: 1
+    effects:
+    - id: main
+      event: on_cast
+      target:
+        select: area
+        shape: sphere
+        size_ft: 30
+        affects: all
+        filter:
+        - creature
+      attack: null
+      save:
+        ability: con
+        on_success: negate
+        dc: 21
+      on_hit: []
+      on_fail:
+      - damage:
+          dice: 5d6
+          bonus: 0
+          type: poison
+      - modify:
+          stat: ac
+          op: add
+          value: -2
+          scope: all
+        until: end_of_turn(target.next_turn)
+      on_success: []
+      apply: []
+      limit: null
+      source_ref: legendary:Noxious Miasma
+    once_per_round: true
+  - name: Pounce
+    cost: 1
+    attacks:
+    - Rend
+routines:
+- - Rend
+  - Rend
+  - Rend
+replacements:
+- Mind Spike

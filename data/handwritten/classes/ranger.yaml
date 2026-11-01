@@ -9,6 +9,8 @@ subclass_level: 3
 asi_levels:
 - 4
 - 8
+- 12
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -175,6 +177,190 @@ levels:
       1: 4
       2: 3
       3: 2
+  11:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Subclass Feature
+    - Superior Hunter's Prey
+    resources:
+      favored_enemy:
+        max: 4
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 10
+    slots:
+      1: 4
+      2: 3
+      3: 3
+  12:
+    proficiency_bonus: 4
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      favored_enemy:
+        max: 4
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 10
+    slots:
+      1: 4
+      2: 3
+      3: 3
+  13:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Relentless Hunter
+    resources:
+      favored_enemy:
+        max: 5
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 11
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 1
+  14:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Nature's Veil
+    resources:
+      favored_enemy:
+        max: 5
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 11
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 1
+  15:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Subclass Feature
+    - Superior Hunter's Defense
+    resources:
+      favored_enemy:
+        max: 5
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 12
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 2
+  16:
+    proficiency_bonus: 5
+    hit_die: d10
+    features:
+    - Ability Score Improvement
+    resources:
+      favored_enemy:
+        max: 5
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 12
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 2
+  17:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Precise Hunter
+    resources:
+      favored_enemy:
+        max: 6
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 14
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 1
+  18:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Feral Senses
+    resources:
+      favored_enemy:
+        max: 6
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 14
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 1
+  19:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Epic Boon
+    resources:
+      favored_enemy:
+        max: 6
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 15
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+  20:
+    proficiency_bonus: 6
+    hit_die: d10
+    features:
+    - Foe Slayer
+    resources:
+      favored_enemy:
+        max: 6
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 2
+    cantrips: 0
+    prepared: 15
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
 features:
 - name: Favored Enemy
   level: 1
@@ -237,6 +423,53 @@ features:
   level: 10
   origin: class
   unsupported: Temp-HP preparation and exhaustion recovery are not simulated.
+- name: Subclass Feature
+  level: 11
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id002
+    builder: true
+- name: Relentless Hunter
+  level: 13
+  origin: class
+  mechanics:
+    relentless_hunter: true
+- name: Nature's Veil
+  level: 14
+  origin: class
+  mechanics:
+    builder: true
+- name: Subclass Feature
+  level: 15
+  origin: class
+  mechanics: *id001
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id002
+- name: Precise Hunter
+  level: 17
+  origin: class
+  mechanics:
+    precise_hunter: true
+- name: Feral Senses
+  level: 18
+  origin: class
+  unsupported: Blindsight is not modeled.
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Foe Slayer
+  level: 20
+  origin: class
+  mechanics:
+    foe_slayer: true
 - name: Hunter
   level: 3
   origin: subclass
@@ -256,3 +489,16 @@ features:
   origin: subclass
   mechanics:
     multiattack_defense: true
+- name: Superior Hunter's Prey
+  level: 11
+  origin: subclass
+  mechanics:
+    superior_hunters_prey: true
+  unsupported: Only weapon hits on the marked creature trigger it; the second creature
+    is assumed in range.
+- name: Superior Hunter's Defense
+  level: 15
+  origin: subclass
+  mechanics:
+    superior_hunters_defense: true
+  unsupported: Only damage from attacks triggers the Reaction.

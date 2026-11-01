@@ -300,7 +300,7 @@ def test_step3_fix1_scope_additions_and_combat_mechanics(monkeypatch):
     def oracle():
         raw=source_spells(); records={s['name']:s for s in read_yaml(ROOT/'spell_scope.yaml')['spells']}
         specs=spell_specs()
-        assert len(specs)==245
+        assert len(specs)==273
         for name,scope in expected.items():
             assert records[name]['scope']==spell_catalog.classify(raw[name])['scope']==scope
             if raw[name]['level']<=5:

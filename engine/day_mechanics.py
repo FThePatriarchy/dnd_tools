@@ -128,6 +128,7 @@ class DayMechanics:
         natural = dice.d20(self.rng,adv,dis)
         bonus = self.modifier(actor,"save",0,"death",consume=True) - self.exhaustion_penalty(actor)
         natural = self.heroic_reroll(actor, natural, lambda n: n == 20 or n != 1 and n + bonus >= 10, "death")
+        if actor.features.get("survivor") and natural >= 18: natural = 20  # Defy Death
         success, total, natural = self.class_failed_save(actor,"death",10,bonus,natural,natural == 20 or natural != 1 and natural + bonus >= 10)
         if natural == 20:
             self.heal(actor, 1)

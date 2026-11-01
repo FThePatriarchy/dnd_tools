@@ -24,8 +24,8 @@ def source(name):
     c = next(x for x in d["class"] if x["source"] == "XPHB")
     short = {"fighter": "Champion", "rogue": "Assassin", "wizard": "Evoker", "cleric": "Life", "barbarian": "Berserker", "paladin": "Devotion", "warlock": "Fiend", "bard": "Lore", "monk": "Open Hand", "ranger": "Hunter", "druid": "Moon", "sorcerer": "Draconic"}[name]
     s = next(x for x in d["subclass"] if x["source"] == "XPHB" and x["shortName"] == short)
-    f = {("class", x["name"], x["level"]): x for x in d["classFeature"] if x["source"] == "XPHB" and x["level"] <= 10}
-    f.update({("subclass", x["name"], x["level"]): x for x in d["subclassFeature"] if x["source"] == "XPHB" and x["subclassShortName"] == short and x["level"] <= 10})
+    f = {("class", x["name"], x["level"]): x for x in d["classFeature"] if x["source"] == "XPHB" and x["level"] <= 20}
+    f.update({("subclass", x["name"], x["level"]): x for x in d["subclassFeature"] if x["source"] == "XPHB" and x["subclassShortName"] == short and x["level"] <= 20})
     return c, s, f
 
 
@@ -70,10 +70,13 @@ def check_class_source(data, path="<class>"):
             if level >= 2:
                 text = json.dumps(features[("class", "Action Surge", 2)]["entries"])
                 v.check("Once" in text and "Short" in text and "Long" in text, p, "missing source recovery")
-                use("action_surge", 1, "all")
+                use("action_surge", 1 if level < 17 else 2, "all")
+                if level >= 17: v.check("twice" in json.dumps(features[("class", "Action Surge", 17)]["entries"]), p, "missing two-uses rule")
             if level >= 9:
                 v.check("can't use this feature again until" in json.dumps(features[("class", "Indomitable", 9)]["entries"]), p, "missing single-use rule")
-                use("indomitable", 1)
+                use("indomitable", 1 + (level >= 13) + (level >= 17))
+                for at in (13, 17):
+                    if level >= at: v.check("twice" in json.dumps(features[("class", "Indomitable", at)]["entries"]) or "three times" in json.dumps(features[("class", "Indomitable", at)]["entries"]), p, "missing Indomitable uses")
         elif c["name"] == "Rogue":
             v.check("two kinds" in json.dumps(features[("class", "Weapon Mastery", 1)]["entries"]), p, "missing two-masteries rule")
             masteries = 2
@@ -130,8 +133,8 @@ def check_class_source(data, path="<class>"):
             p = f"features[{i}]." + ".".join(map(str, route))
             if route == ("level",): expected = entry["level"]
             elif route == ("name",): expected = entry["name"]
-            elif f["name"] == "Improved Critical" and route == ("mechanics", "improved_critical"):
-                expected = int(re.search(r"roll of (\d+) or", text)[1])
+            elif f["name"] in {"Improved Critical", "Superior Critical"} and route == ("mechanics", "improved_critical"):
+                expected = int(re.search(r"roll of (\d+)", text)[1])
             elif f["name"] == "Divine Strike" and route == ("mechanics", "divine_strike"):
                 expected = re.search(r"\{@damage ([0-9]+d[0-9]+)", text)[1]
             elif f["name"] == "Second Wind" and route == ("actions", 0, "effects", 0, "apply", 0, "heal", "dice"):

@@ -1,0 +1,45 @@
+name: Power Word Fortify
+source: XPHB
+level: 7
+school: enchantment
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: false
+  m: null
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: instant
+concentration: false
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: n_targets
+    n: 6
+    distinct: true
+    up_to: true
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save: null
+  on_hit: []
+  on_fail: []
+  on_success: []
+  apply:
+  - temp_hp:
+      amount: 20
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- The Temporary Hit Points are split evenly among the six recipients.

@@ -1,0 +1,134 @@
+name: Ancient Red Dragon
+source: XMM
+cr: '24'
+ac: 22
+max_hp: 507
+hp_formula: 26d20 + 234
+abilities:
+  str: 30
+  dex: 10
+  con: 29
+  int: 18
+  wis: 15
+  cha: 27
+speed: 40
+movement_modes:
+  walk: 40
+  climb: 40
+  fly: 80
+creature_type: dragon
+alignment: evil
+proficiency_bonus: 7
+save_bonuses:
+  dex: 7
+  wis: 9
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 14
+resistances: []
+immunities:
+- fire
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 17
+  reach_ft: 15
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 10
+      type: slashing
+  - damage:
+      dice: 3d6
+      bonus: 0
+      type: fire
+multiattack: []
+actions:
+- name: Fire Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 90
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: dex
+      dc: 24
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 26d6
+        bonus: 0
+        type: fire
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- Lair actions and the in-lair Legendary Resistance count are excluded.
+- 'Pounce, Cloaked Flight and breath positioning need a grid: Pounce is one Rend, Cloaked Flight is the Invisibility
+  casting.'
+spell_ability: cha
+spell_dc: 23
+spell_attack_bonus: 15
+spells:
+- Command
+- Detect Magic
+- Scorching Ray
+- Fireball
+spell_levels:
+  Command: 2
+  Detect Magic: 1
+  Scorching Ray: 3
+  Fireball: 6
+spell_costs:
+  Command: action
+  Detect Magic: action
+  Scorching Ray: action
+  Fireball: action
+spell_components:
+  Command:
+    m: false
+  Detect Magic:
+    m: false
+  Scorching Ray:
+    m: false
+  Fireball:
+    m: false
+limited_uses:
+  Fireball: 1
+  legendary_resistance: 4
+spell_resources:
+  Fireball: Fireball
+legendary:
+  uses: 3
+  options:
+  - name: Commanding Presence
+    cost: 1
+    spell: Command
+    once_per_round: true
+  - name: Fiery Rays
+    cost: 1
+    spell: Scorching Ray
+    once_per_round: true
+  - name: Pounce
+    cost: 1
+    attacks:
+    - Rend
+routines:
+- - Rend
+  - Rend
+  - Rend
+replacements:
+- Scorching Ray

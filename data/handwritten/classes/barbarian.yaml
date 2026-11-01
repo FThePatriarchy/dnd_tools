@@ -9,6 +9,8 @@ subclass_level: 3
 asi_levels:
 - 4
 - 8
+- 12
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -160,6 +162,147 @@ levels:
     cantrips: 0
     prepared: 0
     slots: {}
+  11:
+    proficiency_bonus: 4
+    hit_die: d12
+    features:
+    - Relentless Rage
+    resources:
+      rage:
+        max: 4
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  12:
+    proficiency_bonus: 4
+    hit_die: d12
+    features:
+    - Ability Score Improvement
+    resources:
+      rage:
+        max: 5
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  13:
+    proficiency_bonus: 5
+    hit_die: d12
+    features:
+    - Improved Brutal Strike
+    resources:
+      rage:
+        max: 5
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  14:
+    proficiency_bonus: 5
+    hit_die: d12
+    features:
+    - Subclass Feature
+    - Intimidating Presence
+    resources:
+      rage:
+        max: 5
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  15:
+    proficiency_bonus: 5
+    hit_die: d12
+    features:
+    - Persistent Rage
+    resources:
+      rage:
+        max: 5
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  16:
+    proficiency_bonus: 5
+    hit_die: d12
+    features:
+    - Ability Score Improvement
+    resources:
+      rage:
+        max: 5
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  17:
+    proficiency_bonus: 6
+    hit_die: d12
+    features:
+    - Improved Brutal Strike
+    resources:
+      rage:
+        max: 6
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  18:
+    proficiency_bonus: 6
+    hit_die: d12
+    features:
+    - Indomitable Might
+    resources:
+      rage:
+        max: 6
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  19:
+    proficiency_bonus: 6
+    hit_die: d12
+    features:
+    - Epic Boon
+    resources:
+      rage:
+        max: 6
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
+  20:
+    proficiency_bonus: 6
+    hit_die: d12
+    features:
+    - Primal Champion
+    resources:
+      rage:
+        max: 6
+        short_rest: 1
+        long_rest: all
+    weapon_masteries: 4
+    cantrips: 0
+    prepared: 0
+    slots: {}
 features:
 - name: Rage
   level: 1
@@ -243,6 +386,55 @@ features:
   origin: class
   mechanics:
     builder: true
+- name: Relentless Rage
+  level: 11
+  origin: class
+  mechanics:
+    relentless_rage: true
+  unsupported: The rising save DC resets each fight rather than on a rest.
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Improved Brutal Strike
+  level: 13
+  origin: class
+  mechanics: &id002
+    improved_brutal_strike: true
+- name: Subclass Feature
+  level: 14
+  origin: class
+  mechanics:
+    builder: true
+- name: Persistent Rage
+  level: 15
+  origin: class
+  mechanics:
+    persistent_rage: true
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id001
+- name: Improved Brutal Strike
+  level: 17
+  origin: class
+  mechanics: *id002
+- name: Indomitable Might
+  level: 18
+  origin: class
+  mechanics:
+    indomitable_might: true
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Primal Champion
+  level: 20
+  origin: class
+  mechanics:
+    builder: true
 - name: Path of the Berserker
   level: 3
   origin: subclass
@@ -263,3 +455,9 @@ features:
   origin: subclass
   mechanics:
     retaliation: true
+- name: Intimidating Presence
+  level: 14
+  origin: subclass
+  mechanics:
+    builder: true
+  unsupported: Restoring the use by spending a Rage is not modeled.

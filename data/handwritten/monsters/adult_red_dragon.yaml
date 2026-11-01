@@ -117,6 +117,7 @@ legendary:
   - name: Commanding Presence
     cost: 1
     spell: Command
+    once_per_round: true
 size: H
 routines:
 - - Rend

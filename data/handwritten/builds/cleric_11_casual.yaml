@@ -1,0 +1,49 @@
+class: cleric
+level: 11
+subclass: life
+abilities:
+  str: 15
+  dex: 10
+  con: 13
+  int: 8
+  wis: 14
+  cha: 12
+equipment: chain_shield
+choices:
+  ability_method: standard_array
+  background:
+    wis: 1
+    con: 1
+    str: 1
+  asis:
+    4:
+      wis: 1
+      str: 1
+    8:
+      wis: 1
+      str: 1
+  divine_order: protector
+  blessed_strikes: divine_strike
+  cantrips:
+  - Sacred Flame
+  - Guidance
+  - Light
+  - Thaumaturgy
+  - Spare the Dying
+  prepared_spells:
+  - Heal
+  - Harm
+  - Healing Word
+  - Sanctuary
+  - Protection from Evil and Good
+  - Detect Magic
+  - Command
+  - Warding Bond
+  - Beacon of Hope
+  - Spiritual Weapon
+  - Spirit Guardians
+  - Flame Strike
+  - Guiding Bolt
+  - Hold Person
+  - Shield of Faith
+  - Bane

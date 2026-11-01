@@ -1,0 +1,56 @@
+name: Flesh to Stone
+source: XPHB
+level: 6
+school: transmutation
+casting_time: action
+reaction_trigger: null
+range:
+  type: point
+  feet: 60
+components:
+  v: true
+  s: true
+  m: a cockatrice feather
+  m_consumed: false
+  m_cost_gp: null
+duration:
+  type: minutes
+  n: 1
+concentration: true
+ritual: false
+choices: []
+effects:
+- id: main
+  event: on_cast
+  target:
+    select: single
+    filter:
+    - creature
+    - visible
+    affects: any
+  attack: null
+  save:
+    ability: con
+    on_success: negate
+    auto_success_if: target.creature_type == construct
+  on_hit: []
+  on_fail:
+  - apply_condition:
+      condition: restrained
+      repeat_save:
+        ability: con
+        timing: end_of_turn
+        on_success: end
+  on_success:
+  - modify:
+      stat: speed
+      op: set
+      value: 0
+      scope: all
+    until: start_of_turn(caster.next_turn)
+  apply: []
+  limit: null
+scaling: null
+ends_on: []
+unsupported:
+- 'Becoming Petrified after repeated failed saves is not modeled: the target stays Restrained until it saves.'

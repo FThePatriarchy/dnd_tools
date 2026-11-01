@@ -1,0 +1,68 @@
+name: Tyrannosaurus Rex
+source: XMM
+cr: '8'
+ac: 13
+max_hp: 136
+hp_formula: 13d12 + 52
+abilities:
+  str: 25
+  dex: 10
+  con: 19
+  int: 2
+  wis: 12
+  cha: 9
+speed: 50
+movement_modes:
+  walk: 50
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses:
+  str: 10
+  wis: 4
+save_proficiencies:
+- str
+- wis
+initiative_bonus: 3
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 10
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 4d12
+      bonus: 7
+      type: piercing
+  - apply_condition:
+      condition: grappled
+      escape_dc: 17
+      max_size: L
+      linked: true
+  - apply_condition:
+      condition: restrained
+      max_size: L
+      linked: true
+- name: Tail
+  kind: melee
+  to_hit: 10
+  reach_ft: 15
+  effects:
+  - damage:
+      dice: 4d8
+      bonus: 7
+      type: bludgeoning
+  - apply_condition:
+      condition: prone
+      max_size: H
+multiattack:
+- Bite
+- Tail
+actions: []
+traits: []
+unsupported:
+- A creature grappled by the Bite can still be targeted by the Tail.

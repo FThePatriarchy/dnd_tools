@@ -10,7 +10,7 @@ from .loader import scaled_spell
 from .policy import Policy, area_heuristic, grab_cap
 from .state import Combatant, Effect, Binding, SpellInstance, compare_deadline
 
-INSTANT_PRIMITIVES = {"damage", "heal", "heal_pool", "temp_hp", "hit_dice_heal", "restore", "remove_condition", "spend_reaction", "stabilize", "dispel", "end_spell", "end_concentration", "maintain_spell"}
+INSTANT_PRIMITIVES = {"damage", "heal", "heal_pool", "kill", "temp_hp", "hit_dice_heal", "restore", "remove_condition", "spend_reaction", "stabilize", "dispel", "end_spell", "end_concentration", "maintain_spell"}
 
 MOVEMENT_EVENTS = {"on_aura_moves_onto_creature", "on_creature_enters_aura"}
 
@@ -300,6 +300,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if defender.has_condition("prone"):
             if melee: adv = True
             else: dis = True
+        if defender.features.get("elusive") and not defender.has_condition("incapacitated"): adv = False
         if weapon and ability == "str" and self.current is attacker and attacker.features.get("brutal_strike") and attacker.statuses.get("reckless") and not dis and attacker.statuses.get("brutal_turn") != self.turn_index and self.policy_for(attacker).brutal_strike(self,attacker,defender):
             adv = False
             attacker.statuses["brutal_attack"] = True
@@ -327,6 +328,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             if hit and self.monster_reaction(attacker, defender, attack, melee): hit = False
         attack["hit"] = hit
         self.record("attack", attacker=attacker.id, defender=defender.id, **attack)
+        if hit: self.hurl_through_hell(attacker, defender)
         if hit and self.mirror_intercepts(attacker, defender):
             self.end_activity_effects(attacker)
             return False
@@ -363,7 +365,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if dtype in target.immunities: amount = 0
         else:
             if any(e.kind == "defense" and dtype in e.data.get("immunity", []) for e in target.active_effects): amount = 0
-            resisted = (target.raging and dtype in {"bludgeoning","piercing","slashing"}) or dtype in target.resistances or target.has_condition("petrified") or any(e.kind == "defense" and dtype in e.data.get("resistance", []) for e in target.active_effects)
+            resisted = (target.raging and dtype in {"bludgeoning","piercing","slashing"}) or (dtype != "force" and any(e.kind == "status" and e.data.get("id") == "superior_defense" for e in target.active_effects)) or dtype in target.resistances or target.has_condition("petrified") or any(e.kind == "defense" and dtype in e.data.get("resistance", []) for e in target.active_effects)
             if resisted: amount //= 2
             if dtype in target.vulnerabilities or any(e.kind == "defense" and dtype in e.data.get("vulnerability", []) for e in target.active_effects): amount *= 2
         for e in target.active_effects:
@@ -428,6 +430,12 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             if self.saving_throw(target, "con", target.features["undead_fortitude"] + amount):
                 target.hp = 1
                 self.feature_log(target, "Undead Fortitude")
+        if before > 0 and target.hp == 0 and not target.dead and target.raging and target.features.get("relentless_rage"):
+            uses = target.statuses.get("relentless_uses", 0)
+            target.statuses["relentless_uses"] = uses + 1
+            if self.saving_throw(target, "con", 10 + 5 * uses):
+                target.hp = 2 * target.level
+                self.feature_log(target, "Relentless Rage")
         if before > 0 and target.hp == 0 and source is not None and source.team!=target.team and source.alive and source.features.get("dark_ones_blessing"):
             source.temp_hp=max(source.temp_hp,max(1,source.level+source.mod("cha")))
             self.feature_log(source,"Dark One's Blessing",amount=source.temp_hp)
@@ -445,7 +453,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if target.concentration is not None:
             if target.has_condition("incapacitated") or not target.alive:
                 self.end_spell(target.concentration)
-            elif amount and not self.saving_throw(target, "con", min(30, max(10, amount // 2)), concentration=True):
+            elif amount and not (target.features.get("relentless_hunter") and self.instances[target.concentration].spec["name"] == "Hunter's Mark") \
+                    and not self.saving_throw(target, "con", min(30, max(10, amount // 2)), concentration=True):
                 self.end_spell(target.concentration)
         if amount:
             if source is not None: self.end_activity_effects(source)
@@ -526,6 +535,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
 
     def available_slot(self, actor, spec):
         if self.free_mark(actor,spec["name"]): return 1
+        if self.signature_free(actor,spec["name"]): return 3
         if spec["name"] in actor.spell_resources:
             return actor.spell_levels.get(spec["name"], spec["level"]) if actor.limited_uses.get(actor.spell_resources[spec["name"]], 0) else None
         if spec["name"] in actor.spell_levels: return actor.spell_levels[spec["name"]]
@@ -540,7 +550,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if actor.raging: return False
         if actor.has_status("wild_shape"):
             moon={"Cure Wounds","Moonbeam","Starry Wisp"} | ({"Conjure Animals"} if actor.level>=5 else set()) | ({"Fount of Moonlight"} if actor.level>=7 else set()) | ({"Mass Cure Wounds"} if actor.level>=9 else set())
-            if not actor.features.get("circle_forms") or name not in moon: return False
+            if not actor.features.get("beast_spells") and (not actor.features.get("circle_forms") or name not in moon): return False
+            if actor.features.get("beast_spells") and (spec["components"].get("m_cost_gp") or spec["components"].get("m_consumed")): return False
         if actor.features.get("innate_sorcery") and spec["level"] and actor.statuses.get("quickened_turn")==self.turn_index: return False
         if not actor.recharge_ready.get(name, True): return False
         if (actor.has_status("engulfed") or actor.has_status("verbal_components_blocked")) and actor.spell_components.get(name, {}).get("v", spec["components"]["v"]): return False
@@ -551,11 +562,12 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if kind not in {"action", "bonus_action", "reaction"} or getattr(actor, kind) < 1: return False
         if kind == "action" and actor.action <= actor.surge_actions: return False
         if kind != "reaction" and self.current is not actor: return False
-        innate = self.free_mark(actor,name,slot) or name in actor.innate_spells or name in actor.spell_resources or name in actor.spell_levels
+        innate = self.free_mark(actor,name,slot) or self.signature_free(actor,name,slot) or name in actor.innate_spells or name in actor.spell_resources or name in actor.spell_levels
         if spec["level"] and not innate and actor.slot_cast_turn == self.turn_index: return False
         available = self.available_slot(actor, spec) if slot is None else slot
         if available is None or available < spec["level"]: return False
         if self.free_mark(actor,name,slot): return available==1
+        if self.signature_free(actor,name,slot): return available==3
         if innate and available != actor.spell_levels.get(name, spec["level"]): return False
         if not spec["level"]: return available == 0
         if name in actor.spell_resources: return actor.limited_uses.get(actor.spell_resources[name], 0) > 0
@@ -611,7 +623,9 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             if spec["level"]: caster.statuses["leveled_spell_turn"]=self.turn_index
             meta=caster.statuses.get("casting_metamagic",{})
             if meta.get("spell")==name:
-                caster.limited_uses["sorcery_points"]-=meta["cost"]; caster.spend("sorcery_points",meta["cost"])
+                if caster.features.get("arcane_apotheosis") and caster.has_status("innate_sorcery") and caster.statuses.get("apotheosis_turn")!=caster.turns_taken:
+                    caster.statuses["apotheosis_turn"]=caster.turns_taken  # Arcane Apotheosis: one free Metamagic per turn
+                else: caster.limited_uses["sorcery_points"]-=meta["cost"]; caster.spend("sorcery_points",meta["cost"])
                 if meta["option"]=="quickened_spell": caster.statuses["quickened_turn"]=self.turn_index
                 self.feature_log(caster,meta["option"])
         if spec["concentration"] and caster.concentration is not None:
@@ -619,11 +633,11 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         # Ending self-Haste (or a reaction) can make this casting impossible.
         if caster.has_condition("incapacitated") or not caster.alive: return None
         pending = {"caster": caster, "spell": spec, "targets": targets or [], "cancelled": False}
-        innate = self.free_mark(caster,name,slot) or name in caster.innate_spells or name in caster.spell_resources or name in caster.spell_levels
+        innate = self.free_mark(caster,name,slot) or self.signature_free(caster,name,slot) or name in caster.innate_spells or name in caster.spell_resources or name in caster.spell_levels
         instance.choices["_slot_expended"] = bool(slot and not innate)
         previous_slot_turn = caster.slot_cast_turn
         if innate:
-            resource = "favored_enemy" if self.free_mark(caster,name,slot) else caster.spell_resources.get(name, name)
+            resource = "favored_enemy" if self.free_mark(caster,name,slot) else self.signature_free(caster,name,slot) or caster.spell_resources.get(name, name)
             if resource in caster.limited_uses:
                 caster.limited_uses[resource] -= 1
                 caster.spend(resource)
@@ -631,6 +645,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             caster.recharge_ready[name] = False
             caster.spend(name)
         if slot and not innate: caster.slot_cast_turn = self.turn_index
+        self.overchannel(caster, spec, instance)
         pending = self.offer_reactions("on_spell_cast_nearby", **pending)
         if pending["cancelled"]:
             # Counterspell does not expend the interrupted spell's slot.
@@ -1020,11 +1035,13 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                             rolled = [self.rng.randint(1, sides) for _ in range(n * (2 if ctx.get("critical") else 1))]
                             amount = sum(rolled) + flat + bonus
                             instance.limits_count["orb_duplicate"] = len(set(rolled)) < len(rolled)
-                        elif key == "heal" and "dice" in value and target.has_status("maximize_healing"):
+                        elif key == "heal" and "dice" in value and (target.has_status("maximize_healing") or instance.caster.features.get("supreme_healing") and "level" in instance.spec) \
+                                or key == "damage" and "dice" in value and instance.choices.get("_overchannel"):
                             n, sides, flat = dice.parts(value["dice"])
                             amount = n * sides + flat + bonus
                         else: amount = self.class_weapon_dice(instance.caster, value["dice"], bool(ctx.get("critical")) and key == "damage" and ctx.get("attacker", instance.caster) is instance.caster and not declaration.get("save"), ctx if key == "damage" else {}) + bonus if "dice" in value else value["amount"]
                         if amount == "spell_mod": amount = instance.caster.spell_mod
+                        if amount == "full": amount = target.max_hp
                     if key == "damage" and ctx.get("attack", {}).get("weapon"):
                         for e in instance.caster.active_effects:
                             if e.kind == "weapon_adjustment":
@@ -1365,6 +1382,10 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 actor.statuses["vex"] = {"target": target.id, "expires": actor.turns_taken + 1}
             self.class_mastery(actor, target, attack)
         vex = actor.statuses.pop("vex", None)
+        studied = target.statuses.get("studied_by", {}).pop(actor.id, None) if actor.features.get("studied_attacks") else None
+        if studied is not None and actor.turns_taken <= studied:
+            # Studied Attacks: advantage on the next attack roll against a creature this fighter missed.
+            actor.effects.append(Effect("advantage", {"on": "attack_rolls", "scope": "all", "against": None}, 0, "studied", uses=1))
         extra = None
         if vex and vex["target"] == target.id and actor.turns_taken <= vex["expires"]:
             extra = Effect("advantage", {"on": "attack_rolls", "scope": "all", "against": None}, 0, "vex", uses=1)
@@ -1375,6 +1396,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         success = self.attack(actor, target, attack["to_hit"], hit, attack.get("kind", "melee") == "melee", weapon=True, ability=attack.get("ability", "str" if attack.get("kind", "melee") == "melee" else "dex"))
         self._monster_attack = previous_context
         actor.statuses.pop("brutal_attack",None)
+        if not success and actor.features.get("studied_attacks"): target.statuses.setdefault("studied_by", {})[actor.id] = actor.turns_taken + 1
         if success:
             self.class_after_hit(actor, target, cunning)
             self.monk_hit(actor,target,attack)
@@ -1453,8 +1475,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if pool is None or key in instance.choices: return
         allocations = instance.choices.get("allocations")
         if allocations is None:
-            allocations = self.policy_for(instance.caster).healing_pool(self, instance, targets, pool["amount"])
-        caps = {t.id: max(0, t.max_hp // 2 - t.hp) for t in targets}
+            allocations = self.policy_for(instance.caster).healing_pool(self, instance, targets, pool["amount"], pool["cap"])
+        caps = {t.id: max(0, (t.max_hp if pool["cap"] == "full" else t.max_hp // 2) - t.hp) for t in targets}
         if (not isinstance(allocations, dict) or set(allocations) - set(caps)
             or any(type(n) is not int or not 0 <= n <= caps[k] for k, n in allocations.items())
             or sum(allocations.values()) > pool["amount"]):
@@ -1713,6 +1735,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         self.focus_at_start={}
         for actor in self.combatants:
             self.monk_initiative(actor)
+            self.class_initiative(actor)
             if actor.features.get("monks_focus"): self.focus_at_start[actor.id]=(actor.limited_uses["focus"],actor.resources_spent.get("focus",0))
         initiative = sorted((c for c in self.combatants if c.summoner_id is None), key=lambda c: (-(dice.d20(self.rng, advantage=c.has_condition("invisible") or c.features.get("initiative_advantage", False)) + c.mod("dex") + c.initiative_bonus), c.id))
         for c in [c for c in initiative if c.features.get("alert")]:

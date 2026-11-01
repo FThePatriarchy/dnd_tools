@@ -1,0 +1,131 @@
+name: Adult Blue Dragon
+source: XMM
+cr: '16'
+ac: 19
+max_hp: 212
+hp_formula: 17d12 + 102
+abilities:
+  str: 25
+  dex: 10
+  con: 23
+  int: 16
+  wis: 15
+  cha: 20
+speed: 40
+movement_modes:
+  walk: 40
+  burrow: 30
+  fly: 80
+creature_type: dragon
+alignment: evil
+proficiency_bonus: 5
+save_bonuses:
+  dex: 5
+  wis: 7
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 10
+resistances: []
+immunities:
+- lightning
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 12
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 7
+      type: slashing
+  - damage:
+      dice: 1d10
+      bonus: 0
+      type: lightning
+multiattack: []
+actions:
+- name: Lightning Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: line
+      size_ft: 90
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: dex
+      dc: 19
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 11d10
+        bonus: 0
+        type: lightning
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- Lair actions and the in-lair Legendary Resistance count are excluded.
+- 'Pounce, Cloaked Flight and breath positioning need a grid: Pounce is one Rend, Cloaked Flight is the Invisibility
+  casting.'
+spell_ability: cha
+spell_dc: 18
+spell_attack_bonus: 10
+spells:
+- Detect Magic
+- Invisibility
+- Mage Hand
+- Shatter
+spell_levels:
+  Detect Magic: 1
+  Invisibility: 2
+  Mage Hand: 0
+  Shatter: 2
+spell_costs:
+  Detect Magic: action
+  Invisibility: action
+  Mage Hand: action
+  Shatter: action
+spell_components:
+  Detect Magic:
+    m: false
+  Invisibility:
+    m: false
+  Mage Hand:
+    m: false
+  Shatter:
+    m: false
+limited_uses:
+  legendary_resistance: 3
+legendary:
+  uses: 3
+  options:
+  - name: Cloaked Flight
+    cost: 1
+    spell: Invisibility
+    once_per_round: true
+  - name: Sonic Boom
+    cost: 1
+    spell: Shatter
+    once_per_round: true
+  - name: Tail Swipe
+    cost: 1
+    attacks:
+    - Rend
+routines:
+- - Rend
+  - Rend
+  - Rend
+replacements:
+- Shatter

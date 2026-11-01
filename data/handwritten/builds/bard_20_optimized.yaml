@@ -1,0 +1,57 @@
+class: bard
+level: 20
+subclass: lore
+abilities:
+  str: 8
+  dex: 14
+  con: 15
+  int: 8
+  wis: 10
+  cha: 15
+equipment: studded_staff
+choices:
+  ability_method: point_buy
+  background:
+    cha: 2
+    con: 1
+  asis:
+    4:
+      cha: 2
+    8:
+      cha: 1
+      con: 1
+    12:
+      con: 2
+    16:
+      con: 1
+      str: 1
+    19:
+      str: 2
+  cantrips:
+  - Starry Wisp
+  - Vicious Mockery
+  - Mage Hand
+  - Minor Illusion
+  prepared_spells:
+  - Otto's Irresistible Dance
+  - Power Word Fortify
+  - Mordenkainen's Sword
+  - Regenerate
+  - Mind Blank
+  - Power Word Stun
+  - Dominate Monster
+  - Foresight
+  - Healing Word
+  - Fireball
+  - Wall of Force
+  - Sleep
+  - Dissonant Whispers
+  - Faerie Fire
+  - Hypnotic Pattern
+  - Slow
+  - Synaptic Static
+  - Polymorph
+  - Shatter
+  - Hold Person
+  - Aid
+  - Mass Cure Wounds

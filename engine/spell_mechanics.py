@@ -144,6 +144,7 @@ class SpellMechanics:
                 target.hit_dice -= count
                 self.heal(target, sum(dice.roll(self.rng, "1" + target.hit_die if target.hit_die.startswith("d") else target.hit_die) for _ in range(count)) + instance.caster.spell_mod)
         elif key == "extinguish": self.extinguish(target, method="doused")
+        elif key == "kill": self.kill(target)
         elif key == "stabilize":
             if target.hp == 0 and not target.permanently_removed: self.stabilize(target)
         elif key == "restore":

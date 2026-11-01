@@ -9,6 +9,8 @@ subclass_level: 3
 asi_levels:
 - 4
 - 8
+- 12
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -246,6 +248,303 @@ levels:
       3: 3
       4: 3
       5: 2
+  11:
+    proficiency_bonus: 4
+    hit_die: d6
+    features: []
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 11
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 16
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+  12:
+    proficiency_bonus: 4
+    hit_die: d6
+    features:
+    - Ability Score Improvement
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 12
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 16
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+  13:
+    proficiency_bonus: 5
+    hit_die: d6
+    features: []
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 13
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 17
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+  14:
+    proficiency_bonus: 5
+    hit_die: d6
+    features:
+    - Subclass Feature
+    - Dragon Wings
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 14
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 17
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+  15:
+    proficiency_bonus: 5
+    hit_die: d6
+    features: []
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 15
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 18
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+      8: 1
+  16:
+    proficiency_bonus: 5
+    hit_die: d6
+    features:
+    - Ability Score Improvement
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 16
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 18
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+      8: 1
+  17:
+    proficiency_bonus: 6
+    hit_die: d6
+    features:
+    - Metamagic
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 17
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 19
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+      8: 1
+      9: 1
+  18:
+    proficiency_bonus: 6
+    hit_die: d6
+    features:
+    - Subclass Feature
+    - Dragon Companion
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 18
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 20
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 3
+      6: 1
+      7: 1
+      8: 1
+      9: 1
+  19:
+    proficiency_bonus: 6
+    hit_die: d6
+    features:
+    - Epic Boon
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 19
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 21
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 3
+      6: 2
+      7: 1
+      8: 1
+      9: 1
+  20:
+    proficiency_bonus: 6
+    hit_die: d6
+    features:
+    - Arcane Apotheosis
+    resources:
+      innate_sorcery:
+        max: 2
+        short_rest: 0
+        long_rest: all
+      sorcery_points:
+        max: 20
+        short_rest: 0
+        long_rest: all
+      sorcerous_restoration:
+        max: 1
+        short_rest: 0
+        long_rest: all
+    weapon_masteries: 0
+    cantrips: 6
+    prepared: 22
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 3
+      6: 2
+      7: 2
+      8: 1
+      9: 1
 features:
 - name: Innate Sorcery
   level: 1
@@ -306,6 +605,39 @@ features:
   origin: class
   mechanics:
     builder: true
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Subclass Feature
+  level: 14
+  origin: class
+  mechanics: &id002
+    builder: true
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id001
+- name: Metamagic
+  level: 17
+  origin: class
+  mechanics:
+    progression: true
+- name: Subclass Feature
+  level: 18
+  origin: class
+  mechanics: *id002
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Arcane Apotheosis
+  level: 20
+  origin: class
+  mechanics:
+    arcane_apotheosis: true
 - name: Draconic Sorcery
   level: 3
   origin: subclass
@@ -326,3 +658,13 @@ features:
   origin: subclass
   mechanics:
     elemental_affinity: true
+- name: Dragon Wings
+  level: 14
+  origin: subclass
+  unsupported: Flight is not simulated.
+- name: Dragon Companion
+  level: 18
+  origin: subclass
+  mechanics:
+    builder: true
+  unsupported: Casting Summon Dragon without Concentration is not modeled.

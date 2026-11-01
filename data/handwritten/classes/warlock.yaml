@@ -9,6 +9,8 @@ subclass_level: 3
 asi_levels:
 - 4
 - 8
+- 12
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -125,6 +127,116 @@ levels:
     prepared: 10
     slots:
       5: 2
+  11:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Mystic Arcanum
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 11
+    slots:
+      5: 3
+  12:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 11
+    slots:
+      5: 3
+  13:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Mystic Arcanum
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 12
+    slots:
+      5: 3
+  14:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Hurl Through Hell
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 12
+    slots:
+      5: 3
+  15:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Mystic Arcanum
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 13
+    slots:
+      5: 3
+  16:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 13
+    slots:
+      5: 3
+  17:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Mystic Arcanum
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 14
+    slots:
+      5: 4
+  18:
+    proficiency_bonus: 6
+    hit_die: d8
+    features: []
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 14
+    slots:
+      5: 4
+  19:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Epic Boon
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 15
+    slots:
+      5: 4
+  20:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Eldritch Master
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 15
+    slots:
+      5: 4
 features:
 - name: Eldritch Invocation Options
   level: 1
@@ -173,6 +285,46 @@ features:
   origin: class
   mechanics:
     builder: true
+- name: Mystic Arcanum
+  level: 11
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id002
+    builder: true
+- name: Mystic Arcanum
+  level: 13
+  origin: class
+  mechanics: *id001
+- name: Subclass Feature
+  level: 14
+  origin: class
+  mechanics:
+    builder: true
+- name: Mystic Arcanum
+  level: 15
+  origin: class
+  mechanics: *id001
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id002
+- name: Mystic Arcanum
+  level: 17
+  origin: class
+  mechanics: *id001
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Eldritch Master
+  level: 20
+  origin: class
+  unsupported: Magical Cunning is not automated, so neither is this.
 - name: Fiend Patron
   level: 3
   origin: subclass
@@ -198,3 +350,9 @@ features:
   origin: subclass
   mechanics:
     fiendish_resilience: true
+- name: Hurl Through Hell
+  level: 14
+  origin: subclass
+  mechanics:
+    hurl_through_hell: true
+  unsupported: Restoring the use with a Pact Magic slot is not modeled.

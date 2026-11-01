@@ -1,14 +1,17 @@
-"""Strict level-1..10 class declarations; no older-edition fallback."""
+"""Strict level-1..20 class declarations; no older-edition fallback."""
 import re
 
 from .loader import ROOT, Validator, ValidationError, read_yaml
 from .sheets import validate_sheet
 
+MAX_LEVEL = 20
 SUBCLASSES = {"fighter": "champion", "rogue": "assassin", "wizard": "evoker", "cleric": "life", "barbarian": "berserker", "paladin": "devotion", "warlock": "fiend", "bard": "lore", "monk": "open hand", "ranger": "hunter", "druid": "moon", "sorcerer": "draconic"}
 SYMBOLS = {"class_level", "sneak_dice", "spark_dice", "wis_dice"}
 CLASS_FLAGS = set("improved_critical initiative_advantage remarkable_athlete tactical_mind tactical_master heroic_warrior sneak_attack assassinate uncanny_dodge reliable_talent roving_aim poisoners_kit evasion potent_cantrip sculpt_spells empowered_evocation disciple_of_life blessed_healer potent_spellcasting divine_strike arcane_recovery memorize_spell sear_undead thaumaturge armored rage reckless_attack danger_sense frenzy mindless_rage retaliation brutal_strike lay_on_hands sacred_weapon aura_of_protection aura_of_devotion aura_of_courage".split())
 CLASS_FLAGS.update("values_buffs pact_magic agonizing_blast armor_of_shadows eldritch_mind dark_ones_blessing dark_ones_own_luck fiendish_resilience bardic_inspiration cutting_words jack_of_all_trades".split())
 CLASS_FLAGS.update("martial_arts monks_focus uncanny_metabolism deflect_attacks stunning_strike empowered_strikes heightened_focus self_restoration open_hand_technique wholeness_of_body favored_enemy colossus_slayer horde_breaker multiattack_defense open_hand_addle stunning_reserve".split())
+CLASS_FLAGS.update("relentless_rage improved_brutal_strike persistent_rage indomitable_might radiant_strikes holy_nimbus deflect_energy disciplined_survivor perfect_focus quivering_palm superior_defense superior_hunters_prey relentless_hunter superior_hunters_defense precise_hunter foe_slayer hurl_through_hell peerless_skill superior_inspiration lunar_form beast_spells archdruid arcane_apotheosis".split())
+CLASS_FLAGS.update("studied_attacks survivor improved_cunning_strike envenom_weapons elusive death_strike supreme_healing overchannel improved_potent_spellcasting".split())
 CLASS_FLAGS.update("wild_shape circle_forms improved_circle_forms innate_sorcery font_of_magic elemental_affinity quickened_spell heightened_spell careful_spell extended_spell".split())
 BOOL_FLAGS = CLASS_FLAGS - {"improved_critical", "sneak_attack", "divine_strike"}
 
@@ -36,7 +39,7 @@ def validate_class(data, path="<class>", *, source_check=True):
     v.sequence(data["asi_levels"], "asi_levels")
     for n in data["asi_levels"]: v.number(n, "asi_levels", 1, True)
     v.check(isinstance(data["levels"], dict), "levels", "expected mapping")
-    v.check(set(data["levels"]) == set(range(1, 11)), "levels", "requires levels 1..10")
+    v.check(set(data["levels"]) == set(range(1, MAX_LEVEL + 1)), "levels", f"requires levels 1..{MAX_LEVEL}")
     v.sequence(data["features"], "features")
     names = set()
     for i, f in enumerate(data["features"]):
@@ -44,7 +47,7 @@ def validate_class(data, path="<class>", *, source_check=True):
         v.obj(f, p, "name level origin", "mechanics actions unsupported")
         v.text(f["name"], p + ".name")
         v.number(f["level"], p + ".level", 1, True)
-        v.check(f["level"] <= 10, p, "level beyond scope")
+        v.check(f["level"] <= MAX_LEVEL, p, "level beyond scope")
         v.enum(f["origin"], {"class", "subclass"}, p + ".origin")
         v.check((f["name"], f["level"], f["origin"]) not in names, p, "duplicate feature")
         names.add((f["name"], f["level"], f["origin"]))

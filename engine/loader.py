@@ -14,7 +14,7 @@ DAMAGE_TYPES = {"acid", "bludgeoning", "cold", "fire", "force", "lightning", "ne
 TOP = "name source level school casting_time reaction_trigger range components duration concentration ritual choices effects scaling ends_on unsupported".split()
 BLOCK = "id event target attack save on_hit on_fail on_success apply limit".split()
 PRIMITIVES = {
-    "heal_pool": ("amount cap", ""),
+    "heal_pool": ("amount cap", ""), "kill": ("", ""),
     "damage": ("type", "dice amount bonus explode_max wounded_dice delay leech half end_after_total leap_on_duplicate slot_bonus add_caster_mod"), "heal": ("", "dice bonus amount"),
     "temp_hp": ("", "dice amount"),
     "type_mask": ("type", ""), "extinguish": ("", ""),
@@ -237,10 +237,10 @@ class Validator:
                 if "wounded_dice" in value: self.dice(value["wounded_dice"], q + ".wounded_dice")
             elif key == "heal_pool":
                 self.number(value["amount"], q + ".amount", 0, True)
-                self.enum(value["cap"], {"half"}, q + ".cap")
+                self.enum(value["cap"], {"half", "full"}, q + ".cap")
             elif key in {"temp_hp", "heal"}:
                 self.check(("dice" in value) != ("amount" in value), q, "requires exactly one of dice/amount")
-                if "amount" in value and value["amount"] != "spell_mod": self.number(value["amount"], q + ".amount", 0)
+                if "amount" in value and value["amount"] not in {"spell_mod", "full"} or key == "temp_hp" and value.get("amount") == "full": self.number(value["amount"], q + ".amount", 0)
             elif key == "apply_condition":
                 self.enum(value["condition"], CONDITIONS, q + ".condition")
                 if "resist_removal" in value: self.enum(value["resist_removal"], ABILITIES, q)

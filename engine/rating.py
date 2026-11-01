@@ -25,7 +25,7 @@ import os
 import random
 import sys
 
-from .benchmark import encounter_xp, load_benchmark
+from .benchmark import default_version, encounter_xp, load_benchmark
 from .calibration import BUDGETS, REPORTS
 from .day_options import MORALE
 from .encounters import party_sheets, run_encounter, wilson
@@ -140,12 +140,13 @@ class _Inline:
         f = Future(); f.set_result(fn(arg)); return f
 
 
-def rate_party(builds, *, threshold=THRESHOLD, seed=1, strategy="default", morale="none", benchmark=1, workers=None,
+def rate_party(builds, *, threshold=THRESHOLD, seed=1, strategy="default", morale="none", benchmark=None, workers=None,
                probe=_probe, executor=None):
     """Rate a party. probe and executor (a context-managed object with submit) can be replaced in tests."""
     from .day_options import DayOptions
     sheets = party_sheets(builds, DayOptions())
     level = round(sum(s["level"] for s in sheets) / len(sheets))
+    if benchmark is None: benchmark = default_version(level)
     data = load_benchmark(benchmark)
     if level not in data["levels"]: raise ValueError(f"benchmark v{benchmark} has no level {level}")
     ladders = data["levels"][level]
@@ -239,7 +240,7 @@ def main():
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--strategy", choices=list(STRATEGIES), default="default", help="party AI strategy")
     parser.add_argument("--morale", choices=MORALE, default="none")
-    parser.add_argument("--benchmark", type=int, default=1, help="frozen benchmark version")
+    parser.add_argument("--benchmark", type=int, help="frozen benchmark version (default: 1 up to level 10, 2 above)")
     parser.add_argument("--workers", type=int)
     parser.add_argument("--name", help="report name for --write (default: the build names)")
     parser.add_argument("--write", action="store_true", help="write data/reports/rating_<name>.{md,json}")

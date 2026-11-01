@@ -9,6 +9,8 @@ subclass_level: 3
 asi_levels:
 - 4
 - 8
+- 12
+- 16
 levels:
   1:
     proficiency_bonus: 2
@@ -146,6 +148,181 @@ levels:
       3: 3
       4: 3
       5: 2
+  11:
+    proficiency_bonus: 4
+    hit_die: d8
+    features: []
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 16
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+  12:
+    proficiency_bonus: 4
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 16
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+  13:
+    proficiency_bonus: 5
+    hit_die: d8
+    features: []
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 17
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+  14:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Subclass Feature
+    - Peerless Skill
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 17
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+  15:
+    proficiency_bonus: 5
+    hit_die: d8
+    features: []
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 18
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+      8: 1
+  16:
+    proficiency_bonus: 5
+    hit_die: d8
+    features:
+    - Ability Score Improvement
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 18
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+      8: 1
+  17:
+    proficiency_bonus: 6
+    hit_die: d8
+    features: []
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 19
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 2
+      6: 1
+      7: 1
+      8: 1
+      9: 1
+  18:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Superior Inspiration
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 20
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 3
+      6: 1
+      7: 1
+      8: 1
+      9: 1
+  19:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Epic Boon
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 21
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 3
+      6: 2
+      7: 1
+      8: 1
+      9: 1
+  20:
+    proficiency_bonus: 6
+    hit_die: d8
+    features:
+    - Words of Creation
+    resources: {}
+    weapon_masteries: 0
+    cantrips: 4
+    prepared: 22
+    slots:
+      1: 4
+      2: 3
+      3: 3
+      4: 3
+      5: 3
+      6: 2
+      7: 2
+      8: 1
+      9: 1
 features:
 - name: Bardic Inspiration
   level: 1
@@ -203,6 +380,36 @@ features:
   origin: class
   mechanics:
     builder: true
+- name: Ability Score Improvement
+  level: 12
+  origin: class
+  mechanics: &id001
+    builder: true
+- name: Subclass Feature
+  level: 14
+  origin: class
+  mechanics:
+    builder: true
+- name: Ability Score Improvement
+  level: 16
+  origin: class
+  mechanics: *id001
+- name: Superior Inspiration
+  level: 18
+  origin: class
+  mechanics:
+    superior_inspiration: true
+- name: Epic Boon
+  level: 19
+  origin: class
+  mechanics:
+    builder: true
+- name: Words of Creation
+  level: 20
+  origin: class
+  mechanics:
+    builder: true
+  unsupported: The second target within ten feet is not modeled.
 - name: College of Lore
   level: 3
   origin: subclass
@@ -222,3 +429,9 @@ features:
   origin: subclass
   mechanics:
     builder: true
+- name: Peerless Skill
+  level: 14
+  origin: subclass
+  mechanics:
+    peerless_skill: true
+  unsupported: Used on failed attack rolls only.
