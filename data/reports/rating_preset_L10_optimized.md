@@ -1,10 +1,10 @@
 # Party rating: fighter_10_optimized, cleric_10_optimized, rogue_10_optimized, wizard_10_optimized
 
-Level 10, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,600 runs.
+Level 10, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,450 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 10 (3100 XP).
 
-**Overall: 9,411 XP (2,353 per PC, 0.76x High)**, the geometric mean of the types.
+**Overall: 9,404 XP (2,351 per PC, 0.76x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
@@ -13,7 +13,7 @@ The rating is the encounter XP at which the party's chance of defeat (TPK, or ev
 | caster | 7,858 | 1,965 | 0.63 |
 | swarm | 9,422 | 2,355 | 0.76 |
 | control | 10,286 | 2,571 | 0.83 |
-| solo | 6,558 | 1,639 | 0.53 |
+| solo | 6,530 | 1,633 | 0.53 |
 
 ## Ladder results
 
@@ -85,4 +85,4 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | young_green_dragon x1 | 3,900 | 0.0% | 1.8% | 100 |
 | young_blue_dragon x1 | 5,000 | 0.0% | 1.8% | 100 |
 | young_red_dragon x1 | 5,900 | 0.0% | 1.8% | 100 |
-| adult_red_dragon x1 | 18,000 | 92.0% | 7.8% | 50 |
+| adult_red_dragon x1 | 18,000 | 96.0% | 6.2% | 50 |

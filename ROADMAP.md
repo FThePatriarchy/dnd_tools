@@ -209,7 +209,7 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 - **Classes:** all twelve class tables run to level 20 and are checked against the XPHB tables; every level 11–20 feature is implemented, a builder choice, or a documented omission (`data/handwritten/CLASS_FORMAT.md`, "Levels 11–20"). The level 19 Epic Boon is an extra ASI (Boon of Fortitude is the one boon modeled). Presets exist at 11/13/15/17/20 for every class and profile.
 - **Spells:** 28 level 6–9 combat spells (`engine/spell_high.py`), source-checked like the rest. Omitted on purpose: Wish, Time Stop, True Polymorph, Shapechange, Simulacrum, Imprisonment, Contingency, Heroes' Feast, Prismatic Spray, Eyebite and the walls. New engine primitives: `kill` (Power Word Kill, Divine Word), full healing (Power Word Heal), and an uncapped healing pool (Mass Heal).
 - **Monsters:** 21 high-CR XMM monsters (`engine/monster_high.py`): tyrannosaurus, clay golem, roc, purple worm, stone/frost/fire giants, horned devil, archmage, archpriest, mind flayer, vampire, adult white/black/green/blue and ancient white/black/green/blue/red dragons. All pass the source check.
-- **Fix that changes old results:** the adult red dragon's Commanding Presence legendary action lacked its once-per-round limit, so it cast Command about twice a round. Ratings that include it (the level 10 solo ladder) were too harsh and need a rerun.
+- **Fix that changes old results:** the adult red dragon's Commanding Presence legendary action lacked its once-per-round limit, so it cast Command about twice a round. Rerunning the three level 10 preset ratings changes nothing that matters (0.73×, 0.59× and 0.76× as before, within 0.1% in XP): their solo crossing comes before the adult red dragon step.
 - **Benchmark v2** (`data/benchmarks/benchmark_v2.yaml`): v1's levels 1–10 unchanged, plus levels 11–20 frozen by the same rules with the new monsters added to the rosters. Ratings use v1 up to level 10 and v2 above.
 - **Standard party ratings** (Fighter/Cleric/Rogue/Wizard, `data/reports/rating_preset_L{11,13,15,17,20}.md`, 4–6 minutes each):
 
@@ -226,7 +226,7 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 
 ## Later
 
-- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Still to do: the calibration sweep at levels 11–20, and casual/optimized ratings there.
+- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Still to do: the calibration sweep at levels 11–20, casual/optimized ratings there, and class comparisons at high level.
 - More classes: all twelve 2024 classes are done at levels 1–20.
 - ~~A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.~~ Done 2026-10-31: `python -m engine.dm fight|day|monsters` (`engine/dm.py`). `fight` runs adaptively (100–800 runs) and reports win, defeat, TPK, someone down and someone dead with 95% margins, the encounter's XP as a multiple of this party's DMG High budget, and each PC's chance to drop or die, HP left and mean resources spent. `day` takes a day file or inline `--steps` and adds, per encounter, how often it is reached and cleared. `monsters` lists usable monsters by CR. The shared runners gained an optional `detail` output; their metrics are unchanged.
 - Repo housekeeping: done 2026-10-26. `readme.md` has working usage examples; the 5etools zip, `raw_data/` and the retired `spellsim/` + `ai_extractors/` pipeline are ignored and kept locally.
