@@ -104,3 +104,23 @@ def test_benchmark_v2_keeps_v1_and_adds_levels_11_to_20():
     assert all(v2["levels"][level] == v1["levels"][level] for level in range(1, 11))
     assert freeze(2)["levels"] == v2["levels"]
     assert default_version(10) == 1 and default_version(11) == 2
+
+
+def test_blinded_caster_does_not_healing_word_itself():
+    from engine.policy import Policy
+    from engine.state import Combatant as C
+    sheet = load_sheet(ROOT / "monsters" / "archpriest.yaml")
+    priest = C.from_sheet(sheet, "p", "enemy")
+    priest.hp = 50
+    priest.conditions.add("blinded")
+    foe = Combatant("f", team="party", max_hp=500, ac=30)
+    b = Combat([priest, foe], load_spells(), seed=1)
+    b.begin_turn(priest)
+    Policy().take_turn(b, priest)
+    assert priest.limited_uses["Divine Aid"] == 3
+
+
+def test_high_sweep_writes_its_own_report():
+    from engine.calibration import HIGH_LEVELS, report_paths
+    assert HIGH_LEVELS == (11, 13, 15, 17, 20)
+    assert report_paths("party_spread", "grab_half", high=True)[1].name == "calibration_dmg_area_party_spread_grab_half_high.md"

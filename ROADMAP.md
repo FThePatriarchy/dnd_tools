@@ -223,10 +223,26 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 
   - The party reaches 5% defeat at about 0.5–0.7× DMG High, below the 0.73–0.80× of levels 1–10. The builder gives no magic items, which the DMG budgets assume at these levels, and tier 4 monsters (legendary resistance and actions, breath recharge) hit harder than the PCs' new features add.
   - Single-type values rest on one roster monster per level (e.g. tyrannosaurus brutes at 13–15), so they are weaker evidence than the overall value.
+- **Calibration sweep at 11–20** (2026-11-01): `python -m engine.calibration --high --runs 100 --write` → `data/reports/calibration_dmg_area_party_spread_grab_half_high.md` (engine defaults, same party and rules as the level 1–10 baseline, about 25 minutes). No engine errors. Median per slot:
+
+  | Level | Low defeat | Moderate: any down / defeat | High: any down / any death / defeat |
+  | ---: | ---: | ---: | ---: |
+  | 10 (baseline) | 0% | 59% / 4% | 87% / 10% / 3% |
+  | 11 | 0% | 23% / 0% | 80% / 17% / 16% |
+  | 13 | 0% | 31% / 0% | 84% / 29% / 24% |
+  | 15 | 0% | 50% / 6% | 100% / 34% / 26% |
+  | 17 | 0% | 41% / 0% | 85% / 35% / 34% |
+  | 20 | 0% | 81% / 15% | 100% / 100% / 100% |
+
+  - Median TPK never falls from Low to Moderate to High to Over at any level, so the shape holds. Low is easy and Moderate stays survivable through level 17, as the DMG describes.
+  - High gets steadily deadlier with level: median defeat climbs from 16% at 11 to 34% at 17, against 0–18% at levels 1–10. This agrees with the ratings falling to 0.5–0.7×.
+  - **Level 20 breaks.** The High budget nearly doubles from 17 to 20 (11,700 → 22,000 XP per PC), and every High group (8 adult white dragons, 7 adult black, 5 adult blue, 6 purple worms, 3 ancient white, 2 ancient green) wipes the party, mostly in rounds 1–3 from stacked breath weapons. Moderate is already 15% defeat. This is rules-legal (the 2024 DMG has no group multiplier), but the 4 PCs have no magic items, Wish or other omitted spells.
+  - Low–High outliers (defeat ≥ 50%): aboleths at every level (domination, as at level 10), mage ×7 at 11 High (94%), tyrannosaurus ×8 at 15 High (100%), horned devil ×6–7 at 17 High and 20 Moderate, mind flayer ×7 at 13 High, and the six level 20 High groups.
+- **Fix:** a blinded caster tried to Healing Word itself and crashed the run (Healing Word needs a target the caster can see; the rogue's level 14 Obscure strike blinds). It now falls back to Cure Wounds. Level 1–10 results are unchanged, since the old path always raised.
 
 ## Later
 
-- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Still to do: the calibration sweep at levels 11–20, casual/optimized ratings there, and class comparisons at high level.
+- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Calibration sweep done 2026-11-01. Still to do: casual/optimized ratings at 11–20, magic items (the likely cause of the low tier 3–4 numbers), and class comparisons at high level.
 - More classes: all twelve 2024 classes are done at levels 1–20.
 - ~~A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.~~ Done 2026-10-31: `python -m engine.dm fight|day|monsters` (`engine/dm.py`). `fight` runs adaptively (100–800 runs) and reports win, defeat, TPK, someone down and someone dead with 95% margins, the encounter's XP as a multiple of this party's DMG High budget, and each PC's chance to drop or die, HP left and mean resources spent. `day` takes a day file or inline `--steps` and adds, per encounter, how often it is reached and cleared. `monsters` lists usable monsters by CR. The shared runners gained an optional `detail` output; their metrics are unchanged.
 - Repo housekeeping: done 2026-10-26. `readme.md` has working usage examples; the 5etools zip, `raw_data/` and the retired `spellsim/` + `ai_extractors/` pipeline are ignored and kept locally.

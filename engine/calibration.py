@@ -12,6 +12,7 @@ default DayOptions.
     python -m engine.calibration --compare                    # side-by-side area-rule report
     python -m engine.calibration --compare-grab               # side-by-side grab-cap report
     python -m engine.calibration --adaptive --write           # adaptive run counts (*_adaptive reports)
+    python -m engine.calibration --high --runs 100 --write    # levels 11-20 (*_high reports)
 
 --area and --grab swap the no-grid area-of-effect rule and the multi-target
 grab cap for one sweep. Their defaults are the engine defaults
@@ -32,6 +33,7 @@ from .loader import ROOT, load_sheet
 from .policy import FEET_PER_TARGET, dmg_area_heuristic, is_grab, printed_grab_count
 
 LEVELS = (1, 3, 5, 7, 10)
+HIGH_LEVELS = (11, 13, 15, 17, 20)
 # Fixed reference party, not the supported-class registry.
 CLASSES = ("fighter", "cleric", "rogue", "wizard")
 
@@ -69,12 +71,13 @@ MORALE_RULES = {
 }
 
 
-def report_paths(area, grab="data", morale="none", adaptive=False):
+def report_paths(area, grab="data", morale="none", adaptive=False, high=False):
     """Named by rule, not by default: calibration_dmg is the DMG area table with printed grabs."""
     stem = ("calibration_dmg" + ("" if area == "dmg" else f"_area_{area}")
             + ("" if grab == "data" else f"_grab_{grab.removeprefix('grab_')}")
             + ("" if morale == "none" else f"_morale_{morale}")
-            + ("_adaptive" if adaptive else ""))
+            + ("_adaptive" if adaptive else "")
+            + ("_high" if high else ""))
     return REPORTS / f"{stem}.json", REPORTS / f"{stem}.md"
 
 
@@ -461,6 +464,7 @@ def main():
                         help="defeat rates the interval must exclude before stopping")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--levels", type=int, nargs="+", default=list(LEVELS))
+    parser.add_argument("--high", action="store_true", help=f"levels {HIGH_LEVELS}; writes *_high reports")
     parser.add_argument("--workers", type=int)
     parser.add_argument("--area", choices=list(AREA_RULES), default=DEFAULT_AREA, help="area-of-effect rule for this sweep only")
     parser.add_argument("--grab", choices=list(GRAB_RULES), default=DEFAULT_GRAB, help="multi-target grab cap for this sweep only")
@@ -494,10 +498,12 @@ def main():
     try:
         runs = Adaptive(args.min_runs, args.max_runs, args.batch, args.precision, tuple(args.threshold)) if args.adaptive else args.runs
     except ValueError as exc: parser.error(str(exc))
+    if args.high: args.levels = list(HIGH_LEVELS)
+    elif args.write and max(args.levels) > 10: parser.error("use --high to write levels above 10")
     cells = sweep(runs, args.seed, tuple(args.levels), args.workers, args.area, args.grab, args.monsters, args.morale)
     text = markdown(cells, runs, args.seed, args.area, args.grab, args.morale)
     if args.write:
-        json_path, md_path = report_paths(args.area, args.grab, args.morale, args.adaptive)
+        json_path, md_path = report_paths(args.area, args.grab, args.morale, args.adaptive, args.high)
         json_path.write_text(json.dumps({"runs": asdict(runs) if args.adaptive else runs, "adaptive": args.adaptive, "seed": args.seed, "area": args.area, "grab": args.grab,
                                          "morale": args.morale, "monsters": args.monsters, "cells": cells}, indent=1), encoding="utf-8")
         md_path.write_text(text, encoding="utf-8")

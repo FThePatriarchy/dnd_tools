@@ -405,7 +405,8 @@ class Policy:
         if wounded and actor.features.get("lay_on_hands") and self.allow_healing(combat,actor,wounded[0]):
             combat.lay_on_hands(actor,wounded[0])
         if wounded:
-            if self.allow_healing(combat, actor, wounded[0]) and combat.can_cast(actor, "Healing Word"):
+            # Healing Word needs a target the caster can see (a blinded caster falls back to touch).
+            if self.allow_healing(combat, actor, wounded[0]) and combat.can_cast(actor, "Healing Word") and wounded[0].visible_to(actor):
                 combat.cast(actor, "Healing Word", targets=[wounded[0]])
             elif self.allow_healing(combat, actor, wounded[0]) and combat.can_cast(actor, "Cure Wounds"):
                 combat.cast(actor, "Cure Wounds", targets=[wounded[0]])
