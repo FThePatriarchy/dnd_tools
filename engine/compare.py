@@ -11,9 +11,12 @@ about 2.3% across seeds, and single types moving by up to ~0.1x).
 Candidates are build names, or --variants: recipes generated from a class's
 main decisions at standard ability scores, so only the decision changes. A
 cheap expected-damage x durability screen ranks generated variants, and the
-top --finalists (plus the standard build) are rated.
+top --finalists (plus the standard build) are rated. --feats rates the
+standard build with each feat; --abilities rates other standard-array
+placements and ASI plans for the standard build.
 
     python -m engine.compare --level 5 --class fighter --variants --references standard casual
+    python -m engine.compare --level 5 --class cleric --abilities --finalists 5
     python -m engine.compare --level 5 --class wizard --candidates wizard_5 wizard_5_optimized wizard_5_casual
 """
 import argparse
@@ -27,7 +30,7 @@ import yaml
 from .benchmark import load_benchmark
 from .calibration import REPORTS
 from .loader import ROOT, load_sheet
-from .presets import ordered, party, recipe as preset_recipe
+from .presets import PRIMARY, ordered, party, recipe as preset_recipe
 from .rating import rate_party
 
 REFERENCE_CLASSES = ("fighter", "cleric", "rogue", "wizard")
@@ -179,6 +182,53 @@ def variants(cls, level, feats_only=False):
     return legal
 
 
+# Abilities worth a high secondary score, per class (the primary always takes the 15).
+SECONDARY = {"fighter": ("con", "dex", "wis"), "barbarian": ("con", "dex", "wis"), "paladin": ("con", "cha", "wis"),
+             "rogue": ("con", "wis", "int"), "monk": ("wis", "con", "str"), "ranger": ("con", "wis", "str"),
+             "wizard": ("con", "dex", "wis"), "sorcerer": ("con", "dex", "wis"), "warlock": ("con", "dex", "wis"),
+             "bard": ("con", "dex", "wis"), "cleric": ("con", "str", "dex"), "druid": ("con", "dex", "int")}
+ASI_PLANS = ("primary", "split", "con first")
+
+
+def ability_variants(cls, level):
+    """The standard build with the standard array's 14 and 13 on two of the class's secondary abilities
+    (12, 10, 8 on the rest in the standard order), under each ASI plan: all to the primary (the
+    default), +1 primary / +1 Con each time, or +2 Con at the first ASI. Builds whose sheets come out
+    identical, or that the builder rejects, are dropped; the standard build is first."""
+    from itertools import permutations
+    from .builder import ABILITIES, build, default_asis
+    base = standard_recipe(cls, level)
+    primary = PRIMARY[cls]
+    standard_order = sorted((a for a in ABILITIES if a != primary), key=lambda a: -base["abilities"][a])
+    out, seen = [base], {sheet_key(base)}
+    for high, mid in permutations(SECONDARY[cls], 2):
+        rest = [a for a in standard_order if a not in {high, mid}]
+        abilities = {primary: 15, high: 14, mid: 13, **dict(zip(rest, (12, 10, 8)))}
+        for plan in ASI_PLANS:
+            asis = default_asis(cls, level, {**abilities, primary: abilities[primary] + 2, "con": abilities["con"] + 1})
+            if not asis and plan != "primary": continue
+            if plan == "split": asis = {n: {primary: 1, "con": 1} for n in asis}
+            if plan == "con first" and asis: asis[min(asis)] = {"con": 2}
+            r = deepcopy(base)
+            r["name"] = f"14 {high.title()}, 13 {mid.title()}" + ("" if plan == "primary" else f"; ASI {plan}")
+            r["abilities"] = abilities
+            r["choices"]["asis"] = asis
+            try: build(r["class"], r["level"], r["subclass"], r["abilities"], r["equipment"], r["choices"])
+            except Exception: continue
+            key = sheet_key(r)
+            if key in seen: continue
+            seen.add(key); out.append(r)
+    return out
+
+
+def sheet_key(recipe):
+    """What the simulation sees of a recipe: its built sheet with the scores reduced to modifiers."""
+    from .builder import build
+    sheet = build(recipe["class"], recipe["level"], recipe["subclass"], recipe["abilities"], recipe["equipment"], recipe["choices"])
+    sheet = {**sheet, "abilities": {a: (s - 10) // 2 for a, s in sheet["abilities"].items()}}
+    return json.dumps(sheet, sort_keys=True)
+
+
 def screen_score(candidate, level):
     """Crude expected damage per round x effective HP against the level's benchmark brute."""
     from . import Combat, Combatant
@@ -258,6 +308,7 @@ def main():
     group.add_argument("--candidates", nargs="+", help="build names of the same class")
     group.add_argument("--variants", action="store_true", help="generate variants of the class's main decisions")
     group.add_argument("--feats", action="store_true", help="the standard build and its feat variants only")
+    group.add_argument("--abilities", action="store_true", help="the standard build with other ability arrays and ASI plans")
     parser.add_argument("--finalists", type=int, default=4, help="variants rated after the screen (plus standard)")
     parser.add_argument("--only", nargs="+", metavar="NAME", help="keep only the variants with these names (plus standard)")
     parser.add_argument("--references", nargs="+", default=["standard"], choices=["casual", "standard", "optimized"])
@@ -268,8 +319,8 @@ def main():
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     screened = None
-    if args.variants or args.feats:
-        found = variants(args.cls, args.level, feats_only=args.feats)
+    if args.variants or args.feats or args.abilities:
+        found = ability_variants(args.cls, args.level) if args.abilities else variants(args.cls, args.level, feats_only=args.feats)
         if args.only: found = found[:1] + [v for v in found[1:] if v["name"] in args.only]
         scores = [(v, screen_score(v, args.level)) for v in found]
         ranked = sorted(scores[1:], key=lambda vs: -vs[1])[:max(0, args.finalists)]

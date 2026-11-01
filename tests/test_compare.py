@@ -63,3 +63,15 @@ def test_recipe_candidates_use_their_label(monkeypatch):
     candidate = {**standard_recipe("fighter", 5), "name": "my build"}
     results = compare(5, "fighter", [candidate], ("standard",))
     assert results["standard"]["rows"][0][0] == "my build"
+
+
+def test_ability_variants_are_legal_distinct_and_start_with_standard():
+    from engine.compare import ability_variants, sheet_key
+    found = ability_variants("fighter", 5)
+    assert found[0]["name"] == "standard"
+    assert len({sheet_key(v) for v in found}) == len(found)
+    split = next(v for v in found if v["name"] == "14 Con, 13 Dex; ASI split")
+    assert split["choices"]["asis"] == {4: {"str": 1, "con": 1}}
+    # 14 Con, 13 Dex with every ASI on Str is the standard sheet, so it is dropped as a duplicate
+    assert "14 Con, 13 Dex" not in [v["name"] for v in found]
+    assert [v["name"] for v in ability_variants("fighter", 1) if "ASI" in v["name"]] == []

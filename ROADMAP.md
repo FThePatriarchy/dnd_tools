@@ -181,8 +181,13 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 - **Druid in the cleric's slot, Sorcerer in the wizard's** (`compare_L{5,10}_{druid,sorcerer}_variants.md`, standard party):
   - Druid: -5% at level 5 (-11% against ranged and casters) and -11% at level 10 (-20% against swarms, -15% against ranged and control). The three spell profiles give identical results at level 5: the AI casts the same few spells from each list. Alert (-6%) and War Caster (-4%) are within noise of the standard druid. Only the standard druid was rated at level 10.
   - Sorcerer: +11% at level 5 (+19% against brutes, +18% against swarms) and +12% at level 10 (+25% against casters, +23% against swarms). Innate Sorcery (+1 DC and advantage on spell attacks), Quickened leveled spells plus a cantrip, and Draconic Resilience's extra HP and AC outweigh the wizard's extra prepared spells. The casual spell list costs 2% at level 5 and 7% at level 10; the "lasting control" Metamagic pair (Heightened + Extended) is 3% below the default Quickened + Heightened at level 5.
+- **Ability scores and ASIs (2026-10-31)** (`compare_L5_{fighter,wizard,rogue,cleric}_abilities.md`): `python -m engine.compare --abilities` keeps 15 on the class's primary ability, tries each ordering of 14 and 13 over two likely secondaries (the rest get 12/10/8), and crosses that with three ASI plans: everything into the primary (the default), split (+1 primary, +1 Con at each ASI) and Con first (the first ASI is +2 Con). Arrays the builder rejects and arrays that give an identical sheet are dropped (11–16 per class), and the five best by the screen are rated. In the standard party at level 5:
+  - Every candidate is within noise of the standard build on all four classes: -1% to +3% overall. The best is the split ASI with 14 Con (+2% to +3% on each class). The background's +2/+1 already leaves the primary at 19 by level 4, so the split costs no modifier and buys +1 Con.
+  - Almost all of that gain is the level 5 control crossing (+11% to +14%), which moves with any change to the random stream (see Feats above). On the other five opponent types the swaps are within ±4%, apart from the fighter's Con-first plans at about +10% against brutes.
+  - Moving 14 and 13 between secondaries without changing the ASIs does nothing measurable (±1%), since most secondary modifiers are never rolled in combat.
+  - So at level 5 the standard array is as good as any legal alternative; the decisions that matter are kit, spells and feats. Level 10, with two ASIs, is not yet rated.
 - **Not yet done:**
-  - Searching ability-score and ASI choices.
+  - Ability and ASI searches at level 10 and for the other eight classes.
   - The optimized and casual reference parties for every class.
   - Cover and range so Sharpshooter has something to remove; the remaining classes' feat reports with the new feats.
 
