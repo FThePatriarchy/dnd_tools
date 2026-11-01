@@ -251,6 +251,11 @@ class Combatant:
         if isinstance(other, SpellInstance): return self.has_condition_source(name, other.id)
         return any(e.kind == "apply_condition" and e.data["condition"] == name and e.data.get("caster_id") == other.id and self.condition_effective(e, self.active_effects) for e in self.active_effects)
 
+    def save_bonus(self, ability) -> int:
+        """Printed or derived save bonus, plus magic items (Cloak/Ring of Protection, Stone of Good Luck)."""
+        base = self.save_bonuses.get(ability, self.mod(ability) + (self.proficiency_bonus if ability in self.save_proficiencies else 0))
+        return base + self.features.get("item_save_bonus", 0)
+
     def visible_to(self, other) -> bool:
         return self.visible and (not self.has_condition("invisible") or other.has_status("see_invisible")) and not other.has_condition("blinded")
 

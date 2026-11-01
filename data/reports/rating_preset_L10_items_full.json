@@ -1,0 +1,589 @@
+{
+ "builds": [
+  {
+   "name": "fighter_10+items_full",
+   "class": "fighter",
+   "level": 10,
+   "subclass": "champion",
+   "abilities": {
+    "str": 15,
+    "dex": 12,
+    "con": 14,
+    "int": 10,
+    "wis": 13,
+    "cha": 8
+   },
+   "equipment": "chain_greatsword",
+   "choices": {
+    "ability_method": "standard_array",
+    "asis": {
+     "4": {
+      "str": 2
+     },
+     "6": {
+      "str": 2
+     },
+     "8": {
+      "str": 1,
+      "con": 1
+     }
+    },
+    "weapon_masteries": [
+     "greatsword"
+    ],
+    "fighting_style": [
+     "defense",
+     "great_weapon_fighting"
+    ],
+    "expertise": [],
+    "items": [
+     "+2 Weapon",
+     "Belt of Hill Giant Strength",
+     "Cloak of Protection",
+     "Stone of Good Luck"
+    ]
+   }
+  },
+  {
+   "name": "cleric_10+items_full",
+   "class": "cleric",
+   "level": 10,
+   "subclass": "life",
+   "abilities": {
+    "str": 13,
+    "dex": 10,
+    "con": 14,
+    "int": 12,
+    "wis": 15,
+    "cha": 8
+   },
+   "equipment": "chain_shield",
+   "choices": {
+    "ability_method": "standard_array",
+    "asis": {
+     "4": {
+      "wis": 2
+     },
+     "8": {
+      "wis": 2
+     }
+    },
+    "weapon_masteries": [],
+    "cantrips": [
+     "Sacred Flame",
+     "Toll the Dead",
+     "Guidance",
+     "Word of Radiance",
+     "Resistance"
+    ],
+    "prepared_spells": [
+     "Spirit Guardians",
+     "Healing Word",
+     "Guiding Bolt",
+     "Spiritual Weapon",
+     "Hold Person",
+     "Shield of Faith",
+     "Bane",
+     "Sanctuary",
+     "Command",
+     "Inflict Wounds",
+     "Silence",
+     "Warding Bond",
+     "Flame Strike",
+     "Animate Dead",
+     "Aura of Vitality"
+    ],
+    "expertise": [],
+    "divine_order": "protector",
+    "blessed_strikes": "potent_spellcasting",
+    "items": [
+     "+2 Shield",
+     "+1 Armor",
+     "Cloak of Protection",
+     "Stone of Good Luck",
+     "+1 Wand of the War Mage",
+     "+1 Weapon"
+    ]
+   }
+  },
+  {
+   "name": "rogue_10+items_full",
+   "class": "rogue",
+   "level": 10,
+   "subclass": "assassin",
+   "abilities": {
+    "str": 8,
+    "dex": 15,
+    "con": 14,
+    "int": 12,
+    "wis": 13,
+    "cha": 10
+   },
+   "equipment": "studded_rapier",
+   "choices": {
+    "ability_method": "standard_array",
+    "asis": {
+     "4": {
+      "dex": 2
+     },
+     "8": {
+      "dex": 2
+     },
+     "10": {
+      "dex": 1,
+      "con": 1
+     }
+    },
+    "weapon_masteries": [
+     "rapier",
+     "shortbow"
+    ],
+    "expertise": [
+     "stealth",
+     "sleight of hand",
+     "perception",
+     "investigation"
+    ],
+    "cunning_strike": [
+     "poison",
+     "trip"
+    ],
+    "items": [
+     "+2 Weapon",
+     "Cloak of Protection",
+     "Stone of Good Luck"
+    ]
+   }
+  },
+  {
+   "name": "wizard_10+items_full",
+   "class": "wizard",
+   "level": 10,
+   "subclass": "evoker",
+   "abilities": {
+    "str": 8,
+    "dex": 14,
+    "con": 13,
+    "int": 15,
+    "wis": 12,
+    "cha": 10
+   },
+   "equipment": "unarmored_staff",
+   "choices": {
+    "ability_method": "standard_array",
+    "asis": {
+     "4": {
+      "int": 2
+     },
+     "8": {
+      "int": 2
+     }
+    },
+    "weapon_masteries": [],
+    "cantrips": [
+     "Fire Bolt",
+     "Ray of Frost",
+     "Toll the Dead",
+     "Shocking Grasp",
+     "Acid Splash"
+    ],
+    "prepared_spells": [
+     "Fireball",
+     "Shield",
+     "Mage Armor",
+     "Magic Missile",
+     "Counterspell",
+     "Scorching Ray",
+     "Thunderwave",
+     "Mirror Image",
+     "Misty Step",
+     "Haste",
+     "Web",
+     "Cone of Cold",
+     "Ice Storm",
+     "Wall of Fire",
+     "Fire Shield"
+    ],
+    "spellbook": [
+     "Shield",
+     "Mage Armor",
+     "Magic Missile",
+     "Thunderwave",
+     "Sleep",
+     "Chromatic Orb",
+     "Burning Hands",
+     "Charm Person",
+     "Scorching Ray",
+     "Mirror Image",
+     "Darkness",
+     "Gust of Wind",
+     "Misty Step",
+     "Web",
+     "Fireball",
+     "Counterspell",
+     "Lightning Bolt",
+     "Haste",
+     "Slow",
+     "Ice Storm",
+     "Wall of Fire",
+     "Fire Shield",
+     "Alter Self",
+     "Animate Dead",
+     "Cone of Cold",
+     "Animate Objects",
+     "Bigby's Hand",
+     "Arcane Lock",
+     "Banishment"
+    ],
+    "expertise": [
+     "arcana"
+    ],
+    "items": [
+     "+2 Wand of the War Mage",
+     "Cloak of Protection",
+     "Stone of Good Luck"
+    ]
+   }
+  }
+ ],
+ "level": 10,
+ "size": 4,
+ "threshold": 0.05,
+ "seed": 1,
+ "strategy": "default",
+ "morale": "none",
+ "benchmark": 1,
+ "types": {
+  "brute": {
+   "kind": "brute",
+   "xp": 12075.0,
+   "censored": "",
+   "steps": [
+    [
+     "wyvern x1",
+     2300,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "wyvern x2",
+     4600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "wyvern x3",
+     6900,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "wyvern x4",
+     9200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "wyvern x5",
+     11500,
+     0.023333333333333334,
+     300,
+     0.018012156140559843
+    ],
+    [
+     "wyvern x6",
+     13800,
+     0.13,
+     100,
+     0.06611592058792562
+    ]
+   ]
+  },
+  "ranged": {
+   "kind": "ranged",
+   "xp": 13976.470588235294,
+   "censored": "",
+   "steps": [
+    [
+     "barbed_devil x1",
+     1800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "barbed_devil x2",
+     3600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "barbed_devil x3",
+     5400,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "barbed_devil x4",
+     7200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "barbed_devil x5",
+     9000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "barbed_devil x6",
+     10800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "barbed_devil x8",
+     14400,
+     0.056666666666666664,
+     600,
+     0.018655365578992146
+    ],
+    [
+     "barbed_devil x10",
+     18000,
+     0.66,
+     50,
+     0.12704612457447473
+    ]
+   ]
+  },
+  "caster": {
+   "kind": "caster",
+   "xp": 9528.57142857143,
+   "censored": "",
+   "steps": [
+    [
+     "mage x1",
+     2300,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "mage x2",
+     4600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "mage x3",
+     6900,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "mage x4",
+     9200,
+     0.015,
+     200,
+     0.01902574568094227
+    ],
+    [
+     "mage x5",
+     11500,
+     0.26,
+     50,
+     0.11840814974197177
+    ]
+   ]
+  },
+  "swarm": {
+   "kind": "swarm",
+   "xp": 9716.666666666666,
+   "censored": "",
+   "steps": [
+    [
+     "guard_captain x1",
+     1100,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "guard_captain x2",
+     2200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "guard_captain x3",
+     3300,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "guard_captain x4",
+     4400,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "guard_captain x5",
+     5500,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "guard_captain x6",
+     6600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "guard_captain x8",
+     8800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "guard_captain x10",
+     11000,
+     0.12,
+     100,
+     0.06406346545852173
+    ]
+   ]
+  },
+  "control": {
+   "kind": "control",
+   "xp": 12300.0,
+   "censored": "",
+   "steps": [
+    [
+     "vampire_spawn x1",
+     1800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire_spawn x2",
+     3600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire_spawn x3",
+     5400,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire_spawn x4",
+     7200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire_spawn x5",
+     9000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire_spawn x6",
+     10800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire_spawn x8",
+     14400,
+     0.12,
+     50,
+     0.09093608688667978
+    ]
+   ]
+  },
+  "solo": {
+   "kind": "solo",
+   "xp": 6637.804878048781,
+   "censored": "",
+   "steps": [
+    [
+     "troll x1",
+     1800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "young_white_dragon x1",
+     2300,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "young_black_dragon x1",
+     2900,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "young_green_dragon x1",
+     3900,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "young_blue_dragon x1",
+     5000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "young_red_dragon x1",
+     5900,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "adult_red_dragon x1",
+     18000,
+     0.82,
+     50,
+     0.10512930582673508
+    ]
+   ]
+  }
+ },
+ "xp": 10414.215438513265,
+ "runs": 5750
+}

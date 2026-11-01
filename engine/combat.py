@@ -177,7 +177,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         for effect in actor.active_effects:
             if effect.kind == "base_ac" and not (effect.data["unarmored_only"] and actor.features.get("armored")):
                 bases.append(effect.data["base"] + (actor.mod(effect.data["ability"]) if effect.data["ability"] else 0))
-        return self.modifier(actor, "ac", max(bases))
+        return self.modifier(actor, "ac", max(bases) + actor.features.get("item_ac_bonus", 0))
 
     def turn_rules(self, actor):
         result = {}
@@ -254,7 +254,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if concentration and target.concentration in self.instances and self.instances[target.concentration].choices.get("_metamagic")=="extended_spell": advantage=True
         if concentration and (target.features.get("war_caster") or target.features.get("eldritch_mind")):
             advantage = True  # War Caster: advantage on saves to maintain Concentration
-        bonus = target.save_bonuses.get(ability, target.mod(ability) + (target.proficiency_bonus if ability in target.save_proficiencies else 0))
+        bonus = target.save_bonus(ability)
         natural = dice.d20(self.rng, advantage, disadvantage)
         bonus = self.modifier(target, "save", bonus, ability, consume=True)
         if concentration: bonus += self.modifier(target, "concentration_save", 0, ability)
@@ -1561,7 +1561,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         return total
 
     def save_failure_probability(self, actor, target, ability, dc=None):
-        bonus = target.save_bonuses.get(ability, target.mod(ability) + (target.proficiency_bonus if ability in target.save_proficiencies else 0))
+        bonus = target.save_bonus(ability)
         return min(1, max(0, ((actor.spell_dc if dc is None else dc) - bonus - 1) / 20))
 
     def cantrip_spec(self, actor, name):

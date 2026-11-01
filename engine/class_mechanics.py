@@ -370,7 +370,7 @@ class ClassMechanics:
         """Expected rounds a concentration spell lasts: each hit risks a DC 10 Constitution save."""
         allies = [c for c in self.combatants if c.team == actor.team and c.alive]
         hits = sum(self.expected_attack_hits(e, actor) for e in enemies) / max(1, len(allies))
-        bonus = actor.save_bonuses.get("con", actor.mod("con") + (actor.proficiency_bonus if "con" in actor.save_proficiencies else 0))
+        bonus = actor.save_bonus("con")
         fail = min(.95, max(.05, (9 - bonus) / 20)) * (.5 if (actor.features.get("war_caster") or actor.features.get("eldritch_mind")) else 1)
         keep = (1 - fail) ** hits
         return horizon if keep >= 1 else (1 - keep ** horizon) / (1 - keep)

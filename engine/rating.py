@@ -213,7 +213,8 @@ def describe(rating, xp, censored=""):
 
 def markdown(rating):
     censored = [t.kind for t in rating.types.values() if t.censored]
-    out = [f"# Party rating: {', '.join(rating.builds)}", "",
+    names = [b["name"] if isinstance(b, dict) else b for b in rating.builds]
+    out = [f"# Party rating: {', '.join(names)}", "",
            f"Level {rating.level}, {rating.size} PCs; benchmark v{rating.benchmark}; defeat threshold {rating.threshold:.0%}; "
            f"party strategy `{rating.strategy}`; morale `{rating.morale}`; seed {rating.seed}; {rating.runs:,} runs.", "",
            "The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing "
@@ -225,6 +226,10 @@ def markdown(rating):
     for t in rating.types.values():
         mark = {"below": "< ", "above": "> "}.get(t.censored, "")
         out.append(f"| {t.kind} | {mark}{t.xp:,.0f} | {mark}{rating.per_char(t.xp):,.0f} | {mark}{rating.multiple(t.xp):.2f} |")
+    kits = [(b["name"], b["choices"].get("items", [])) for b in rating.builds if isinstance(b, dict)]
+    if kits:
+        out += ["", "## Magic items", "", "DMG-sized kits (`engine/items.py`).", ""]
+        out += [f"- {name}: {', '.join(items) or 'none'}" for name, items in kits]
     out += ["", "## Ladder results", "", "Defeat chance at each benchmark step, with its 95% half-width and run count.", ""]
     for t in rating.types.values():
         out += [f"### {t.kind}", "", "| Encounter | XP | Defeat | ± | Runs |", "| --- | ---: | ---: | ---: | ---: |"]
@@ -242,13 +247,18 @@ def main():
     parser.add_argument("--morale", choices=MORALE, default="none")
     parser.add_argument("--benchmark", type=int, help="frozen benchmark version (default: 1 up to level 10, 2 above)")
     parser.add_argument("--workers", type=int)
+    parser.add_argument("--items", choices=["half", "full"], help="give the party a DMG-sized magic item kit (engine/items.py)")
     parser.add_argument("--name", help="report name for --write (default: the build names)")
     parser.add_argument("--write", action="store_true", help="write data/reports/rating_<name>.{md,json}")
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     if not 0 < args.threshold < 1: parser.error("threshold must be between 0 and 1")
+    party = args.party
+    if args.items:
+        from .items import with_items
+        party = with_items(party, args.items)
     try:
-        rating = rate_party(args.party, threshold=args.threshold, seed=args.seed, strategy=args.strategy,
+        rating = rate_party(party, threshold=args.threshold, seed=args.seed, strategy=args.strategy,
                             morale=args.morale, benchmark=args.benchmark, workers=args.workers)
     except (ValueError, OSError) as exc: parser.error(str(exc))
     text = markdown(rating)

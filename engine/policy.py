@@ -106,7 +106,7 @@ class Policy:
 
     def stunning_strike(self, combat, actor, target):
         if not self.focus_allowed(combat,actor) or target.has_condition("incapacitated") or target.immune_to("stunned"): return False
-        bonus=target.save_bonuses.get("con",target.mod("con")+(target.proficiency_bonus if "con" in target.save_proficiencies else 0))
+        bonus=target.save_bonus("con")
         fail=max(0,min(1,(7+actor.mod("wis")+actor.proficiency_bonus-bonus)/20))
         threshold=.6 if actor.features.get("stunning_reserve") else .4
         valuable=bool(target.spells) or target.max_hp>=.75*max((e.max_hp for e in combat.enemies(actor)),default=target.max_hp)
@@ -365,7 +365,7 @@ class Policy:
         if spell["name"] == "Counterspell":
             pending_caster = trigger["caster"]
             if pending_caster.team == reactor.team: return False
-            con = pending_caster.save_bonuses.get("con", pending_caster.mod("con") + (pending_caster.proficiency_bonus if "con" in pending_caster.save_proficiencies else 0))
+            con = pending_caster.save_bonus("con")
             if con + 1 >= reactor.spell_dc: return False
             # Control, buffs, healing and counter-counterspells can matter too.
             return any(block[key] for block in trigger["spell"]["effects"] for key in ("on_hit", "on_fail", "apply"))

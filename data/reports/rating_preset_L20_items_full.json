@@ -1,0 +1,747 @@
+{
+ "builds": [
+  {
+   "name": "fighter_20+items_full",
+   "class": "fighter",
+   "level": 20,
+   "subclass": "champion",
+   "abilities": {
+    "str": 15,
+    "dex": 12,
+    "con": 14,
+    "int": 10,
+    "wis": 13,
+    "cha": 8
+   },
+   "equipment": "chain_greatsword",
+   "choices": {
+    "ability_method": "standard_array",
+    "asis": {
+     "4": {
+      "str": 2
+     },
+     "6": {
+      "str": 2
+     },
+     "8": {
+      "str": 1,
+      "con": 1
+     },
+     "12": {
+      "con": 2
+     },
+     "14": {
+      "con": 2
+     },
+     "16": {
+      "con": 1,
+      "dex": 1
+     },
+     "19": {
+      "dex": 2
+     }
+    },
+    "weapon_masteries": [
+     "greatsword"
+    ],
+    "fighting_style": [
+     "defense",
+     "great_weapon_fighting"
+    ],
+    "expertise": [],
+    "items": [
+     "Belt of Storm Giant Strength",
+     "+3 Armor",
+     "+3 Weapon",
+     "Ring of Protection",
+     "Ioun Stone, Protection"
+    ]
+   }
+  },
+  {
+   "name": "cleric_20+items_full",
+   "class": "cleric",
+   "level": 20,
+   "subclass": "life",
+   "abilities": {
+    "str": 13,
+    "dex": 10,
+    "con": 14,
+    "int": 12,
+    "wis": 15,
+    "cha": 8
+   },
+   "equipment": "chain_shield",
+   "choices": {
+    "ability_method": "standard_array",
+    "asis": {
+     "4": {
+      "wis": 2
+     },
+     "8": {
+      "wis": 2
+     },
+     "12": {
+      "wis": 1,
+      "con": 1
+     },
+     "16": {
+      "con": 2
+     },
+     "19": {
+      "con": 2
+     }
+    },
+    "weapon_masteries": [],
+    "cantrips": [
+     "Sacred Flame",
+     "Toll the Dead",
+     "Guidance",
+     "Word of Radiance",
+     "Resistance"
+    ],
+    "prepared_spells": [
+     "Heal",
+     "Harm",
+     "Divine Word",
+     "Fire Storm",
+     "Regenerate",
+     "Power Word Fortify",
+     "Holy Aura",
+     "Sunburst",
+     "Mass Heal",
+     "Power Word Heal",
+     "Spirit Guardians",
+     "Healing Word",
+     "Guiding Bolt",
+     "Spiritual Weapon",
+     "Hold Person",
+     "Shield of Faith",
+     "Bane",
+     "Sanctuary",
+     "Command",
+     "Inflict Wounds",
+     "Silence",
+     "Warding Bond"
+    ],
+    "expertise": [],
+    "divine_order": "protector",
+    "blessed_strikes": "potent_spellcasting",
+    "items": [
+     "+3 Armor",
+     "Ioun Stone, Mastery",
+     "+3 Shield",
+     "+3 Wand of the War Mage",
+     "Ring of Protection",
+     "+1 Weapon"
+    ]
+   }
+  },
+  {
+   "name": "rogue_20+items_full",
+   "class": "rogue",
+   "level": 20,
+   "subclass": "assassin",
+   "abilities": {
+    "str": 8,
+    "dex": 15,
+    "con": 14,
+    "int": 12,
+    "wis": 13,
+    "cha": 10
+   },
+   "equipment": "studded_rapier",
+   "choices": {
+    "ability_method": "standard_array",
+    "asis": {
+     "4": {
+      "dex": 2
+     },
+     "8": {
+      "dex": 2
+     },
+     "10": {
+      "dex": 1,
+      "con": 1
+     },
+     "12": {
+      "con": 2
+     },
+     "16": {
+      "con": 2
+     },
+     "19": {
+      "con": 1,
+      "str": 1
+     }
+    },
+    "weapon_masteries": [
+     "rapier",
+     "shortbow"
+    ],
+    "expertise": [
+     "stealth",
+     "sleight of hand",
+     "perception",
+     "investigation"
+    ],
+    "cunning_strike": [
+     "poison",
+     "trip",
+     "obscure"
+    ],
+    "items": [
+     "+3 Armor",
+     "Ioun Stone, Mastery",
+     "+3 Weapon",
+     "Ring of Protection",
+     "Ioun Stone, Protection"
+    ]
+   }
+  },
+  {
+   "name": "wizard_20+items_full",
+   "class": "wizard",
+   "level": 20,
+   "subclass": "evoker",
+   "abilities": {
+    "str": 8,
+    "dex": 14,
+    "con": 13,
+    "int": 15,
+    "wis": 12,
+    "cha": 10
+   },
+   "equipment": "unarmored_staff",
+   "choices": {
+    "ability_method": "standard_array",
+    "asis": {
+     "4": {
+      "int": 2
+     },
+     "8": {
+      "int": 2
+     },
+     "12": {
+      "int": 1,
+      "con": 1
+     },
+     "16": {
+      "con": 2
+     },
+     "19": {
+      "con": 2
+     }
+    },
+    "weapon_masteries": [],
+    "cantrips": [
+     "Fire Bolt",
+     "Ray of Frost",
+     "Toll the Dead",
+     "Shocking Grasp",
+     "Acid Splash"
+    ],
+    "prepared_spells": [
+     "Disintegrate",
+     "Chain Lightning",
+     "Circle of Death",
+     "Finger of Death",
+     "Delayed Blast Fireball",
+     "Power Word Stun",
+     "Sunburst",
+     "Meteor Swarm",
+     "Power Word Kill",
+     "Otto's Irresistible Dance",
+     "Flesh to Stone",
+     "Otiluke's Freezing Sphere",
+     "Mordenkainen's Sword",
+     "Foresight",
+     "Weird",
+     "Fireball",
+     "Shield",
+     "Mage Armor",
+     "Magic Missile",
+     "Counterspell",
+     "Scorching Ray",
+     "Thunderwave",
+     "Mirror Image",
+     "Misty Step",
+     "Haste"
+    ],
+    "spellbook": [
+     "Shield",
+     "Mage Armor",
+     "Magic Missile",
+     "Thunderwave",
+     "Sleep",
+     "Chromatic Orb",
+     "Burning Hands",
+     "Charm Person",
+     "Scorching Ray",
+     "Mirror Image",
+     "Continual Flame",
+     "Darkness",
+     "Misty Step",
+     "Web",
+     "Fireball",
+     "Counterspell",
+     "Lightning Bolt",
+     "Haste",
+     "Slow",
+     "Ice Storm",
+     "Wall of Fire",
+     "Fire Shield",
+     "Alter Self",
+     "Animate Dead",
+     "Cone of Cold",
+     "Animate Objects",
+     "Bigby's Hand",
+     "Arcane Lock",
+     "Arcane Vigor",
+     "Disintegrate",
+     "Chain Lightning",
+     "Otiluke's Freezing Sphere",
+     "Circle of Death",
+     "Otto's Irresistible Dance",
+     "Finger of Death",
+     "Delayed Blast Fireball",
+     "Mordenkainen's Sword",
+     "Flesh to Stone",
+     "Banishment",
+     "Power Word Stun",
+     "Sunburst",
+     "Gust of Wind",
+     "Befuddlement",
+     "Bestow Curse",
+     "Meteor Swarm",
+     "Power Word Kill",
+     "Jallarzi's Storm of Radiance",
+     "Foresight",
+     "Weird",
+     "Blight",
+     "Blindness/Deafness",
+     "Blink",
+     "Blur"
+    ],
+    "expertise": [
+     "arcana"
+    ],
+    "items": [
+     "Robe of the Archmagi",
+     "Ioun Stone, Mastery",
+     "Staff of Power"
+    ]
+   }
+  }
+ ],
+ "level": 20,
+ "size": 4,
+ "threshold": 0.05,
+ "seed": 1,
+ "strategy": "default",
+ "morale": "none",
+ "benchmark": 2,
+ "types": {
+  "brute": {
+   "kind": "brute",
+   "xp": 59717.64705882353,
+   "censored": "",
+   "steps": [
+    [
+     "roc x1",
+     7200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "roc x2",
+     14400,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "roc x3",
+     21600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "roc x4",
+     28800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "roc x5",
+     36000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "roc x6",
+     43200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "roc x8",
+     57600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "roc x10",
+     72000,
+     0.34,
+     50,
+     0.12704612457447473
+    ]
+   ]
+  },
+  "ranged": {
+   "kind": "ranged",
+   "xp": 58196.17834394905,
+   "censored": "",
+   "steps": [
+    [
+     "horned_devil x1",
+     7200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "horned_devil x2",
+     14400,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "horned_devil x3",
+     21600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "horned_devil x4",
+     28800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "horned_devil x5",
+     36000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "horned_devil x6",
+     43200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "horned_devil x8",
+     57600,
+     0.03142857142857143,
+     350,
+     0.018877411773085336
+    ],
+    [
+     "horned_devil x10",
+     72000,
+     0.48,
+     50,
+     0.13345560009457297
+    ]
+   ]
+  },
+  "caster": {
+   "kind": "caster",
+   "xp": 53900.0,
+   "censored": "",
+   "steps": [
+    [
+     "archmage x1",
+     8400,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "archmage x2",
+     16800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "archmage x3",
+     25200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "archmage x4",
+     33600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "archmage x5",
+     42000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "archmage x6",
+     50400,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "archmage x8",
+     67200,
+     0.24,
+     50,
+     0.11557646267317383
+    ]
+   ]
+  },
+  "swarm": {
+   "kind": "swarm",
+   "xp": 64428.0,
+   "censored": "",
+   "steps": [
+    [
+     "frost_giant x1",
+     3900,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "frost_giant x2",
+     7800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "frost_giant x3",
+     11700,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "frost_giant x4",
+     15600,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "frost_giant x5",
+     19500,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "frost_giant x6",
+     23400,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "frost_giant x8",
+     31200,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "frost_giant x10",
+     39000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "frost_giant x12",
+     46800,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "frost_giant x16",
+     62400,
+     0.006666666666666667,
+     150,
+     0.017807519422395543
+    ],
+    [
+     "frost_giant x20",
+     78000,
+     0.34,
+     50,
+     0.12704612457447473
+    ]
+   ]
+  },
+  "control": {
+   "kind": "control",
+   "xp": 61612.903225806454,
+   "censored": "",
+   "steps": [
+    [
+     "vampire x1",
+     10000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire x2",
+     20000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire x3",
+     30000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire x4",
+     40000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire x5",
+     50000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire x6",
+     60000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "vampire x8",
+     80000,
+     0.62,
+     50,
+     0.12993381974997675
+    ]
+   ]
+  },
+  "solo": {
+   "kind": "solo",
+   "xp": 62000,
+   "censored": "above",
+   "steps": [
+    [
+     "adult_white_dragon x1",
+     10000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "adult_black_dragon x1",
+     11500,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "adult_green_dragon x1",
+     13000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "adult_blue_dragon x1",
+     15000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "adult_red_dragon x1",
+     18000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "ancient_white_dragon x1",
+     25000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "ancient_black_dragon x1",
+     33000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "ancient_green_dragon x1",
+     41000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "ancient_blue_dragon x1",
+     50000,
+     0.0,
+     100,
+     0.018496749384498135
+    ],
+    [
+     "ancient_red_dragon x1",
+     62000,
+     0.02,
+     250,
+     0.018691659540891435
+    ]
+   ]
+  }
+ },
+ "xp": 59880.76251844654,
+ "runs": 6650
+}

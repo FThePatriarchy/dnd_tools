@@ -221,7 +221,7 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
   | 17 | 0.62× | control 0.50× | swarm 0.75× |
   | 20 | 0.50× | caster 0.40× | solo 0.59× |
 
-  - The party reaches 5% defeat at about 0.5–0.7× DMG High, below the 0.73–0.80× of levels 1–10. The builder gives no magic items, which the DMG budgets assume at these levels, and tier 4 monsters (legendary resistance and actions, breath recharge) hit harder than the PCs' new features add.
+  - The party reaches 5% defeat at about 0.5–0.7× DMG High, below the 0.73–0.80× of levels 1–10. The builder gives no magic items (the DMG builds encounters without assuming any, p. 218, but a typical campaign hands out about 75 by level 17; see "Magic items" below), and tier 4 monsters (legendary resistance and actions, breath recharge) hit harder than the PCs' new features add.
   - Single-type values rest on one roster monster per level (e.g. tyrannosaurus brutes at 13–15), so they are weaker evidence than the overall value.
 - **Calibration sweep at 11–20** (2026-11-01): `python -m engine.calibration --high --runs 100 --write` → `data/reports/calibration_dmg_area_party_spread_grab_half_high.md` (engine defaults, same party and rules as the level 1–10 baseline, about 25 minutes). No engine errors. Median per slot:
 
@@ -251,12 +251,46 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 
   - Casual stays about 0.75–0.8× standard, as at levels 1–10.
   - Optimized converges on standard from level 15: by then both max the primary and Con (20/20 for the fighter, cleric and rogue at 17), use the same weapons, and share most spells. What is left is the dump stat; the optimized fighter's Wis 10 against standard's 13 matters against mind flayers and aboleths. The 2–4% gaps below standard are within the noise of a single-seed rating.
-  - So the builder's profiles no longer spread parties apart at tier 3–4. A real optimized table differs there through magic items, feats beyond ASIs and multiclassing, which the builder does not model.
+  - So the builder's profiles no longer spread parties apart at tier 3–4. A real optimized table differs there through magic items, feats beyond ASIs and multiclassing, which the builder does not model (magic items are now an option; see below).
 - **Fix:** a blinded caster tried to Healing Word itself and crashed the run (Healing Word needs a target the caster can see; the rogue's level 14 Obscure strike blinds). It now falls back to Cure Wounds. Level 1–10 results are unchanged, since the old path always raised.
+
+## Magic items (2026-11-01)
+
+- **Catalog** (`engine/items.py`): 31 combat XDMG items that are plain stat changes, each checked against the 5etools XDMG data (rarity, attunement, weapon/AC/save/spell bonuses, set scores, rules text). Included:
+  - +1 to +3 weapons, armor and shields;
+  - Cloak and Ring of Protection, Stone of Good Luck, Ioun Stones of Protection and Mastery, Bracers of Defense;
+  - Gauntlets of Ogre Power, Headband of Intellect, Amulet of Health, the five Giant Strength belts;
+  - Wand of the War Mage and Rod of the Pact Keeper (+1 to +3), Staff of Power, Robe of the Archmagi.
+  - Not modeled: charges and spells cast from items, consumables (potions, scrolls), and items with bespoke rules (Cloak of Displacement, Mantle of Spell Resistance, Armor of Invulnerability, and the like).
+- **Builder:** `choices.items` lists a build's items. The builder rejects two items in one slot, more than 3 attuned items, wrong attunement (Robe and Staff are sorcerer/warlock/wizard only), and items that need armor, a Shield or no armor.
+  - Weapon bonuses go to the first weapon and make it magical.
+  - Armor and shield bonuses and the Robe's base AC change the sheet's AC.
+  - Other AC bonuses and save bonuses are new `item_ac_bonus` / `item_save_bonus` features, so they stack with Mage Armor.
+  - Ioun Stone of Mastery raises the Proficiency Bonus. Uses already fixed by the class table do not change.
+  - Saves now go through `Combatant.save_bonus()`. Item-free results are bit-identical (full suite passes).
+- **Kits:** `--items half|full` on `engine.rating` gives each PC a kit sized from the 2024 DMG "Magic Items Awarded by Level" table (p. 218).
+  - A party reaching level L has the items of levels 1 to L−1, spread evenly within each tier. Commons are skipped.
+  - `half` assumes half of the uncommon-and-better items are combat items this party keeps; `full` keeps them all.
+  - Following the DMG's "Player Wish List", the rarest items are placed first, handed round the party, each PC taking the best item of that rarity on its class wish list.
+  - The DMG itself says encounters are built *without* assuming magic items, so these ratings measure a typically equipped party against budgets that assume none.
+- **Standard party with items** (`data/reports/rating_preset_L*_items_{half,full}.md`, × DMG High):
+
+  | Level | No items | Half kit | Full kit |
+  | ---: | ---: | ---: | ---: |
+  | 10 | 0.73× | 0.83× | 0.84× |
+  | 11 | 0.62× | 0.76× | 0.82× |
+  | 13 | 0.72× | 0.84× | 0.91× |
+  | 15 | 0.59× | 0.77× | 0.85× |
+  | 17 | 0.62× | 0.79× | 0.82× |
+  | 20 | 0.50× | 0.68× | 0.68× |
+
+  - Items add about 15–30%, more at higher levels. With the half kit, levels 10–17 rate 0.76–0.84×, level with the item-free 0.73–0.80× of levels 1–10. The tier 3 drop was mostly missing items.
+  - Level 20 stays low (0.68×). Its solo ladder tops out before the party reaches 5% defeat, so the overall value is a lower bound. Half and full give the same result at 20, because every PC's slots and 3 attunements are already full: extra items have nowhere to go.
+  - At 10 and 17 the full kit adds little over half for the same reason. Wish-list slots, not the DMG count, become the limit.
 
 ## Later
 
-- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Calibration sweep done 2026-11-01. Casual/optimized ratings done 2026-11-01. Still to do: magic items (the likely cause of the low tier 3–4 numbers), and class comparisons at high level.
+- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Calibration sweep done 2026-11-01. Casual/optimized ratings done 2026-11-01. Magic items done 2026-11-01 (see "Magic items" below). Still to do: class comparisons at high level.
 - More classes: all twelve 2024 classes are done at levels 1–20.
 - ~~A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.~~ Done 2026-10-31: `python -m engine.dm fight|day|monsters` (`engine/dm.py`). `fight` runs adaptively (100–800 runs) and reports win, defeat, TPK, someone down and someone dead with 95% margins, the encounter's XP as a multiple of this party's DMG High budget, and each PC's chance to drop or die, HP left and mean resources spent. `day` takes a day file or inline `--steps` and adds, per encounter, how often it is reached and cleared. `monsters` lists usable monsters by CR. The shared runners gained an optional `detail` output; their metrics are unchanged.
 - Repo housekeeping: done 2026-10-26. `readme.md` has working usage examples; the 5etools zip, `raw_data/` and the retired `spellsim/` + `ai_extractors/` pipeline are ignored and kept locally.

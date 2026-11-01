@@ -8,6 +8,7 @@ from .classes import MAX_LEVEL, load_class, substitute, SUBCLASSES
 from .class_source import source
 from .loader import ROOT, Validator, ValidationError, load_spells, read_yaml
 from .sheets import validate_sheet
+from .items import ATTUNEMENT_SLOTS, ITEMS, legal as item_legal
 
 # XPHB class membership, transcribed from archive data/spells/sources.json.
 SPELL_LISTS = {
@@ -197,9 +198,16 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     subclass = c["subclass"] if subclass is None else subclass
     v.enum(subclass,{c["subclass"]},"subclass")
     choices=deepcopy(choices) if choices is not None else {}
-    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat invocations magical_discoveries hunters_prey open_hand stunning_budget primal_order metamagic spell_mastery signature_spells mystic_arcanum")
+    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat invocations magical_discoveries hunters_prey open_hand stunning_budget primal_order metamagic spell_mastery signature_spells mystic_arcanum items")
     v.check(class_name=="bard" or "magical_discoveries" not in choices,"choices.magical_discoveries","Bard choice only")
     v.check(type(background) is bool,"background","expected boolean")
+    items=choices.get("items",[]); v.sequence(items,"choices.items")
+    for n in items: v.enum(n,ITEMS,"choices.items")
+    v.check(len({ITEMS[n]["slot"] for n in items if n in ITEMS})==len(items),"choices.items","two items in one slot")
+    v.check(sum(bool(ITEMS[n]["attune"]) for n in items if n in ITEMS)<=ATTUNEMENT_SLOTS,"choices.items",f"more than {ATTUNEMENT_SLOTS} attuned items")
+    item_effects=[ITEMS[n]["effects"] for n in items if n in ITEMS]
+    item_total=lambda key: sum(e.get(key,0) for e in item_effects)
+    if item_total("proficiency"): row={**row,"proficiency_bonus":row["proficiency_bonus"]+item_total("proficiency")}
     abilities=deepcopy(abilities if abilities is not None else DEFAULT_ABILITIES[class_name])
     v.obj(abilities,"abilities",ABILITIES)
     for a,n in abilities.items(): v.number(n,"abilities."+a,3,True); v.check(n<=20,"abilities."+a,"score exceeds 20")
@@ -257,10 +265,14 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     if level>=20 and class_name in {"barbarian","monk"}:
         # Primal Champion / Body and Mind: +4 to two scores, to a maximum of 25.
         for a in (("str","con") if class_name=="barbarian" else ("dex","wis")): abilities[a]=min(25,abilities[a]+4)
+    for e in item_effects:
+        for a,n in e.get("scores",{}).items(): abilities[a]=max(abilities[a],n)
     mod=lambda a:(abilities[a]-10)//2
     equipment=DEFAULT_EQUIPMENT[class_name] if equipment is None else equipment
     v.enum(equipment,EQUIPMENT,"equipment")
     armor,shield,weapons=EQUIPMENT[equipment]
+    for n in items:
+        if n in ITEMS: v.check(not item_legal(n,class_name,armor,shield),"choices.items",f"{n}: {item_legal(n,class_name,armor,shield)}")
     primal=choices.get("primal_order","warden")
     if class_name=="druid": v.enum(primal,{"warden","magician"},"choices.primal_order")
     else: v.check("primal_order" not in choices,"choices.primal_order","Druid choice only")
@@ -500,6 +512,20 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         sheet["spells"]=list(dict.fromkeys(cantrips+prepared+domain))
     else:
         v.check(not any(k in choices for k in ("cantrips","prepared_spells","spellbook")),"choices","class has no spellcasting")
+    if item_effects:
+        armored_ac=item_total("armor")*(armor!="none")+item_total("shield")*shield
+        base=max([e["base_ac"] for e in item_effects if "base_ac" in e],default=0)
+        sheet["ac"]=max(sheet["ac"],base+mod("dex"))+armored_ac
+        if item_total("ac")+item_total("unarmored_ac"): sheet["features"]["item_ac_bonus"]=item_total("ac")+item_total("unarmored_ac")
+        if item_total("saves"): sheet["features"]["item_save_bonus"]=item_total("saves")
+        if any(e.get("magic_resistance") for e in item_effects): sheet["features"]["magic_resistance"]=True
+        bonus=item_total("weapon")+item_total("staff")
+        weapon=next((a for a in sheet["attacks"] if a["name"]!="Unarmed Strike" and (not item_total("staff") or a["name"]=="Quarterstaff")),None)
+        if bonus and weapon:
+            weapon["to_hit"]+=bonus; weapon["effects"][0]["damage"]["bonus"]+=bonus; weapon["magical"]=True
+        if "spell_attack_bonus" in sheet: sheet["spell_attack_bonus"]+=item_total("spell_attack")
+        if "spell_dc" in sheet: sheet["spell_dc"]+=item_total("spell_dc")
+        sheet["items"]=list(items)
     validate_sheet(sheet,"<built character>")
     return sheet
 

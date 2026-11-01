@@ -11,7 +11,11 @@ def effect_block(identifier, *, target=None, save=None, apply=None, on_fail=None
 def validate_sheet(data, path, *, summoned=False):
     v = Validator(path)
     v.obj(data, "$", "name source max_hp ac abilities speed creature_type proficiency_bonus",
-          "hp_formula cr level save_proficiencies save_bonuses resistances immunities vulnerabilities condition_immunities spell_ability spell_dc spell_attack_bonus spell_slots spells innate_spells limited_uses hit_dice attacks multiattack extra_attack actions traits alignment initiative_bonus unsupported unsupported_spells features movement_modes size routines replacements legendary spell_resources spell_levels spell_costs spell_recharge spell_components skill_proficiencies expertise cunning_strike prepared_spells spellbook position engagement_tags")
+          "hp_formula cr level save_proficiencies save_bonuses resistances immunities vulnerabilities condition_immunities spell_ability spell_dc spell_attack_bonus spell_slots spells innate_spells limited_uses hit_dice attacks multiattack extra_attack actions traits alignment initiative_bonus unsupported unsupported_spells features movement_modes size routines replacements legendary spell_resources spell_levels spell_costs spell_recharge spell_components skill_proficiencies expertise cunning_strike prepared_spells spellbook position engagement_tags items")
+    if "items" in data:
+        from .items import ITEMS
+        v.sequence(data["items"], "items")
+        for name in data["items"]: v.enum(name, ITEMS, "items")
     if "position" in data: v.enum(data["position"], {"front", "back"}, "position")
     if "engagement_tags" in data:
         v.sequence(data["engagement_tags"], "engagement_tags")
@@ -86,10 +90,11 @@ def validate_sheet(data, path, *, summoned=False):
     v.check(len({a.get('name') for a in attacks}) == len(attacks), "attacks", "duplicate attack name")
     for i, a in enumerate(attacks):
         p = f"attacks[{i}]"
-        v.obj(a, p, "name kind to_hit effects", "reach_ft range_ft ability mastery recharge resource riders advantage_if on_hit_self properties")
+        v.obj(a, p, "name kind to_hit effects", "reach_ft range_ft ability mastery recharge resource riders advantage_if on_hit_self properties magical")
         if "properties" in a:
             v.sequence(a["properties"], p + ".properties")
             for prop in a["properties"]: v.enum(prop, {"finesse", "two_handed", "versatile", "light", "heavy", "reach"}, p + ".properties")
+        if "magical" in a: v.boolean(a["magical"], p + ".magical")
         v.text(a["name"], p + ".name")
         v.enum(a["kind"], {"melee", "ranged"}, p + ".kind")
         if summoned and a["to_hit"] == "spell_attack": pass
@@ -169,9 +174,9 @@ def validate_sheet(data, path, *, summoned=False):
     if "features" in data:
         f = data["features"]
         from .classes import CLASS_FLAGS
-        v.obj(f, "features", "", set("pack_tactics magic_resistance sunlight_sensitivity bloodied_frenzy evasion parry regeneration undead_fortitude life_drain redirect_attack authority_aura grapple_damage rampage great_weapon_fighting no_sleep concentration_while_asleep great_weapon_master sharpshooter war_caster alert polearm_master resilient lucky tough boon_of_fortitude".split()) | CLASS_FLAGS)
+        v.obj(f, "features", "", set("pack_tactics magic_resistance sunlight_sensitivity bloodied_frenzy evasion parry regeneration undead_fortitude life_drain redirect_attack authority_aura grapple_damage rampage great_weapon_fighting no_sleep concentration_while_asleep great_weapon_master sharpshooter war_caster alert polearm_master resilient lucky tough boon_of_fortitude item_ac_bonus item_save_bonus".split()) | CLASS_FLAGS)
         for key, value in f.items():
-            if key in {"parry", "undead_fortitude", "improved_critical"}: v.number(value, "features." + key, 1, True)
+            if key in {"parry", "undead_fortitude", "improved_critical", "item_ac_bonus", "item_save_bonus"}: v.number(value, "features." + key, 1, True)
             elif key in {"sneak_attack", "divine_strike"}: v.dice(value, "features." + key)
             elif key == "regeneration":
                 v.obj(value, "features.regeneration", "amount blocked_by at_zero")
