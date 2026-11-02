@@ -70,7 +70,7 @@ python -m engine.simulate --party fighter_5 cleric_5 rogue_5 wizard_5 --monsters
 python -m engine.rating --party fighter_5 cleric_5 rogue_5 wizard_5
 ```
 
-**Find the encounter a party can take (here: half the time someone goes down):**
+**Find the encounter a party can take (here: half the time someone goes down; add `--theme undead` for an undead fight):**
 ```bash
 python -m engine.finder encounter --level 5 --template elite_pack --target down=0.5
 ```

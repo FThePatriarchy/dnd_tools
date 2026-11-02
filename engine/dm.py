@@ -62,7 +62,9 @@ def budget_line(xp, levels):
     """The encounter's XP against the summed 2024 DMG budgets of these PCs."""
     if any(level not in BUDGETS for level in levels): return f"{xp:,} XP"
     low, moderate, high = (sum(BUDGETS[level][k] for level in levels) for k in range(3))
-    return f"{xp:,} XP = {xp / high:.2f}× DMG High (this party's budgets: Low {low:,} · Moderate {moderate:,} · High {high:,})"
+    # The smallest DMG budget that fits the encounter (below Low counts as Low), as in BUILD_REPORT's step 4.
+    band = "Low" if xp <= low else "Moderate" if xp <= moderate else "High" if xp <= high else "above High"
+    return f"{xp:,} XP = {xp / high:.2f}× DMG High, {band} (this party's budgets: Low {low:,} · Moderate {moderate:,} · High {high:,})"
 
 
 def pct(p, ci=None):

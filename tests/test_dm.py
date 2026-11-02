@@ -73,3 +73,11 @@ def test_compare_party_must_contain_the_replaced_member(monkeypatch, capsys):
     with pytest.raises(SystemExit):
         compare.main()
     assert "--replace" in capsys.readouterr().err
+
+
+def test_budget_line_names_the_dmg_band():
+    from engine.dm import budget_line
+    party = [5] * 4  # Low 2,000 · Moderate 3,000 · High 4,400
+    assert ", Low (" in budget_line(1100, party) and ", Low (" in budget_line(2000, party)
+    assert ", Moderate (" in budget_line(2500, party) and ", High (" in budget_line(4400, party)
+    assert ", above High (" in budget_line(5000, party)

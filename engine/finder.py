@@ -136,11 +136,11 @@ def _run_day_job(job):
 
 
 def find_encounter(builds, level, shape, *, target=None, limits=(), seed=1, morale="none", strategy="default",
-                   exclude=DEFAULT_EXCLUDE, scales=ENCOUNTER_SCALES, mapper=None, workers=None):
+                   exclude=DEFAULT_EXCLUDE, scales=ENCOUNTER_SCALES, mapper=None, workers=None, themes=None):
     high = budget(level, "high", len(builds))
 
     def make(scale):
-        picks = suggest(shape, scale * high, seed=seed, count=1, exclude=exclude)
+        picks = suggest(shape, scale * high, seed=seed, count=1, exclude=exclude, themes=themes)
         if not picks: return None
         fill, xp = picks[0]
         entries = encounter_entries(fill)
@@ -157,14 +157,14 @@ def parse_plan(text):
     return tokens
 
 
-def day_for(plan, shapes, total, seed, exclude=DEFAULT_EXCLUDE):
+def day_for(plan, shapes, total, seed, exclude=DEFAULT_EXCLUDE, themes=None):
     """A day definition: every E filled at total XP, cycling through shapes, each with its own seed."""
     steps, labels, index = [], [], 0
     for token in plan:
         if token == "S": steps.append({"rest": "short"}); labels.append("short rest"); continue
         if token == "L": steps.append({"rest": "long"}); labels.append("long rest"); continue
         shape = shapes[index % len(shapes)]
-        picks = suggest(shape, total, seed=seed + index, count=1, exclude=exclude)
+        picks = suggest(shape, total, seed=seed + index, count=1, exclude=exclude, themes=themes)
         if not picks: return None
         fill, xp = picks[0]
         steps.append({"encounter": encounter_entries(fill)})
@@ -174,11 +174,11 @@ def day_for(plan, shapes, total, seed, exclude=DEFAULT_EXCLUDE):
 
 
 def find_day(builds, level, plan, shapes, *, target=None, limits=(), seed=1, morale="none", strategy="default",
-             exclude=DEFAULT_EXCLUDE, scales=DAY_SCALES, mapper=None, workers=None):
+             exclude=DEFAULT_EXCLUDE, scales=DAY_SCALES, mapper=None, workers=None, themes=None):
     moderate = budget(level, "moderate", len(builds))
 
     def make(scale):
-        made = day_for(plan, shapes, scale * moderate, seed, exclude)
+        made = day_for(plan, shapes, scale * moderate, seed, exclude, themes)
         if made is None: return None
         day, labels = made
         key = json.dumps(day["steps"])
@@ -247,6 +247,7 @@ def main():
         p.add_argument("--strategy", default="default", choices=list(STRATEGIES))
         p.add_argument("--morale", default="none", choices=("none", "dmg", "rout"))
         p.add_argument("--exclude", nargs="*", default=list(DEFAULT_EXCLUDE))
+        p.add_argument("--theme", nargs="+", metavar="TYPE", help="only monsters of these creature types, e.g. undead fiend")
         p.add_argument("--workers", type=int)
         p.add_argument("--write", metavar="NAME", help="write data/reports/finder_<NAME>.md")
         if kind == "day": p.add_argument("--plan", required=True, help="e.g. 'E E S E E S E E'")
@@ -267,8 +268,12 @@ def main():
             builds, level = party(args.level, args.profile), args.level
     except (ValueError, OSError) as exc: parser.error(str(exc))
     if not target and not limits: parser.error("give a --target, at least one --limit, or both")
+    if args.theme:
+        from .templates import themed
+        try: themed(args.theme)
+        except ValueError as exc: parser.error(str(exc))
     common = dict(target=target, limits=limits, seed=args.seed, morale=args.morale, strategy=args.strategy,
-                  exclude=set(args.exclude), workers=args.workers)
+                  exclude=set(args.exclude), workers=args.workers, themes=args.theme)
     if args.kind == "encounter":
         if len(shapes) > 1: parser.error("an encounter takes one template or shape")
         best, points = find_encounter(builds, level, shapes[0], **common)
