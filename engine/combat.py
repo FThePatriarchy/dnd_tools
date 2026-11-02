@@ -428,6 +428,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 removed=min(n,reduction); typed[key]-=removed; reduction-=removed
         self.deflect_reduce(typed, attack_context)
         self.uncanny_reduce(typed, attack_context)
+        self.stone_reduce(typed, attack_context)
         grouped = defaultdict(dict)
         for (target, dtype), amount in typed.items():
             grouped[target][dtype] = self.mitigate_damage(target, amount, dtype, sources[target])
@@ -459,6 +460,11 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             if self.saving_throw(target, "con", target.features["undead_fortitude"] + amount):
                 target.hp = 1
                 self.feature_log(target, "Undead Fortitude")
+        if before > 0 and target.hp == 0 and not target.dead and target.features.get("relentless_endurance") and target.limited_uses.get("relentless_endurance"):
+            # Orc: reduced to 0 Hit Points but not killed outright, drop to 1 instead (once per Long Rest).
+            target.limited_uses["relentless_endurance"] -= 1; target.spend("relentless_endurance")
+            target.hp = 1
+            self.feature_log(target, "Relentless Endurance")
         if before > 0 and target.hp == 0 and not target.dead and target.raging and target.features.get("relentless_rage"):
             uses = target.statuses.get("relentless_uses", 0)
             target.statuses["relentless_uses"] = uses + 1

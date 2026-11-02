@@ -104,6 +104,8 @@ FEATS = {
     "boon_of_fortitude": {"abilities": set(ABILITIES), "requires": "epic"},
 }
 ORIGIN_FEATS = {"alert", "lucky", "tough"}
+# 2024 species with combat traits the engine simulates (see CLASS_FORMAT.md, "Species"); choice -> allowed options.
+SPECIES = {"dwarf": None, "halfling": None, "human": ORIGIN_FEATS, "orc": None, "goliath": {"stone", "fire"}}
 ARCANUM = {6: ["Circle of Death"], 7: ["Finger of Death"], 8: ["Power Word Stun", "Dominate Monster"], 9: ["Power Word Kill", "Foresight"]}
 MARTIAL_DIE = {level: "1d6" if level < 5 else "1d8" if level < 11 else "1d10" if level < 17 else "1d12" for level in range(1, MAX_LEVEL + 1)}
 
@@ -198,7 +200,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     subclass = c["subclass"] if subclass is None else subclass
     v.enum(subclass,{c["subclass"]},"subclass")
     choices=deepcopy(choices) if choices is not None else {}
-    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat invocations magical_discoveries hunters_prey open_hand stunning_budget primal_order metamagic spell_mastery signature_spells mystic_arcanum items")
+    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat species species_choice invocations magical_discoveries hunters_prey open_hand stunning_budget primal_order metamagic spell_mastery signature_spells mystic_arcanum items")
     v.check(class_name=="bard" or "magical_discoveries" not in choices,"choices.magical_discoveries","Bard choice only")
     v.check(type(background) is bool,"background","expected boolean")
     items=choices.get("items",[]); v.sequence(items,"choices.items")
@@ -306,6 +308,16 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     faces=int(c["hit_die"][1:]); hp=max(1,faces+mod("con"))+(level-1)*max(1,faces//2+1+mod("con"))
     if class_name=="sorcerer" and level>=3: hp += level
     if choices.get("origin_feat")=="tough": hp += 2*level
+    species=choices.get("species"); species_choice=choices.get("species_choice")
+    if species is not None:
+        v.enum(species,set(SPECIES),"choices.species")
+        options=SPECIES.get(species)
+        if options is None: v.check(species_choice is None,"choices.species_choice",f"{species} has no choice")
+        else: v.enum(species_choice,options,"choices.species_choice")
+        if species=="human": v.check(species_choice!=choices.get("origin_feat"),"choices.species_choice","Versatile must be a different Origin feat")
+    elif species_choice is not None: v.check(False,"choices.species_choice","needs choices.species")
+    if species=="dwarf": hp += level  # Dwarven Toughness
+    if species=="human" and species_choice=="tough": hp += 2*level
     if "boon_of_fortitude" in feats: hp += 40
     sheet={"name":f"{class_name.title()} {level} ({subclass.title()})", "source":"XPHB", "level":level,
            "hit_dice":{"die":c["hit_die"],"count":level}, "max_hp":hp,"ac":ac,"abilities":abilities,
@@ -383,11 +395,28 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     for feat in feats: sheet["features"][feat]=True
     if resilient: sheet["save_proficiencies"].append(resilient)
     origin=choices.get("origin_feat")
-    if origin is not None:
-        v.enum(origin,ORIGIN_FEATS,"choices.origin_feat")
+    origins=[f for f in (origin, species_choice if species=="human" else None) if f is not None]
+    if origin is not None: v.enum(origin,ORIGIN_FEATS,"choices.origin_feat")
+    for origin in origins:
         sheet["features"][origin]=True
         if origin=="alert": sheet["initiative_bonus"]=sheet.get("initiative_bonus",0)+row["proficiency_bonus"]
         if origin=="lucky": sheet["limited_uses"]["luck"]={"max":row["proficiency_bonus"],"long_rest":"all"}
+    pb=row["proficiency_bonus"]
+    if species=="dwarf":
+        sheet["resistances"]=sorted(set(sheet.get("resistances",[]))|{"poison"})
+    elif species=="halfling":
+        sheet["size"]="S"; sheet["features"]["halfling_luck"]=True
+    elif species=="human":
+        sheet["limited_uses"]["resourceful"]={"max":1,"long_rest":"all"}  # Heroic Inspiration after each Long Rest
+    elif species=="orc":
+        sheet["features"]["relentless_endurance"]=True
+        sheet["limited_uses"]["relentless_endurance"]={"max":1,"long_rest":"all"}
+        sheet["limited_uses"]["adrenaline_rush"]={"max":pb,"short_rest":"all","long_rest":"all"}
+    elif species=="goliath":
+        key={"stone":"stones_endurance","fire":"fires_burn"}[species_choice]
+        sheet["features"][key]=True
+        sheet["limited_uses"][key]={"max":pb,"long_rest":"all"}
+    if species: sheet["name"]+=", "+(species.title() if species_choice is None else f"{species.title()} ({species_choice.replace('_',' ')})")
     if class_name in {"fighter","barbarian","paladin","monk","ranger"} and level>=5: sheet["extra_attack"]=2
     if class_name=="fighter" and level>=11: sheet["extra_attack"]=3 if level<20 else 4
     for weapon in weapons:

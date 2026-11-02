@@ -148,6 +148,11 @@ class ClassMechanics:
 
     def class_initiative(self, actor):
         if not actor.alive: return
+        if actor.limited_uses.get("resourceful") and "heroic_inspiration" not in actor.statuses:
+            # Human Resourceful: Heroic Inspiration after each Long Rest, granted when the day's first fight starts.
+            actor.limited_uses["resourceful"] -= 1; actor.spend("resourceful")
+            actor.statuses["heroic_inspiration"] = {}
+            self.feature_log(actor, "Resourceful")
         used = actor.statuses.pop("used_metabolism", False)
         if actor.features.get("persistent_rage") and not actor.statuses.get("persistent_rage_used") and actor.limited_uses.get("rage", 0) < actor.max_limited_uses.get("rage", 0):
             actor.statuses["persistent_rage_used"] = True
@@ -616,6 +621,12 @@ class ClassMechanics:
                 self.feature_log(actor, "Death Strike")
             self.damage(target, amount, dtype, actor)
             self.feature_log(actor, "Sneak Attack", dice=f"{n}d{sides}", critical=critical)
+        if actor.features.get("fires_burn") and actor.limited_uses.get("fires_burn") and actor.statuses.get("fires_burn_turn") != self.turn_index:
+            # Goliath Fire's Burn: +1d10 Fire on a hit (Proficiency Bonus uses per Long Rest; the AI spends one a turn).
+            actor.statuses["fires_burn_turn"] = self.turn_index
+            actor.limited_uses["fires_burn"] -= 1; actor.spend("fires_burn")
+            self.damage(target, dice.roll(self.rng, "1d10", critical), "fire", actor)
+            self.feature_log(actor, "Fire's Burn")
         if actor.features.get("divine_strike") and self.current is actor and actor.statuses.get("strike_turn") != self.turn_index:
             actor.statuses["strike_turn"] = self.turn_index
             self.damage(target, dice.roll(self.rng, actor.features["divine_strike"], critical), "radiant", actor)
@@ -679,6 +690,32 @@ class ClassMechanics:
             typed[k] = n // 2 + extra
             spare -= extra
 
+    def stone_reduce(self, typed, attack_context):
+        """Goliath Stone's Endurance: a Reaction reduces the damage of a hit by 1d12 + Con modifier."""
+        if attack_context is None: return
+        attacker, target, attack = attack_context
+        if not target.features.get("stones_endurance") or not target.limited_uses.get("stones_endurance") or not target.reaction: return
+        if target.has_condition("incapacitated") or self.turn_rules(target).get("no_reactions"): return
+        entries = [(k, n) for k, n in typed.items() if k[0] is target]
+        total = sum(n for _, n in entries)
+        # Worth a use when the hit is at least the average reduction (6.5 + Con).
+        if total < 6.5 + target.mod("con") or not self.policy_for(target).reaction(self, target, {"name": "Stone's Endurance"}, {"attack": attack, "damage": total}): return
+        target.reaction -= 1
+        target.limited_uses["stones_endurance"] -= 1; target.spend("stones_endurance")
+        reduction = dice.roll(self.rng, "1d12") + target.mod("con")
+        self.record("reaction", actor=target.id, name="Stone's Endurance", damage=total, reduction=reduction)
+        for key, n in sorted(entries, key=lambda e: -e[1]):
+            removed = min(n, max(0, reduction)); typed[key] -= removed; reduction -= removed
+
+    def adrenaline_rush(self, actor):
+        """Orc Adrenaline Rush with an unused Bonus Action: Dash (no grid) for Proficiency Bonus Temporary Hit Points."""
+        if not actor.limited_uses.get("adrenaline_rush") or not actor.bonus_action or not actor.alive or actor.has_condition("incapacitated"): return
+        if not self.enemies(actor) or actor.temp_hp >= actor.proficiency_bonus: return
+        actor.bonus_action -= 1
+        actor.limited_uses["adrenaline_rush"] -= 1; actor.spend("adrenaline_rush")
+        actor.temp_hp = max(actor.temp_hp, actor.proficiency_bonus)
+        self.feature_log(actor, "Adrenaline Rush", temp_hp=actor.temp_hp)
+
     def class_flags(self, actor, on, scope, against):
         adv = bool(on == "initiative" and actor.features.get("initiative_advantage"))
         adv |= on == "ability_checks" and scope == "athletics" and actor.features.get("remarkable_athlete", False)
@@ -699,6 +736,10 @@ class ClassMechanics:
         return adv, dis
 
     def heroic_reroll(self, actor, natural, succeeds, kind="save"):
+        if natural == 1 and actor.features.get("halfling_luck"):
+            # Halfling Luck: a 1 on the d20 of a D20 Test is rerolled, and the new roll must be used.
+            natural = dice.d20(self.rng)
+            self.feature_log(actor, "Halfling Luck", roll=kind)
         if not succeeds(natural) and actor.statuses.pop("heroic_inspiration", None) is not None:
             self.feature_log(actor, "Heroic Inspiration")
             natural = dice.reroll(self.rng, natural, self.policy_for(actor).reroll_die(self, actor, natural))

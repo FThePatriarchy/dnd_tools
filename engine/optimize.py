@@ -2,7 +2,7 @@
 
 Starting from a member of your party, each round tries every one-change
 neighbour of the current build (a kit, a spell list, a feat, an ability/ASI
-plan, a subclass option), measures them in the party with the focused paired
+plan, a subclass option, a species), measures them in the party with the focused paired
 method (engine.focused), and accepts the best change only when its 95%
 interval lies above zero. It repeats from the improved build until no change
 helps, so changes combine (for example a feat on top of a better kit).
@@ -72,10 +72,10 @@ def legal(recipe):
 
 def candidate_changes(cls, level):
     """[(label, change)] from compare's generators, relative to the class's standard build; no duplicates."""
-    from .compare import ability_variants, standard_recipe, variants
+    from .compare import ability_variants, species_variants, standard_recipe, variants
     base = standard_recipe(cls, level)
     out, seen = [], set()
-    for v in variants(cls, level)[1:] + ability_variants(cls, level)[1:]:
+    for v in variants(cls, level)[1:] + ability_variants(cls, level)[1:] + species_variants(base):
         change = change_between(base, v)
         key = json.dumps(sorted((list(k), x) for k, x in change.items()), sort_keys=True, default=str)
         if change and key not in seen:

@@ -504,6 +504,7 @@ class Policy:
         for trait in actor.traits + [a for a in actor.actions if a["name"]=="Cunning Action"]:
             if trait["name"] in {"Nimble Escape", "Cunning Action", "Deathless Agility"} and combat.action_available(actor, trait):
                 combat.use_action(actor, trait["name"])
+        combat.adrenaline_rush(actor)
 
 
 class NovaPolicy(Policy):

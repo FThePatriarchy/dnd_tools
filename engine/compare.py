@@ -125,6 +125,19 @@ def feat_variants(base, cls, level):
     return out
 
 
+def species_variants(base):
+    """The standard build as each species the builder supports (one per Human feat / Goliath ancestry)."""
+    from .builder import SPECIES
+    out = []
+    for species, options in sorted(SPECIES.items()):
+        for choice in sorted(options) if options else [None]:
+            if species == "human" and choice == base["choices"].get("origin_feat"): continue
+            name = f"species: {species}" + (f" ({choice})" if choice else "")
+            changes = {"species": species, **({"species_choice": choice} if choice else {})}
+            out.append(variant(base, name, **changes))
+    return out
+
+
 def variants(cls, level, feats_only=False):
     """Recipes for a class's main decisions at standard abilities; the first is the standard build."""
     base = standard_recipe(cls, level)
@@ -377,6 +390,7 @@ def main():
     group.add_argument("--variants", action="store_true", help="generate variants of the class's main decisions")
     group.add_argument("--feats", action="store_true", help="the standard build and its feat variants only")
     group.add_argument("--abilities", action="store_true", help="the standard build with other ability arrays and ASI plans")
+    group.add_argument("--species", action="store_true", help="the standard build as each supported species")
     parser.add_argument("--finalists", type=int, default=4, help="variants rated after the screen (plus standard)")
     parser.add_argument("--only", nargs="+", metavar="NAME", help="keep only the variants with these names (plus standard)")
     parser.add_argument("--references", nargs="+", default=["standard"], choices=["casual", "standard", "optimized"])
@@ -403,8 +417,12 @@ def main():
         if member not in args.party: parser.error(f"--replace: name a member of --party (got {member!r})")
         parties = {"yours": (list(args.party), args.party.index(member))}
     screened = None
-    if args.variants or args.feats or args.abilities:
-        found = ability_variants(args.cls, args.level) if args.abilities else variants(args.cls, args.level, feats_only=args.feats)
+    if args.variants or args.feats or args.abilities or args.species:
+        if args.species:
+            base = standard_recipe(args.cls, args.level)
+            found = [base] + species_variants(base)
+        else:
+            found = ability_variants(args.cls, args.level) if args.abilities else variants(args.cls, args.level, feats_only=args.feats)
         if args.only: found = found[:1] + [v for v in found[1:] if v["name"] in args.only]
         if args.screen == "sim" and args.method == "focused" and len(found) - 1 > args.finalists:
             scores = sim_screen(args.level, args.cls, found, seed=args.seed, strategy=args.strategy, workers=args.workers,
