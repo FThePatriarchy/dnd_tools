@@ -82,7 +82,7 @@ level; a build has at most one. Each feat becomes a sheet feature flag.
 | Feat | +1 to | Prerequisite | Simulated | Not simulated (no grid) |
 |---|---|---|---|---|
 | Great Weapon Master | Str | Str 13 | +PB damage on a hit with a Heavy weapon (greatsword, longbow) made in the Attack action on the attacker's turn; Hew: after a critical hit or a kill with a melee weapon, one attack with the same weapon as a Bonus Action (once per Bonus Action) | — |
-| Sharpshooter | Dex | Dex 13 | the +1 only | ignoring half and three-quarters cover; no disadvantage in melee or at long range. Cover, range bands and melee adjacency are not modelled, so Sharpshooter is valued here as +1 Dex. |
+| Sharpshooter | Dex | Dex 13 | the +1 only | ignoring half and three-quarters cover; no disadvantage in melee or at long range. By default cover and melee adjacency are not modelled, so Sharpshooter is valued as +1 Dex. With `DayOptions.cover` it ignores row-based half cover and the in-melee disadvantage for weapon attacks; monsters never have cover, and range bands are not modelled. |
 | War Caster | Int, Wis or Cha | Spellcasting | advantage on Constitution saves to maintain Concentration | Reactive Spell (no opportunity attacks); somatic components with full hands |
 | Polearm Master | Str or Dex | Str or Dex 13 | Pole Strike: after the Attack action with a Quarterstaff, Spear or Heavy and Reach weapon (the glaive), one attack with the same weapon as a Bonus Action, d4 Bludgeoning plus the usual modifier. Great Weapon Master's +PB does not apply to it (it is not part of the Attack action). | Reactive Strike (no movement into reach) |
 | Resilient | the chosen ability | — | +1 and saving-throw proficiency in one ability whose save the class lacks | — |
