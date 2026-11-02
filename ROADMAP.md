@@ -28,6 +28,8 @@ The simulation is the source of truth. Expected-value maths (hit chance × damag
   - Aboleth ×3 has an inconsistent result: deaths in 96% of runs, 0% wins, 2% TPK.
   - Engine crash: Cunning Strike can target an illegal creature. The seed is in the report.
 
+- **Audit (2026-11-02):** `AUDIT.md` lists the rough edges in combat simulation, build comparison and DM tools, with a fix plan and order. Start there.
+
 ## Phase 1 — Trustworthy benchmark
 
 Fix the modelling distortions the sweep exposed, comparing options side by side before changing any default.
