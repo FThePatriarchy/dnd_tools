@@ -323,8 +323,8 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         sheet["actions"].extend(substitute(f.get("actions",[]),level,row))
         sheet["features"].update({k:substitute(x,level,row) for k,x in f.get("mechanics",{}).items() if k not in {"builder","progression"}})
         if "unsupported" in f: sheet["unsupported"].append(f["name"]+": "+f["unsupported"])
-    # Do not enable for cleric/wizard: their published results must stay bit-identical.
-    if class_name in {"paladin","warlock","bard","monk","ranger","druid","sorcerer"}: sheet["features"]["values_buffs"]=True
+    # Every class values in-combat buffs (until 2026-11-02 the cleric and wizard did not, to keep old baselines).
+    sheet["features"]["values_buffs"]=True
     if class_name=="barbarian" and level>=14:
         sheet["limited_uses"]["intimidating_presence"]={"max":1,"long_rest":"all"}
         sheet["actions"].append({"name":"Intimidating Presence","cost":"bonus_action","resource":"intimidating_presence","duration":{"type":"minutes","n":1},

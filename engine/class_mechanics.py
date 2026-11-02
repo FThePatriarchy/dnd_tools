@@ -326,8 +326,11 @@ class ClassMechanics:
         if not enemies: return 0
         duration = spec.get("duration", {"type": "instant"})
         cap = duration.get("n", 1) * {"rounds": 1, "minutes": 10, "hours": 600, "days": 14400}.get(duration["type"], 0)
-        horizon = min(self.expected_remaining_rounds(actor), cap)
-        if spec.get("concentration"): horizon = self.concentration_horizon(actor, enemies, horizon)
+        full = horizon = min(self.expected_remaining_rounds(actor), cap)
+        broken = 0  # chance that concentration breaks before the fight (or the spell) would end
+        if spec.get("concentration"):
+            horizon = self.concentration_horizon(actor, enemies, horizon)
+            broken = 1 - self.concentration_keep(actor, enemies) ** full
         slot = spec["level"] if slot is None else slot
         probe = SpellInstance(0, spec, actor, slot, self.turn_index, self.time_rounds)
         selected = {}
@@ -364,15 +367,27 @@ class ClassMechanics:
                         else: total += min(incoming * horizon, max(0, amount - ally.temp_hp))
                     elif "max_hp" in p:
                         total += min(incoming * horizon, p["max_hp"]["amount"])
+                    elif "grant_action" in p and "attack" in p["grant_action"].get("restricted_to", []):
+                        # Haste: one more weapon attack each round while it lasts.
+                        swings = len(ally.multiattack) if ally.multiattack else max(1, ally.extra_attack)
+                        per_attack = self.expected_weapon_damage(ally, enemies[0]) / swings
+                        total += per_attack * min(swings, p["grant_action"].get("attack_limit", 1)) * horizon
+                    elif "on_spell_end" in p and any(q.get("apply_condition", {}).get("condition") == "incapacitated" for q in p["on_spell_end"]):
+                        # Haste's lethargy: a turn lost if the spell ends while the fight goes on.
+                        total -= self.at_will_damage_rate(ally, enemies[0]) * broken
         return total
 
-    def concentration_horizon(self, actor, enemies, horizon):
-        """Expected rounds a concentration spell lasts: each hit risks a DC 10 Constitution save."""
+    def concentration_keep(self, actor, enemies):
+        """Chance a caster keeps concentration through one round: each hit risks a DC 10 Constitution save."""
         allies = [c for c in self.combatants if c.team == actor.team and c.alive]
         hits = sum(self.expected_attack_hits(e, actor) for e in enemies) / max(1, len(allies))
         bonus = actor.save_bonus("con")
         fail = min(.95, max(.05, (9 - bonus) / 20)) * (.5 if (actor.features.get("war_caster") or actor.features.get("eldritch_mind")) else 1)
-        keep = (1 - fail) ** hits
+        return (1 - fail) ** hits
+
+    def concentration_horizon(self, actor, enemies, horizon):
+        """Expected rounds a concentration spell lasts."""
+        keep = self.concentration_keep(actor, enemies)
         return horizon if keep >= 1 else (1 - keep ** horizon) / (1 - keep)
 
     def buff_attack_gain(self, ally, target, attack_bonus, damage_bonus=0, *, weapon_only=False):

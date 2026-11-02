@@ -46,3 +46,24 @@ def test_wizard_never_fireballs_fire_elementals():
         combat.run(30)
         casts += sum(1 for e in combat.log if e["event"] == "cast" and e["spell"] == "Fireball")
     assert casts == 0
+
+
+def haste_value(enemy, count):
+    party = [pc(f"{c}_10", i) for i, c in enumerate(("fighter", "cleric", "rogue", "wizard"))]
+    foes = [monster(enemy, i) for i in range(count)]
+    combat = Combat(party + foes, SPELLS, seed=1)
+    wizard = party[3]
+    combat.begin_turn(wizard)
+    return combat, wizard, combat.scale(wizard, combat.spells["Haste"], 3)
+
+
+def test_haste_values_its_extra_attack_and_charges_for_lethargy(monkeypatch):
+    combat, wizard, haste = haste_value("hill_giant", 2)
+    with_lethargy = combat.expected_buff_value(wizard, haste, slot=3)
+    assert with_lethargy > 0
+    # Certain concentration: no lethargy cost, so the value can only rise.
+    monkeypatch.setattr(combat, "concentration_keep", lambda *a: 1.0)
+    assert combat.expected_buff_value(wizard, haste, slot=3) > with_lethargy
+    # Concentration that never survives a round: the extra attack is worth less than the lost turn.
+    monkeypatch.setattr(combat, "concentration_keep", lambda *a: 0.0)
+    assert combat.expected_buff_value(wizard, haste, slot=3) < with_lethargy
