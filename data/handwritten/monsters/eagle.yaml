@@ -1,0 +1,42 @@
+name: Eagle
+source: XMM
+cr: '0'
+ac: 12
+max_hp: 4
+hp_formula: 1d6 + 1
+abilities:
+  str: 6
+  dex: 15
+  con: 12
+  int: 2
+  wis: 14
+  cha: 7
+speed: 10
+movement_modes:
+  walk: 10
+  fly: 60
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Talons
+  kind: melee
+  to_hit: 4
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 2
+      type: slashing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: S

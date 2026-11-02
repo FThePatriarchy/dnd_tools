@@ -1,0 +1,49 @@
+name: Warhorse
+source: XMM
+cr: 1/2
+ac: 11
+max_hp: 19
+hp_formula: 3d10 + 3
+abilities:
+  str: 18
+  dex: 12
+  con: 13
+  int: 2
+  wis: 12
+  cha: 7
+speed: 60
+movement_modes:
+  walk: 60
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses:
+  wis: 3
+save_proficiencies:
+- wis
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Hooves
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d4
+      bonus: 4
+      type: bludgeoning
+  - damage:
+      dice: 2d4
+      bonus: 0
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Hooves: the extra damage and Prone needs a grid: the rider applies only after moving 20+ feet straight toward
+  the target, which is not simulated.'
+size: L

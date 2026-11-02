@@ -1,0 +1,59 @@
+name: Giant Axe Beak
+source: XMM
+cr: '5'
+ac: 15
+max_hp: 84
+hp_formula: 8d12 + 32
+abilities:
+  str: 21
+  dex: 14
+  con: 19
+  int: 3
+  wis: 12
+  cha: 5
+speed: 50
+movement_modes:
+  walk: 50
+creature_type: monstrosity
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 3
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Sharpened Beak
+  kind: melee
+  to_hit: 8
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d12
+      bonus: 5
+      type: slashing
+  - damage:
+      dice: 1d12
+      bonus: 0
+      type: slashing
+- name: Talons
+  kind: melee
+  to_hit: 8
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 5
+      type: piercing
+  - apply_condition:
+      condition: prone
+      max_size: L
+multiattack:
+- Sharpened Beak
+- Talons
+actions: []
+traits: []
+unsupported: []
+size: H

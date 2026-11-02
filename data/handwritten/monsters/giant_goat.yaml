@@ -1,0 +1,50 @@
+name: Giant Goat
+source: XMM
+cr: 1/2
+ac: 11
+max_hp: 19
+hp_formula: 3d10 + 3
+abilities:
+  str: 17
+  dex: 13
+  con: 12
+  int: 3
+  wis: 12
+  cha: 6
+speed: 40
+movement_modes:
+  walk: 40
+  climb: 30
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses:
+  str: 5
+save_proficiencies:
+- str
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Ram
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 3
+      type: bludgeoning
+  - damage:
+      dice: 2d4
+      bonus: 0
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Ram: the extra damage and Prone needs a grid: the rider applies only after moving 20+ feet straight toward the
+  target, which is not simulated.'
+size: L

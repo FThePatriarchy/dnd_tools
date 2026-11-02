@@ -1,0 +1,44 @@
+name: Goat
+source: XMM
+cr: '0'
+ac: 10
+max_hp: 4
+hp_formula: 1d8
+abilities:
+  str: 11
+  dex: 10
+  con: 11
+  int: 2
+  wis: 10
+  cha: 5
+speed: 40
+movement_modes:
+  walk: 40
+  climb: 30
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses:
+  str: 2
+save_proficiencies:
+- str
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Ram
+  kind: melee
+  to_hit: 2
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M

@@ -1,0 +1,48 @@
+name: Ankylosaurus
+source: XMM
+cr: '3'
+ac: 15
+max_hp: 68
+hp_formula: 8d12 + 16
+abilities:
+  str: 19
+  dex: 11
+  con: 15
+  int: 2
+  wis: 12
+  cha: 5
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses:
+  str: 6
+save_proficiencies:
+- str
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Tail
+  kind: melee
+  to_hit: 6
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 4
+      type: bludgeoning
+  - apply_condition:
+      condition: prone
+      max_size: H
+multiattack:
+- Tail
+- Tail
+actions: []
+traits: []
+unsupported: []
+size: H

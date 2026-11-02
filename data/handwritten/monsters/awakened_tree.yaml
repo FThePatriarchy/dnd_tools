@@ -1,0 +1,44 @@
+name: Awakened Tree
+source: XMM
+cr: '2'
+ac: 13
+max_hp: 59
+hp_formula: 7d12 + 14
+abilities:
+  str: 19
+  dex: 6
+  con: 15
+  int: 10
+  wis: 10
+  cha: 7
+speed: 20
+movement_modes:
+  walk: 20
+creature_type: plant
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- bludgeoning
+- piercing
+immunities: []
+vulnerabilities:
+- fire
+condition_immunities: []
+attacks:
+- name: Slam
+  kind: melee
+  to_hit: 6
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 4
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: H

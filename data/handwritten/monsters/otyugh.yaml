@@ -1,0 +1,93 @@
+name: Otyugh
+source: XMM
+cr: '5'
+ac: 14
+max_hp: 104
+hp_formula: 11d10 + 44
+abilities:
+  str: 16
+  dex: 11
+  con: 19
+  int: 6
+  wis: 13
+  cha: 6
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: aberration
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses:
+  con: 7
+save_proficiencies:
+- con
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 3
+      type: piercing
+  - apply_condition:
+      condition: poisoned
+- name: Tentacle
+  kind: melee
+  to_hit: 6
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 3
+      type: piercing
+  - apply_condition:
+      condition: grappled
+      escape_dc: 13
+      max_size: M
+      linked: true
+      capacity: 2
+multiattack:
+- Bite
+- Tentacle
+- Tentacle
+actions:
+- name: Tentacle Slam
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+      eligible_if: target.has_condition_from(grappled, caster)
+    attack: null
+    save:
+      ability: con
+      dc: 14
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 3d8
+        bonus: 3
+        type: bludgeoning
+    - apply_condition:
+        condition: stunned
+      until: start_of_turn(caster.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+    if: target.has_condition_from(grappled, caster)
+traits: []
+unsupported:
+- 'Bite: the Poisoned condition lasts the fight; its Hit Point maximum loss after a Long Rest is not modeled.'
+size: L

@@ -1,0 +1,46 @@
+name: Hook Horror
+source: XMM
+cr: '3'
+ac: 15
+max_hp: 75
+hp_formula: 10d10 + 20
+abilities:
+  str: 18
+  dex: 10
+  con: 15
+  int: 6
+  wis: 12
+  cha: 7
+speed: 30
+movement_modes:
+  walk: 30
+  climb: 30
+creature_type: monstrosity
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses:
+  con: 4
+save_proficiencies:
+- con
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Hook
+  kind: melee
+  to_hit: 6
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 4
+      type: piercing
+multiattack:
+- Hook
+- Hook
+actions: []
+traits: []
+unsupported: []
+size: L

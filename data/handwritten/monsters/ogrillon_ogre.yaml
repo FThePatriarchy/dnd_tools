@@ -1,0 +1,50 @@
+name: Ogrillon Ogre
+source: XMM
+cr: '1'
+ac: 12
+max_hp: 52
+hp_formula: 7d10 + 14
+abilities:
+  str: 17
+  dex: 10
+  con: 14
+  int: 7
+  wis: 9
+  cha: 10
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: giant
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Battleaxe
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 3
+      type: slashing
+- name: Javelin
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 3
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: L

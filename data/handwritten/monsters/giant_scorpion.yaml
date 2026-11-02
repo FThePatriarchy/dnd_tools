@@ -1,0 +1,63 @@
+name: Giant Scorpion
+source: XMM
+cr: '3'
+ac: 15
+max_hp: 52
+hp_formula: 7d10 + 14
+abilities:
+  str: 16
+  dex: 13
+  con: 15
+  int: 1
+  wis: 9
+  cha: 3
+speed: 40
+movement_modes:
+  walk: 40
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Claw
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 3
+      type: bludgeoning
+  - apply_condition:
+      condition: grappled
+      escape_dc: 13
+      max_size: L
+      linked: true
+      capacity: 2
+- name: Sting
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 3
+      type: piercing
+  - damage:
+      dice: 2d10
+      bonus: 0
+      type: poison
+multiattack:
+- Claw
+- Claw
+- Sting
+actions: []
+traits: []
+unsupported: []
+size: L

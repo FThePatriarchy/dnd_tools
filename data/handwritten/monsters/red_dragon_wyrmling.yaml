@@ -1,0 +1,81 @@
+name: Red Dragon Wyrmling
+source: XMM
+cr: '4'
+ac: 17
+max_hp: 75
+hp_formula: 10d8 + 30
+abilities:
+  str: 19
+  dex: 10
+  con: 17
+  int: 12
+  wis: 11
+  cha: 15
+speed: 30
+movement_modes:
+  walk: 30
+  climb: 30
+  fly: 60
+creature_type: dragon
+alignment: evil
+proficiency_bonus: 2
+save_bonuses:
+  dex: 2
+  wis: 2
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 2
+resistances: []
+immunities:
+- fire
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 4
+      type: slashing
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: fire
+multiattack:
+- Rend
+- Rend
+actions:
+- name: Fire Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 15
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: dex
+      dc: 13
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 7d6
+        bonus: 0
+        type: fire
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported: []
+size: M

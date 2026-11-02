@@ -1,0 +1,41 @@
+name: Riding Horse
+source: XMM
+cr: 1/4
+ac: 11
+max_hp: 13
+hp_formula: 2d10 + 2
+abilities:
+  str: 16
+  dex: 13
+  con: 12
+  int: 2
+  wis: 11
+  cha: 7
+speed: 60
+movement_modes:
+  walk: 60
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Hooves
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 3
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: L

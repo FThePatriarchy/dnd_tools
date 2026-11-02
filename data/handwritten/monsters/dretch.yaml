@@ -1,0 +1,75 @@
+name: Dretch
+source: XMM
+cr: 1/4
+ac: 11
+max_hp: 18
+hp_formula: 4d6 + 4
+abilities:
+  str: 12
+  dex: 11
+  con: 12
+  int: 5
+  wis: 8
+  cha: 3
+speed: 20
+movement_modes:
+  walk: 20
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- cold
+- fire
+- lightning
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- poisoned
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 3
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 1
+      type: slashing
+multiattack: []
+actions:
+- name: Fetid Cloud
+  cost: action
+  resource: Fetid Cloud
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: emanation
+      size_ft: 10
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 11
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: poisoned
+      until: end_of_turn(target.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- 'Fetid Cloud: the action-or-Bonus-Action limit and losing Reactions while Poisoned are not modeled.'
+limited_uses:
+  Fetid Cloud: 1
+size: S

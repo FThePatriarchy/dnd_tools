@@ -1,0 +1,52 @@
+name: Animated Armor
+source: XMM
+cr: '1'
+ac: 18
+max_hp: 33
+hp_formula: 6d8 + 6
+abilities:
+  str: 14
+  dex: 11
+  con: 13
+  int: 1
+  wis: 3
+  cha: 1
+speed: 25
+movement_modes:
+  walk: 25
+creature_type: construct
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 2
+resistances: []
+immunities:
+- poison
+- psychic
+vulnerabilities: []
+condition_immunities:
+- charmed
+- deafened
+- exhaustion
+- frightened
+- paralyzed
+- petrified
+- poisoned
+attacks:
+- name: Slam
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: bludgeoning
+multiattack:
+- Slam
+- Slam
+actions: []
+traits: []
+unsupported: []
+size: M

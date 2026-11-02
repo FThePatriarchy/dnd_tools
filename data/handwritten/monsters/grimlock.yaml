@@ -1,0 +1,46 @@
+name: Grimlock
+source: XMM
+cr: 1/4
+ac: 11
+max_hp: 11
+hp_formula: 2d8 + 2
+abilities:
+  str: 16
+  dex: 12
+  con: 12
+  int: 9
+  wis: 8
+  cha: 6
+speed: 30
+movement_modes:
+  walk: 30
+  climb: 30
+creature_type: aberration
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bone Cudgel
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 3
+      type: bludgeoning
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: psychic
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M

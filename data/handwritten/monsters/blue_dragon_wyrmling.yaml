@@ -1,0 +1,81 @@
+name: Blue Dragon Wyrmling
+source: XMM
+cr: '3'
+ac: 17
+max_hp: 65
+hp_formula: 10d8 + 20
+abilities:
+  str: 17
+  dex: 10
+  con: 15
+  int: 12
+  wis: 11
+  cha: 15
+speed: 30
+movement_modes:
+  walk: 30
+  burrow: 15
+  fly: 60
+creature_type: dragon
+alignment: evil
+proficiency_bonus: 2
+save_bonuses:
+  dex: 2
+  wis: 2
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 2
+resistances: []
+immunities:
+- lightning
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 3
+      type: slashing
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: lightning
+multiattack:
+- Rend
+- Rend
+actions:
+- name: Lightning Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: line
+      size_ft: 30
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: dex
+      dc: 12
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 6d6
+        bonus: 0
+        type: lightning
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported: []
+size: M

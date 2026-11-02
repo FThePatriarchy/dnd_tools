@@ -1,0 +1,51 @@
+name: Needle Blight
+source: XMM
+cr: 1/4
+ac: 12
+max_hp: 16
+hp_formula: 3d8 + 3
+abilities:
+  str: 12
+  dex: 12
+  con: 13
+  int: 4
+  wis: 8
+  cha: 3
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: plant
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities:
+- deafened
+attacks:
+- name: Claw
+  kind: melee
+  to_hit: 3
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d4
+      bonus: 1
+      type: slashing
+- name: Needles
+  kind: ranged
+  to_hit: 3
+  reach_ft: 0
+  effects:
+  - damage:
+      dice: 2d4
+      bonus: 1
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M

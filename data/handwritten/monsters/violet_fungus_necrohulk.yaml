@@ -1,0 +1,106 @@
+name: Violet Fungus Necrohulk
+source: XMM
+cr: '7'
+ac: 17
+max_hp: 123
+hp_formula: 13d10 + 52
+abilities:
+  str: 19
+  dex: 12
+  con: 18
+  int: 7
+  wis: 14
+  cha: 10
+speed: 40
+movement_modes:
+  walk: 40
+creature_type: plant
+alignment: evil
+proficiency_bonus: 3
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 3
+resistances: []
+immunities:
+- necrotic
+- poison
+vulnerabilities: []
+condition_immunities:
+- blinded
+- charmed
+- deafened
+- frightened
+- poisoned
+attacks:
+- name: Rotting Slam
+  kind: melee
+  to_hit: 7
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 4
+      type: bludgeoning
+  - damage:
+      dice: 2d6
+      bonus: 0
+      type: necrotic
+multiattack:
+- Rotting Slam
+- Rotting Slam
+actions:
+- name: Spore Bomb
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: sphere
+      size_ft: 20
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 15
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 8d6
+        bonus: 0
+        type: necrotic
+    - apply_condition:
+        condition: poisoned
+      until: start_of_turn(caster.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+- name: Absorb Body
+  cost: bonus_action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: str
+      dc: 15
+      on_success: negate
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- 'Spore Bomb: being unable to regain Hit Points while Poisoned is not modeled.'
+- Absorb Body (grafting a creature) is not modeled (the action has no simulated effect, so the AI never uses it).
+size: L

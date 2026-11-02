@@ -1,0 +1,88 @@
+name: Nothic
+source: XMM
+cr: '2'
+ac: 15
+max_hp: 45
+hp_formula: 6d8 + 18
+abilities:
+  str: 14
+  dex: 16
+  con: 16
+  int: 13
+  wis: 10
+  cha: 8
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: aberration
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Claw
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 3
+      type: slashing
+multiattack:
+- Claw
+- Claw
+actions:
+- name: Rotting Gaze
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: con
+      dc: 13
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 5d6
+        bonus: 0
+        type: necrotic
+    on_success: []
+    apply: []
+    limit: null
+- name: Weird Insight
+  cost: bonus_action
+  recharge: 6
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: wis
+      dc: 14
+      on_success: negate
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported: []
+size: M

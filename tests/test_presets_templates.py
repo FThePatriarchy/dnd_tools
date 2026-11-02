@@ -76,4 +76,4 @@ def test_suggestions_are_seeded_and_cube_needs_opt_in():
 
 
 def test_impossible_budget_gives_no_fill():
-    assert fills({"boss": 1}, 10) == []
+    assert fills({"boss": 1}, 5) == []  # below the cheapest monster (CR 0, 10 XP)

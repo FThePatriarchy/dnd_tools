@@ -91,5 +91,5 @@ def test_day_for_fills_each_encounter_with_its_own_seed():
     kinds = [next(iter(s)) for s in day["steps"]]
     assert kinds == ["encounter", "encounter", "rest", "encounter"] and day["steps"][2] == {"rest": "short"}
     assert len(day["steps"][1]["encounter"]) == 1 and len(labels) == 4  # second encounter uses the solo shape
-    assert day_for(["E"], [TEMPLATES["solo"]], 10, seed=1) is None
+    assert day_for(["E"], [TEMPLATES["solo"]], 5, seed=1) is None  # below the cheapest monster (CR 0, 10 XP)
     assert ENCOUNTER_SCALES[0] == DAY_SCALES[0] == 0.25

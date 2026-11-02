@@ -1,0 +1,99 @@
+name: Copper Dragon Wyrmling
+source: XMM
+cr: '1'
+ac: 16
+max_hp: 22
+hp_formula: 4d8 + 4
+abilities:
+  str: 15
+  dex: 12
+  con: 13
+  int: 14
+  wis: 11
+  cha: 13
+speed: 30
+movement_modes:
+  walk: 30
+  climb: 30
+  fly: 60
+creature_type: dragon
+alignment: good
+proficiency_bonus: 2
+save_bonuses:
+  dex: 3
+  wis: 2
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 2
+resistances: []
+immunities:
+- acid
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 2
+      type: slashing
+multiattack: []
+actions:
+- name: Acid Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: line
+      size_ft: 20
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: dex
+      dc: 11
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 4d8
+        bonus: 0
+        type: acid
+    on_success: []
+    apply: []
+    limit: null
+- name: Slowing Breath
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 15
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 11
+      on_success: negate
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- Slowing Breath (no Reactions, half Speed, action or Bonus Action) is not modeled (the action has no simulated
+  effect, so the AI never uses it).
+size: M

@@ -1,0 +1,80 @@
+name: Scarecrow
+source: XMM
+cr: '1'
+ac: 11
+max_hp: 27
+hp_formula: 6d8
+abilities:
+  str: 11
+  dex: 13
+  con: 11
+  int: 10
+  wis: 10
+  cha: 13
+speed: 30
+movement_modes:
+  walk: 30
+creature_type: construct
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 2
+resistances: []
+immunities:
+- poison
+vulnerabilities:
+- fire
+condition_immunities:
+- charmed
+- exhaustion
+- frightened
+- paralyzed
+- petrified
+- poisoned
+- unconscious
+attacks:
+- name: Fearsome Claw
+  kind: melee
+  to_hit: 3
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d4
+      bonus: 1
+      type: slashing
+  - apply_condition:
+      condition: frightened
+    until: end_of_turn(caster.next_turn)
+multiattack: []
+actions:
+- name: Terrifying Glare
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+    attack: null
+    save:
+      ability: wis
+      dc: 11
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: frightened
+      until: end_of_turn(caster.next_turn)
+    - apply_condition:
+        condition: paralyzed
+      until: end_of_turn(caster.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- 'Terrifying Glare: Paralyzed is applied with Frightened and for the same time.'
+size: M

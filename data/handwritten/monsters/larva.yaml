@@ -1,0 +1,41 @@
+name: Larva
+source: XMM
+cr: '0'
+ac: 9
+max_hp: 9
+hp_formula: 2d8
+abilities:
+  str: 9
+  dex: 9
+  con: 10
+  int: 6
+  wis: 10
+  cha: 2
+speed: 20
+movement_modes:
+  walk: 20
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 1
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: -1
+      type: necrotic
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M

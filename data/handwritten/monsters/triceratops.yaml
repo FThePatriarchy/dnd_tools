@@ -1,0 +1,49 @@
+name: Triceratops
+source: XMM
+cr: '5'
+ac: 14
+max_hp: 114
+hp_formula: 12d12 + 36
+abilities:
+  str: 22
+  dex: 9
+  con: 17
+  int: 2
+  wis: 11
+  cha: 5
+speed: 50
+movement_modes:
+  walk: 50
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Gore
+  kind: melee
+  to_hit: 9
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d12
+      bonus: 6
+      type: piercing
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: piercing
+multiattack:
+- Gore
+- Gore
+actions: []
+traits: []
+unsupported:
+- 'Gore: the extra damage and Prone needs a grid: the rider applies only after moving 20+ feet straight toward the
+  target, which is not simulated.'
+size: H
