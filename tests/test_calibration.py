@@ -126,3 +126,14 @@ def test_compositions_fit_budget():
     xp = {"goblin": 50, "ogre": 450, "dragon": 5000}
     for name, count, total in compositions(budget(3, "moderate"), xp):
         assert 0.75 * budget(3, "moderate") <= total <= budget(3, "moderate") and 1 <= count <= 8
+
+
+def test_item_sweep_gives_the_party_kits_and_its_own_report():
+    from engine.calibration import party, report_paths, run_cell
+    assert party(5) == ["fighter_5", "cleric_5", "rogue_5", "wizard_5"]
+    kits = [r["choices"]["items"] for r in party(10, "full")]
+    assert all(kits) and [r["class"] for r in party(10, "full")] == ["fighter", "cleric", "rogue", "wizard"]
+    assert report_paths("party_spread", "grab_half", items="half")[1].name == "calibration_dmg_area_party_spread_grab_half_items_half.md"
+    assert report_paths("party_spread", "grab_half", high=True, items="full")[1].name.endswith("_items_full_high.md")
+    cell = run_cell((10, "high", "troll", 3, 5400, 2, 1, "party_spread", "grab_half", "none", "full"))
+    assert cell["items"] == "full" and cell["runs"] == 2

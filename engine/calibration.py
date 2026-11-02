@@ -13,11 +13,14 @@ default DayOptions.
     python -m engine.calibration --compare-grab               # side-by-side grab-cap report
     python -m engine.calibration --adaptive --write           # adaptive run counts (*_adaptive reports)
     python -m engine.calibration --high --runs 100 --write    # levels 11-20 (*_high reports)
+    python -m engine.calibration --items half --write         # DMG-sized magic item kits (*_items_half reports)
 
 --area and --grab swap the no-grid area-of-effect rule and the multi-target
 grab cap for one sweep. Their defaults are the engine defaults
 (party_spread and grab_half); every rule name always means the same rule,
-so report file names stay comparable across default changes.
+so report file names stay comparable across default changes. --items gives
+the party the kit engine.items would give it at each level (none by default,
+as the DMG builds encounters without assuming magic items).
 """
 import argparse
 from collections import defaultdict
@@ -71,12 +74,13 @@ MORALE_RULES = {
 }
 
 
-def report_paths(area, grab="data", morale="none", adaptive=False, high=False):
+def report_paths(area, grab="data", morale="none", adaptive=False, high=False, items=None):
     """Named by rule, not by default: calibration_dmg is the DMG area table with printed grabs."""
     stem = ("calibration_dmg" + ("" if area == "dmg" else f"_area_{area}")
             + ("" if grab == "data" else f"_grab_{grab.removeprefix('grab_')}")
             + ("" if morale == "none" else f"_morale_{morale}")
             + ("_adaptive" if adaptive else "")
+            + (f"_items_{items}" if items else "")
             + ("_high" if high else ""))
     return REPORTS / f"{stem}.json", REPORTS / f"{stem}.md"
 
@@ -158,13 +162,22 @@ def run_cell(task):
     """One composition, many runs (a fixed count or an Adaptive spec), aggregated."""
     level, difficulty, monster, count, xp_total, runs, seed, area, grab, *rest = task
     morale = rest[0] if rest else "none"
-    result = run_encounter([f"{cls}_{level}" for cls in CLASSES], [f"{monster} x{count}"], runs, seed,
+    items = rest[1] if len(rest) > 1 else None
+    result = run_encounter(party(level, items), [f"{monster} x{count}"], runs, seed,
                            area=AREA_RULES[area][0], target_cap=GRAB_RULES[grab][0], morale=morale)
     return {"level": level, "difficulty": difficulty, "monster": monster, "count": count, "area": area, "grab": grab,
-            "morale": morale, "xp": xp_total, "budget": budget(level, difficulty), **result}
+            "morale": morale, "items": items, "xp": xp_total, "budget": budget(level, difficulty), **result}
 
 
-def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data", monsters=None, morale="none"):
+def party(level, items=None):
+    """The reference party's build names, or recipes with a DMG-sized kit (items "half" or "full")."""
+    names = [f"{cls}_{level}" for cls in CLASSES]
+    if not items: return names
+    from .items import with_items
+    return with_items(names, items)
+
+
+def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data", monsters=None, morale="none", items=None):
     """monsters restricts which compositions run; each composition keeps its own seed."""
     xp = monster_xp()
     tasks = []
@@ -172,7 +185,7 @@ def sweep(runs=200, seed=1, levels=LEVELS, workers=None, area="dmg", grab="data"
         for difficulty in DIFFICULTIES:
             for monster, count, total in compositions(budget(level, difficulty), xp):
                 if monsters and monster not in monsters: continue
-                tasks.append((level, difficulty, monster, count, total, runs, seed, area, grab, morale))
+                tasks.append((level, difficulty, monster, count, total, runs, seed, area, grab, morale, items))
     with ProcessPoolExecutor(max_workers=workers) as pool:
         return list(pool.map(run_cell, tasks))
 
@@ -199,7 +212,7 @@ def sampling(runs, cells):
             f"interval excludes {', '.join(pct(t) for t in runs.thresholds)}; {sum(counts)} runs in total)")
 
 
-def markdown(cells, runs, seed, area="dmg", grab="data", morale="none"):
+def markdown(cells, runs, seed, area="dmg", grab="data", morale="none", items=None):
     failed = [c for c in cells if c["failed_runs"]]
     cells = [c for c in cells if c["runs"]]
     by = defaultdict(list)
@@ -212,6 +225,7 @@ def markdown(cells, runs, seed, area="dmg", grab="data", morale="none"):
            f"Area rule: `{area}` — {AREA_RULES[area][1]}", "",
            f"Grab rule: `{grab}` — {GRAB_RULES[grab][1]}", "",
            f"Morale: `{morale}` — {MORALE_RULES[morale]} Fled is the share of monsters that fled.", "",
+           *(item_lines(sorted({c["level"] for c in cells}), items)),
            "TPK: every PC at 0 HP. Defeat: the party loses, either by TPK or with every PC still "
            "standing dominated or otherwise out of the fight.", "",
            "## Summary (mean across compositions, [min-max] in brackets)", "",
@@ -255,6 +269,17 @@ def markdown(cells, runs, seed, area="dmg", grab="data", morale="none"):
                 out.append(f"| {c['level']} | {c['difficulty']} | {c['monster']} x{c['count']} | "
                            f"{c['failed_runs']} | {message} | {seed} |")
     return "\n".join(out) + "\n"
+
+
+def item_lines(levels, items):
+    if not items: return ["Magic items: none (the DMG builds encounters without assuming any).", ""]
+    from .items import SHARES
+    out = [f"Magic items: `{items}` — DMG-sized kits (`engine/items.py`, {SHARES[items]:.0%} of the uncommon-and-better "
+           "items awarded by this level kept as combat items):", ""]
+    for level in levels:
+        kits = "; ".join(f"{r['class']} {', '.join(r['choices']['items']) or 'none'}" for r in party(level, items))
+        out.append(f"- Level {level}: {kits}")
+    return out + [""]
 
 
 def median(values):
@@ -469,6 +494,7 @@ def main():
     parser.add_argument("--area", choices=list(AREA_RULES), default=DEFAULT_AREA, help="area-of-effect rule for this sweep only")
     parser.add_argument("--grab", choices=list(GRAB_RULES), default=DEFAULT_GRAB, help="multi-target grab cap for this sweep only")
     parser.add_argument("--morale", choices=list(MORALE_RULES), default="none", help="optional morale rule for this sweep only")
+    parser.add_argument("--items", choices=["half", "full"], help="give the party a DMG-sized magic item kit (engine/items.py)")
     parser.add_argument("--monsters", nargs="+", help="run only compositions of these monsters")
     parser.add_argument("--write", action="store_true", help="write the sweep to data/reports/")
     parser.add_argument("--compare", action="store_true", help="write the side-by-side area-rule report from written sweeps")
@@ -500,12 +526,12 @@ def main():
     except ValueError as exc: parser.error(str(exc))
     if args.high: args.levels = list(HIGH_LEVELS)
     elif args.write and max(args.levels) > 10: parser.error("use --high to write levels above 10")
-    cells = sweep(runs, args.seed, tuple(args.levels), args.workers, args.area, args.grab, args.monsters, args.morale)
-    text = markdown(cells, runs, args.seed, args.area, args.grab, args.morale)
+    cells = sweep(runs, args.seed, tuple(args.levels), args.workers, args.area, args.grab, args.monsters, args.morale, args.items)
+    text = markdown(cells, runs, args.seed, args.area, args.grab, args.morale, args.items)
     if args.write:
-        json_path, md_path = report_paths(args.area, args.grab, args.morale, args.adaptive, args.high)
+        json_path, md_path = report_paths(args.area, args.grab, args.morale, args.adaptive, args.high, args.items)
         json_path.write_text(json.dumps({"runs": asdict(runs) if args.adaptive else runs, "adaptive": args.adaptive, "seed": args.seed, "area": args.area, "grab": args.grab,
-                                         "morale": args.morale, "monsters": args.monsters, "cells": cells}, indent=1), encoding="utf-8")
+                                         "morale": args.morale, "items": args.items, "monsters": args.monsters, "cells": cells}, indent=1), encoding="utf-8")
         md_path.write_text(text, encoding="utf-8")
     print(text)
 

@@ -227,7 +227,7 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 
   | Level | Low defeat | Moderate: any down / defeat | High: any down / any death / defeat |
   | ---: | ---: | ---: | ---: |
-  | 10 (baseline) | 0% | 59% / 4% | 87% / 10% / 3% |
+  | 10 (baseline, rerun 2026-11-02) | 0% | 56% / 0% | 82% / 6% / 6% |
   | 11 | 0% | 23% / 0% | 80% / 17% / 16% |
   | 13 | 0% | 31% / 0% | 84% / 29% / 24% |
   | 15 | 0% | 50% / 6% | 100% / 34% / 26% |
@@ -235,7 +235,7 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
   | 20 | 0% | 81% / 15% | 100% / 100% / 100% |
 
   - Median TPK never falls from Low to Moderate to High to Over at any level, so the shape holds. Low is easy and Moderate stays survivable through level 17, as the DMG describes.
-  - High gets steadily deadlier with level: median defeat climbs from 16% at 11 to 34% at 17, against 0–18% at levels 1–10. This agrees with the ratings falling to 0.5–0.7×.
+  - High gets steadily deadlier with level: median defeat climbs from 16% at 11 to 34% at 17, against 0–10% at levels 1–10 (0–18% before the 2026-11-02 baseline rerun). This agrees with the ratings falling to 0.5–0.7×.
   - **Level 20 breaks.** The High budget nearly doubles from 17 to 20 (11,700 → 22,000 XP per PC), and every High group (8 adult white dragons, 7 adult black, 5 adult blue, 6 purple worms, 3 ancient white, 2 ancient green) wipes the party, mostly in rounds 1–3 from stacked breath weapons. Moderate is already 15% defeat. This is rules-legal (the 2024 DMG has no group multiplier), but the 4 PCs have no magic items, Wish or other omitted spells.
   - Low–High outliers (defeat ≥ 50%): aboleths at every level (domination, as at level 10), mage ×7 at 11 High (94%), tyrannosaurus ×8 at 15 High (100%), horned devil ×6–7 at 17 High and 20 Moderate, mind flayer ×7 at 13 High, and the six level 20 High groups.
 - **Casual and optimized ratings at 11–20** (2026-11-01, `data/reports/rating_preset_L{11,13,15,17,20}_{casual,optimized}.md`, × DMG High):
@@ -304,12 +304,33 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
   | 20 | 0.50× | 0.68× | 0.68× |
 
   - Items add about 15–30%, more at higher levels. With the half kit, levels 10–17 rate 0.76–0.84×, level with the item-free 0.73–0.80× of levels 1–10. The tier 3 drop was mostly missing items.
-  - Level 20 stays low (0.68×). Its solo ladder tops out before the party reaches 5% defeat, so the overall value is a lower bound. Half and full give the same result at 20, because every PC's slots and 3 attunements are already full: extra items have nowhere to go.
+  - Level 20 stays low (0.68×). Its solo ladder tops out before the party reaches 5% defeat, so the overall value is a lower bound. Half and full rate the same at 20 (every type within 2%). Attunement and item slots are already full there, so the full share only upgrades a few items (+3 instead of +2 Armor on the fighter, Ioun Stones of Mastery on the cleric, rogue and wizard), which barely changes the party.
   - At 10 and 17 the full kit adds little over half for the same reason. Wish-list slots, not the DMG count, become the limit.
+- **Calibration sweep with items** (2026-11-02): `python -m engine.calibration [--high] --runs 100 --items half|full --write` → `data/reports/calibration_dmg_area_party_spread_grab_half_items_{half,full}[_high].md`. Each report lists the kit per level. No engine errors. Median defeat per slot, no items / half kit / full kit:
+
+  | Level | Moderate | High | Over (1.5× High) |
+  | ---: | --- | --- | --- |
+  | 1 | 8% / 8% / 8% | 10% / 10% / 10% | 22% / 22% / 22% |
+  | 3 | 0% / 0% / 0% | 4% / 3% / 2% | 25% / 22% / 21% |
+  | 5 | 0% / 0% / 0% | 7% / 4% / 2% | 22% / 20% / 15% |
+  | 7 | 0% / 0% / 0% | 0% / 0% / 0% | 22% / 19% / 12% |
+  | 10 | 0% / 0% / 0% | 6% / 1% / 0% | 72% / 36% / 33% |
+  | 11 | 0% / 0% / 0% | 16% / 3% / 2% | 62% / 40% / 33% |
+  | 13 | 0% / 0% / 0% | 24% / 3% / 1% | 58% / 27% / 14% |
+  | 15 | 6% / 0% / 0% | 26% / 7% / 0% | 96% / 72% / 49% |
+  | 17 | 0% / 0% / 0% | 34% / 2% / 2% | 100% / 90% / 85% |
+  | 20 | 15% / 0% / 0% | 100% / 68% / 74% | 100% / 100% / 100% |
+
+  - Low stays at 0% defeat everywhere. Level 1 has no kit (nothing is awarded before level 2), so its rows match.
+  - Items matter little at levels 1–7, where kits are one to four uncommon items, and a lot from level 10: median High defeat at 11–17 falls from 16–34% to 0–7%, the same range as levels 1–10 without items. Moderate never defeats a kitted party below level 20. With DMG-sized items, High is again "hard but survivable" through level 17. The rising High lethality of the item-free sweep was the missing items.
+  - Someone still goes down in most High fights with items (median 59–94% at 11–17, against 80–100% without).
+  - Level 20 still breaks. High is 68–74% defeat even with the full kit (the half/full gap is within noise: 6 groups of 100 runs), from the same stacked breath weapons. Moderate drops from 15% to 0%.
+  - Outliers that survive the items (defeat ≥ 50% at Low–High): mage ×7 at 11 High (75%), aboleths at 13–20, tyrannosaurus ×8 at 15 High (100%), and five of the six level 20 High groups. Kits add AC, saves and damage, not the counters these need (aboleth domination, eight T-rexes' single-target damage).
+- **Baseline rerun** (2026-11-02): the level 1–10 sweep was last written on 2026-10-24, and later engine fixes shift some cells (median level 5 High defeat 18% → 7%, level 10 Over 98% → 72%). It was rerun with the current engine (`calibration_dmg_area_party_spread_grab_half.md`) so the item sweeps compare against the same engine; the "no items" column above is the rerun.
 
 ## Later
 
-- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Calibration sweep done 2026-11-01. Casual/optimized ratings done 2026-11-01. Magic items done 2026-11-01 (see "Magic items" below). Class comparisons at 15 and 20 done 2026-11-01.
+- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Calibration sweep done 2026-11-01. Casual/optimized ratings done 2026-11-01. Magic items done 2026-11-01 (see "Magic items" below). Class comparisons at 15 and 20 done 2026-11-01. Items in calibration done 2026-11-02.
 - More classes: all twelve 2024 classes are done at levels 1–20.
 - ~~A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.~~ Done 2026-10-31: `python -m engine.dm fight|day|monsters` (`engine/dm.py`). `fight` runs adaptively (100–800 runs) and reports win, defeat, TPK, someone down and someone dead with 95% margins, the encounter's XP as a multiple of this party's DMG High budget, and each PC's chance to drop or die, HP left and mean resources spent. `day` takes a day file or inline `--steps` and adds, per encounter, how often it is reached and cleared. `monsters` lists usable monsters by CR. The shared runners gained an optional `detail` output; their metrics are unchanged.
 - Repo housekeeping: done 2026-10-26. `readme.md` has working usage examples; the 5etools zip, `raw_data/` and the retired `spellsim/` + `ai_extractors/` pipeline are ignored and kept locally.
