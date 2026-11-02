@@ -1,18 +1,18 @@
 # Party rating: fighter_7, cleric_7, rogue_7, wizard_7
 
-Level 7, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 6,700 runs.
+Level 7, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,900 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 7 (1700 XP).
 
-**Overall: 5,087 XP (1,272 per PC, 0.75x High)**, the geometric mean of the types.
+**Overall: 5,043 XP (1,261 per PC, 0.74x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
-| brute | 4,448 | 1,112 | 0.65 |
-| ranged | 5,546 | 1,387 | 0.82 |
-| caster | 4,691 | 1,173 | 0.69 |
-| swarm | 5,826 | 1,457 | 0.86 |
-| control | 3,949 | 987 | 0.58 |
+| brute | 4,433 | 1,108 | 0.65 |
+| ranged | 5,335 | 1,334 | 0.78 |
+| caster | 4,612 | 1,153 | 0.68 |
+| swarm | 5,850 | 1,462 | 0.86 |
+| control | 3,961 | 990 | 0.58 |
 | solo | 6,505 | 1,626 | 0.96 |
 
 ## Ladder results
@@ -28,7 +28,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | owlbear x3 | 2,100 | 0.0% | 1.8% | 100 |
 | owlbear x4 | 2,800 | 0.0% | 1.8% | 100 |
 | owlbear x5 | 3,500 | 0.0% | 1.8% | 100 |
-| owlbear x6 | 4,200 | 1.3% | 2.2% | 150 |
+| owlbear x6 | 4,200 | 1.6% | 1.7% | 250 |
 | owlbear x8 | 5,600 | 22.0% | 11.2% | 50 |
 
 ### ranged
@@ -41,8 +41,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | manticore x4 | 2,800 | 0.0% | 1.8% | 100 |
 | manticore x5 | 3,500 | 0.0% | 1.8% | 100 |
 | manticore x6 | 4,200 | 0.0% | 1.8% | 100 |
-| manticore x8 | 5,600 | 5.2% | 2.0% | 500 |
-| manticore x10 | 7,000 | 68.0% | 12.5% | 50 |
+| manticore x8 | 5,600 | 6.2% | 1.9% | 600 |
+| manticore x10 | 7,000 | 70.0% | 12.3% | 50 |
 
 ### caster
 
@@ -55,8 +55,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | cultist_fanatic x5 | 2,250 | 0.0% | 1.8% | 100 |
 | cultist_fanatic x6 | 2,700 | 0.0% | 1.8% | 100 |
 | cultist_fanatic x8 | 3,600 | 0.0% | 1.8% | 100 |
-| cultist_fanatic x10 | 4,500 | 2.6% | 1.7% | 350 |
-| cultist_fanatic x12 | 5,400 | 14.0% | 9.6% | 50 |
+| cultist_fanatic x10 | 4,500 | 2.9% | 1.8% | 350 |
+| cultist_fanatic x12 | 5,400 | 20.0% | 10.9% | 50 |
 
 ### swarm
 
@@ -68,8 +68,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | warrior_veteran x4 | 2,800 | 0.0% | 1.8% | 100 |
 | warrior_veteran x5 | 3,500 | 0.0% | 1.8% | 100 |
 | warrior_veteran x6 | 4,200 | 0.0% | 1.8% | 100 |
-| warrior_veteran x8 | 5,600 | 1.3% | 2.2% | 150 |
-| warrior_veteran x10 | 7,000 | 24.0% | 11.6% | 50 |
+| warrior_veteran x8 | 5,600 | 0.0% | 1.8% | 100 |
+| warrior_veteran x10 | 7,000 | 28.0% | 12.1% | 50 |
 
 ### control
 
@@ -80,7 +80,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | basilisk x3 | 2,100 | 0.0% | 1.8% | 100 |
 | basilisk x4 | 2,800 | 0.0% | 1.8% | 100 |
 | basilisk x5 | 3,500 | 0.7% | 1.8% | 150 |
-| basilisk x6 | 4,200 | 7.4% | 2.8% | 350 |
+| basilisk x6 | 4,200 | 7.2% | 2.6% | 400 |
 
 ### solo
 
