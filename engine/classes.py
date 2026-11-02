@@ -83,9 +83,10 @@ def validate_class(data, path="<class>", *, source_check=True):
     return data
 
 
-def load_class(name):
+def load_class(name, *, source_check=False):
+    """Load and validate a class. The XPHB cross-check needs raw_data/ and runs in tests."""
     if name not in SUBCLASSES: raise ValueError(f"unknown class: {name}")
     path = ROOT / "classes" / (name + ".yaml")
-    try: return validate_class(read_yaml(path), path)
+    try: return validate_class(read_yaml(path), path, source_check=source_check)
     except (TypeError, KeyError, AttributeError, IndexError) as exc:
         raise ValidationError(f"{path}:$: malformed class ({exc})") from exc

@@ -4,7 +4,6 @@ import inspect
 import json
 from pathlib import Path
 import textwrap
-import zipfile
 
 import pytest
 
@@ -112,9 +111,8 @@ def test_step4_fix2_mutation_proof(spells, monkeypatch, feature):
 
 def source_membership():
     # Deliberately independent of builder tables and its spell_options cache.
-    archive = Path(__file__).resolve().parents[1] / "5etools-v2.30.1.zip"
-    with zipfile.ZipFile(archive) as z:
-        data = json.loads(z.read("data/spells/sources.json"))["XPHB"]
+    from engine.source_files import archive_member
+    data = json.loads(archive_member("data/spells/sources.json"))["XPHB"]
     return {cls: {n for n, v in data.items() if any(c["source"] == "XPHB" and c["name"].lower() == cls for c in v.get("class", []))}
             for cls in ("wizard", "cleric")}
 

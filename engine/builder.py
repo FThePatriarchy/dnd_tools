@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 
 from .classes import MAX_LEVEL, load_class, substitute, SUBCLASSES
-from .class_source import source
+from .class_facts import facts
 from .loader import ROOT, Validator, ValidationError, load_spells, read_yaml
 from .sheets import validate_sheet
 from .items import ATTUNEMENT_SLOTS, ITEMS, legal as item_legal
@@ -367,7 +367,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     if class_name=="warlock":
         invocations=choices.get("invocations",["armor_of_shadows"] + (["agonizing_blast","eldritch_mind"] if level>=2 else []))
         v.sequence(invocations,"choices.invocations")
-        v.check(len(set(invocations))==len(invocations) and len(invocations)<=source(class_name)[0]["classTableGroups"][0]["rows"][level-1][0],"choices.invocations","duplicate or too many invocations")
+        v.check(len(set(invocations))==len(invocations) and len(invocations)<=facts(class_name)["invocations"][level-1],"choices.invocations","duplicate or too many invocations")
         for inv in invocations:
             v.enum(inv,{"armor_of_shadows","agonizing_blast","eldritch_mind"},"choices.invocations")
             v.check(inv=="armor_of_shadows" or level>=2,"choices.invocations","invocation requires level 2")
@@ -411,7 +411,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     if class_name=="barbarian" and level<3 and "skills" not in choices: skills=skills[:2]
     expected=4 if class_name=="rogue" else 3 if class_name=="barbarian" and level>=3 else 3 if class_name in {"bard","ranger"} else 2
     v.check(len(skills)==expected and len(set(skills))==len(skills),"choices.skills","wrong skill count")
-    allowed=source(class_name)[0]["startingProficiencies"]["skills"][0].get("choose",{}).get("from","acrobatics; animal handling; arcana; athletics; deception; history; insight; intimidation; investigation; medicine; nature; perception; performance; persuasion; religion; sleight of hand; stealth; survival".split("; "))
+    allowed=(facts(class_name)["skills"] or "acrobatics; animal handling; arcana; athletics; deception; history; insight; intimidation; investigation; medicine; nature; perception; performance; persuasion; religion; sleight of hand; stealth; survival".split("; "))
     for skill in skills: v.enum(skill,set(allowed),"choices.skills")
     count=(2+2*int(level>=6)) if class_name=="rogue" else int(class_name=="wizard" and level>=2)
     expertise=choices.get("expertise",skills[:count]); v.sequence(expertise,"choices.expertise")
@@ -443,7 +443,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         for n in cantrips: v.check(n in options and options[n]["level"]==0,"choices.cantrips",f"not a supported {class_name} cantrip: {n}")
         domain=["Hunter's Mark"] if class_name=="ranger" else []
         if class_name in {"cleric","paladin","warlock","druid","sorcerer"} and level>=3:
-            for at,names in source(class_name)[1]["additionalSpells"][0]["prepared"].items():
+            for at,names in facts(class_name)["prepared"].items():
                 if int(at)<=level:
                     for ref in names:
                         n=next((n for n in _spells() if n.lower()==ref.split('|')[0]),None)

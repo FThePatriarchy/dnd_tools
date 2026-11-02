@@ -1,0 +1,263 @@
+{
+ "barbarian": {
+  "prepared": {},
+  "skills": [
+   "animal handling",
+   "athletics",
+   "intimidation",
+   "nature",
+   "perception",
+   "survival"
+  ]
+ },
+ "bard": {
+  "prepared": {
+   "6": [
+    {
+     "choose": "level=0;1;2;3|class=Cleric;Druid;Wizard"
+    },
+    {
+     "choose": "level=0;1;2;3|class=Cleric;Druid;Wizard"
+    }
+   ]
+  },
+  "skills": null
+ },
+ "cleric": {
+  "prepared": {
+   "3": [
+    "aid|xphb",
+    "bless|xphb",
+    "cure wounds|xphb",
+    "lesser restoration|xphb"
+   ],
+   "5": [
+    "mass healing word|xphb",
+    "revivify|xphb"
+   ],
+   "7": [
+    "aura of life|xphb",
+    "death ward|xphb"
+   ],
+   "9": [
+    "greater restoration|xphb",
+    "mass cure wounds|xphb"
+   ]
+  },
+  "skills": [
+   "history",
+   "insight",
+   "medicine",
+   "persuasion",
+   "religion"
+  ]
+ },
+ "druid": {
+  "prepared": {
+   "3": [
+    "cure wounds|xphb",
+    "moonbeam|xphb",
+    "starry wisp|xphb"
+   ],
+   "5": [
+    "conjure animals|xphb"
+   ],
+   "7": [
+    "fount of moonlight|xphb"
+   ],
+   "9": [
+    "mass cure wounds|xphb"
+   ]
+  },
+  "skills": [
+   "arcana",
+   "animal handling",
+   "insight",
+   "medicine",
+   "nature",
+   "perception",
+   "religion",
+   "survival"
+  ]
+ },
+ "fighter": {
+  "prepared": {},
+  "skills": [
+   "acrobatics",
+   "animal handling",
+   "athletics",
+   "history",
+   "insight",
+   "intimidation",
+   "persuasion",
+   "perception",
+   "survival"
+  ]
+ },
+ "monk": {
+  "prepared": {},
+  "skills": [
+   "acrobatics",
+   "athletics",
+   "history",
+   "insight",
+   "religion",
+   "stealth"
+  ]
+ },
+ "paladin": {
+  "prepared": {
+   "13": [
+    "freedom of movement|xphb",
+    "guardian of faith|xphb"
+   ],
+   "17": [
+    "commune|xphb",
+    "flame strike|xphb"
+   ],
+   "3": [
+    "protection from evil and good|xphb",
+    "shield of faith|xphb"
+   ],
+   "5": [
+    "aid|xphb",
+    "zone of truth|xphb"
+   ],
+   "9": [
+    "beacon of hope|xphb",
+    "dispel magic|xphb"
+   ]
+  },
+  "skills": [
+   "athletics",
+   "insight",
+   "intimidation",
+   "medicine",
+   "persuasion",
+   "religion"
+  ]
+ },
+ "ranger": {
+  "prepared": {},
+  "skills": [
+   "animal handling",
+   "athletics",
+   "insight",
+   "investigation",
+   "nature",
+   "perception",
+   "stealth",
+   "survival"
+  ]
+ },
+ "rogue": {
+  "prepared": {},
+  "skills": [
+   "acrobatics",
+   "athletics",
+   "deception",
+   "insight",
+   "intimidation",
+   "investigation",
+   "perception",
+   "persuasion",
+   "sleight of hand",
+   "stealth"
+  ]
+ },
+ "sorcerer": {
+  "prepared": {
+   "3": [
+    "alter self|xphb",
+    "chromatic orb|xphb",
+    "command|xphb",
+    "dragon's breath|xphb"
+   ],
+   "5": [
+    "fear|xphb",
+    "fly|xphb"
+   ],
+   "7": [
+    "arcane eye|xphb",
+    "charm monster|xphb"
+   ],
+   "9": [
+    "legend lore|xphb",
+    "summon dragon|xphb"
+   ]
+  },
+  "skills": [
+   "arcana",
+   "deception",
+   "insight",
+   "intimidation",
+   "persuasion",
+   "religion"
+  ]
+ },
+ "warlock": {
+  "invocations": [
+   1,
+   3,
+   3,
+   3,
+   5,
+   5,
+   6,
+   6,
+   7,
+   7,
+   7,
+   8,
+   8,
+   8,
+   9,
+   9,
+   9,
+   10,
+   10,
+   10
+  ],
+  "prepared": {
+   "3": [
+    "burning hands|xphb",
+    "command|xphb",
+    "scorching ray|xphb",
+    "suggestion|xphb"
+   ],
+   "5": [
+    "fireball|xphb",
+    "stinking cloud|xphb"
+   ],
+   "7": [
+    "fire shield|xphb",
+    "wall of fire|xphb"
+   ],
+   "9": [
+    "geas|xphb",
+    "insect plague|xphb"
+   ]
+  },
+  "skills": [
+   "arcana",
+   "deception",
+   "history",
+   "intimidation",
+   "investigation",
+   "nature",
+   "religion"
+  ]
+ },
+ "wizard": {
+  "prepared": {},
+  "skills": [
+   "arcana",
+   "history",
+   "insight",
+   "investigation",
+   "medicine",
+   "nature",
+   "religion"
+  ]
+ }
+}

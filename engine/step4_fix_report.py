@@ -6,7 +6,6 @@ import hashlib
 import json
 from pathlib import Path
 import random
-import zipfile
 
 from .day import simulate_day, load_day, day_monsters, encounter_names
 from .day_options import DayOptions
@@ -100,8 +99,8 @@ def walk(value):
 
 
 def budgets():
-    with zipfile.ZipFile(ROOT/"5etools-v2.30.1.zip") as z:
-        book = json.loads(z.read("data/book/book-xdmg.json"))
+    from .source_files import archive_member
+    book = json.loads(archive_member("data/book/book-xdmg.json"))
     table = next(d for d in walk(book) if d.get("caption") == "XP Budget per Character")
     per_pc = {int(row[0]):[int(n.replace(",","")) for n in row[1:]] for row in table["rows"]}
     result=[]
