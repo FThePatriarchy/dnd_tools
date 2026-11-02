@@ -1,17 +1,17 @@
 # Party rating: fighter_1_casual, cleric_1_casual, rogue_1_casual, wizard_1_casual
 
-Level 1, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,500 runs.
+Level 1, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 3,300 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 1 (100 XP).
 
-**Overall: 280 XP (70 per PC, 0.70x High)**, the geometric mean of the types.
+**Overall: 272 XP (68 per PC, 0.68x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
 | brute | 252 | 63 | 0.63 |
-| ranged | 206 | 51 | 0.51 |
+| ranged | 172 | 43 | 0.43 |
 | caster | 508 | 127 | 1.27 |
-| swarm | 138 | 34 | 0.34 |
+| swarm | 137 | 34 | 0.34 |
 | control | 271 | 68 | 0.68 |
 | solo | 489 | 122 | 1.22 |
 
@@ -33,9 +33,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | --- | ---: | ---: | ---: | ---: |
 | skeleton x1 | 50 | 0.0% | 1.8% | 100 |
 | skeleton x2 | 100 | 0.0% | 1.8% | 100 |
-| skeleton x3 | 150 | 1.3% | 2.2% | 150 |
-| skeleton x4 | 200 | 2.6% | 1.7% | 350 |
-| skeleton x5 | 250 | 24.0% | 11.6% | 50 |
+| skeleton x3 | 150 | 2.0% | 1.9% | 250 |
+| skeleton x4 | 200 | 8.7% | 4.6% | 150 |
 
 ### caster
 
@@ -53,7 +52,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | kobold_warrior x3 | 75 | 0.0% | 1.8% | 100 |
 | kobold_warrior x4 | 100 | 0.0% | 1.8% | 100 |
 | kobold_warrior x5 | 125 | 2.6% | 1.7% | 350 |
-| kobold_warrior x6 | 150 | 7.3% | 2.4% | 450 |
+| kobold_warrior x6 | 150 | 7.6% | 2.5% | 450 |
 
 ### control
 
