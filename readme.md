@@ -85,6 +85,11 @@ python -m engine.compare --level 5 --class fighter --variants
 python -m engine.compare --level 5 --class fighter --feats --party fighter_5 paladin_5 bard_5 sorcerer_5 --replace fighter_5
 ```
 
+**Let it find a better build for one member of your party** (tries kits, spell lists, feats and ability/ASI plans one change at a time, keeping a change only when its 95% interval is above zero):
+```bash
+python -m engine.optimize --party fighter_5 cleric_5 rogue_5 wizard_5 --member fighter_5 --write my_fighter
+```
+
 **Source cross-checks.** The engine runs from `data/handwritten/` alone. The tests that check those files against the 2024 books also need the pinned 5etools v2.30.1 data (gitignored); in a fresh clone, fetch it once:
 ```bash
 pip install -e ".[dev]"
