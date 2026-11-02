@@ -278,7 +278,7 @@ def fmt_delta(d, noise=NOISE):
 def markdown(level, cls, results, screened=None):
     out = [f"# Build comparison: {cls}, level {level}", "",
            "Each row swaps the candidate into the reference party in place of its "
-           f"{cls} and re-rates the party against benchmark v{default_version(level)} (5% defeat threshold, same seeds). "
+           f"{ROLES[cls]} and re-rates the party against benchmark v{default_version(level)} (5% defeat threshold, same seeds). "
            f"Values are the change in rating; ≈ marks changes within noise: under {NOISE:.0%} overall and "
            f"under {TYPE_NOISE:.0%} for a single opponent type, whose rating rests on one interpolated crossing.", ""]
     if screened:

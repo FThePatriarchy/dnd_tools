@@ -66,7 +66,7 @@ def printed_grab_count(instance, block, n: int, eligible) -> int:
 
 class Policy:
     def choose_wild_shape(self, combat, actor):
-        from .loader import ROOT, load_sheet
+        from .loader import monster_sheet
         from .state import Combatant
         if actor.has_status("wild_shape") or not actor.limited_uses.get("wild_shape") or not actor.bonus_action: return
         enemies=combat.enemies(actor)
@@ -74,7 +74,7 @@ class Policy:
         concentration=any(combat.spells[n]["concentration"] and combat.can_cast(actor,n) for n in actor.spells)
         if actor.concentration is None and concentration and actor.hp>=actor.max_hp/2: return
         names=["wolf"] if actor.level<3 else ["dire_wolf","brown_bear","giant_spider"]
-        forms=[(n,Combatant.from_sheet(load_sheet(ROOT/"monsters"/(n+".yaml")),"shape_probe",actor.team)) for n in names]
+        forms=[(n,Combatant.from_sheet(monster_sheet(n),"shape_probe",actor.team)) for n in names]
         best=max(forms,key=lambda item:combat.expected_weapon_damage(item[1],enemies[0]))[0]
         combat.wild_shape(actor,best)
 

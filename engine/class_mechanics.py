@@ -26,11 +26,11 @@ class ClassMechanics:
 
     def wild_shape(self, actor, form_name):
         from fractions import Fraction
-        from .loader import ROOT, load_sheet
+        from .loader import monster_sheet
         if not actor.features.get("wild_shape") or not actor.limited_uses.get("wild_shape") or not self.class_bonus_available(actor) or actor.has_status("wild_shape") or actor.transform_snapshot is not None: return False
         # shortcut: known forms use existing Beast sheets; expand when more Beasts are imported.
         if form_name not in {"wolf","dire_wolf","brown_bear","giant_spider"}: return False
-        form=load_sheet(ROOT/"monsters"/(form_name+".yaml"))
+        form=monster_sheet(form_name)
         cap=actor.level//3 if actor.features.get("circle_forms") else .25 if actor.level<4 else .5
         if form["creature_type"]!="beast" or Fraction(str(form["cr"]))>cap or form.get("movement_modes",{}).get("fly",0) and actor.level<8: return False
         fields=("abilities","ac","attacks","multiattack","routines","actions","features","speed","movement_modes","size","save_bonuses","resistances","immunities","vulnerabilities","condition_immunities","creature_type","position")

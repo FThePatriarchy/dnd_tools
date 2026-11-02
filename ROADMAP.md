@@ -253,6 +253,25 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
   - Optimized converges on standard from level 15: by then both max the primary and Con (20/20 for the fighter, cleric and rogue at 17), use the same weapons, and share most spells. What is left is the dump stat; the optimized fighter's Wis 10 against standard's 13 matters against mind flayers and aboleths. The 2–4% gaps below standard are within the noise of a single-seed rating.
   - So the builder's profiles no longer spread parties apart at tier 3–4. A real optimized table differs there through magic items, feats beyond ASIs and multiclassing, which the builder does not model (magic items are now an option; see below).
 - **Fix:** a blinded caster tried to Healing Word itself and crashed the run (Healing Word needs a target the caster can see; the rogue's level 14 Obscure strike blinds). It now falls back to Cure Wounds. Level 1–10 results are unchanged, since the old path always raised.
+- **Class comparisons at 15 and 20** (2026-11-01, `data/reports/compare_L{15,20}_{class}_class.md`): each of the other eight classes' standard build in its role slot of the standard party, as in Phase 5. Change in overall rating against the reference member, levels 5 and 10 from Phase 5 for comparison:
+
+  | Class (slot) | L5 | L10 | L15 | L20 |
+  | --- | ---: | ---: | ---: | ---: |
+  | Monk (rogue) | +8% | +5% | +10% | +16% |
+  | Sorcerer (wizard) | +11% | +12% | +10% | +3% ≈ |
+  | Warlock (wizard) | -23% | +4% | -1% ≈ | -11% |
+  | Barbarian (fighter) | +3% | -5% | -5% | -8% |
+  | Bard (cleric) | +2% ≈ | -10% | -10% | -15% |
+  | Druid (cleric) | -5% | -11% | -20% | -17% |
+  | Paladin (fighter) | -2% ≈ | -5% | -17% | -19% |
+  | Ranger (fighter) | -8% | -12% | -27% | -38% |
+
+  - The monk is the only class that gains on its reference at every level, and its lead grows: at level 20 it is +19% to +27% against brutes, ranged and casters. The sorcerer stays ahead of the wizard but its lead shrinks to noise at 20.
+  - The fighter's replacements fall further behind with level. At 20 the paladin is -55% against control and -35% against solo, and the barbarian -34% and -32%; the losses are concentrated against the control (chain devil) and solo (dragon) ladders, not yet traced to a cause. The ranger is below the fighter against every type at 20 (-18% to -61%).
+  - Neither cleric replacement holds up past level 5: the bard loses most against control (-34% at 20); the druid loses 31% against ranged and control at 15 and 31% against solo at 20.
+  - The warlock swings with the opponent type (at 15, +32% against casters but -30% against control), so its overall value is less stable than the others'.
+  - As at level 5–10, these are the builder's standard builds without magic items; per-type values rest on one roster monster per level.
+- **Fix:** each druid turn reloaded and re-validated four beast sheets (and through them every spell file) to choose a Wild Shape form. Monster sheets are now parsed once per process (`loader.monster_sheet`). The level 15 druid comparison crashed twice with a Windows access violation inside that file I/O; with the cache it completes. Results are unchanged (same random stream).
 
 ## Magic items (2026-11-01)
 
@@ -290,7 +309,7 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
 
 ## Later
 
-- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Calibration sweep done 2026-11-01. Casual/optimized ratings done 2026-11-01. Magic items done 2026-11-01 (see "Magic items" below). Still to do: class comparisons at high level.
+- ~~Levels 11–20.~~ Done 2026-11-01 (see "Levels 11–20" below). Calibration sweep done 2026-11-01. Casual/optimized ratings done 2026-11-01. Magic items done 2026-11-01 (see "Magic items" below). Class comparisons at 15 and 20 done 2026-11-01.
 - More classes: all twelve 2024 classes are done at levels 1–20.
 - ~~A command line for DMs: give it a party and an encounter, get back win rate, wipe chance and resources spent.~~ Done 2026-10-31: `python -m engine.dm fight|day|monsters` (`engine/dm.py`). `fight` runs adaptively (100–800 runs) and reports win, defeat, TPK, someone down and someone dead with 95% margins, the encounter's XP as a multiple of this party's DMG High budget, and each PC's chance to drop or die, HP left and mean resources spent. `day` takes a day file or inline `--steps` and adds, per encounter, how often it is reached and cleared. `monsters` lists usable monsters by CR. The shared runners gained an optional `detail` output; their metrics are unchanged.
 - Repo housekeeping: done 2026-10-26. `readme.md` has working usage examples; the 5etools zip, `raw_data/` and the retired `spellsim/` + `ai_extractors/` pipeline are ignored and kept locally.

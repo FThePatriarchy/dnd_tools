@@ -669,6 +669,18 @@ def scaled_spell(spell: dict, slot: int, level: int, choices=None) -> dict:
     return result
 
 
+@lru_cache(maxsize=64)
+def _validated_sheet(path, mtime_ns, size):
+    return load_sheet(path)
+
+
+def monster_sheet(name) -> dict:
+    """A monster sheet by name, parsed and validated once (Wild Shape loads forms every turn)."""
+    path = (ROOT / "monsters" / (name + ".yaml")).resolve()
+    stat = path.stat()
+    return deepcopy(_validated_sheet(str(path), stat.st_mtime_ns, stat.st_size))
+
+
 def load_sheet(path) -> dict:
     from .sheets import validate_sheet
     data = read_yaml(path)
