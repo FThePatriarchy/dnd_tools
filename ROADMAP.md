@@ -13,6 +13,17 @@ Party strength varies a lot (an optimized party can be roughly twice as strong a
 
 The simulation is the source of truth. Expected-value maths (hit chance × damage) is used only where it is cheap and safe: AI move scoring inside the simulation, quick screening before a full run, and exact single-roll damage distributions.
 
+## Audit and fixes (2026-11-02)
+
+`AUDIT.md` has the full audit, the evidence behind each finding, and what is still open. In short:
+
+- **Fresh clones run.** The engine reads only `data/handwritten/` at runtime. The three builder facts it took from the raw class JSON are in `data/handwritten/class_facts.json`, and the XPHB cross-check runs in tests only. `python -m engine.source_files --fetch` downloads the pinned 5etools files those tests need.
+- **AI fixes that change results.** Damage estimates apply immunity, resistance and vulnerability (the L5 wizard had cast Fireball at fire elementals 22 times in 100 fights). Leveled spells count each victim's damage only up to its HP. The party values its weapon against the creature it would attack. Every class values buffs, the reference cleric and wizard included, and Haste values its extra attack minus the lethargy risk. **Reports in `data/reports/` are being rerun with this AI**; those not yet rerun predate it.
+- **Build comparison is focused and paired.** The full rating's crossings rest on one under-sampled ladder step (50-150 runs), which made per-type values swing 10-14%. `compare` now rates the base once, runs base and candidates on the deciding steps with shared seeds, and reports paired bootstrap 95% intervals. The "optimized fighter +14% against control" result became +2% (-1% to +9%). `--party ... --replace` compares builds in your own party; `--method full` keeps the old method.
+- **Build search.** `python -m engine.optimize --party ... --member NAME` hill-climbs one member's build (kits, spell lists, feats, ability/ASI plans, species), accepting a change only when its interval is above zero.
+- **Species.** Dwarf, Halfling, Human (a second Origin feat), Orc and Goliath (Stone or Fire); see `CLASS_FORMAT.md`, "Species".
+- **DM tools.** 63 more XMM monsters (154 in all; `engine/monster_more.py`). Reviewing them showed that the importer keeps only a save action's damage and target, so every save action in the batch was reviewed. Calibration keeps its original 91-monster roster. `--theme TYPE` on `templates` and `finder`. `dm` has `--items` and `--cover` and names the DMG band. `--level` offers only levels with preset builds instead of crashing.
+
 ## Current state (2026-10-23)
 
 - Druid (Moon) and Sorcerer (Draconic), levels 1-10, now have standard/casual/optimized builds at 1/3/5/7/10. Both use `values_buffs`; reference parties are unchanged. Wild Shape, Innate Sorcery, selected Metamagic and rest resources are implemented; scope and XPHB corrections are in `data/handwritten/CLASS_FORMAT.md`. Comparison results are under Phase 5.
@@ -27,8 +38,6 @@ The simulation is the source of truth. Expected-value maths (hit chance × damag
   - A few multi-target monster abilities produce near-certain wipes at any budget: Engulf (gelatinous cube, water elemental), caster area spells (mage, priest), breath weapons in groups, Petrifying Gaze.
   - Aboleth ×3 has an inconsistent result: deaths in 96% of runs, 0% wins, 2% TPK.
   - Engine crash: Cunning Strike can target an illegal creature. The seed is in the report.
-
-- **Audit (2026-11-02):** `AUDIT.md` lists the rough edges in combat simulation, build comparison and DM tools, with a fix plan and order. Start there.
 
 ## Phase 1 — Trustworthy benchmark
 
