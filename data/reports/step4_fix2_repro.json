@@ -1,0 +1,327 @@
+{
+  "engine_sha256": "989f05d61e581dc029b3e5e10ce9163540bba9317cccfcbaff393e14ac9b6d04",
+  "monsters": {
+    "aboleth": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 5.49,
+        "mean_resources_spent": {
+          "action_surge": 1.4,
+          "second_wind": 0.58,
+          "slot_1": 1.982,
+          "slot_2": 0.008,
+          "slot_3": 0.604
+        },
+        "mean_rounds": 4.582,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.058,
+        "wins": 29
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 5.49,
+        "mean_resources_spent": {
+          "action_surge": 1.4,
+          "second_wind": 0.58,
+          "slot_1": 1.982,
+          "slot_2": 0.008,
+          "slot_3": 0.604
+        },
+        "mean_rounds": 4.582,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.058,
+        "wins": 29
+      }
+    },
+    "adult_red_dragon": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 0,
+        "mean_resources_spent": {
+          "action_surge": 0.296,
+          "second_wind": 0.082,
+          "slot_1": 0.036,
+          "slot_3": 0.144
+        },
+        "mean_rounds": 1.018,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.0,
+        "wins": 0
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 0,
+        "mean_resources_spent": {
+          "action_surge": 0.312,
+          "second_wind": 0.096,
+          "slot_1": 0.036,
+          "slot_3": 0.144
+        },
+        "mean_rounds": 1.084,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.0,
+        "wins": 0
+      }
+    },
+    "cultist_fanatic": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 171.038,
+        "mean_resources_spent": {
+          "action_surge": 1.016,
+          "slot_1": 0.12,
+          "slot_2": 0.892
+        },
+        "mean_rounds": 1,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 171.038,
+        "mean_resources_spent": {
+          "action_surge": 1.016,
+          "slot_1": 0.12,
+          "slot_2": 0.892
+        },
+        "mean_rounds": 1,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      }
+    },
+    "imp": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 171.984,
+        "mean_resources_spent": {
+          "action_surge": 0.402,
+          "slot_1": 0.57
+        },
+        "mean_rounds": 1,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 171.984,
+        "mean_resources_spent": {
+          "action_surge": 0.402,
+          "slot_1": 0.57
+        },
+        "mean_rounds": 1,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      }
+    },
+    "mage": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 88.718,
+        "mean_resources_spent": {
+          "action_surge": 1.872,
+          "second_wind": 0.85,
+          "slot_1": 0.904,
+          "slot_2": 0.862,
+          "slot_3": 0.098
+        },
+        "mean_rounds": 1.858,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.912,
+        "wins": 456
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 89.888,
+        "mean_resources_spent": {
+          "action_surge": 1.872,
+          "second_wind": 0.79,
+          "slot_1": 0.788,
+          "slot_2": 0.896,
+          "slot_3": 0.102
+        },
+        "mean_rounds": 1.83,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.874,
+        "wins": 437
+      }
+    },
+    "mage_apprentice": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 165.094,
+        "mean_resources_spent": {
+          "action_surge": 1.184,
+          "slot_1": 0.01,
+          "slot_2": 0.978,
+          "slot_3": 0.154
+        },
+        "mean_rounds": 1.022,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 165.248,
+        "mean_resources_spent": {
+          "action_surge": 1.198,
+          "slot_1": 0.004,
+          "slot_2": 1.0,
+          "slot_3": 0.142
+        },
+        "mean_rounds": 1.016,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      }
+    },
+    "priest": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 173.516,
+        "mean_resources_spent": {
+          "action_surge": 0.914,
+          "slot_1": 0.098,
+          "slot_2": 0.766
+        },
+        "mean_rounds": 1,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 173.516,
+        "mean_resources_spent": {
+          "action_surge": 0.914,
+          "slot_1": 0.098,
+          "slot_2": 0.766
+        },
+        "mean_rounds": 1,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      }
+    },
+    "quasit": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 173.116,
+        "mean_resources_spent": {
+          "action_surge": 0.558,
+          "slot_1": 0.596
+        },
+        "mean_rounds": 1,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 173.116,
+        "mean_resources_spent": {
+          "action_surge": 0.558,
+          "slot_1": 0.596
+        },
+        "mean_rounds": 1,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 1.0,
+        "wins": 500
+      }
+    },
+    "stone_golem": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 63.204,
+        "mean_resources_spent": {
+          "action_surge": 2.0,
+          "second_wind": 0.624,
+          "slot_1": 4.738,
+          "slot_2": 0.29,
+          "slot_3": 1.382
+        },
+        "mean_rounds": 6.344,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.616,
+        "wins": 308
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 63.204,
+        "mean_resources_spent": {
+          "action_surge": 2.0,
+          "second_wind": 0.624,
+          "slot_1": 4.738,
+          "slot_2": 0.29,
+          "slot_3": 1.382
+        },
+        "mean_rounds": 6.344,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.616,
+        "wins": 308
+      }
+    },
+    "young_white_dragon": {
+      "independent_control": {
+        "draws": 0,
+        "mean_party_hp": 68.548,
+        "mean_resources_spent": {
+          "action_surge": 1.978,
+          "second_wind": 1.074,
+          "slot_1": 2.0,
+          "slot_3": 0.904
+        },
+        "mean_rounds": 3.13,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.912,
+        "wins": 456
+      },
+      "shared": {
+        "draws": 0,
+        "mean_party_hp": 65.03,
+        "mean_resources_spent": {
+          "action_surge": 1.98,
+          "second_wind": 1.106,
+          "slot_1": 1.732,
+          "slot_3": 0.934
+        },
+        "mean_rounds": 3.154,
+        "runs": 500,
+        "seed": 1,
+        "win_rate": 0.842,
+        "wins": 421
+      }
+    }
+  },
+  "party": [
+    "fighter5",
+    "fighter5",
+    "cleric5",
+    "cleric5"
+  ],
+  "runs": 500,
+  "seed": 1
+}

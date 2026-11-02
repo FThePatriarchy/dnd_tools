@@ -169,8 +169,19 @@ class MonsterMechanics:
         return True
 
     def routine(self, actor, target):
-        options = actor.routines or ([actor.multiattack or [actor.attacks[0]["name"]] * actor.extra_attack] if actor.attacks else [])
+        options = actor.routines or ([actor.multiattack or [self.pc_weapon(actor)["name"]] * actor.extra_attack] if actor.attacks else [])
         return self.policy_for(actor).monster_routine(self, actor, target, options) if options else []
+
+    def pc_weapon(self, actor):
+        """The first weapon, or under the cover rules the first melee weapon while a ranged one would have disadvantage."""
+        first = actor.attacks[0]
+        if first.get("kind") == "ranged" and self.ranged_disadvantage(actor, first):
+            return next((a for a in actor.attacks if a.get("kind") == "melee"), first)
+        return first
+
+    def ranged_disadvantage(self, actor, attack):
+        return (self.cover_rules() and attack.get("kind") == "ranged" and not actor.features.get("sharpshooter")
+                and self.in_melee(actor))
 
     def routine_value(self, actor, names, target, control=False):
         total = 0
@@ -178,7 +189,9 @@ class MonsterMechanics:
             attack = next((a for a in actor.attacks if a["name"] == name), None)
             if attack:
                 if not actor.recharge_ready.get(name, True): continue
-                total += sum(dice.mean(p["damage"]["dice"]) + p["damage"].get("bonus", 0) for p in attack["effects"] if "damage" in p and "if" not in p) * self.hit_probability(actor, target, attack["to_hit"])
+                hit = self.hit_probability(actor, target, attack["to_hit"])
+                if self.ranged_disadvantage(actor, attack): hit *= hit
+                total += sum(dice.mean(p["damage"]["dice"]) + p["damage"].get("bonus", 0) for p in attack["effects"] if "damage" in p and "if" not in p) * hit
             else:
                 action = next((a for a in actor.actions if a["name"] == name), None)
                 if action and actor.limited_uses.get(action.get("resource"), 1): total += self.expected_spell_damage(actor, {"effects": action["effects"]}, target, horizon=1, control_value=control)

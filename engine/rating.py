@@ -60,6 +60,7 @@ class PartyRating:
     types: dict
     xp: float
     runs: int
+    cover: bool = False
 
     @property
     def high(self):
@@ -86,8 +87,8 @@ def batch_seed(seed, encounter, index):
 
 
 def _probe(task):
-    builds, encounter, seed, runs, strategy, morale = task
-    return run_encounter(builds, [encounter], runs, seed, morale=morale, strategy=strategy)
+    builds, encounter, seed, runs, strategy, morale, *rest = task
+    return run_encounter(builds, [encounter], runs, seed, morale=morale, strategy=strategy, cover=bool(rest and rest[0]))
 
 
 class Step:
@@ -140,7 +141,7 @@ class _Inline:
         f = Future(); f.set_result(fn(arg)); return f
 
 
-def rate_party(builds, *, threshold=THRESHOLD, seed=1, strategy="default", morale="none", benchmark=None, workers=None,
+def rate_party(builds, *, threshold=THRESHOLD, seed=1, strategy="default", morale="none", cover=False, benchmark=None, workers=None,
                probe=_probe, executor=None):
     """Rate a party. probe and executor (a context-managed object with submit) can be replaced in tests."""
     from .day_options import DayOptions
@@ -177,7 +178,7 @@ def rate_party(builds, *, threshold=THRESHOLD, seed=1, strategy="default", moral
             while len(running) < limit:
                 st = next_batch()
                 if st is None: break
-                job = (list(builds), st.encounter, batch_seed(seed, st.encounter, st.submitted), BATCH, strategy, morale)
+                job = (list(builds), st.encounter, batch_seed(seed, st.encounter, st.submitted), BATCH, strategy, morale, cover)
                 running[pool.submit(probe, job)] = (st, st.submitted)
                 st.submitted += 1
             if not running: break
@@ -203,7 +204,7 @@ def rate_party(builds, *, threshold=THRESHOLD, seed=1, strategy="default", moral
         types[kind] = TypeRating(kind, xp, censored, steps_)
     overall = math.exp(sum(math.log(t.xp) for t in types.values()) / len(types))
     return PartyRating(list(builds), level, len(builds), threshold, seed, strategy, morale, benchmark, types, overall,
-                       performed)
+                       performed, cover)
 
 
 def describe(rating, xp, censored=""):
@@ -216,7 +217,8 @@ def markdown(rating):
     names = [b["name"] if isinstance(b, dict) else b for b in rating.builds]
     out = [f"# Party rating: {', '.join(names)}", "",
            f"Level {rating.level}, {rating.size} PCs; benchmark v{rating.benchmark}; defeat threshold {rating.threshold:.0%}; "
-           f"party strategy `{rating.strategy}`; morale `{rating.morale}`; seed {rating.seed}; {rating.runs:,} runs.", "",
+           f"party strategy `{rating.strategy}`; morale `{rating.morale}`; "
+           + ("cover and ranged-in-melee rules on; " if rating.cover else "") + f"seed {rating.seed}; {rating.runs:,} runs.", "",
            "The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing "
            "dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per "
            f"character at level {rating.level} ({rating.high} XP).", "",
@@ -245,6 +247,7 @@ def main():
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--strategy", choices=list(STRATEGIES), default="default", help="party AI strategy")
     parser.add_argument("--morale", choices=MORALE, default="none")
+    parser.add_argument("--cover", action="store_true", help="optional cover and ranged-in-melee rules (DayOptions.cover)")
     parser.add_argument("--benchmark", type=int, help="frozen benchmark version (default: 1 up to level 10, 2 above)")
     parser.add_argument("--workers", type=int)
     parser.add_argument("--items", choices=["half", "full"], help="give the party a DMG-sized magic item kit (engine/items.py)")
@@ -259,7 +262,7 @@ def main():
         party = with_items(party, args.items)
     try:
         rating = rate_party(party, threshold=args.threshold, seed=args.seed, strategy=args.strategy,
-                            morale=args.morale, benchmark=args.benchmark, workers=args.workers)
+                            morale=args.morale, cover=args.cover, benchmark=args.benchmark, workers=args.workers)
     except (ValueError, OSError) as exc: parser.error(str(exc))
     text = markdown(rating)
     if args.write:

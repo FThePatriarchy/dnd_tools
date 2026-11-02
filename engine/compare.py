@@ -250,19 +250,19 @@ def screen_score(candidate, level):
     return offense * durability
 
 
-def compare(level, cls, candidates, references=("standard",), *, seed=1, strategy="default", workers=None):
+def compare(level, cls, candidates, references=("standard",), *, seed=1, strategy="default", workers=None, cover=False):
     """{reference: {"base": PartyRating, "rows": [(label, PartyRating)]}} for each reference profile."""
     results = {}
     for ref in references:
         base_party = party(level, ref)
         slot = REFERENCE_CLASSES.index(ROLES[cls])
-        base = rate_party(base_party, seed=seed, strategy=strategy, workers=workers)
+        base = rate_party(base_party, seed=seed, strategy=strategy, workers=workers, cover=cover)
         rows = []
         for candidate in candidates:
             if candidate == base_party[slot]:
                 rows.append((label(candidate), base)); continue
             trial = list(base_party); trial[slot] = candidate
-            rows.append((label(candidate), rate_party(trial, seed=seed, strategy=strategy, workers=workers)))
+            rows.append((label(candidate), rate_party(trial, seed=seed, strategy=strategy, workers=workers, cover=cover)))
         results[ref] = {"base": base, "member": base_party[slot], "rows": rows}
     return results
 
@@ -275,12 +275,13 @@ def fmt_delta(d, noise=NOISE):
     return f"{d:+.0%}" + ("" if abs(d) >= noise else " ≈")
 
 
-def markdown(level, cls, results, screened=None):
+def markdown(level, cls, results, screened=None, cover=False):
     out = [f"# Build comparison: {cls}, level {level}", "",
            "Each row swaps the candidate into the reference party in place of its "
            f"{ROLES[cls]} and re-rates the party against benchmark v{default_version(level)} (5% defeat threshold, same seeds). "
            f"Values are the change in rating; ≈ marks changes within noise: under {NOISE:.0%} overall and "
-           f"under {TYPE_NOISE:.0%} for a single opponent type, whose rating rests on one interpolated crossing.", ""]
+           f"under {TYPE_NOISE:.0%} for a single opponent type, whose rating rests on one interpolated crossing."
+           + (" Cover and ranged-in-melee rules on (`DayOptions.cover`)." if cover else ""), ""]
     if screened:
         out += ["## Screen", "", "Expected damage × effective HP against the level's benchmark brute; the top variants were rated.", "",
                 "| Variant | Screen score | Rated |", "| --- | ---: | --- |"]
@@ -314,6 +315,7 @@ def main():
     parser.add_argument("--references", nargs="+", default=["standard"], choices=["casual", "standard", "optimized"])
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--strategy", default="default")
+    parser.add_argument("--cover", action="store_true", help="optional cover and ranged-in-melee rules (DayOptions.cover)")
     parser.add_argument("--workers", type=int)
     parser.add_argument("--write", metavar="NAME", help="write data/reports/compare_<NAME>.md")
     args = parser.parse_args()
@@ -328,8 +330,8 @@ def main():
         screened = [(v["name"], s, v in candidates) for v, s in sorted(scores, key=lambda vs: -vs[1])]
     else:
         candidates = args.candidates
-    results = compare(args.level, args.cls, candidates, args.references, seed=args.seed, strategy=args.strategy, workers=args.workers)
-    text = markdown(args.level, args.cls, results, screened)
+    results = compare(args.level, args.cls, candidates, args.references, seed=args.seed, strategy=args.strategy, workers=args.workers, cover=args.cover)
+    text = markdown(args.level, args.cls, results, screened, cover=args.cover)
     if args.write:
         (REPORTS / f"compare_{args.write}.md").write_text(text, encoding="utf-8")
         data = {ref: {"base": asdict(d["base"]), "rows": [[name, asdict(r)] for name, r in d["rows"]]} for ref, d in results.items()}

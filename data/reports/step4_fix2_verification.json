@@ -1,0 +1,17 @@
+{
+  "engine_sha256": "989f05d61e581dc029b3e5e10ce9163540bba9317cccfcbaff393e14ac9b6d04",
+  "day_rows": 14,
+  "day_trials": 14000,
+  "cr_control_fights": 10000,
+  "legacy_seeded_assertions": "127/162 survivors; both exact distributions retained",
+  "all_field_unchanged_default_day_rows": [
+    "step1_easy_day_conservative_1000",
+    "step1_easy_day_nova_1000",
+    "step1_goblin_warren_conservative_1000",
+    "step1_goblin_warren_nova_1000"
+  ],
+  "pytest": "2115 passed in 971.18s (0:16:11)",
+  "focused_pytest": "65 passed in 37.15s",
+  "new_exact_cases": 31,
+  "killed_in_memory_variants": 12
+}

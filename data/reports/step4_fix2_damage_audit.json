@@ -1,0 +1,4270 @@
+{
+  "spells": 245,
+  "monsters": 70,
+  "damage_blocks": 131,
+  "save_damage_blocks": 76,
+  "simultaneous_save_exceptions": [],
+  "notes": [
+    "No supported simultaneous save damage effect requests independent per-target rolls.",
+    "Attack rolls, later per-creature ticks, delayed Vitriolic Sphere damage, and later commanded activations are independent.",
+    "Flame Strike, Destructive Wave, Ice Storm and Jallarzi components have distinct rolls, each shared across simultaneous victims.",
+    "Ice Knife and Lightning Arrow attack damage is separate from the shared saving-throw splash.",
+    "Magic Missile retains its explicit shared roll; Sear Undead already shares one roll."
+  ],
+  "blocks": [
+    {
+      "path": [
+        "spell",
+        "Acid Splash",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 5,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "acid"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Armor of Agathys",
+        "effects",
+        1
+      ],
+      "id": "frost",
+      "event": "on_attack_hit(any, caster)",
+      "target": {
+        "select": "ref",
+        "ref": "trigger.attacker"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "amount": 5,
+          "type": "cold"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Arms of Hadar",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 10,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "str",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "necrotic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Banishing Smite",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d10",
+          "bonus": 0,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Bigby's Hand",
+        "effects",
+        1
+      ],
+      "id": "fist",
+      "event": "on_cast or bonus_action_command",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "melee_spell"
+      },
+      "damage": [
+        {
+          "dice": "5d8",
+          "bonus": 0,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Bigby's Hand",
+        "effects",
+        3
+      ],
+      "id": "crush",
+      "event": "bonus_action_command",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any",
+        "eligible_if": "target.has_condition_from(grappled, spell)"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d6",
+          "bonus": "spell_mod",
+          "type": "bludgeoning"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Blight",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half",
+        "auto_fail_if": "target.creature_type == plant"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "8d8",
+          "bonus": 0,
+          "type": "necrotic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Blinding Smite",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d8",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Burning Hands",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 15,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Call Lightning",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast or action_command",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 5,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d10",
+          "bonus": 0,
+          "type": "lightning"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Chill Touch",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature_or_object"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "melee_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d10",
+          "bonus": 0,
+          "type": "necrotic"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Chromatic Orb",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "3d8",
+          "bonus": 0,
+          "type": "$type",
+          "leap_on_duplicate": true
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Cloud of Daggers",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast or on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "cube",
+        "size_ft": 5,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d4",
+          "bonus": 0,
+          "type": "slashing"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Cloudkill",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast or on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d8",
+          "bonus": 0,
+          "type": "poison"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Cone of Cold",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 60,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "8d8",
+          "bonus": 0,
+          "type": "cold"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Conjure Animals",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 10,
+        "affects": "chosen",
+        "filter": [
+          "creature",
+          "visible"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d10",
+          "bonus": 0,
+          "type": "slashing"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Conjure Barrage",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 60,
+        "affects": "chosen",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d8",
+          "bonus": 0,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Conjure Elemental",
+        "effects",
+        0
+      ],
+      "id": "catch",
+      "event": "start_of_turn(target) or on_creature_enters_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 5,
+        "affects": "chosen",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "8d8",
+          "bonus": 0,
+          "type": "$type"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Conjure Elemental",
+        "effects",
+        1
+      ],
+      "id": "hold",
+      "event": "start_of_turn(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 5,
+        "affects": "chosen",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d8",
+          "bonus": 0,
+          "type": "$type"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Conjure Minor Elementals",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_attack_hit(caster, defender)",
+      "target": {
+        "select": "ref",
+        "ref": "trigger.defender"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "$damage_type"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Conjure Volley",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cylinder",
+        "size_ft": 40,
+        "affects": "chosen",
+        "filter": [
+          "creature",
+          "visible"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "8d8",
+          "bonus": 0,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Conjure Woodland Beings",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 10,
+        "affects": "chosen",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d8",
+          "bonus": 0,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Contagion",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "11d8",
+          "bonus": 0,
+          "type": "necrotic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Cordon of Arrows",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 30,
+        "affects": "enemy",
+        "filter": [
+          "creature"
+        ],
+        "exclude": "caster"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d4",
+          "bonus": 0,
+          "type": "piercing"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Crusader's Mantle",
+        "effects",
+        1
+      ],
+      "id": "main",
+      "event": "on_attack_hit(attacker, defender)",
+      "target": {
+        "select": "ref",
+        "ref": "trigger.defender"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d4",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Destructive Wave",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 30,
+        "affects": "chosen",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d6",
+          "bonus": 0,
+          "type": "thunder"
+        },
+        {
+          "dice": "5d6",
+          "bonus": 0,
+          "type": "$damage_type"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Dissonant Whispers",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Divine Favor",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_attack_hit(caster, defender)",
+      "target": {
+        "select": "ref",
+        "ref": "trigger.defender"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d4",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Divine Smite",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "radiant"
+        },
+        {
+          "dice": "1d8",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Dragon's Breath",
+        "effects",
+        1
+      ],
+      "id": "breath",
+      "event": "action_command",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 15,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "main"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "$damage_type"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Eldritch Blast",
+        "effects",
+        0
+      ],
+      "id": "beam",
+      "event": "on_cast",
+      "target": {
+        "select": "n_targets",
+        "n": 1,
+        "distinct": false,
+        "filter": [
+          "creature_or_object"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d10",
+          "bonus": 0,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Ensnaring Strike",
+        "effects",
+        1
+      ],
+      "id": "vines",
+      "event": "start_of_turn(target)",
+      "target": {
+        "select": "ref",
+        "ref": "main"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "piercing"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Evard's Black Tentacles",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "cube",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "str",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "bludgeoning"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Fire Bolt",
+        "effects",
+        0
+      ],
+      "id": "bolt",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature_or_object"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d10",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Fire Shield",
+        "effects",
+        1
+      ],
+      "id": "retaliate",
+      "event": "on_attack_hit(any, caster)",
+      "target": {
+        "select": "ref",
+        "ref": "trigger.attacker"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "fire"
+        },
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "cold"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Fireball",
+        "effects",
+        0
+      ],
+      "id": "blast",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "8d6",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Flame Blade",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "action_command",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "melee_spell"
+      },
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": "spell_mod",
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Flame Strike",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cylinder",
+        "size_ft": 10,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d6",
+          "bonus": 0,
+          "type": "fire"
+        },
+        {
+          "dice": "5d6",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Flaming Sphere",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 5,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Fount of Moonlight",
+        "effects",
+        1
+      ],
+      "id": "main",
+      "event": "on_attack_hit(caster, defender)",
+      "target": {
+        "select": "ref",
+        "ref": "trigger.defender"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Glyph of Warding",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "glyph_triggered",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d8",
+          "bonus": 0,
+          "type": "$type"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Grasping Vine",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast or bonus_action_command",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "melee_spell"
+      },
+      "damage": [
+        {
+          "dice": "4d8",
+          "bonus": 0,
+          "type": "bludgeoning"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Guardian of Faith",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_creature_enters_aura(target) or start_of_turn(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 10,
+        "affects": "enemy",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "amount": 20,
+          "type": "radiant",
+          "end_after_total": 60
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Guiding Bolt",
+        "effects",
+        0
+      ],
+      "id": "bolt",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "4d6",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Hail of Thorns",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 5,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "trigger.defender"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d10",
+          "bonus": 0,
+          "type": "piercing"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Heat Metal",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast or bonus_action_command",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any",
+        "eligible_if": "target.has_status(heated_metal)"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Hellish Rebuke",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "ref",
+        "ref": "trigger.attacker"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d10",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Hex",
+        "effects",
+        1
+      ],
+      "id": "extra_damage",
+      "event": "on_attack_hit(caster, defender)",
+      "target": {
+        "select": "ref",
+        "ref": "mark"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "necrotic"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Hunger of Hadar",
+        "effects",
+        1
+      ],
+      "id": "cold",
+      "event": "start_of_turn(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "cold"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Hunger of Hadar",
+        "effects",
+        2
+      ],
+      "id": "acid",
+      "event": "end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "acid"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Hunter's Mark",
+        "effects",
+        1
+      ],
+      "id": "extra_damage",
+      "event": "on_attack_hit(caster, defender)",
+      "target": {
+        "select": "ref",
+        "ref": "mark"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Ice Knife",
+        "effects",
+        0
+      ],
+      "id": "knife",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d10",
+          "bonus": 0,
+          "type": "piercing"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Ice Knife",
+        "effects",
+        1
+      ],
+      "id": "explosion",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 5,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "knife"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "cold"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Ice Storm",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cylinder",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d10",
+          "bonus": 0,
+          "type": "bludgeoning"
+        },
+        {
+          "dice": "4d6",
+          "bonus": 0,
+          "type": "cold"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Inflict Wounds",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d10",
+          "bonus": 0,
+          "type": "necrotic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Insect Plague",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast or on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d10",
+          "bonus": 0,
+          "type": "piercing"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Jallarzi's Storm of Radiance",
+        "effects",
+        1
+      ],
+      "id": "damage",
+      "event": "on_cast or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "cylinder",
+        "size_ft": 10,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d10",
+          "bonus": 0,
+          "type": "radiant"
+        },
+        {
+          "dice": "2d10",
+          "bonus": 0,
+          "type": "thunder"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Lightning Arrow",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d8",
+          "bonus": 0,
+          "type": "lightning"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Lightning Arrow",
+        "effects",
+        1
+      ],
+      "id": "splash",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 10,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "main",
+        "exclude": "origin"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "lightning"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Lightning Bolt",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "line",
+        "size_ft": 100,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "8d6",
+          "bonus": 0,
+          "type": "lightning"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Magic Missile",
+        "effects",
+        0
+      ],
+      "id": "darts",
+      "event": "on_cast",
+      "target": {
+        "select": "n_targets",
+        "n": 3,
+        "distinct": false,
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d4",
+          "bonus": 1,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "explicit shared resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Melf's Acid Arrow",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "4d4",
+          "bonus": 0,
+          "type": "acid"
+        },
+        {
+          "dice": "2d4",
+          "bonus": 0,
+          "type": "acid",
+          "delay": "end_of_turn(target.next_turn)"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Mind Sliver",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "int",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Mind Spike",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d8",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Moonbeam",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast or on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "cylinder",
+        "size_ft": 5,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d10",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Mordenkainen's Faithful Hound",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "start_of_turn(caster)",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "enemy",
+        "within_ft": 5
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d8",
+          "bonus": 0,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Phantasmal Force",
+        "effects",
+        1
+      ],
+      "id": "hazard",
+      "event": "start_of_turn(caster)",
+      "target": {
+        "select": "ref",
+        "ref": "main"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Phantasmal Killer",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d10",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Phantasmal Killer",
+        "effects",
+        1
+      ],
+      "id": "nightmare",
+      "event": "end_of_turn(target)",
+      "target": {
+        "select": "ref",
+        "ref": "main"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d10",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Poison Spray",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d12",
+          "bonus": 0,
+          "type": "poison"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Produce Flame",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "action_command",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature_or_object"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d8",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Ray of Frost",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d8",
+          "bonus": 0,
+          "type": "cold"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Ray of Sickness",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "poison"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Sacred Flame",
+        "effects",
+        0
+      ],
+      "id": "flame",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "negate",
+        "ignore_cover": [
+          "half",
+          "three_quarters"
+        ]
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d8",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Scorching Ray",
+        "effects",
+        0
+      ],
+      "id": "rays",
+      "event": "on_cast",
+      "target": {
+        "select": "n_targets",
+        "n": 3,
+        "distinct": false,
+        "filter": [
+          "creature_or_object"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Searing Smite",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Searing Smite",
+        "effects",
+        1
+      ],
+      "id": "burn",
+      "event": "start_of_turn(target)",
+      "target": {
+        "select": "ref",
+        "ref": "main"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Shatter",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 10,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half",
+        "disadvantage_if": "target.creature_type == construct"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d8",
+          "bonus": 0,
+          "type": "thunder"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Shining Smite",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Shocking Grasp",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "melee_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d8",
+          "bonus": 0,
+          "type": "lightning"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Sorcerous Burst",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature_or_object"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d8",
+          "bonus": 0,
+          "type": "$damage_type",
+          "explode_max": "spell_mod"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Spirit Guardians",
+        "effects",
+        1
+      ],
+      "id": "spirits",
+      "event": "on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 15,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster",
+        "exclude": "designated_on_cast"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d8",
+          "bonus": 0,
+          "type": "$spirit_damage"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Spiritual Weapon",
+        "effects",
+        0
+      ],
+      "id": "weapon_attack",
+      "event": "on_cast or bonus_action_command",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any",
+        "origin": "spiritual_weapon",
+        "within_ft": 5
+      },
+      "save": null,
+      "attack": {
+        "type": "melee_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d8",
+          "bonus": "spell_mod",
+          "type": "force"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Staggering Smite",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d6",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Starry Wisp",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature_or_object"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d8",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Steel Wind Strike",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "n_targets",
+        "n": 5,
+        "distinct": true,
+        "up_to": true,
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "melee_spell"
+      },
+      "damage": [
+        {
+          "dice": "6d10",
+          "bonus": 0,
+          "type": "force"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Summon Aberration",
+        "effects",
+        0,
+        "apply",
+        0,
+        "summon",
+        "forms",
+        "mind flayer",
+        "traits",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 5,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "exclude": "summoner"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Summon Construct",
+        "effects",
+        0,
+        "apply",
+        0,
+        "summon",
+        "forms",
+        "metal",
+        "traits",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_attack_hit(any, caster)",
+      "target": {
+        "select": "ref",
+        "ref": "trigger.attacker"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d10",
+          "bonus": 0,
+          "type": "fire",
+          "slot_bonus": false
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Summon Dragon",
+        "effects",
+        0,
+        "apply",
+        0,
+        "summon",
+        "forms",
+        "acid",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 30,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "acid",
+          "slot_bonus": false
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Summon Dragon",
+        "effects",
+        0,
+        "apply",
+        0,
+        "summon",
+        "forms",
+        "cold",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 30,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "cold",
+          "slot_bonus": false
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Summon Dragon",
+        "effects",
+        0,
+        "apply",
+        0,
+        "summon",
+        "forms",
+        "fire",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 30,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "fire",
+          "slot_bonus": false
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Summon Dragon",
+        "effects",
+        0,
+        "apply",
+        0,
+        "summon",
+        "forms",
+        "lightning",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 30,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "lightning",
+          "slot_bonus": false
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Summon Dragon",
+        "effects",
+        0,
+        "apply",
+        0,
+        "summon",
+        "forms",
+        "poison",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 30,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "poison",
+          "slot_bonus": false
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Synaptic Static",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "int",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "8d6",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Thorn Whip",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "melee_spell"
+      },
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "piercing"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Thunderclap",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 5,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "thunder"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Thunderous Smite",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d6",
+          "bonus": 0,
+          "type": "thunder"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Thunderwave",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cube",
+        "size_ft": 15,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "thunder"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Toll the Dead",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d8",
+          "bonus": 0,
+          "type": "necrotic",
+          "wounded_dice": "1d12"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Vampiric Touch",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast or action_command",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "melee_spell"
+      },
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "necrotic",
+          "leech": 0.5
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Vicious Mockery",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Vitriolic Sphere",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "sphere",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "10d4",
+          "bonus": 0,
+          "type": "acid"
+        },
+        {
+          "dice": "5d4",
+          "bonus": 0,
+          "type": "acid",
+          "delay": "end_of_turn(target.next_turn)"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Wall of Fire",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "line",
+        "size_ft": 60,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d8",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Wall of Fire",
+        "effects",
+        1
+      ],
+      "id": "heat",
+      "event": "end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "line",
+        "size_ft": 60,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d8",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Wind Wall",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "line",
+        "size_ft": 50,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "str",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d8",
+          "bonus": 0,
+          "type": "bludgeoning"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Witch Bolt",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": {
+        "type": "ranged_spell"
+      },
+      "damage": [
+        {
+          "dice": "2d12",
+          "bonus": 0,
+          "type": "lightning"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Witch Bolt",
+        "effects",
+        1
+      ],
+      "id": "sustain",
+      "event": "bonus_action_command",
+      "target": {
+        "select": "ref",
+        "ref": "main"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d12",
+          "bonus": 0,
+          "type": "lightning"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "spell",
+        "Word of Radiance",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 5,
+        "affects": "chosen",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "con",
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "radiant"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Wrathful Smite",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d6",
+          "bonus": 0,
+          "type": "necrotic"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "spell",
+        "Yolande's Regal Presence",
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_aura_moves_onto_creature(target) or on_creature_enters_aura(target) or end_of_turn_in_aura(target)",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 10,
+        "affects": "chosen",
+        "filter": [
+          "creature",
+          "visible"
+        ],
+        "origin": "caster"
+      },
+      "save": {
+        "ability": "wis",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d6",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "monster",
+        "aboleth",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any",
+        "eligible_if": "target.has_condition_from(grappled, caster) or target.has_condition_from(charmed, caster)"
+      },
+      "save": {
+        "ability": "int",
+        "dc": 16,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "aboleth",
+        "legendary",
+        "options",
+        1,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any",
+        "eligible_if": "target.has_condition_from(grappled, caster) or target.has_condition_from(charmed, caster)"
+      },
+      "save": {
+        "ability": "int",
+        "dc": 16,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "psychic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "adult_red_dragon",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 60,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "dc": 21,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "17d6",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "air_elemental",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "str",
+        "dc": 13,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d10",
+          "bonus": 2,
+          "type": "thunder"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "chain_devil",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "dex",
+        "dc": 15,
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d4",
+          "bonus": 4,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "fire_elemental",
+        "traits",
+        0,
+        "effects",
+        0
+      ],
+      "id": "aura",
+      "event": "end_of_turn(caster)",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 10,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d10",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "monster",
+        "gelatinous_cube",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "n_targets",
+        "n": 4,
+        "up_to": true,
+        "distinct": true,
+        "filter": [
+          "creature"
+        ],
+        "affects": "enemy",
+        "max_size": "L"
+      },
+      "save": {
+        "ability": "dex",
+        "dc": 12,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "acid"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "gelatinous_cube",
+        "actions",
+        0,
+        "effects",
+        1
+      ],
+      "id": "ongoing",
+      "event": "start_of_turn(caster)",
+      "target": {
+        "select": "ref",
+        "ref": "main"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "acid"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "monster",
+        "gladiator",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "str",
+        "dc": 15,
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d4",
+          "bonus": 4,
+          "type": "bludgeoning"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "hell_hound",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 15,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "dc": 12,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "5d6",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "vampire_spawn",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any",
+        "eligible_if": "target.has_condition(grappled) or target.has_condition(incapacitated) or target.has_condition(restrained)"
+      },
+      "save": {
+        "ability": "con",
+        "dc": 14,
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d4",
+          "bonus": 3,
+          "type": "piercing"
+        },
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "necrotic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "vrock",
+        "actions",
+        0,
+        "effects",
+        1
+      ],
+      "id": "ongoing",
+      "event": "start_of_turn(target)",
+      "target": {
+        "select": "ref",
+        "ref": "main"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d10",
+          "bonus": 0,
+          "type": "poison"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "monster",
+        "vrock",
+        "actions",
+        1,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "emanation",
+        "size_ft": 20,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "con",
+        "dc": 15,
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "3d6",
+          "bonus": 0,
+          "type": "thunder"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "water_elemental",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "n_targets",
+        "n": 2,
+        "up_to": true,
+        "distinct": true,
+        "filter": [
+          "creature"
+        ],
+        "affects": "enemy",
+        "max_size": "L"
+      },
+      "save": {
+        "ability": "str",
+        "dc": 15,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "4d8",
+          "bonus": 4,
+          "type": "bludgeoning"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "water_elemental",
+        "actions",
+        0,
+        "effects",
+        1
+      ],
+      "id": "ongoing",
+      "event": "start_of_turn(caster)",
+      "target": {
+        "select": "ref",
+        "ref": "main"
+      },
+      "save": null,
+      "attack": null,
+      "damage": [
+        {
+          "dice": "2d8",
+          "bonus": 0,
+          "type": "bludgeoning"
+        }
+      ],
+      "roll_scope": "separate attack/event",
+      "later_ticks": "fresh resolution and fresh roll"
+    },
+    {
+      "path": [
+        "monster",
+        "wight",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "single",
+        "filter": [
+          "creature"
+        ],
+        "affects": "any"
+      },
+      "save": {
+        "ability": "con",
+        "dc": 13,
+        "on_success": "negate"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "1d8",
+          "bonus": 2,
+          "type": "necrotic"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "young_black_dragon",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "line",
+        "size_ft": 30,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "dc": 14,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "14d6",
+          "bonus": 0,
+          "type": "acid"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "young_blue_dragon",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "line",
+        "size_ft": 60,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "dc": 16,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "10d10",
+          "bonus": 0,
+          "type": "lightning"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "young_green_dragon",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 30,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "con",
+        "dc": 14,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "12d6",
+          "bonus": 0,
+          "type": "poison"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "young_red_dragon",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "breath",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 30,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "dex",
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "16d6",
+          "bonus": 0,
+          "type": "fire"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    },
+    {
+      "path": [
+        "monster",
+        "young_white_dragon",
+        "actions",
+        0,
+        "effects",
+        0
+      ],
+      "id": "main",
+      "event": "on_cast",
+      "target": {
+        "select": "area",
+        "shape": "cone",
+        "size_ft": 30,
+        "affects": "all",
+        "filter": [
+          "creature"
+        ]
+      },
+      "save": {
+        "ability": "con",
+        "dc": 15,
+        "on_success": "half"
+      },
+      "attack": null,
+      "damage": [
+        {
+          "dice": "9d8",
+          "bonus": 0,
+          "type": "cold"
+        }
+      ],
+      "roll_scope": "one component roll per save resolution",
+      "later_ticks": null
+    }
+  ]
+}

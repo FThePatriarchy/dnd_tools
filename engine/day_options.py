@@ -17,6 +17,7 @@ class DayOptions:
     targeting: str = "threat"
     attack_downed: bool = False
     morale: str = "none"  # optional DMG morale: "none" (fight to the last), "dmg", "rout"
+    cover: bool = False  # optional cover and ranged-in-melee rules (engine.combat.half_cover / in_melee)
 
     def __post_init__(self):
         for f in fields(self):

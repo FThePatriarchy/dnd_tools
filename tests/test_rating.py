@@ -43,7 +43,7 @@ def test_crossing_interpolates_and_censors():
 def test_rate_party_uses_every_ladder_step(monkeypatch):
     # Synthetic probe: defeat rises linearly with encounter XP, reaching 5% at 1,000 XP.
     def probe(job):
-        builds, encounter, seed, runs, strategy, morale = job
+        builds, encounter, seed, runs, strategy, morale, *_ = job
         assert builds == ["fighter_3", "cleric_3", "rogue_3", "wizard_3"] and runs == 50
         return {"defeat": encounter_xp([encounter]) / 20000, "runs": runs, "failed_runs": 0, "ci": {"defeat": 0.01}, "errors": {}}
     rating = rate_party(["fighter_3", "cleric_3", "rogue_3", "wizard_3"], probe=probe, executor=_Inline(), workers=1)

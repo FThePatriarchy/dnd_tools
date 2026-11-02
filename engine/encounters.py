@@ -99,7 +99,7 @@ def party_sheets(builds, options):
     return sheets
 
 
-def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, morale="none",
+def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, morale="none", cover=False,
                   strategy="default", monster_strategy="default", detail=False):
     """Run a party (build names) against one encounter (entries like "ogre x3").
 
@@ -117,7 +117,7 @@ def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, 
     from .policy import strategy_policy
     from .state import Combatant
     if _SPELLS is None: _SPELLS = load_spells()
-    opts = DayOptions(morale=morale)
+    opts = DayOptions(morale=morale, cover=cover)
     sheets = party_sheets(builds, opts)
     names = encounter_names(encounter)
     day = {"name": "encounter", "steps": [{"encounter": list(encounter)}]}

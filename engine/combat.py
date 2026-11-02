@@ -179,6 +179,25 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 bases.append(effect.data["base"] + (actor.mod(effect.data["ability"]) if effect.data["ability"] else 0))
         return self.modifier(actor, "ac", max(bases) + actor.features.get("item_ac_bonus", 0))
 
+    def cover_rules(self):
+        options = getattr(self, "day_options", None)
+        return bool(options and options.cover)
+
+    def half_cover(self, defender):
+        """No-grid cover: a back-row target is behind a standing front-row ally (+2 AC against ranged attacks).
+        Monsters have no rows, so only the party's back row gets it."""
+        return defender.position == "back" and any(
+            c is not defender and c.team == defender.team and c.alive and c.position == "front"
+            and not c.has_condition("incapacitated") for c in self.combatants)
+
+    def in_melee(self, actor):
+        """No-grid adjacency for ranged attacks: an enemy that can still fight is within 5 feet when the
+        actor stands in the front row facing a melee enemy, or a melee attack reached it since its last turn."""
+        engaged = actor.statuses.get("melee_engaged", ())
+        return any(e.alive and not e.has_condition("incapacitated") and any(a.get("kind") == "melee" for a in e.attacks)
+                   and (e.id in engaged or actor.position == "front" and actor.team == "party")
+                   for e in self.combatants if e.team != actor.team)
+
     def turn_rules(self, actor):
         result = {}
         for effect in actor.active_effects:
@@ -300,6 +319,16 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if defender.has_condition("prone"):
             if melee: adv = True
             else: dis = True
+        cover = 0
+        if self.cover_rules() and not melee:
+            if not (weapon and attacker.features.get("sharpshooter")):  # Sharpshooter: weapon attacks ignore both
+                dis |= self.in_melee(attacker)
+                cover = 2 if self.half_cover(defender) else 0
+        elif self.cover_rules():
+            engaged = defender.statuses.setdefault("melee_engaged", [])
+            if attacker.id not in engaged: engaged.append(attacker.id)
+        def armor():
+            return self.armor_class(defender) + cover
         if defender.features.get("elusive") and not defender.has_condition("incapacitated"): adv = False
         if weapon and ability == "str" and self.current is attacker and attacker.features.get("brutal_strike") and attacker.statuses.get("reckless") and not dis and attacker.statuses.get("brutal_turn") != self.turn_index and self.policy_for(attacker).brutal_strike(self,attacker,defender):
             adv = False
@@ -307,24 +336,24 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             attacker.statuses["brutal_turn"] = self.turn_index
         self.duel_activity(attacker, defender)
         natural = dice.d20(self.rng, adv, dis)
-        natural = self.heroic_reroll(attacker, natural, lambda n: n != 1 and (n >= (attacker.features.get("improved_critical",20) if weapon else 20) or n + bonus >= self.armor_class(defender)), "attack")
+        natural = self.heroic_reroll(attacker, natural, lambda n: n != 1 and (n >= (attacker.features.get("improved_critical",20) if weapon else 20) or n + bonus >= armor()), "attack")
         total = natural + self.modifier(attacker, "attack_roll", bonus, against=defender, consume=True)
         total -= self.exhaustion_penalty(attacker)
         critical_roll = natural >= (attacker.features.get("improved_critical", 20) if weapon else 20)
         critical = critical_roll or (melee and any(defender.has_condition(c) for c in ("paralyzed", "unconscious")))
         attack = {"natural": natural, "total": total, "critical": critical, "advantage": adv and not dis, "disadvantage": dis and not adv, "weapon": weapon, "melee": melee}
-        hit = natural != 1 and (critical_roll or total >= self.armor_class(defender))
+        hit = natural != 1 and (critical_roll or total >= armor())
         if not hit and natural!=1:
-            total=self.failed_test_bonus(attacker,total,self.armor_class(defender),luck=False)
+            total=self.failed_test_bonus(attacker,total,armor(),luck=False)
             attack["total"]=total
-            hit=total>=self.armor_class(defender)
+            hit=total>=armor()
         if hit and not critical_roll:
-            total=self.cutting_words(attacker,total,self.armor_class(defender),defender)
+            total=self.cutting_words(attacker,total,armor(),defender)
             attack["total"]=total
-            hit=total>=self.armor_class(defender)
+            hit=total>=armor()
         if hit:
             self.offer_reactions("on_attack_provisional_hit", attacker=attacker, defender=defender, who=defender, attack=attack)
-            hit = natural != 1 and (critical_roll or total >= self.armor_class(defender))
+            hit = natural != 1 and (critical_roll or total >= armor())
             if hit and self.monster_reaction(attacker, defender, attack, melee): hit = False
         attack["hit"] = hit
         self.record("attack", attacker=attacker.id, defender=defender.id, **attack)
@@ -1334,6 +1363,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         self.tally_saves(actor)
         self.repeat_saves(actor, "end_of_turn")
         self.expire("end_of_turn", actor)
+        actor.statuses.pop("melee_engaged", None)
         for c in self.combatants:
             for e in list(c.effects):
                 inst = self.instances.get(e.source)
