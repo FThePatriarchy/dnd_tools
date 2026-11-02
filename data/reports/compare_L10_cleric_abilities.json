@@ -1,0 +1,2722 @@
+{
+ "level": 10,
+ "class": "cleric",
+ "screen": [
+  [
+   "standard",
+   1859.2000000000003,
+   true
+  ],
+  [
+   "14 Con, 13 Dex",
+   1859.2000000000003,
+   true
+  ],
+  [
+   "14 Con, 13 Str; ASI con first",
+   1813.5,
+   true
+  ],
+  [
+   "14 Con, 13 Dex; ASI con first",
+   1813.5,
+   true
+  ],
+  [
+   "14 Str, 13 Con",
+   1635.2,
+   true
+  ],
+  [
+   "14 Str, 13 Dex",
+   1635.2,
+   true
+  ],
+  [
+   "14 Dex, 13 Con",
+   1635.2,
+   false
+  ],
+  [
+   "14 Dex, 13 Str",
+   1635.2,
+   false
+  ],
+  [
+   "14 Con, 13 Str; ASI split",
+   1618.5,
+   false
+  ],
+  [
+   "14 Con, 13 Dex; ASI split",
+   1618.5,
+   false
+  ],
+  [
+   "14 Str, 13 Con; ASI split",
+   1618.5,
+   false
+  ],
+  [
+   "14 Str, 13 Dex; ASI con first",
+   1618.5,
+   false
+  ],
+  [
+   "14 Dex, 13 Con; ASI split",
+   1618.5,
+   false
+  ],
+  [
+   "14 Dex, 13 Str; ASI con first",
+   1618.5,
+   false
+  ],
+  [
+   "14 Str, 13 Dex; ASI split",
+   1423.5,
+   false
+  ],
+  [
+   "14 Dex, 13 Str; ASI split",
+   1423.5,
+   false
+  ]
+ ],
+ "results": {
+  "standard": {
+   "base": {
+    "builds": [
+     "fighter_10",
+     "cleric_10",
+     "rogue_10",
+     "wizard_10"
+    ],
+    "level": 10,
+    "size": 4,
+    "threshold": 0.05,
+    "seed": 1,
+    "strategy": "default",
+    "morale": "none",
+    "benchmark": 1,
+    "types": {
+     "brute": {
+      "kind": "brute",
+      "xp": 10158.333333333334,
+      "censored": "",
+      "steps": [
+       [
+        "wyvern x1",
+        2300,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "wyvern x2",
+        4600,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "wyvern x3",
+        6900,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "wyvern x4",
+        9200,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "wyvern x5",
+        11500,
+        0.12,
+        100,
+        0.06406346545852173
+       ]
+      ]
+     },
+     "ranged": {
+      "kind": "ranged",
+      "xp": 11103.157894736842,
+      "censored": "",
+      "steps": [
+       [
+        "barbed_devil x1",
+        1800,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "barbed_devil x2",
+        3600,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "barbed_devil x3",
+        5400,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "barbed_devil x4",
+        7200,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "barbed_devil x5",
+        9000,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "barbed_devil x6",
+        10800,
+        0.023333333333333334,
+        300,
+        0.018012156140559843
+       ],
+       [
+        "barbed_devil x8",
+        14400,
+        0.34,
+        50,
+        0.12704612457447473
+       ]
+      ]
+     },
+     "caster": {
+      "kind": "caster",
+      "xp": 7538.888888888889,
+      "censored": "",
+      "steps": [
+       [
+        "mage x1",
+        2300,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "mage x2",
+        4600,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "mage x3",
+        6900,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "mage x4",
+        9200,
+        0.18,
+        50,
+        0.10512930582673502
+       ]
+      ]
+     },
+     "swarm": {
+      "kind": "swarm",
+      "xp": 8973.684210526315,
+      "censored": "",
+      "steps": [
+       [
+        "guard_captain x1",
+        1100,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "guard_captain x2",
+        2200,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "guard_captain x3",
+        3300,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "guard_captain x4",
+        4400,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "guard_captain x5",
+        5500,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "guard_captain x6",
+        6600,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "guard_captain x8",
+        8800,
+        0.02,
+        250,
+        0.018691659540891435
+       ],
+       [
+        "guard_captain x10",
+        11000,
+        0.4,
+        50,
+        0.1310508635735754
+       ]
+      ]
+     },
+     "control": {
+      "kind": "control",
+      "xp": 11013.559322033898,
+      "censored": "",
+      "steps": [
+       [
+        "vampire_spawn x1",
+        1800,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "vampire_spawn x2",
+        3600,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "vampire_spawn x3",
+        5400,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "vampire_spawn x4",
+        7200,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "vampire_spawn x5",
+        9000,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "vampire_spawn x6",
+        10800,
+        0.02666666666666667,
+        300,
+        0.01907793673417272
+       ],
+       [
+        "vampire_spawn x8",
+        14400,
+        0.42,
+        50,
+        0.13195777535196018
+       ]
+      ]
+     },
+     "solo": {
+      "kind": "solo",
+      "xp": 6572.222222222223,
+      "censored": "",
+      "steps": [
+       [
+        "troll x1",
+        1800,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_white_dragon x1",
+        2300,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_black_dragon x1",
+        2900,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_green_dragon x1",
+        3900,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_blue_dragon x1",
+        5000,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "young_red_dragon x1",
+        5900,
+        0.0,
+        100,
+        0.018496749384498135
+       ],
+       [
+        "adult_red_dragon x1",
+        18000,
+        0.9,
+        50,
+        0.08506327541468672
+       ]
+      ]
+     }
+    },
+    "xp": 9057.976143815175,
+    "runs": 6450
+   },
+   "rows": [
+    [
+     "standard",
+     {
+      "builds": [
+       "fighter_10",
+       {
+        "name": "standard",
+        "class": "cleric",
+        "level": 10,
+        "subclass": "life",
+        "abilities": {
+         "str": 13,
+         "dex": 10,
+         "con": 14,
+         "int": 12,
+         "wis": 15,
+         "cha": 8
+        },
+        "equipment": "chain_shield",
+        "choices": {
+         "ability_method": "standard_array",
+         "asis": {
+          "4": {
+           "wis": 2
+          },
+          "8": {
+           "wis": 2
+          }
+         },
+         "weapon_masteries": [],
+         "cantrips": [
+          "Sacred Flame",
+          "Toll the Dead",
+          "Guidance",
+          "Word of Radiance",
+          "Resistance"
+         ],
+         "prepared_spells": [
+          "Spirit Guardians",
+          "Healing Word",
+          "Guiding Bolt",
+          "Spiritual Weapon",
+          "Hold Person",
+          "Shield of Faith",
+          "Bane",
+          "Sanctuary",
+          "Command",
+          "Inflict Wounds",
+          "Silence",
+          "Warding Bond",
+          "Flame Strike",
+          "Animate Dead",
+          "Aura of Vitality"
+         ],
+         "expertise": [],
+         "divine_order": "protector",
+         "blessed_strikes": "potent_spellcasting"
+        }
+       },
+       "rogue_10",
+       "wizard_10"
+      ],
+      "level": 10,
+      "size": 4,
+      "threshold": 0.05,
+      "seed": 1,
+      "strategy": "default",
+      "morale": "none",
+      "benchmark": 1,
+      "types": {
+       "brute": {
+        "kind": "brute",
+        "xp": 10158.333333333334,
+        "censored": "",
+        "steps": [
+         [
+          "wyvern x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x4",
+          9200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x5",
+          11500,
+          0.12,
+          100,
+          0.06406346545852173
+         ]
+        ]
+       },
+       "ranged": {
+        "kind": "ranged",
+        "xp": 11103.157894736842,
+        "censored": "",
+        "steps": [
+         [
+          "barbed_devil x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x6",
+          10800,
+          0.023333333333333334,
+          300,
+          0.018012156140559843
+         ],
+         [
+          "barbed_devil x8",
+          14400,
+          0.34,
+          50,
+          0.12704612457447473
+         ]
+        ]
+       },
+       "caster": {
+        "kind": "caster",
+        "xp": 7538.888888888889,
+        "censored": "",
+        "steps": [
+         [
+          "mage x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x4",
+          9200,
+          0.18,
+          50,
+          0.10512930582673502
+         ]
+        ]
+       },
+       "swarm": {
+        "kind": "swarm",
+        "xp": 8973.684210526315,
+        "censored": "",
+        "steps": [
+         [
+          "guard_captain x1",
+          1100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x2",
+          2200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x3",
+          3300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x4",
+          4400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x5",
+          5500,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x6",
+          6600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x8",
+          8800,
+          0.02,
+          250,
+          0.018691659540891435
+         ],
+         [
+          "guard_captain x10",
+          11000,
+          0.4,
+          50,
+          0.1310508635735754
+         ]
+        ]
+       },
+       "control": {
+        "kind": "control",
+        "xp": 11013.559322033898,
+        "censored": "",
+        "steps": [
+         [
+          "vampire_spawn x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x6",
+          10800,
+          0.02666666666666667,
+          300,
+          0.01907793673417272
+         ],
+         [
+          "vampire_spawn x8",
+          14400,
+          0.42,
+          50,
+          0.13195777535196018
+         ]
+        ]
+       },
+       "solo": {
+        "kind": "solo",
+        "xp": 6572.222222222223,
+        "censored": "",
+        "steps": [
+         [
+          "troll x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_white_dragon x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_black_dragon x1",
+          2900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_green_dragon x1",
+          3900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_blue_dragon x1",
+          5000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_red_dragon x1",
+          5900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "adult_red_dragon x1",
+          18000,
+          0.9,
+          50,
+          0.08506327541468672
+         ]
+        ]
+       }
+      },
+      "xp": 9057.976143815175,
+      "runs": 6200
+     }
+    ],
+    [
+     "14 Con, 13 Dex",
+     {
+      "builds": [
+       "fighter_10",
+       {
+        "name": "14 Con, 13 Dex",
+        "class": "cleric",
+        "level": 10,
+        "subclass": "life",
+        "abilities": {
+         "wis": 15,
+         "con": 14,
+         "dex": 13,
+         "str": 12,
+         "int": 10,
+         "cha": 8
+        },
+        "equipment": "chain_shield",
+        "choices": {
+         "ability_method": "standard_array",
+         "asis": {
+          "4": {
+           "wis": 2
+          },
+          "8": {
+           "wis": 1,
+           "con": 1
+          }
+         },
+         "weapon_masteries": [],
+         "cantrips": [
+          "Sacred Flame",
+          "Toll the Dead",
+          "Guidance",
+          "Word of Radiance",
+          "Resistance"
+         ],
+         "prepared_spells": [
+          "Spirit Guardians",
+          "Healing Word",
+          "Guiding Bolt",
+          "Spiritual Weapon",
+          "Hold Person",
+          "Shield of Faith",
+          "Bane",
+          "Sanctuary",
+          "Command",
+          "Inflict Wounds",
+          "Silence",
+          "Warding Bond",
+          "Flame Strike",
+          "Animate Dead",
+          "Aura of Vitality"
+         ],
+         "expertise": [],
+         "divine_order": "protector",
+         "blessed_strikes": "potent_spellcasting"
+        }
+       },
+       "rogue_10",
+       "wizard_10"
+      ],
+      "level": 10,
+      "size": 4,
+      "threshold": 0.05,
+      "seed": 1,
+      "strategy": "default",
+      "morale": "none",
+      "benchmark": 1,
+      "types": {
+       "brute": {
+        "kind": "brute",
+        "xp": 10350.0,
+        "censored": "",
+        "steps": [
+         [
+          "wyvern x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x4",
+          9200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x5",
+          11500,
+          0.1,
+          100,
+          0.05956826270252592
+         ]
+        ]
+       },
+       "ranged": {
+        "kind": "ranged",
+        "xp": 11123.595505617977,
+        "censored": "",
+        "steps": [
+         [
+          "barbed_devil x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x6",
+          10800,
+          0.023333333333333334,
+          300,
+          0.018012156140559843
+         ],
+         [
+          "barbed_devil x8",
+          14400,
+          0.32,
+          50,
+          0.12526040616462514
+         ]
+        ]
+       },
+       "caster": {
+        "kind": "caster",
+        "xp": 7618.75,
+        "censored": "",
+        "steps": [
+         [
+          "mage x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x4",
+          9200,
+          0.16,
+          50,
+          0.10088397770671981
+         ]
+        ]
+       },
+       "swarm": {
+        "kind": "swarm",
+        "xp": 9006.25,
+        "censored": "",
+        "steps": [
+         [
+          "guard_captain x1",
+          1100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x2",
+          2200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x3",
+          3300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x4",
+          4400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x5",
+          5500,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x6",
+          6600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x8",
+          8800,
+          0.02,
+          250,
+          0.018691659540891435
+         ],
+         [
+          "guard_captain x10",
+          11000,
+          0.34,
+          50,
+          0.12704612457447473
+         ]
+        ]
+       },
+       "control": {
+        "kind": "control",
+        "xp": 10991.803278688525,
+        "censored": "",
+        "steps": [
+         [
+          "vampire_spawn x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x6",
+          10800,
+          0.03142857142857143,
+          350,
+          0.018877411773085336
+         ],
+         [
+          "vampire_spawn x8",
+          14400,
+          0.38,
+          50,
+          0.1299338197499768
+         ]
+        ]
+       },
+       "solo": {
+        "kind": "solo",
+        "xp": 6572.222222222223,
+        "censored": "",
+        "steps": [
+         [
+          "troll x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_white_dragon x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_black_dragon x1",
+          2900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_green_dragon x1",
+          3900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_blue_dragon x1",
+          5000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_red_dragon x1",
+          5900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "adult_red_dragon x1",
+          18000,
+          0.9,
+          50,
+          0.08506327541468672
+         ]
+        ]
+       }
+      },
+      "xp": 9107.497784379459,
+      "runs": 6450
+     }
+    ],
+    [
+     "14 Con, 13 Str; ASI con first",
+     {
+      "builds": [
+       "fighter_10",
+       {
+        "name": "14 Con, 13 Str; ASI con first",
+        "class": "cleric",
+        "level": 10,
+        "subclass": "life",
+        "abilities": {
+         "wis": 15,
+         "con": 14,
+         "str": 13,
+         "int": 12,
+         "dex": 10,
+         "cha": 8
+        },
+        "equipment": "chain_shield",
+        "choices": {
+         "ability_method": "standard_array",
+         "asis": {
+          "4": {
+           "con": 2
+          },
+          "8": {
+           "wis": 1,
+           "con": 1
+          }
+         },
+         "weapon_masteries": [],
+         "cantrips": [
+          "Sacred Flame",
+          "Toll the Dead",
+          "Guidance",
+          "Word of Radiance",
+          "Resistance"
+         ],
+         "prepared_spells": [
+          "Spirit Guardians",
+          "Healing Word",
+          "Guiding Bolt",
+          "Spiritual Weapon",
+          "Hold Person",
+          "Shield of Faith",
+          "Bane",
+          "Sanctuary",
+          "Command",
+          "Inflict Wounds",
+          "Silence",
+          "Warding Bond",
+          "Flame Strike",
+          "Animate Dead",
+          "Aura of Vitality"
+         ],
+         "expertise": [],
+         "divine_order": "protector",
+         "blessed_strikes": "potent_spellcasting"
+        }
+       },
+       "rogue_10",
+       "wizard_10"
+      ],
+      "level": 10,
+      "size": 4,
+      "threshold": 0.05,
+      "seed": 1,
+      "strategy": "default",
+      "morale": "none",
+      "benchmark": 1,
+      "types": {
+       "brute": {
+        "kind": "brute",
+        "xp": 10245.454545454546,
+        "censored": "",
+        "steps": [
+         [
+          "wyvern x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x4",
+          9200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x5",
+          11500,
+          0.11,
+          100,
+          0.06188550122571487
+         ]
+        ]
+       },
+       "ranged": {
+        "kind": "ranged",
+        "xp": 11136.263736263736,
+        "censored": "",
+        "steps": [
+         [
+          "barbed_devil x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x6",
+          10800,
+          0.016,
+          250,
+          0.01708529254244458
+         ],
+         [
+          "barbed_devil x8",
+          14400,
+          0.38,
+          50,
+          0.1299338197499768
+         ]
+        ]
+       },
+       "caster": {
+        "kind": "caster",
+        "xp": 7858.333333333333,
+        "censored": "",
+        "steps": [
+         [
+          "mage x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x4",
+          9200,
+          0.12,
+          50,
+          0.09093608688667978
+         ]
+        ]
+       },
+       "swarm": {
+        "kind": "swarm",
+        "xp": 8943.478260869566,
+        "censored": "",
+        "steps": [
+         [
+          "guard_captain x1",
+          1100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x2",
+          2200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x3",
+          3300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x4",
+          4400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x5",
+          5500,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x6",
+          6600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x8",
+          8800,
+          0.02,
+          250,
+          0.018691659540891435
+         ],
+         [
+          "guard_captain x10",
+          11000,
+          0.48,
+          50,
+          0.13345560009457297
+         ]
+        ]
+       },
+       "control": {
+        "kind": "control",
+        "xp": 10596.774193548386,
+        "censored": "",
+        "steps": [
+         [
+          "vampire_spawn x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x6",
+          10800,
+          0.056363636363636366,
+          550,
+          0.019451818936836986
+         ],
+         [
+          "vampire_spawn x8",
+          14400,
+          0.34,
+          50,
+          0.12704612457447473
+         ]
+        ]
+       },
+       "solo": {
+        "kind": "solo",
+        "xp": 6587.5,
+        "censored": "",
+        "steps": [
+         [
+          "troll x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_white_dragon x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_black_dragon x1",
+          2900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_green_dragon x1",
+          3900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_blue_dragon x1",
+          5000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_red_dragon x1",
+          5900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "adult_red_dragon x1",
+          18000,
+          0.88,
+          50,
+          0.09093608688667976
+         ]
+        ]
+       }
+      },
+      "xp": 9078.212092479745,
+      "runs": 6000
+     }
+    ],
+    [
+     "14 Con, 13 Dex; ASI con first",
+     {
+      "builds": [
+       "fighter_10",
+       {
+        "name": "14 Con, 13 Dex; ASI con first",
+        "class": "cleric",
+        "level": 10,
+        "subclass": "life",
+        "abilities": {
+         "wis": 15,
+         "con": 14,
+         "dex": 13,
+         "str": 12,
+         "int": 10,
+         "cha": 8
+        },
+        "equipment": "chain_shield",
+        "choices": {
+         "ability_method": "standard_array",
+         "asis": {
+          "4": {
+           "con": 2
+          },
+          "8": {
+           "wis": 1,
+           "con": 1
+          }
+         },
+         "weapon_masteries": [],
+         "cantrips": [
+          "Sacred Flame",
+          "Toll the Dead",
+          "Guidance",
+          "Word of Radiance",
+          "Resistance"
+         ],
+         "prepared_spells": [
+          "Spirit Guardians",
+          "Healing Word",
+          "Guiding Bolt",
+          "Spiritual Weapon",
+          "Hold Person",
+          "Shield of Faith",
+          "Bane",
+          "Sanctuary",
+          "Command",
+          "Inflict Wounds",
+          "Silence",
+          "Warding Bond",
+          "Flame Strike",
+          "Animate Dead",
+          "Aura of Vitality"
+         ],
+         "expertise": [],
+         "divine_order": "protector",
+         "blessed_strikes": "potent_spellcasting"
+        }
+       },
+       "rogue_10",
+       "wizard_10"
+      ],
+      "level": 10,
+      "size": 4,
+      "threshold": 0.05,
+      "seed": 1,
+      "strategy": "default",
+      "morale": "none",
+      "benchmark": 1,
+      "types": {
+       "brute": {
+        "kind": "brute",
+        "xp": 10350.0,
+        "censored": "",
+        "steps": [
+         [
+          "wyvern x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x4",
+          9200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x5",
+          11500,
+          0.1,
+          150,
+          0.04844671430935309
+         ]
+        ]
+       },
+       "ranged": {
+        "kind": "ranged",
+        "xp": 11069.158878504673,
+        "censored": "",
+        "steps": [
+         [
+          "barbed_devil x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x6",
+          10800,
+          0.023333333333333334,
+          300,
+          0.018012156140559843
+         ],
+         [
+          "barbed_devil x8",
+          14400,
+          0.38,
+          50,
+          0.1299338197499768
+         ]
+        ]
+       },
+       "caster": {
+        "kind": "caster",
+        "xp": 7721.428571428572,
+        "censored": "",
+        "steps": [
+         [
+          "mage x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x4",
+          9200,
+          0.14,
+          50,
+          0.09617680217259669
+         ]
+        ]
+       },
+       "swarm": {
+        "kind": "swarm",
+        "xp": 8906.140350877193,
+        "censored": "",
+        "steps": [
+         [
+          "guard_captain x1",
+          1100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x2",
+          2200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x3",
+          3300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x4",
+          4400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x5",
+          5500,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x6",
+          6600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x8",
+          8800,
+          0.03428571428571429,
+          350,
+          0.019621980160308965
+         ],
+         [
+          "guard_captain x10",
+          11000,
+          0.36,
+          50,
+          0.12860116830790125
+         ]
+        ]
+       },
+       "control": {
+        "kind": "control",
+        "xp": 11037.735849056604,
+        "censored": "",
+        "steps": [
+         [
+          "vampire_spawn x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x6",
+          10800,
+          0.02666666666666667,
+          300,
+          0.01907793673417272
+         ],
+         [
+          "vampire_spawn x8",
+          14400,
+          0.38,
+          50,
+          0.1299338197499768
+         ]
+        ]
+       },
+       "solo": {
+        "kind": "solo",
+        "xp": 6572.222222222223,
+        "censored": "",
+        "steps": [
+         [
+          "troll x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_white_dragon x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_black_dragon x1",
+          2900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_green_dragon x1",
+          3900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_blue_dragon x1",
+          5000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_red_dragon x1",
+          5900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "adult_red_dragon x1",
+          18000,
+          0.9,
+          50,
+          0.08506327541468672
+         ]
+        ]
+       }
+      },
+      "xp": 9109.734783756814,
+      "runs": 6550
+     }
+    ],
+    [
+     "14 Str, 13 Con",
+     {
+      "builds": [
+       "fighter_10",
+       {
+        "name": "14 Str, 13 Con",
+        "class": "cleric",
+        "level": 10,
+        "subclass": "life",
+        "abilities": {
+         "wis": 15,
+         "str": 14,
+         "con": 13,
+         "int": 12,
+         "dex": 10,
+         "cha": 8
+        },
+        "equipment": "chain_shield",
+        "choices": {
+         "ability_method": "standard_array",
+         "asis": {
+          "4": {
+           "wis": 2
+          },
+          "8": {
+           "wis": 1,
+           "con": 1
+          }
+         },
+         "weapon_masteries": [],
+         "cantrips": [
+          "Sacred Flame",
+          "Toll the Dead",
+          "Guidance",
+          "Word of Radiance",
+          "Resistance"
+         ],
+         "prepared_spells": [
+          "Spirit Guardians",
+          "Healing Word",
+          "Guiding Bolt",
+          "Spiritual Weapon",
+          "Hold Person",
+          "Shield of Faith",
+          "Bane",
+          "Sanctuary",
+          "Command",
+          "Inflict Wounds",
+          "Silence",
+          "Warding Bond",
+          "Flame Strike",
+          "Animate Dead",
+          "Aura of Vitality"
+         ],
+         "expertise": [],
+         "divine_order": "protector",
+         "blessed_strikes": "potent_spellcasting"
+        }
+       },
+       "rogue_10",
+       "wizard_10"
+      ],
+      "level": 10,
+      "size": 4,
+      "threshold": 0.05,
+      "seed": 1,
+      "strategy": "default",
+      "morale": "none",
+      "benchmark": 1,
+      "types": {
+       "brute": {
+        "kind": "brute",
+        "xp": 10158.333333333334,
+        "censored": "",
+        "steps": [
+         [
+          "wyvern x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x4",
+          9200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x5",
+          11500,
+          0.12,
+          100,
+          0.06406346545852173
+         ]
+        ]
+       },
+       "ranged": {
+        "kind": "ranged",
+        "xp": 10991.803278688525,
+        "censored": "",
+        "steps": [
+         [
+          "barbed_devil x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x6",
+          10800,
+          0.03142857142857143,
+          350,
+          0.018877411773085336
+         ],
+         [
+          "barbed_devil x8",
+          14400,
+          0.38,
+          50,
+          0.1299338197499768
+         ]
+        ]
+       },
+       "caster": {
+        "kind": "caster",
+        "xp": 7618.75,
+        "censored": "",
+        "steps": [
+         [
+          "mage x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x4",
+          9200,
+          0.16,
+          50,
+          0.10088397770671981
+         ]
+        ]
+       },
+       "swarm": {
+        "kind": "swarm",
+        "xp": 8957.142857142857,
+        "censored": "",
+        "steps": [
+         [
+          "guard_captain x1",
+          1100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x2",
+          2200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x3",
+          3300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x4",
+          4400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x5",
+          5500,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x6",
+          6600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x8",
+          8800,
+          0.02,
+          250,
+          0.018691659540891435
+         ],
+         [
+          "guard_captain x10",
+          11000,
+          0.44,
+          50,
+          0.13265886480818012
+         ]
+        ]
+       },
+       "control": {
+        "kind": "control",
+        "xp": 10800.0,
+        "censored": "",
+        "steps": [
+         [
+          "vampire_spawn x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x5",
+          9000,
+          0.013333333333333334,
+          150,
+          0.021821389994444593
+         ],
+         [
+          "vampire_spawn x6",
+          10800,
+          0.05,
+          500,
+          0.019337208119980673
+         ],
+         [
+          "vampire_spawn x8",
+          14400,
+          0.46,
+          50,
+          0.13315738301892893
+         ]
+        ]
+       },
+       "solo": {
+        "kind": "solo",
+        "xp": 6572.222222222223,
+        "censored": "",
+        "steps": [
+         [
+          "troll x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_white_dragon x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_black_dragon x1",
+          2900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_green_dragon x1",
+          3900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_blue_dragon x1",
+          5000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_red_dragon x1",
+          5900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "adult_red_dragon x1",
+          18000,
+          0.9,
+          50,
+          0.08506327541468672
+         ]
+        ]
+       }
+      },
+      "xp": 9026.376357248257,
+      "runs": 6300
+     }
+    ],
+    [
+     "14 Str, 13 Dex",
+     {
+      "builds": [
+       "fighter_10",
+       {
+        "name": "14 Str, 13 Dex",
+        "class": "cleric",
+        "level": 10,
+        "subclass": "life",
+        "abilities": {
+         "wis": 15,
+         "str": 14,
+         "dex": 13,
+         "con": 12,
+         "int": 10,
+         "cha": 8
+        },
+        "equipment": "chain_shield",
+        "choices": {
+         "ability_method": "standard_array",
+         "asis": {
+          "4": {
+           "wis": 2
+          },
+          "8": {
+           "wis": 1,
+           "con": 1
+          }
+         },
+         "weapon_masteries": [],
+         "cantrips": [
+          "Sacred Flame",
+          "Toll the Dead",
+          "Guidance",
+          "Word of Radiance",
+          "Resistance"
+         ],
+         "prepared_spells": [
+          "Spirit Guardians",
+          "Healing Word",
+          "Guiding Bolt",
+          "Spiritual Weapon",
+          "Hold Person",
+          "Shield of Faith",
+          "Bane",
+          "Sanctuary",
+          "Command",
+          "Inflict Wounds",
+          "Silence",
+          "Warding Bond",
+          "Flame Strike",
+          "Animate Dead",
+          "Aura of Vitality"
+         ],
+         "expertise": [],
+         "divine_order": "protector",
+         "blessed_strikes": "potent_spellcasting"
+        }
+       },
+       "rogue_10",
+       "wizard_10"
+      ],
+      "level": 10,
+      "size": 4,
+      "threshold": 0.05,
+      "seed": 1,
+      "strategy": "default",
+      "morale": "none",
+      "benchmark": 1,
+      "types": {
+       "brute": {
+        "kind": "brute",
+        "xp": 10245.454545454546,
+        "censored": "",
+        "steps": [
+         [
+          "wyvern x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x4",
+          9200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "wyvern x5",
+          11500,
+          0.11,
+          100,
+          0.06188550122571487
+         ]
+        ]
+       },
+       "ranged": {
+        "kind": "ranged",
+        "xp": 10977.04918032787,
+        "censored": "",
+        "steps": [
+         [
+          "barbed_devil x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x5",
+          9000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "barbed_devil x6",
+          10800,
+          0.035,
+          400,
+          0.01846192281998977
+         ],
+         [
+          "barbed_devil x8",
+          14400,
+          0.34,
+          50,
+          0.12704612457447473
+         ]
+        ]
+       },
+       "caster": {
+        "kind": "caster",
+        "xp": 7721.428571428572,
+        "censored": "",
+        "steps": [
+         [
+          "mage x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x2",
+          4600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x3",
+          6900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "mage x4",
+          9200,
+          0.14,
+          50,
+          0.09617680217259669
+         ]
+        ]
+       },
+       "swarm": {
+        "kind": "swarm",
+        "xp": 9006.25,
+        "censored": "",
+        "steps": [
+         [
+          "guard_captain x1",
+          1100,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x2",
+          2200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x3",
+          3300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x4",
+          4400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x5",
+          5500,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x6",
+          6600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "guard_captain x8",
+          8800,
+          0.02,
+          250,
+          0.018691659540891435
+         ],
+         [
+          "guard_captain x10",
+          11000,
+          0.34,
+          50,
+          0.12704612457447473
+         ]
+        ]
+       },
+       "control": {
+        "kind": "control",
+        "xp": 10829.032258064517,
+        "censored": "",
+        "steps": [
+         [
+          "vampire_spawn x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x2",
+          3600,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x3",
+          5400,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x4",
+          7200,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "vampire_spawn x5",
+          9000,
+          0.013333333333333334,
+          150,
+          0.021821389994444593
+         ],
+         [
+          "vampire_spawn x6",
+          10800,
+          0.04666666666666667,
+          450,
+          0.01978110028276364
+         ],
+         [
+          "vampire_spawn x8",
+          14400,
+          0.46,
+          50,
+          0.13315738301892893
+         ]
+        ]
+       },
+       "solo": {
+        "kind": "solo",
+        "xp": 6587.5,
+        "censored": "",
+        "steps": [
+         [
+          "troll x1",
+          1800,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_white_dragon x1",
+          2300,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_black_dragon x1",
+          2900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_green_dragon x1",
+          3900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_blue_dragon x1",
+          5000,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "young_red_dragon x1",
+          5900,
+          0.0,
+          100,
+          0.018496749384498135
+         ],
+         [
+          "adult_red_dragon x1",
+          18000,
+          0.88,
+          50,
+          0.09093608688667976
+         ]
+        ]
+       }
+      },
+      "xp": 9073.22043316082,
+      "runs": 6450
+     }
+    ]
+   ]
+  }
+ }
+}

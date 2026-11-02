@@ -194,9 +194,14 @@ Started 2026-10-26: `python -m engine.compare` (`engine/compare.py`).
   - Every candidate is within noise of the standard build on all four classes: -1% to +3% overall. The best is the split ASI with 14 Con (+2% to +3% on each class). The background's +2/+1 already leaves the primary at 19 by level 4, so the split costs no modifier and buys +1 Con.
   - Almost all of that gain is the level 5 control crossing (+11% to +14%), which moves with any change to the random stream (see Feats above). On the other five opponent types the swaps are within ±4%, apart from the fighter's Con-first plans at about +10% against brutes.
   - Moving 14 and 13 between secondaries without changing the ASIs does nothing measurable (±1%), since most secondary modifiers are never rolled in combat.
-  - So at level 5 the standard array is as good as any legal alternative; the decisions that matter are kit, spells and feats. Level 10, with two ASIs, is not yet rated.
+  - So at level 5 the standard array is as good as any legal alternative; the decisions that matter are kit, spells and feats. See below for level 10.
+- **Ability scores and ASIs at level 10 (2026-11-02)** (`compare_L10_{fighter,cleric,rogue,wizard}_abilities.md`, standard party, the same three ASI plans applied to both ASIs, top 5 by the screen rated). The search leaves 5–15 distinct alternatives per class, since several plans give the same sheet once the primary reaches 20.
+  - Every candidate on the fighter, cleric and rogue is within noise of the standard build: -2% to +1% overall, and within ±7% on every opponent type.
+  - The wizard's best is 14 Con, 13 Dex with the first ASI on Con (+3%, at the noise threshold; +9% against brutes and +8% against casters, both within type noise). It trades reaching Int 20 one ASI later for +1 Con modifier (HP and concentration saves).
+  - The split plan that led at level 5 (via the control crossing) is no better at level 10: within ±1% wherever it was rated.
+  - So the level 5 conclusion holds at level 10: the standard array and putting ASIs in the primary are as good as any legal alternative, with at most a few percent for a Con-first caster.
 - **Not yet done:**
-  - Ability and ASI searches at level 10 and for the other eight classes.
+  - Ability and ASI searches for the other eight classes (the reference four are done at levels 5 and 10).
   - The optimized and casual reference parties for every class.
   - Cover and range so Sharpshooter has something to remove.
 
