@@ -127,9 +127,11 @@ def feat_variants(base, cls, level):
 
 def species_variants(base):
     """The standard build as each species the builder supports (one per Human feat / Goliath ancestry)."""
-    from .builder import SPECIES
+    from .builder import DRACONIC, SPECIES
     out = []
     for species, options in sorted(SPECIES.items()):
+        if species == "dragonborn":  # one colour per damage type: colours sharing a type play the same
+            options = {min(c for c in DRACONIC if DRACONIC[c] == t) for t in set(DRACONIC.values())}
         for choice in sorted(options) if options else [None]:
             if species == "human" and choice == base["choices"].get("origin_feat"): continue
             name = f"species: {species}" + (f" ({choice})" if choice else "")

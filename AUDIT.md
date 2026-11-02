@@ -65,7 +65,7 @@ A self-audit of the three user-facing tools: combat simulation (`engine/combat.p
 
 **Done (2026-11-02): build search** (`python -m engine.optimize --party ... --member NAME`). It hill-climbs one member's build in your party: each round it screens every one-change neighbour (kits, spell lists, feats, ability/ASI plans, species), measures the leaders with focused paired runs, and accepts the best change only when its 95% interval is above zero. A change that rewrites an accepted change's fields replaces it, and builds already visited are skipped, so the search cannot cycle.
 
-**Done (2026-11-02): M3, species.** The builder takes `choices.species` for Dwarf, Halfling, Human (a second Origin feat), Orc and Goliath (Stone or Fire ancestry); see `CLASS_FORMAT.md`, "Species". `compare --species` rates each one, and `optimize` searches them.
+**Done (2026-11-02): M3, species.** The builder takes `choices.species` for Dwarf, Gnome, Halfling, Human (a second Origin feat), Orc, Tiefling (resistance), Dragonborn (resistance and Breath Weapon) and Goliath (Stone or Fire ancestry); see `CLASS_FORMAT.md`, "Species". `compare --species` rates each one, and `optimize` searches them.
 
 **Plan**
 1. Fix C1-C4 first; the comparisons are only as good as the AI.

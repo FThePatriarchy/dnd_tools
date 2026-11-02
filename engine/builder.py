@@ -105,7 +105,11 @@ FEATS = {
 }
 ORIGIN_FEATS = {"alert", "lucky", "tough"}
 # 2024 species with combat traits the engine simulates (see CLASS_FORMAT.md, "Species"); choice -> allowed options.
-SPECIES = {"dwarf": None, "halfling": None, "human": ORIGIN_FEATS, "orc": None, "goliath": {"stone", "fire"}}
+DRACONIC = {"black": "acid", "blue": "lightning", "brass": "fire", "bronze": "lightning", "copper": "acid",
+            "gold": "fire", "green": "poison", "red": "fire", "silver": "cold", "white": "cold"}
+FIENDISH = {"abyssal": "poison", "chthonic": "necrotic", "infernal": "fire"}
+SPECIES = {"dwarf": None, "halfling": None, "human": ORIGIN_FEATS, "orc": None, "goliath": {"stone", "fire"},
+           "gnome": None, "tiefling": set(FIENDISH), "dragonborn": set(DRACONIC)}
 ARCANUM = {6: ["Circle of Death"], 7: ["Finger of Death"], 8: ["Power Word Stun", "Dominate Monster"], 9: ["Power Word Kill", "Foresight"]}
 MARTIAL_DIE = {level: "1d6" if level < 5 else "1d8" if level < 11 else "1d10" if level < 17 else "1d12" for level in range(1, MAX_LEVEL + 1)}
 
@@ -412,6 +416,19 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         sheet["features"]["relentless_endurance"]=True
         sheet["limited_uses"]["relentless_endurance"]={"max":1,"long_rest":"all"}
         sheet["limited_uses"]["adrenaline_rush"]={"max":pb,"short_rest":"all","long_rest":"all"}
+    elif species=="gnome":
+        sheet["features"]["gnomish_cunning"]=True  # Advantage on Int, Wis and Cha saves
+    elif species=="tiefling":
+        sheet["resistances"]=sorted(set(sheet.get("resistances",[]))|{FIENDISH[species_choice]})
+    elif species=="dragonborn":
+        dtype=DRACONIC[species_choice]
+        sheet["resistances"]=sorted(set(sheet.get("resistances",[]))|{dtype})
+        sheet["limited_uses"]["breath_weapon"]={"max":pb,"long_rest":"all"}
+        n=1+(level>=5)+(level>=11)+(level>=17)
+        sheet["actions"].append({"name":"Breath Weapon","cost":"action","resource":"breath_weapon","effects":[{
+            "id":"breath","event":"on_cast","target":{"select":"area","shape":"cone","size_ft":15,"affects":"all","filter":["creature"]},
+            "attack":None,"save":{"ability":"dex","on_success":"half","dc":8+mod("con")+pb},
+            "on_hit":[],"on_fail":[{"damage":{"dice":f"{n}d10","bonus":0,"type":dtype}}],"on_success":[],"apply":[],"limit":None}]})
     elif species=="goliath":
         key={"stone":"stones_endurance","fire":"fires_burn"}[species_choice]
         sheet["features"][key]=True

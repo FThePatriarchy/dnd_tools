@@ -723,6 +723,7 @@ class ClassMechanics:
             adv = True
         adv |= on in {"saves", "ability_checks"} and scope == "str" and actor.raging
         adv |= on == "saves" and scope == "death" and actor.features.get("survivor", False)
+        adv |= on == "saves" and scope in {"int", "wis", "cha"} and actor.features.get("gnomish_cunning", False)
         adv |= on == "attack_rolls" and against is not None and actor.features.get("precise_hunter", False) and self.marked_by(against, actor)
         adv |= on == "saves" and scope == "dex" and actor.features.get("danger_sense",False) and not actor.has_condition("incapacitated")
         adv |= on == "attack_rolls" and scope == "str" and bool(actor.statuses.get("reckless"))

@@ -82,3 +82,27 @@ def test_traits_fire_in_real_fights(species, choice, trait):
         combat.run(30)
         seen += sum(1 for e in combat.log if e.get("name") == trait)
     assert seen > 0
+
+
+def test_gnome_tiefling_dragonborn():
+    gnome = pc("gnome")
+    combat = Combat([gnome, ogre()], SPELLS, seed=1)
+    assert combat.roll_flags(gnome, "saves", "wis")[0] and not combat.roll_flags(gnome, "saves", "dex")[0]
+    assert "necrotic" in build("fighter", 5, choices={"species": "tiefling", "species_choice": "chthonic"})["resistances"]
+    sheet = build("fighter", 5, choices={"species": "dragonborn", "species_choice": "silver"})
+    breath = next(a for a in sheet["actions"] if a["name"] == "Breath Weapon")
+    block = breath["effects"][0]
+    assert "cold" in sheet["resistances"] and sheet["limited_uses"]["breath_weapon"]["max"] == 3
+    assert block["on_fail"][0]["damage"]["dice"] == "2d10" and block["on_fail"][0]["damage"]["type"] == "cold"
+    assert block["save"]["dc"] == 8 + (sheet["abilities"]["con"] - 10) // 2 + 3
+
+
+def test_single_attackers_use_the_breath_weapon():
+    used = 0
+    for seed in range(10):
+        rogue = pc("dragonborn", "red", cls="rogue")
+        goblins = [Combatant.from_sheet(load_sheet(ROOT / "monsters" / "goblin_warrior.yaml"), f"e{i}", "enemy") for i in range(4)]
+        combat = Combat([rogue, *goblins], SPELLS, seed=seed)
+        combat.run(20)
+        used += sum(1 for e in combat.log if e.get("event") == "action" and e.get("name") == "Breath Weapon")
+    assert used > 0
