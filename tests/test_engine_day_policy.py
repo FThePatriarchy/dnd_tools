@@ -143,9 +143,10 @@ def test_1000_run_standard_day_strategy_comparison():
     conservative = simulate_day(day="goblin_warren", runs=1000, seed=1, strategy="conservative")
     # Newly wired Cultist Command; disabling only that spell restores the old
     # exact baseline (engine/step3_day_baselines.json). No tolerances changed.
-    assert (nova.survived, conservative.survived) == (127, 162)
-    assert nova.encounters_cleared_distribution == {2: 8, 3: 97, 5: 449, 6: 319, 7: 127}
-    assert conservative.encounters_cleared_distribution == {1: 1, 2: 47, 3: 203, 4: 1, 5: 397, 6: 189, 7: 162}
+    # 2026-11-02: resistance-aware, overkill-capped spell values (nova 127 -> 152 survived days).
+    assert (nova.survived, conservative.survived) == (152, 163)
+    assert nova.encounters_cleared_distribution == {2: 9, 3: 99, 5: 415, 6: 325, 7: 152}
+    assert conservative.encounters_cleared_distribution == {1: 1, 2: 47, 3: 203, 4: 1, 5: 396, 6: 189, 7: 163}
     # Fixed before comparison: .07 exceeds 3 * sqrt(2 * .25 / 1000), the
     # worst-case independent-binomial SE bound; no tuning to seeded outcomes.
     assert conservative.survival_probability + .07 >= nova.survival_probability

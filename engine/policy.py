@@ -432,9 +432,12 @@ class Policy:
                 combat.divine_intervention(actor,name)
         if actor.action and not actor.has_condition("incapacitated"):
             options = []
-            weapon = combat.expected_weapon_damage(actor, enemies[0])
+            # Value the weapon against the creature it would attack (party targeting has no
+            # random draw; monster targeting can, so monsters keep the first enemy).
+            focus = self.weapon_target(combat, actor, enemies) if actor.team == "party" else enemies[0]
+            weapon = combat.expected_weapon_damage(actor, focus)
             if actor.features.get("pact_magic"):
-                weapon=max(weapon,max((combat.expected_spell_damage(actor,combat.cantrip_spec(actor,n),enemies[0]) for n in actor.spells if combat.spells[n]["level"]==0),default=0))
+                weapon=max(weapon,max((combat.expected_spell_damage(actor,combat.cantrip_spec(actor,n),focus) for n in actor.spells if combat.spells[n]["level"]==0),default=0))
             if actor.routines: weapon = max(weapon, max(combat.routine_value(actor, r, enemies[0], control=True) for r in actor.routines))
             for name in actor.spells:
                 if not combat.can_cast(actor, name): continue
@@ -446,7 +449,8 @@ class Policy:
                 if spec["concentration"] and actor.concentration is not None: continue
                 slot = combat.available_slot(actor, spec)
                 scaled = combat.scale(actor, spec, slot)
-                value = combat.expected_spell_damage(actor, scaled, enemies[0])
+                # Leveled spells count damage only up to each victim's remaining HP.
+                value = combat.expected_spell_damage(actor, scaled, focus, overkill=spec["level"] > 0)
                 # Cleric/wizard share the buff blind spot; preserve their published baselines.
                 if actor.features.get("values_buffs"):
                     value = max(value, combat.expected_buff_value(actor, scaled, slot=slot))

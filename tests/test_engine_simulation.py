@@ -22,9 +22,11 @@ def test_1000_run_encounters_reproduce_exactly(opponents):
     assert first.mean_resources_spent["action_surge"] <= 1
     # Step 1 fix round: dynamic lasting-effect horizons change the Ogre's
     # spell choices, not the encounter mechanics or statistical tolerances.
+    # 2026-11-02: spell values now respect resistance/immunity and cap each victim's damage
+    # at its HP, so the cleric spends fewer 3rd-level slots on four goblins (1.062 -> 0.805).
     expected = {
-        ("goblin_warrior", "x4"): (1.820, 79.569, {"action_surge": .970, "slot_1": .169, "slot_3": 1.062}),
-        ("ogre",): (2.034, 78.541, {"action_surge": 1.000, "slot_1": .974, "slot_3": .633}),
+        ("goblin_warrior", "x4"): (1.730, 79.658, {"action_surge": .970, "slot_1": .286, "slot_2": .040, "slot_3": .805}),
+        ("ogre",): (2.036, 78.466, {"action_surge": 1.000, "slot_1": .837, "slot_2": .054, "slot_3": .633}),
     }
     assert (first.mean_rounds, first.mean_party_hp, first.mean_resources_spent) == expected[opponents]
 
