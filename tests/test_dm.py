@@ -55,3 +55,21 @@ def test_fight_and_day_reports(capsys):
 def test_bad_input_is_a_usage_error(capsys):
     with pytest.raises(SystemExit): main(["fight", "--level", "5", "--monsters", "dragon"])
     assert "unknown monster" in capsys.readouterr().err
+
+
+def test_levels_without_presets_are_rejected_cleanly(capsys):
+    import pytest
+    from engine.dm import main
+    with pytest.raises(SystemExit):
+        main(["fight", "--level", "4", "--monsters", "ogre"])
+    assert "invalid choice: '4'" in capsys.readouterr().err
+
+
+def test_compare_party_must_contain_the_replaced_member(monkeypatch, capsys):
+    import sys, pytest
+    from engine import compare
+    monkeypatch.setattr(sys, "argv", ["compare", "--level", "5", "--class", "fighter", "--candidates", "fighter_5",
+                                      "--party", "cleric_5", "rogue_5", "--replace", "fighter_5"])
+    with pytest.raises(SystemExit):
+        compare.main()
+    assert "--replace" in capsys.readouterr().err

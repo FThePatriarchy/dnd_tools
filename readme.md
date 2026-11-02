@@ -75,9 +75,21 @@ python -m engine.rating --party fighter_5 cleric_5 rogue_5 wizard_5
 python -m engine.finder encounter --level 5 --template elite_pack --target down=0.5
 ```
 
-**Compare build choices by swapping them into a reference party:**
+**Compare build choices by swapping them into a reference party** (paired runs on the ladder steps that decide the rating, with 95% intervals; `--method full` re-rates each candidate from scratch):
 ```bash
 python -m engine.compare --level 5 --class fighter --variants
+```
+
+**...or into your own party:**
+```bash
+python -m engine.compare --level 5 --class fighter --feats --party fighter_5 paladin_5 bard_5 sorcerer_5 --replace fighter_5
+```
+
+**Source cross-checks.** The engine runs from `data/handwritten/` alone. The tests that check those files against the 2024 books also need the pinned 5etools v2.30.1 data (gitignored); in a fresh clone, fetch it once:
+```bash
+pip install -e ".[dev]"
+python -m engine.source_files --fetch
+python -m pytest
 ```
 
 See `ROADMAP.md` for what each tool measures and the results so far.

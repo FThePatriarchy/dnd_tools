@@ -8,6 +8,16 @@ numbers. Changes under NOISE overall, or TYPE_NOISE for one opponent type,
 are marked as within noise (Phase 2 measured overall ratings agreeing within
 about 2.3% across seeds, and single types moving by up to ~0.1x).
 
+By default candidates are measured with engine.focused: the base party is
+rated once, then base and candidates are run on the same ladder steps that
+decide each crossing (the bracket), with --runs runs per step and shared
+batch seeds, and each change gets a paired bootstrap 95% interval. A change
+whose interval contains zero is marked ≈. --method full re-rates every
+candidate from scratch with the fixed noise bars (the published reports).
+
+--party and --replace swap candidates into your own party instead of a
+reference one.
+
 Candidates are build names, or --variants: recipes generated from a class's
 main decisions at standard ability scores, so only the decision changes. A
 cheap expected-damage x durability screen ranks generated variants, and the
@@ -18,6 +28,7 @@ placements and ASI plans for the standard build.
     python -m engine.compare --level 5 --class fighter --variants --references standard casual
     python -m engine.compare --level 5 --class cleric --abilities --finalists 5
     python -m engine.compare --level 5 --class wizard --candidates wizard_5 wizard_5_optimized wizard_5_casual
+    python -m engine.compare --level 5 --class fighter --feats --party fighter_5 cleric_5 rogue_5 wizard_5 --replace fighter_5
 """
 import argparse
 from copy import deepcopy
@@ -250,6 +261,33 @@ def screen_score(candidate, level):
     return offense * durability
 
 
+def focused_compare(level, cls, candidates, references=("standard",), *, seed=1, strategy="default", workers=None, cover=False,
+                    runs=400, parties=None):
+    """{reference: {"base": PartyRating, "member", "rows": [(label, change)], "focused": FocusedComparison}}.
+
+    parties optionally maps a label to (party builds, index of the member to replace)."""
+    from .focused import FocusedComparison
+    results = {}
+    targets = parties or {ref: (party(level, ref), REFERENCE_CLASSES.index(ROLES[cls])) for ref in references}
+    for ref, (base_party, slot) in targets.items():
+        fc = FocusedComparison(base_party, seed=seed, runs=runs, strategy=strategy, cover=cover, workers=workers)
+        rows = []
+        for candidate in candidates:
+            trial = list(base_party); trial[slot] = candidate
+            measured = fc.base if candidate == base_party[slot] else fc.measure(label(candidate), trial)
+            rows.append((label(candidate), fc.change(measured)))
+        results[ref] = {"base": fc.base_rating, "member": base_party[slot], "party": list(base_party), "rows": rows, "focused": fc}
+    return results
+
+
+def sim_screen(level, cls, found, *, seed=1, strategy="default", workers=None, cover=False, runs=100, parties=None):
+    """Rank variants by a short focused run (runs per bracket step) in the first reference party."""
+    results = focused_compare(level, cls, found, ("standard",), seed=seed, strategy=strategy, workers=workers, cover=cover,
+                              runs=runs, parties=dict(list(parties.items())[:1]) if parties else None)
+    rows = next(iter(results.values()))["rows"]
+    return [(v, rows[i][1]["overall"][0]) for i, v in enumerate(found)]
+
+
 def compare(level, cls, candidates, references=("standard",), *, seed=1, strategy="default", workers=None, cover=False):
     """{reference: {"base": PartyRating, "rows": [(label, PartyRating)]}} for each reference profile."""
     results = {}
@@ -273,6 +311,35 @@ def delta(new, old):
 
 def fmt_delta(d, noise=NOISE):
     return f"{d:+.0%}" + ("" if abs(d) >= noise else " ≈")
+
+
+def fmt_change(est, lo, hi):
+    """+3% (-1% to +7%), with ≈ when the interval contains zero."""
+    return f"{est:+.0%}{' ≈' if lo <= 0 <= hi else ''} ({lo:+.0%} to {hi:+.0%})"
+
+
+def focused_markdown(level, cls, results, screened=None, cover=False, runs=400):
+    out = [f"# Build comparison: {cls}, level {level}", "",
+           "Each row swaps the candidate into the party in place of the replaced member. The base party is rated once against "
+           f"benchmark v{default_version(level)} (5% defeat threshold); then the base and every candidate are run on the ladder steps "
+           f"that decide each crossing, {runs} runs per step with shared batch seeds (`engine.focused`). Values are the change in "
+           "rating with a paired bootstrap 95% interval; ≈ marks an interval that contains zero."
+           + (" Cover and ranged-in-melee rules on (`DayOptions.cover`)." if cover else ""), ""]
+    if screened:
+        out += ["## Screen", "", screened[0], "", "| Variant | Screen | Rated |", "| --- | ---: | --- |"]
+        out += [f"| {name} | {score} | {'yes' if rated else 'no'} |" for name, score, rated in screened[1]]
+        out.append("")
+    for ref, data in results.items():
+        base, fc = data["base"], data["focused"]
+        kinds = list(base.types)
+        out += [f"## Party: {ref} ({', '.join(label(b) for b in data['party'])}; replacing {label(data['member'])})", "",
+                f"Base rating {base.xp:,.0f} XP ({base.multiple(base.xp):.2f}× High). Focused runs: {fc.runs:,}.", "",
+                "| Candidate | Overall | " + " | ".join(kinds) + " |", "| --- | ---: | " + " | ".join("---:" for _ in kinds) + " |"]
+        for name, ch in sorted(data["rows"], key=lambda row: -row[1]["overall"][0]):
+            cells = [fmt_change(*ch[k][:3]) + ("†" if ch[k][3] else "") for k in kinds]
+            out.append(f"| {name} | {fmt_change(*ch['overall'])} | " + " | ".join(cells) + " |")
+        out += ["", "† the crossing is at the edge of its benchmark ladder (a bound), so the change is a bound too.", ""]
+    return "\n".join(out)
 
 
 def markdown(level, cls, results, screened=None, cover=False):
@@ -317,21 +384,60 @@ def main():
     parser.add_argument("--strategy", default="default")
     parser.add_argument("--cover", action="store_true", help="optional cover and ranged-in-melee rules (DayOptions.cover)")
     parser.add_argument("--workers", type=int)
+    parser.add_argument("--method", choices=["focused", "full"], default="focused",
+                        help="focused: paired runs on the deciding ladder steps with intervals (default); full: re-rate every candidate")
+    parser.add_argument("--runs", type=int, default=400, help="focused: runs per bracket step (default 400)")
+    parser.add_argument("--screen", choices=["sim", "ev"], default="sim",
+                        help="variant screen with --method focused: a short focused run (sim, default) or expected damage x HP "
+                             "against a brute (ev, always used by --method full)")
+    parser.add_argument("--screen-runs", type=int, default=100, help="sim screen: runs per bracket step (default 100)")
+    parser.add_argument("--party", nargs="+", help="your own party (build names) instead of the reference parties")
+    parser.add_argument("--replace", help="with --party: the member to replace (default: the first of the candidate's class)")
     parser.add_argument("--write", metavar="NAME", help="write data/reports/compare_<NAME>.md")
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
+    parties = None
+    if args.party:
+        if args.method == "full": parser.error("--party needs --method focused")
+        member = args.replace or next((b for b in args.party if b.split("_")[0] == args.cls), None)
+        if member not in args.party: parser.error(f"--replace: name a member of --party (got {member!r})")
+        parties = {"yours": (list(args.party), args.party.index(member))}
     screened = None
     if args.variants or args.feats or args.abilities:
         found = ability_variants(args.cls, args.level) if args.abilities else variants(args.cls, args.level, feats_only=args.feats)
         if args.only: found = found[:1] + [v for v in found[1:] if v["name"] in args.only]
-        scores = [(v, screen_score(v, args.level)) for v in found]
+        if args.screen == "sim" and args.method == "focused" and len(found) - 1 > args.finalists:
+            scores = sim_screen(args.level, args.cls, found, seed=args.seed, strategy=args.strategy, workers=args.workers,
+                                cover=args.cover, runs=args.screen_runs, parties=parties)
+            note = f"A short focused run ({args.screen_runs} runs per bracket step) ranks the variants by their change in rating; the top variants were rated."
+            show = lambda x: f"{x:+.0%}"
+        else:
+            scores = [(v, screen_score(v, args.level)) for v in found]
+            note = "Expected damage × effective HP against the level's benchmark brute; the top variants were rated."
+            show = lambda x: f"{x:,.0f}"
         ranked = sorted(scores[1:], key=lambda vs: -vs[1])[:max(0, args.finalists)]
         candidates = [found[0]] + [v for v, _ in ranked]
-        screened = [(v["name"], s, v in candidates) for v, s in sorted(scores, key=lambda vs: -vs[1])]
+        ordered_scores = sorted(scores, key=lambda vs: -vs[1])
+        if args.method == "full": screened = [(v["name"], s, v in candidates) for v, s in ordered_scores]  # published layout
+        else: screened = (note, [(v["name"], show(s), v in candidates) for v, s in ordered_scores])
     else:
         candidates = args.candidates
-    results = compare(args.level, args.cls, candidates, args.references, seed=args.seed, strategy=args.strategy, workers=args.workers, cover=args.cover)
-    text = markdown(args.level, args.cls, results, screened, cover=args.cover)
+    if args.method == "full":
+        results = compare(args.level, args.cls, candidates, args.references, seed=args.seed, strategy=args.strategy, workers=args.workers, cover=args.cover)
+        text = markdown(args.level, args.cls, results, screened, cover=args.cover)
+    else:
+        results = focused_compare(args.level, args.cls, candidates, args.references, seed=args.seed, strategy=args.strategy,
+                                  workers=args.workers, cover=args.cover, runs=args.runs, parties=parties)
+        text = focused_markdown(args.level, args.cls, results, screened, cover=args.cover, runs=args.runs)
+        if args.write:
+            data = {ref: {"base": asdict(d["base"]), "party": d["party"], "member": label(d["member"]), "runs": d["focused"].runs,
+                          "rows": [[name, ch] for name, ch in d["rows"]]} for ref, d in results.items()}
+            (REPORTS / f"compare_{args.write}.md").write_text(text, encoding="utf-8")
+            (REPORTS / f"compare_{args.write}.json").write_text(json.dumps({"level": args.level, "class": args.cls, "method": "focused",
+                                                                            "runs": args.runs, "screen": screened, "results": data},
+                                                                           indent=1, default=str), encoding="utf-8")
+        print(text)
+        return
     if args.write:
         (REPORTS / f"compare_{args.write}.md").write_text(text, encoding="utf-8")
         data = {ref: {"base": asdict(d["base"]), "rows": [[name, asdict(r)] for name, r in d["rows"]]} for ref, d in results.items()}

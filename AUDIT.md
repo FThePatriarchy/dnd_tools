@@ -5,18 +5,20 @@ A self-audit of the three user-facing tools: combat simulation (`engine/combat.p
 ## 0. Blocker: a fresh clone cannot run
 
 - **Reproduced.** `python -m engine.dm fight ...` fails at once with `No such file or directory: raw_data/class/class-fighter.json`. The test suite fails at collection on `raw_data/spell/spells-xphb.json`.
-- `raw_data/` and `5etools-v2.30.1.zip` are gitignored, but they are read at **runtime**, not only by the source-check tests:
-  - the builder reads class JSON for invocation counts, skill lists and subclass prepared spells (`builder.py:370,414,446`);
-  - summon spells read the bestiaries (`spell_more_summons.py`, `spell_wiring.py`).
+- The engine simulates from `data/handwritten/` only, but `raw_data/` (gitignored) was still opened while loading:
+  - every class load ran the XPHB source cross-check (`load_class` defaulted to `source_check=True`);
+  - the builder read three facts from the raw class JSON: the warlock's invocation count, each class's skill choices and the subclass's always-prepared spells (`builder.py:370,414,446`).
+  - (Correction: the summon modules that read the bestiaries, `spell_more_summons.py` and `spell_wiring.py`, are generators; summon forms are already in the spell YAML.)
 - `pytest` is not a declared dependency.
 - **Reproduced:** `test_step3_golden_bytes` hashes the raw bytes of 20 spell files. 19 of the 20 digests only match with Windows CRLF line endings, so the test fails on any Linux or macOS checkout.
 - Workaround used for this audit: download the pinned v2.30.1 files from the 5etools mirror into `raw_data/`.
 
-**Plan**
-1. Add `python -m engine.fetch_source` to download the pinned v2.30.1 files into `raw_data/` (class, spells, bestiary, and the book/items files the tests read), with a SHA-256 check.
-2. Make the runtime path work without the raw files: cache the few facts the builder and summons need in a small committed JSON file generated from the source, and keep the source cross-checks in tests only. Tests that need the raw files skip with a message saying to run the fetch step.
-3. Add `[project.optional-dependencies] dev = ["pytest"]`.
-4. Hash spell files with line endings normalized to LF (or add a `.gitattributes` pinning `eol`), so golden checks pass on every OS.
+**Done (2026-11-02)**
+1. `load_class` no longer cross-checks by default; `tests/test_class_facts.py` runs the check for all twelve classes.
+2. The three builder facts are in the committed `data/handwritten/class_facts.json` (`python -m engine.class_facts --write`); a test checks it against the source. A test also blocks any read of `raw_data/` while building every class and running a fight, and the DM tool was run with `raw_data/` removed.
+3. `python -m engine.source_files --fetch` downloads the pinned v2.30.1 files the cross-check tests need (the zip's four files go to `raw_data/archive/`, read when the zip is absent).
+4. `pytest` is a `dev` extra in `pyproject.toml`.
+5. Golden spell hashes are of LF-normalized content.
 
 ## 1. Combat simulation
 
@@ -28,6 +30,8 @@ A self-audit of the three user-facing tools: combat simulation (`engine/combat.p
 | C4 | Buff valuation (`values_buffs`) is switched off for the cleric and wizard "to preserve published baselines". | Code comment in `policy.py`. | Bless, Haste and similar are undervalued on the **reference party**, which is the yardstick for every build comparison, so paladin/bard/druid results are measured against a handicapped cleric. |
 | C5 | The turn logic is a one-turn greedy script with hard-coded spell names (Healing Word, Cure Wounds, Revivify, Hex, Hunter's Mark, Preserve Life). | Code. | New spells and classes need code changes; healing thresholds (below half HP) are fixed. |
 | C6 | No positions: everyone is engaged from round 1; cover is optional and row-based; no range, movement, flying or kiting. | Documented (REVIEW_NOTES, CLASS_FORMAT). | Sharpshooter, ranged kits, Polearm Master reach, flyers and terrain can't be valued properly. |
+
+**Done (2026-11-02):** C1, C2 and C3 (steps 1, 2 and 4 below). `Combat.damage_factor` mirrors `mitigate_damage`; spell and weapon estimates use it; leveled spells are valued with each victim's damage capped at its HP; the party values its weapon against the creature it would attack. Regression tests: `tests/test_ai_valuation.py` (the wizard casts no Fireball at fire elementals in 30 fights, where it cast 22 in 100 before). Three pinned baselines moved and were re-pinned: fighter + cleric against 4 goblin warriors now spend 0.81 3rd-level slots per fight instead of 1.06; on the goblin warren day the nova strategy survives 152 of 1,000 days instead of 127 (conservative 163 vs 162). The weapon estimate is not capped, because extra attacks move to the next creature. **The published reports in `data/reports/` predate this change** and are not rerun yet.
 
 **Plan**
 1. C1 + C2: one damage-value helper applying resistance/immunity/vulnerability and `min(expected, target HP left)` (with a small credit for a kill). Use it in spell, weapon, action and routine valuation.
@@ -45,6 +49,17 @@ A self-audit of the three user-facing tools: combat simulation (`engine/combat.p
 | M3 | "Optimized" isn't a real min-maxer: no species, no multiclassing, a handful of feats, no Fighting Style beyond the kit list. Optimized is only 3-12% above standard and converges by level 15. | ROADMAP Phase 3, levels 11-20. |
 | M4 | Every value is "swap one member into the F/C/R/W reference party". There is no answer to "best build for *my* party" or "best class in this slot", and casual/optimized references are missing for most classes. | `compare.py` CLI. |
 | M5 | Depends on C1-C4: an AI that wastes slots or ignores buffs undervalues casters and buffers. | — |
+
+**Why the comparisons were noisy (found 2026-11-02).** The full rating stops sampling a step as soon as its interval clears 5%. So each type's crossing is usually interpolated between a 0% step and the next step measured on just 50-150 runs. In the stored L5 fighter base: swarm goes from bugbear ×12 at 0% to ×16 at 36% (50 runs), control from basilisk ×4 at 0% to ×5 at 9% (150 runs), solo from young blue at 0% to young red at 24% (50 runs). That one under-sampled point sets the crossing, which is the "control swings 10-14%" effect.
+
+**Done (2026-11-02): focused comparison** (`engine/focused.py`, now the default for `python -m engine.compare`).
+- The base party is rated once to find each type's bracket (the steps that decide its crossing).
+- The base and every candidate are then run on those steps with the same `--runs` per step (default 400) and the same batch seeds.
+- A candidate's bracket widens one step at a time when its crossing falls outside it.
+- Each change is reported with a paired bootstrap 95% interval over batches; ≈ now means "the interval contains zero" instead of fixed 3%/10% bars.
+- The variant screen is now a short focused run (`--screen sim`, 100 runs per step). The old expected-damage screen couldn't separate spell profiles; it stays as `--screen ev`.
+- `--party ... --replace NAME` compares builds in your own party.
+- `--method full` reproduces the published method.
 
 **Plan**
 1. Fix C1-C4 first; the comparisons are only as good as the AI.
@@ -64,6 +79,8 @@ A self-audit of the three user-facing tools: combat simulation (`engine/combat.p
 | D5 | Encounter templates have no theme or creature-type filter (only `--exclude`), use one monster type per role, and the finder's XP steps are coarse, so its curve isn't monotone. | `templates.py` CLI; ROADMAP Phase 4. |
 | D6 | No surprise, starting distance, terrain or lair actions to design with. | Documented scope. |
 | D7 | The XP line gives "0.25× DMG High" but doesn't say when an encounter is below Low or above High. | Reproduced (minor). |
+
+**Done (2026-11-02):** D1 (`dm`/`finder --level` only offer levels that have preset builds, instead of crashing) and D3 for `dm` (`--items half|full` on `fight` and `day`, `--cover` on `fight`).
 
 **Plan**
 1. D1: generate preset builds for every level 1-20 (the preset rules already exist), or reject missing levels with a clear message. Do the generation.

@@ -22,6 +22,7 @@ import random
 import re
 import sys
 
+from .presets import preset_levels
 from .calibration import BUDGETS, REPORTS, budget
 from .encounters import DAY_METRICS, run_day_runs, run_encounter, wilson
 from .policy import STRATEGIES
@@ -235,7 +236,7 @@ def main():
         p = sub.add_parser(kind)
         who = p.add_mutually_exclusive_group(required=True)
         who.add_argument("--party", nargs="+", help="build names")
-        who.add_argument("--level", type=int, choices=sorted(BUDGETS), help="use a preset party at this level")
+        who.add_argument("--level", type=int, choices=preset_levels(), help="use a preset party at this level")
         p.add_argument("--profile", choices=("casual", "standard", "optimized"), default="standard")
         shape = p.add_mutually_exclusive_group(required=True)
         shape.add_argument("--template", nargs="+", choices=list(TEMPLATES), help="template(s); a day cycles through them")
