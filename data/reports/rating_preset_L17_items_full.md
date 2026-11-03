@@ -1,19 +1,19 @@
 # Party rating: fighter_17+items_full, cleric_17+items_full, rogue_17+items_full, wizard_17+items_full
 
-Level 17, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 6,800 runs.
+Level 17, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,800 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 17 (11700 XP).
 
-**Overall: 38,364 XP (9,591 per PC, 0.82x High)**, the geometric mean of the types.
+**Overall: 38,404 XP (9,601 per PC, 0.82x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
 | brute | 33,125 | 8,281 | 0.71 |
-| ranged | 35,357 | 8,839 | 0.76 |
-| caster | 42,925 | 10,731 | 0.92 |
+| ranged | 36,667 | 9,167 | 0.78 |
+| caster | 42,906 | 10,726 | 0.92 |
 | swarm | 37,700 | 9,425 | 0.81 |
-| control | 32,158 | 8,039 | 0.69 |
-| solo | 52,308 | 13,077 | 1.12 |
+| control | 31,706 | 7,927 | 0.68 |
+| solo | 51,500 | 12,875 | 1.10 |
 
 ## Magic items
 
@@ -50,7 +50,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | fire_giant x4 | 20,000 | 0.0% | 1.8% | 100 |
 | fire_giant x5 | 25,000 | 0.0% | 1.8% | 100 |
 | fire_giant x6 | 30,000 | 0.0% | 1.8% | 100 |
-| fire_giant x8 | 40,000 | 9.3% | 4.7% | 150 |
+| fire_giant x8 | 40,000 | 7.5% | 2.6% | 400 |
 
 ### caster
 
@@ -60,8 +60,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | archmage x2 | 16,800 | 0.0% | 1.8% | 100 |
 | archmage x3 | 25,200 | 0.0% | 1.8% | 100 |
 | archmage x4 | 33,600 | 0.0% | 1.8% | 100 |
-| archmage x5 | 42,000 | 3.1% | 1.9% | 350 |
-| archmage x6 | 50,400 | 20.0% | 10.9% | 50 |
+| archmage x5 | 42,000 | 3.4% | 2.0% | 350 |
+| archmage x6 | 50,400 | 18.0% | 10.5% | 50 |
 
 ### swarm
 
@@ -88,8 +88,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | chain_devil x4 | 15,600 | 0.0% | 1.8% | 100 |
 | chain_devil x5 | 19,500 | 0.0% | 1.8% | 100 |
 | chain_devil x6 | 23,400 | 0.0% | 1.8% | 100 |
-| chain_devil x8 | 31,200 | 1.5% | 1.9% | 200 |
-| chain_devil x10 | 39,000 | 30.0% | 12.3% | 50 |
+| chain_devil x8 | 31,200 | 2.6% | 1.7% | 350 |
+| chain_devil x10 | 39,000 | 40.0% | 13.1% | 50 |
 
 ### solo
 
@@ -106,4 +106,4 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | ancient_black_dragon x1 | 33,000 | 0.0% | 1.8% | 100 |
 | ancient_green_dragon x1 | 41,000 | 0.0% | 1.8% | 100 |
 | ancient_blue_dragon x1 | 50,000 | 0.0% | 1.8% | 100 |
-| ancient_red_dragon x1 | 62,000 | 26.0% | 11.8% | 50 |
+| ancient_red_dragon x1 | 62,000 | 40.0% | 13.1% | 50 |
