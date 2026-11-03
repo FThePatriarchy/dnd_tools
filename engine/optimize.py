@@ -39,10 +39,17 @@ MIN_GAIN = 0.005
 
 
 def recipe_of(member):
-    """A build name or an in-memory recipe -> a recipe dict with a name."""
+    """A build name, a recipe .yaml path (e.g. an earlier search's result) or an in-memory recipe -> a recipe dict with a name."""
     if isinstance(member, dict): return deepcopy(member)
-    data = yaml.safe_load((ROOT / "builds" / f"{member}.yaml").read_text(encoding="utf-8"))
-    return {"name": member, **data}
+    from pathlib import Path
+    path = Path(member) if str(member).endswith(".yaml") else ROOT / "builds" / f"{member}.yaml"
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    return {"name": path.stem if str(member).endswith(".yaml") else member, **data}
+
+
+def party_arg(names):
+    """CLI party entries: build names stay names; .yaml paths become recipes (the builder takes either)."""
+    return [recipe_of(n) if str(n).endswith(".yaml") else n for n in names]
 
 
 def fields_of(recipe):
@@ -209,8 +216,10 @@ def main():
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     if args.member not in args.party: parser.error("--member must be one of --party")
+    member_index = args.party.index(args.member)
+    party = party_arg(args.party)
     log = lambda m: print(m, file=sys.stderr, flush=True)
-    final, steps = optimize(args.party, args.member, seed=args.seed, runs=args.runs, screen_runs=args.screen_runs,
+    final, steps = optimize(party, party[member_index], seed=args.seed, runs=args.runs, screen_runs=args.screen_runs,
                             finalists=args.finalists, max_rounds=args.rounds, strategy=args.strategy, cover=args.cover,
                             workers=args.workers, log=log, min_gain=args.min_gain)
     text = markdown(args.party, args.member, final, steps, args.runs, args.screen_runs)
