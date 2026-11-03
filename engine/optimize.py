@@ -153,8 +153,11 @@ def optimize(party, member, *, seed=1, runs=DEFAULT_RUNS, screen_runs=DEFAULT_SC
             log(f"  {label}: {est:+.1%} ({lo:+.1%} to {hi:+.1%})")
             if lo > 0 and (best is None or est > best[1]): best = (label, est, r)
         steps.append(step)
-        if best is None: break
+        if best is None:
+            log(f"round {rnd}: no change is clearly better; stopping")
+            break
         step.accepted = best[0]
+        log(f"round {rnd}: accepted {best[0]} ({best[1]:+.1%})")
         # A change that rewrites fields an earlier one set replaces it (e.g. an ASI plan over a feat's ASI).
         touched = set(by_label[best[0]])
         replaced = [a for a in applied if set(by_label[a]) & touched]
