@@ -1,0 +1,77 @@
+"""The local web app: API functions, input checks, the job runner and the HTTP server."""
+import json
+import threading
+import time
+import urllib.request
+
+import pytest
+
+from engine.app import api
+from engine.app.jobs import Jobs
+
+
+def test_meta_lists_what_the_page_needs():
+    m = api.meta()
+    assert m["preset_levels"][0] == 1 and "undead" in m["themes"] and len(m["monsters"]) >= 154
+    names = [b["name"] for b in m["builds"] if b["class"] == "bard"]
+    assert names.index("bard_1") < names.index("bard_3") < names.index("bard_17")  # numeric level order
+
+
+def test_fight_and_day_return_json_ready_results():
+    r = api.fight({"party": {"preset": {"level": 5}}, "monsters": [{"name": "ogre", "count": 2}], "runs": 10})
+    assert r["runs"] == 10 and r["budget"]["band"] == "Low" and len(r["characters"]) == 4
+    json.dumps(r)
+    d = api.day({"party": {"builds": ["fighter_5", "cleric_5"]}, "runs": 10,
+                 "steps": [{"encounter": [{"name": "ogre"}]}, {"rest": "short"}, {"encounter": [{"name": "goblin_warrior", "count": 3}]}]})
+    assert [s.get("rest") for s in d["steps"]] == [None, "short", None] and d["day_xp"] == 450 + 150
+    json.dumps(d)
+
+
+def test_requests_are_checked():
+    with pytest.raises(ValueError, match="unknown monster"): api.fight({"monsters": [{"name": "orc"}]})
+    with pytest.raises(ValueError, match="add at least one monster"): api.fight({"monsters": []})
+    with pytest.raises(ValueError, match="presets exist"): api.fight({"party": {"preset": {"level": 4}}, "monsters": [{"name": "ogre"}]})
+    with pytest.raises(ValueError, match="unknown build"): api.fight({"party": {"builds": ["../etc"]}, "monsters": [{"name": "ogre"}]})
+    with pytest.raises(ValueError, match="strategy"): api.fight({"strategy": "berserk", "monsters": [{"name": "ogre"}]})
+
+
+def test_suggest_and_build_sheet():
+    r = api.suggest({"level": 5, "difficulty": "high", "template": "boss_minions", "themes": ["undead"], "count": 2})
+    assert r["suggestions"] and all(m["name"] for s in r["suggestions"] for m in s["monsters"])
+    sheet = api.build_sheet({"name": "fighter_5"})
+    assert sheet["attacks"][0]["damage"] == "2d6+4 slashing"
+
+
+def test_jobs_run_in_the_background_and_report_errors():
+    def ok(req, log): log("working"); return {"x": req["x"]}
+    def bad(req, log): raise ValueError("nope")
+    jobs = Jobs({"ok": ok, "bad": bad})
+    a, b = jobs.start("ok", {"x": 3}), jobs.start("bad", {})
+    for _ in range(100):
+        if a.status != "running" and b.status != "running": break
+        time.sleep(.02)
+    assert a.view()["result"] == {"x": 3} and a.view()["log"][0]["message"] == "working"
+    assert b.status == "failed" and b.error == "nope"
+    with pytest.raises(ValueError): jobs.start("nope", {})
+
+
+def test_http_server_serves_page_meta_and_jobs():
+    from http.server import ThreadingHTTPServer
+    from engine.app.server import Handler
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    base = f"http://127.0.0.1:{server.server_address[1]}"
+    try:
+        assert b"Combat Simulator" in urllib.request.urlopen(base + "/").read()
+        assert json.loads(urllib.request.urlopen(base + "/api/meta").read())["preset_levels"]
+        post = lambda path, body: urllib.request.urlopen(urllib.request.Request(base + path, json.dumps(body).encode(), {"Content-Type": "application/json"}))
+        job = json.loads(post("/api/jobs/fight", {"monsters": [{"name": "ogre"}], "runs": 10}).read())
+        for _ in range(300):
+            view = json.loads(urllib.request.urlopen(f"{base}/api/jobs/{job['id']}").read())
+            if view["status"] != "running": break
+            time.sleep(.1)
+        assert view["status"] == "done" and view["result"]["runs"] == 10
+        with pytest.raises(urllib.error.HTTPError) as err: post("/api/suggest", {"difficulty": "deadly"})
+        assert err.value.code == 400
+    finally:
+        server.shutdown(); server.server_close()

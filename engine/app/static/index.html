@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D&amp;D Combat Simulator</title>
+<style>
+:root {
+  --bg: #f6f5f2; --panel: #ffffff; --ink: #1f2328; --muted: #646b73; --line: #dedbd4;
+  --accent: #8a2b2b; --accent-ink: #ffffff; --good: #2f7a45; --bad: #b3261e; --warn: #9a6400;
+  --chip: #efece6; --bar: #c9c4ba; --focus: #2b5d8a;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #16181b; --panel: #1f2226; --ink: #e8e6e3; --muted: #9aa1a9; --line: #33373d;
+          --accent: #c25b5b; --accent-ink: #16181b; --good: #6cc488; --bad: #ef7b72; --warn: #e0b354;
+          --chip: #2a2e33; --bar: #4a4f56; --focus: #7fb0dd; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { background: var(--panel); border-bottom: 1px solid var(--line); padding: 12px 20px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+header h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
+nav { display: flex; gap: 4px; flex-wrap: wrap; }
+nav button { background: none; border: 0; padding: 8px 12px; border-radius: 6px; color: var(--muted); font: inherit; cursor: pointer; }
+nav button.on { background: var(--accent); color: var(--accent-ink); }
+nav button:hover:not(.on) { background: var(--chip); color: var(--ink); }
+main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 60px; }
+section.tab { display: none; } section.tab.on { display: block; }
+.grid { display: grid; grid-template-columns: minmax(300px, 380px) 1fr; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.card + .card { margin-top: 16px; }
+h2 { font-size: 16px; margin: 0 0 12px; } h3 { font-size: 14px; margin: 16px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+input, select, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: inherit; }
+input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.row { display: flex; gap: 8px; } .row > * { flex: 1; min-width: 0; }
+.check { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; color: var(--ink); } .check input { width: auto; }
+button.go { margin-top: 14px; width: 100%; padding: 10px; background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; font: inherit; font-weight: 600; cursor: pointer; }
+button.go:disabled { opacity: .55; cursor: progress; }
+button.small { padding: 4px 9px; border: 1px solid var(--line); background: var(--chip); color: var(--ink); border-radius: 6px; font: inherit; font-size: 13px; cursor: pointer; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; margin-top: 4px; }
+.seg button { flex: 1; border: 0; background: var(--bg); color: var(--muted); padding: 6px; font: inherit; font-size: 13px; cursor: pointer; }
+.seg button.on { background: var(--chip); color: var(--ink); font-weight: 600; }
+.chips { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.chip { display: flex; align-items: center; gap: 8px; background: var(--chip); border-radius: 7px; padding: 5px 8px; font-size: 14px; }
+.chip span { flex: 1; } .chip input { width: 64px; padding: 3px 6px; }
+.chip .x { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 16px; }
+.muted { color: var(--muted); font-size: 13px; }
+.picker { max-height: 260px; overflow: auto; border: 1px solid var(--line); border-radius: 6px; margin-top: 6px; }
+.picker div { padding: 5px 9px; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
+.picker div:hover { background: var(--chip); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.stat { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.stat b { display: block; font-size: 24px; } .stat small { color: var(--muted); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.pos { color: var(--good); } .neg { color: var(--bad); } .noise { color: var(--muted); }
+.band { display: inline-block; padding: 1px 8px; border-radius: 99px; background: var(--chip); font-size: 13px; }
+.ci { position: relative; height: 10px; background: var(--chip); border-radius: 5px; min-width: 120px; }
+.ci i { position: absolute; top: 0; bottom: 0; background: var(--bar); border-radius: 5px; }
+.ci b { position: absolute; top: -2px; width: 2px; height: 14px; background: var(--ink); }
+.ci u { position: absolute; top: -3px; width: 1px; height: 16px; background: var(--muted); text-decoration: none; }
+.job { font-size: 13px; color: var(--muted); display: flex; gap: 10px; align-items: center; }
+.spin { width: 12px; height: 12px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: s 1s linear infinite; }
+@keyframes s { to { transform: rotate(360deg); } }
+pre.log { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; font-size: 12px; max-height: 220px; overflow: auto; white-space: pre-wrap; }
+.err { color: var(--bad); white-space: pre-wrap; }
+.empty { color: var(--muted); padding: 30px 10px; text-align: center; }
+.step { display: flex; gap: 6px; align-items: flex-start; margin-top: 8px; }
+.step .rest { flex: 1; background: var(--chip); border-radius: 7px; padding: 6px 9px; font-size: 14px; }
+.step .enc { flex: 1; border: 1px dashed var(--line); border-radius: 7px; padding: 6px; }
+details summary { cursor: pointer; color: var(--muted); font-size: 13px; margin-top: 10px; }
+code, .mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>D&amp;D 5.5e Combat Simulator</h1>
+  <nav id="nav">
+    <button data-tab="fight" class="on">Fight</button>
+    <button data-tab="day">Adventuring day</button>
+    <button data-tab="encounters">Encounter ideas</button>
+    <button data-tab="compare">Compare builds</button>
+    <button data-tab="search">Build search</button>
+    <button data-tab="rating">Party rating</button>
+    <button data-tab="library">Library</button>
+  </nav>
+</header>
+<main>
+
+<section class="tab on" id="tab-fight">
+  <div class="grid">
+    <div>
+      <div class="card"><h2>Party</h2><div data-party="fight"></div></div>
+      <div class="card"><h2>Monsters</h2><div data-monsters="fight"></div></div>
+      <div class="card"><h2>Options</h2><div data-options="fight"></div>
+        <button class="go" id="fight-go">Simulate the fight</button></div>
+    </div>
+    <div class="card" id="fight-out"><div class="empty">Pick a party and some monsters, then simulate.<br>The fight runs until the odds are within about ±5 points.</div></div>
+  </div>
+</section>
+
+<section class="tab" id="tab-day">
+  <div class="grid">
+    <div>
+      <div class="card"><h2>Party</h2><div data-party="day"></div></div>
+      <div class="card"><h2>The day</h2><div id="day-steps"></div>
+        <div class="row" style="margin-top:10px">
+          <button class="small" id="day-add-enc">+ Encounter</button><button class="small" id="day-add-short">+ Short rest</button><button class="small" id="day-add-long">+ Long rest</button>
+        </div></div>
+      <div class="card"><h2>Options</h2><div data-options="day"></div>
+        <button class="go" id="day-go">Simulate the day</button></div>
+    </div>
+    <div class="card" id="day-out"><div class="empty">Build a day of encounters and rests, then simulate it.</div></div>
+  </div>
+</section>
+
+<section class="tab" id="tab-encounters">
+  <div class="grid">
+    <div class="card"><h2>What kind of fight?</h2>
+      <div class="row"><div><label>Party level</label><select id="enc-level"></select></div><div><label>Party size</label><input id="enc-size" type="number" min="1" max="8" value="4"></div></div>
+      <label>Difficulty (2024 DMG budget)</label><select id="enc-difficulty"></select>
+      <label>Shape</label><select id="enc-template"></select>
+      <label>Or a custom shape</label><input id="enc-shape" placeholder="e.g. 1 boss, 6 goons">
+      <label>Only these creature types (optional)</label><select id="enc-themes" multiple size="5"></select>
+      <div class="row"><div><label>Suggestions</label><input id="enc-count" type="number" min="1" max="10" value="4"></div><div><label>Variety seed</label><input id="enc-seed" type="number" value="1"></div></div>
+      <button class="go" id="enc-go">Suggest encounters</button>
+    </div>
+    <div class="card" id="enc-out"><div class="empty">Suggestions fill the DMG budget with real monsters. Send one to the Fight tab to see how your party does.</div></div>
+  </div>
+</section>
+
+<section class="tab" id="tab-compare">
+  <div class="grid">
+    <div class="card"><h2>Which build is better?</h2>
+      <div class="row"><div><label>Class</label><select id="cmp-class"></select></div><div><label>Level</label><select id="cmp-level"></select></div></div>
+      <label>Compare</label>
+      <select id="cmp-mode">
+        <option value="feats">Feats</option><option value="species">Species</option><option value="variants">Kits, spells and subclass options</option>
+        <option value="abilities">Ability scores and ASIs</option><option value="candidates">Builds I pick</option>
+      </select>
+      <div id="cmp-cands" style="display:none"><label>Builds</label><select id="cmp-cand-list" multiple size="6"></select></div>
+      <label>In which party?</label>
+      <div class="seg" id="cmp-partymode"><button data-v="ref" class="on">Reference party</button><button data-v="own">My party</button></div>
+      <div id="cmp-own" style="display:none"><div class="muted" style="margin-top:6px">The candidates replace the first party member of the same class.</div><div id="cmp-own-party"></div></div>
+      <div class="row"><div><label>Runs per deciding step</label><input id="cmp-runs" type="number" value="400" min="50" max="2000"></div><div><label>Finalists</label><input id="cmp-finalists" type="number" value="4" min="1" max="40"></div></div>
+      <button class="go" id="cmp-go">Compare</button>
+      <p class="muted">Each candidate replaces the member of its class and the party is re-rated on the benchmark steps that decide its rating, with the same dice as the base. Expect several minutes per candidate.</p>
+    </div>
+    <div class="card" id="cmp-out"><div class="empty">Results show the change in party rating with a 95% interval. ≈ means the interval includes zero.</div></div>
+  </div>
+</section>
+
+<section class="tab" id="tab-search">
+  <div class="grid">
+    <div class="card"><h2>Find a better build</h2>
+      <p class="muted" style="margin-top:0">Improves one member of your party one change at a time (kit, spells, feats, ability scores, species) and keeps a change only when it is clearly better. This takes hours on a 4-core computer.</p>
+      <div id="srch-party"></div>
+      <label>Member to improve</label><select id="srch-member"></select>
+      <div class="row"><div><label>Runs per step</label><input id="srch-runs" type="number" value="300" min="50"></div><div><label>Screen runs</label><input id="srch-screen" type="number" value="60" min="20"></div></div>
+      <div class="row"><div><label>Max rounds</label><input id="srch-rounds" type="number" value="4" min="1" max="10"></div><div><label>Minimum gain</label><input id="srch-min" type="number" value="0.005" step="0.001"></div></div>
+      <button class="go" id="srch-go">Start the search</button>
+    </div>
+    <div class="card" id="srch-out"><div class="empty">The search log and each round's results appear here.</div></div>
+  </div>
+</section>
+
+<section class="tab" id="tab-rating">
+  <div class="grid">
+    <div>
+      <div class="card"><h2>Party</h2><div data-party="rating"></div></div>
+      <div class="card"><h2>Options</h2><div data-options="rating"></div><button class="go" id="rate-go">Rate the party</button>
+        <p class="muted">The rating is the encounter XP at which the party's chance of defeat reaches 5%, against six kinds of opponent. 1.00× means exactly the DMG High budget. Takes a few minutes.</p></div>
+    </div>
+    <div class="card" id="rate-out"><div class="empty">Rate a party to see how much it can take.</div></div>
+  </div>
+</section>
+
+<section class="tab" id="tab-library">
+  <div class="grid">
+    <div class="card"><h2>Builds</h2>
+      <div class="row"><div><label>Class</label><select id="lib-class"><option value="">All</option></select></div><div><label>Level</label><select id="lib-level"><option value="">All</option></select></div></div>
+      <div class="picker" id="lib-builds" style="max-height:420px"></div>
+    </div>
+    <div>
+      <div class="card" id="lib-sheet"><div class="empty">Pick a build to see its sheet.</div></div>
+      <div class="card"><h2>Monsters</h2>
+        <div class="row"><div><input id="lib-msearch" placeholder="Search monsters"></div><div><select id="lib-mtype"><option value="">All types</option></select></div></div>
+        <div style="max-height:420px;overflow:auto;margin-top:8px"><table id="lib-monsters"></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+"use strict";
+let META = null;
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+function h(tag, attrs = {}, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") el.className = v; else if (k === "text") el.textContent = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v); else if (v !== null && v !== undefined && v !== false) el.setAttribute(k, v);
+  }
+  for (const kid of kids.flat()) if (kid !== null && kid !== undefined && kid !== false) el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  return el;
+}
+const pct = (x, d = 0) => x === null || x === undefined ? "–" : (100 * x).toFixed(d) + "%";
+const signed = (x, d = 1) => (x >= 0 ? "+" : "−") + Math.abs(100 * x).toFixed(d) + "%";
+const fmt = n => Math.round(n).toLocaleString();
+const opt = (v, t = v, sel = false) => h("option", { value: v, selected: sel || null }, t);
+function fill(select, values, current) { select.replaceChildren(...values.map(v => Array.isArray(v) ? opt(v[0], v[1], v[0] == current) : opt(v, v, v == current))); }
+
+async function api(path, body) {
+  const r = await fetch(path, body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const data = await r.json();
+  if (!r.ok) throw new Error(data.error || r.statusText);
+  return data;
+}
+
+/* ---------- background jobs ---------- */
+async function runJob(kind, body, out, button, render) {
+  button.disabled = true;
+  const status = h("div", { class: "job" }, h("div", { class: "spin" }), h("span", { text: "Starting…" }));
+  const log = h("pre", { class: "log", style: "display:none" });
+  out.replaceChildren(status, log);
+  try {
+    let job = await api(`/api/jobs/${kind}`, body), seen = 0;
+    while (job.status === "running") {
+      await new Promise(r => setTimeout(r, 1000));
+      job = await api(`/api/jobs/${job.id}?since=${seen}`);
+      for (const line of job.log) { log.style.display = ""; log.textContent += `[${line.t.toFixed(0)}s] ${line.message}\n`; log.scrollTop = 1e9; }
+      seen = job.log_size;
+      status.lastChild.textContent = `Running… ${Math.round(job.elapsed)} s`;
+    }
+    if (job.status === "failed") { out.replaceChildren(h("div", { class: "err", text: job.error })); return; }
+    out.replaceChildren(h("div", { class: "job", text: `Finished in ${Math.round(job.elapsed)} s` }), ...(log.textContent ? [h("details", {}, h("summary", { text: "Log" }), log)] : []));
+    render(job.result, out);
+  } catch (e) { out.replaceChildren(h("div", { class: "err", text: e.message })); }
+  finally { button.disabled = false; }
+}
+
+/* ---------- shared form parts ---------- */
+const PARTY = {};
+function partyPicker(key, host) {
+  const state = PARTY[key] = { mode: "preset", level: 5, profile: "standard", builds: ["fighter_5", "cleric_5", "rogue_5", "wizard_5"], items: "" };
+  const seg = h("div", { class: "seg" }, h("button", { "data-v": "preset", class: "on", text: "Preset party" }), h("button", { "data-v": "builds", text: "Choose builds" }));
+  const preset = h("div", {}, h("div", { class: "row" },
+    h("div", {}, h("label", { text: "Level" }), h("select", { "data-k": "level" })),
+    h("div", {}, h("label", { text: "Profile" }), h("select", { "data-k": "profile" }))),
+    h("div", { class: "muted", style: "margin-top:6px", text: "Fighter, cleric, rogue and wizard." }));
+  const custom = h("div", { style: "display:none" });
+  const items = h("select", {}, opt("", "No magic items"), opt("half", "Half DMG item kit"), opt("full", "Full DMG item kit"));
+  fill($("[data-k=level]", preset), META.preset_levels, 5);
+  fill($("[data-k=profile]", preset), META.profiles, "standard");
+  $("[data-k=level]", preset).onchange = e => state.level = +e.target.value;
+  $("[data-k=profile]", preset).onchange = e => state.profile = e.target.value;
+  items.onchange = e => state.items = e.target.value;
+  function drawCustom() {
+    custom.replaceChildren(...state.builds.map((b, i) => {
+      const s = h("select", {}); fill(s, META.builds.map(x => x.name), b);
+      s.onchange = e => { state.builds[i] = e.target.value; host.dispatchEvent(new Event("partychange")); };
+      return h("div", { class: "step" }, s, h("button", { class: "small", text: "×", title: "Remove", onclick: () => { state.builds.splice(i, 1); drawCustom(); host.dispatchEvent(new Event("partychange")); } }));
+    }), h("button", { class: "small", style: "margin-top:8px", text: "+ Add member", onclick: () => { state.builds.push("fighter_5"); drawCustom(); host.dispatchEvent(new Event("partychange")); } }));
+  }
+  drawCustom();
+  seg.onclick = e => { const v = e.target.dataset.v; if (!v) return; state.mode = v; $$("button", seg).forEach(b => b.classList.toggle("on", b.dataset.v === v));
+    preset.style.display = v === "preset" ? "" : "none"; custom.style.display = v === "builds" ? "" : "none"; host.dispatchEvent(new Event("partychange")); };
+  host.append(seg, preset, custom, h("label", { text: "Magic items" }), items);
+  return state;
+}
+function partyBody(key) {
+  const s = PARTY[key];
+  return { party: s.mode === "preset" ? { preset: { level: s.level, profile: s.profile } } : { builds: s.builds }, items: s.items || null };
+}
+const OPTS = {};
+function optionsPicker(key, host, extra = {}) {
+  const st = OPTS[key] = { strategy: "default", morale: "none", cover: false, runs: "", seed: 1 };
+  const strat = h("select", {}); fill(strat, [["default", "Default (spend freely)"], ["rationed", "Rationed (save for later fights)"], ["nova", "Nova"], ["conservative", "Conservative"]], "default");
+  const morale = h("select", {}); fill(morale, [["none", "Fight to the last"], ["dmg", "DMG morale (monsters may flee)"], ["rout", "Rout (upper bound)"]], "none");
+  strat.onchange = e => st.strategy = e.target.value; morale.onchange = e => st.morale = e.target.value;
+  host.append(h("label", { text: "Party tactics" }), strat, h("label", { text: "Monster morale" }), morale);
+  if (extra.cover) { const c = h("input", { type: "checkbox" }); c.onchange = e => st.cover = e.target.checked;
+    host.append(h("label", { class: "check" }, c, "Cover and ranged-in-melee rules")); }
+  if (extra.runs) { const r = h("input", { type: "number", min: 10, placeholder: extra.runs }); r.oninput = e => st.runs = e.target.value ? +e.target.value : "";
+    host.append(h("label", { text: "Runs" }), r); }
+  return st;
+}
+function optionsBody(key) { const s = OPTS[key]; const b = { strategy: s.strategy, morale: s.morale, seed: s.seed }; if (s.cover) b.cover = true; if (s.runs) b.runs = s.runs; return b; }
+
+const GROUPS = {};
+function monsterPicker(key, host, onchange = () => {}) {
+  const groups = GROUPS[key] = [];
+  const search = h("input", { placeholder: "Search by name, type or CR" });
+  const list = h("div", { class: "picker" }), chosen = h("div", { class: "chips" }), xp = h("div", { class: "muted", style: "margin-top:8px" });
+  function draw() {
+    const q = search.value.trim().toLowerCase();
+    list.replaceChildren(...META.monsters.filter(m => !q || m.name.includes(q.replace(/ /g, "_")) || m.type === q || `cr ${m.cr}` === q || m.cr === q).slice(0, 200)
+      .map(m => h("div", { title: `${m.hp} HP, AC ${m.ac}`, onclick: () => { const g = groups.find(g => g.name === m.name); g ? g.count++ : groups.push({ name: m.name, count: 1 }); drawChosen(); } },
+        h("span", {}, m.label), h("span", { class: "muted", text: `CR ${m.cr} · ${m.type}` }))));
+  }
+  function drawChosen() {
+    chosen.replaceChildren(...groups.map((g, i) => h("div", { class: "chip" }, h("span", { text: META.monsters.find(m => m.name === g.name).label }),
+      (() => { const n = h("input", { type: "number", min: 1, max: 40, value: g.count }); n.oninput = e => { g.count = Math.max(1, +e.target.value || 1); total(); onchange(); }; return n; })(),
+      h("button", { class: "x", title: "Remove", text: "×", onclick: () => { groups.splice(i, 1); drawChosen(); } }))));
+    total(); onchange();
+  }
+  function total() { const x = groups.reduce((a, g) => a + g.count * META.monsters.find(m => m.name === g.name).xp, 0); xp.textContent = groups.length ? `${fmt(x)} XP` : "No monsters yet: click one below."; }
+  search.oninput = draw; draw(); drawChosen();
+  host.append(chosen, xp, h("label", { text: "Add monsters" }), search, list);
+  return { groups, set(list) { groups.splice(0, groups.length, ...list); drawChosen(); } };
+}
+
+/* ---------- result views ---------- */
+function stat(value, label, ci) { return h("div", { class: "stat" }, h("b", { text: value }), h("small", { text: label + (ci ? ` (±${pct(ci, 1)})` : "") })); }
+function bandLine(b) {
+  if (!b || b.high === undefined) return h("p", { class: "muted", text: b ? `${fmt(b.xp)} XP` : "" });
+  return h("p", {}, `${fmt(b.xp)} XP = ${b.multiple.toFixed(2)}× DMG High `, h("span", { class: "band", text: b.band }),
+    h("span", { class: "muted", text: ` (Low ${fmt(b.low)} · Moderate ${fmt(b.moderate)} · High ${fmt(b.high)})` }));
+}
+function characterTable(chars, scope) {
+  return [h("h3", { text: `Per character (${scope})` }), h("table", {}, h("tr", {}, h("th", { text: "Character" }), h("th", { class: "num", text: "Goes down" }), h("th", { class: "num", text: "Dies" }), h("th", { class: "num", text: "HP left" }), h("th", { text: "Resources spent (mean)" })),
+    ...chars.map(c => h("tr", {}, h("td", { text: c.name }), h("td", { class: "num", text: pct(c.down) }), h("td", { class: "num", text: pct(c.death) }), h("td", { class: "num", text: pct(c.hp_left) }),
+      h("td", { class: "muted", text: Object.entries(c.spent).map(([k, v]) => `${k.replace(/_/g, " ")} ${v.toFixed(2)}`).join(", ") || "—" }))))];
+}
+function renderFight(r, out) {
+  out.append(h("h2", { text: r.encounter.join(", ").replace(/_/g, " ") }), bandLine(r.budget),
+    h("div", { class: "stats" }, stat(pct(r.win), "Party wins"), stat(pct(r.defeat), "Defeat (TPK or all PCs out)", r.ci.defeat), stat(pct(r.down), "Someone goes down", r.ci.down), stat(pct(r.death), "Someone dies", r.ci.death)),
+    h("p", { class: "muted", text: `${r.runs} runs · ${r.rounds.toFixed(1)} rounds on average · party HP lost ${pct(r.hp_lost)} · spell slots spent ${pct(r.slots_spent)}${r.options.morale !== "none" ? ` · monsters fled ${pct(r.fled)}` : ""}` }),
+    ...characterTable(r.characters, "one fight"), h("p", { class: "muted", text: "Party: " + r.party.join(", ") }));
+  if (r.failed_runs) out.append(h("p", { class: "err", text: `${r.failed_runs} runs hit an engine error and were left out.` }));
+}
+function renderDay(r, out) {
+  out.append(h("h2", { text: "The day" }), h("div", { class: "stats" }, stat(pct(r.complete), "Whole day cleared, no deaths"), stat(pct(r.defeat), "Defeat"), stat(pct(r.death), "Someone dies")),
+    h("p", { class: "muted", text: `At the end: HP ${pct(Math.min(1, r.hp_left))} · spell slots ${pct(r.slots_left)} · Hit Dice ${pct(r.hit_dice_left)} left · ${r.downs.toFixed(1)} drops to 0 HP · ${r.runs} runs` }),
+    h("table", {}, h("tr", {}, h("th", { text: "Step" }), h("th", { class: "num", text: "Reached" }), h("th", { class: "num", text: "Cleared" }), h("th", { class: "num", text: "Down" }), h("th", { class: "num", text: "Rounds" })),
+      ...r.steps.map((s, i) => s.rest ? h("tr", {}, h("td", { class: "muted", colspan: 5, text: `${i + 1}. ${s.rest} rest` })) :
+        h("tr", {}, h("td", {}, `${i + 1}. ${s.encounter.join(", ").replace(/_/g, " ")} `, h("span", { class: "band", text: `${fmt(s.budget.xp)} XP ${s.budget.band || ""}` })),
+          h("td", { class: "num", text: pct(s.reached) }), h("td", { class: "num", text: pct(s.cleared) }), h("td", { class: "num", text: pct(s.down) }), h("td", { class: "num", text: s.rounds === null ? "–" : s.rounds.toFixed(1) })))),
+    h("p", { class: "muted", text: `Day total ${fmt(r.day_xp)} XP; the DMG's adventuring-day guideline is about ${fmt(r.guideline_xp)} XP for this party.` }),
+    ...characterTable(r.characters, "whole day"));
+}
+function ciBar(est, lo, hi, span) {
+  const x = v => `${50 + 50 * Math.max(-1, Math.min(1, v / span))}%`;
+  return h("div", { class: "ci", title: `${signed(est)} (${signed(lo)} to ${signed(hi)})` },
+    h("i", { style: `left:${x(lo)};right:calc(100% - ${x(hi)})` }), h("u", { style: "left:50%" }), h("b", { style: `left:${x(est)}` }));
+}
+function change(c) { const [e, lo, hi] = c; const noise = lo <= 0 && hi >= 0; return h("span", { class: noise ? "noise" : e > 0 ? "pos" : "neg", text: signed(e) + (noise ? " ≈" : "") }); }
+function renderCompare(r, out) {
+  for (const res of r.results) {
+    const kinds = Object.keys(res.rows[0].types), span = Math.max(0.05, ...res.rows.map(x => Math.max(Math.abs(x.overall[1]), Math.abs(x.overall[2]))));
+    out.append(h("h2", { text: `${r.class} ${r.level}: ${r.mode}` }),
+      h("p", { class: "muted", text: `In ${res.party.join(", ")}, replacing ${res.replacing}. Base rating ${fmt(res.base.xp)} XP (${res.base.multiple.toFixed(2)}× High). ${fmt(res.runs)} focused runs.` }),
+      h("div", { style: "overflow:auto" }, h("table", {}, h("tr", {}, h("th", { text: "Candidate" }), h("th", { class: "num", text: "Overall" }), h("th", { text: "95% interval" }), ...kinds.map(k => h("th", { class: "num", text: k }))),
+        ...res.rows.map(x => h("tr", {}, h("td", { text: x.name }), h("td", { class: "num" }, change(x.overall)), h("td", {}, ciBar(...x.overall, span), h("small", { class: "muted", text: `${signed(x.overall[1])} to ${signed(x.overall[2])}` })),
+          ...kinds.map(k => h("td", { class: "num" }, change(x.types[k].change), x.types[k].edge ? h("sup", { title: "at the edge of its benchmark ladder: a bound", text: "†" }) : null)))))),
+      h("p", { class: "muted", text: "≈: the 95% interval includes zero. †: a bound. Per-type values rest on one monster per level and are weaker evidence than the overall value." }));
+  }
+  if (r.screen) out.append(h("details", {}, h("summary", { text: `Screen (${r.screen.length} variants)` }), h("table", {}, ...r.screen.map(s => h("tr", {}, h("td", { text: s.name }), h("td", { class: "num", text: signed(s.change) }), h("td", { class: "muted", text: s.rated ? "measured" : "" }))))));
+}
+function renderSearch(r, out) {
+  for (const rd of r.rounds) {
+    out.append(h("h3", { text: `Round ${rd.round}: ${rd.accepted ? "accepted " + rd.accepted : "nothing clearly better"}` }),
+      h("p", { class: "muted", text: `Party rating at the start: ${fmt(rd.rating)} XP` }),
+      h("table", {}, ...rd.finalists.map(f => h("tr", {}, h("td", { text: f.name + (f.name === rd.accepted ? " ✓" : "") }), h("td", { class: "num" }, change(f.change)), h("td", { class: "muted", text: `${signed(f.change[1])} to ${signed(f.change[2])}` })))));
+  }
+  const yaml = JSON.stringify(Object.fromEntries(Object.entries(r.final).filter(([k]) => k !== "name")), null, 2);
+  out.append(h("h3", { text: "Final build" }), h("p", { text: r.final.name || "unchanged" }), h("pre", { class: "log mono", text: yaml }));
+}
+function renderRating(r, out) {
+  out.append(h("h2", { text: `${fmt(r.xp)} XP (${r.multiple.toFixed(2)}× DMG High)` }), h("p", { class: "muted", text: `${fmt(r.per_pc)} XP per PC · level ${r.level} · ${fmt(r.runs)} runs · ${r.party.join(", ")}` }),
+    h("table", {}, h("tr", {}, h("th", { text: "Opponent type" }), h("th", { class: "num", text: "Rating" }), h("th", { class: "num", text: "× High" })),
+      ...Object.entries(r.types).map(([k, t]) => h("tr", {}, h("td", { text: k }), h("td", { class: "num", text: (t.censored === "below" ? "< " : t.censored === "above" ? "> " : "") + fmt(t.xp) }), h("td", { class: "num", text: t.multiple.toFixed(2) })))));
+}
+
+/* ---------- tabs ---------- */
+function setupFight() {
+  partyPicker("fight", $("[data-party=fight]"));
+  const mp = monsterPicker("fight", $("[data-monsters=fight]"));
+  optionsPicker("fight", $("[data-options=fight]"), { cover: true, runs: "adaptive (100–800)" });
+  $("#fight-go").onclick = () => runJob("fight", { ...partyBody("fight"), ...optionsBody("fight"), monsters: mp.groups }, $("#fight-out"), $("#fight-go"), renderFight);
+  return mp;
+}
+function setupDay() {
+  partyPicker("day", $("[data-party=day]"));
+  optionsPicker("day", $("[data-options=day]"), { runs: "400" });
+  const steps = [];
+  const host = $("#day-steps");
+  function draw() {
+    host.replaceChildren(...steps.map((s, i) => h("div", { class: "step" },
+      s.rest ? h("div", { class: "rest", text: `${s.rest} rest` }) : (() => { const box = h("div", { class: "enc" }); s.picker = s.picker || null; const p = monsterPicker(`day${i}-${Math.random()}`, box); p.set(s.encounter); s.encounter = p.groups; return box; })(),
+      h("button", { class: "small", text: "×", onclick: () => { steps.splice(i, 1); draw(); } }))));
+    if (!steps.length) host.append(h("div", { class: "muted", text: "Add encounters and rests in order." }));
+  }
+  $("#day-add-enc").onclick = () => { steps.push({ encounter: [] }); draw(); };
+  $("#day-add-short").onclick = () => { steps.push({ rest: "short" }); draw(); };
+  $("#day-add-long").onclick = () => { steps.push({ rest: "long" }); draw(); };
+  draw();
+  $("#day-go").onclick = () => runJob("day", { ...partyBody("day"), ...optionsBody("day"), steps: steps.map(s => s.rest ? { rest: s.rest } : { encounter: s.encounter }) }, $("#day-out"), $("#day-go"), renderDay);
+}
+function setupEncounters(fightPicker) {
+  fill($("#enc-level"), META.preset_levels.length ? Object.keys(META.budgets).map(Number) : [5], 5);
+  fill($("#enc-difficulty"), [["low", "Low"], ["moderate", "Moderate"], ["high", "High"], ["over", "Over (1.5× High)"]], "moderate");
+  fill($("#enc-template"), Object.entries(META.templates).map(([k, v]) => [k, `${k.replace(/_/g, " ")} (${Object.entries(v).map(([r, n]) => `${n} ${r}`).join(", ")})`]), "boss_minions");
+  fill($("#enc-themes"), META.themes);
+  $("#enc-go").onclick = async () => {
+    const out = $("#enc-out"), btn = $("#enc-go"); btn.disabled = true;
+    try {
+      const r = await api("/api/suggest", { level: +$("#enc-level").value, size: +$("#enc-size").value, difficulty: $("#enc-difficulty").value,
+        template: $("#enc-template").value, shape: $("#enc-shape").value.trim() || null, themes: $$("#enc-themes option").filter(o => o.selected).map(o => o.value),
+        count: +$("#enc-count").value, seed: +$("#enc-seed").value });
+      out.replaceChildren(h("h2", { text: `Budget ${fmt(r.budget)} XP` }));
+      if (!r.suggestions.length) out.append(h("div", { class: "empty", text: "No fill lands within 75–100% of the budget. Try another shape, theme or difficulty." }));
+      for (const s of r.suggestions) out.append(h("div", { class: "chip", style: "margin-top:8px" }, h("span", { text: s.label.replace(/_/g, " ") }),
+        h("button", { class: "small", text: "Send to Fight", onclick: () => { fightPicker.set(s.monsters.map(m => ({ name: m.name, count: m.count }))); showTab("fight"); } })));
+    } catch (e) { out.replaceChildren(h("div", { class: "err", text: e.message })); }
+    finally { btn.disabled = false; }
+  };
+}
+function setupCompare() {
+  fill($("#cmp-class"), META.classes, "fighter");
+  const levels = [...new Set(META.builds.map(b => b.level))].sort((a, b) => a - b);
+  fill($("#cmp-level"), levels, 5);
+  const own = { builds: ["fighter_5", "cleric_5", "rogue_5", "wizard_5"] };
+  function drawCands() { fill($("#cmp-cand-list"), META.builds.filter(b => b.class === $("#cmp-class").value && b.level === +$("#cmp-level").value).map(b => b.name)); }
+  function drawOwn() {
+    $("#cmp-own-party").replaceChildren(...own.builds.map((b, i) => { const s = h("select", {}); fill(s, META.builds.map(x => x.name), b); s.onchange = e => own.builds[i] = e.target.value; return h("div", { class: "step" }, s); }));
+  }
+  $("#cmp-class").onchange = $("#cmp-level").onchange = drawCands; drawCands(); drawOwn();
+  $("#cmp-mode").onchange = e => $("#cmp-cands").style.display = e.target.value === "candidates" ? "" : "none";
+  let partyMode = "ref";
+  $("#cmp-partymode").onclick = e => { const v = e.target.dataset.v; if (!v) return; partyMode = v; $$("#cmp-partymode button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); $("#cmp-own").style.display = v === "own" ? "" : "none"; };
+  $("#cmp-go").onclick = () => {
+    const body = { class: $("#cmp-class").value, level: +$("#cmp-level").value, mode: $("#cmp-mode").value, runs: +$("#cmp-runs").value, finalists: +$("#cmp-finalists").value };
+    if (body.mode === "candidates") body.candidates = $$("#cmp-cand-list option").filter(o => o.selected).map(o => o.value);
+    if (partyMode === "own") body.party = own.builds;
+    runJob("compare", body, $("#cmp-out"), $("#cmp-go"), renderCompare);
+  };
+}
+function setupSearch() {
+  const st = { builds: ["fighter_5", "cleric_5", "rogue_5", "wizard_5"] };
+  const host = $("#srch-party");
+  function draw() {
+    host.replaceChildren(h("label", { text: "Party" }), ...st.builds.map((b, i) => { const s = h("select", {}); fill(s, META.builds.map(x => x.name), b); s.onchange = e => { st.builds[i] = e.target.value; members(); }; return h("div", { class: "step" }, s); }));
+    members();
+  }
+  function members() { fill($("#srch-member"), st.builds, $("#srch-member").value || st.builds[0]); }
+  draw();
+  $("#srch-go").onclick = () => runJob("optimize", { party: st.builds, member: $("#srch-member").value, runs: +$("#srch-runs").value, screen_runs: +$("#srch-screen").value,
+    rounds: +$("#srch-rounds").value, min_gain: +$("#srch-min").value }, $("#srch-out"), $("#srch-go"), renderSearch);
+}
+function setupRating() {
+  partyPicker("rating", $("[data-party=rating]"));
+  optionsPicker("rating", $("[data-options=rating]"), { cover: true });
+  $("#rate-go").onclick = () => runJob("rate", { ...partyBody("rating"), ...optionsBody("rating") }, $("#rate-out"), $("#rate-go"), renderRating);
+}
+function setupLibrary() {
+  fill($("#lib-class"), [["", "All"], ...META.classes]);
+  fill($("#lib-level"), [["", "All"], ...[...new Set(META.builds.map(b => b.level))].sort((a, b) => a - b)]);
+  fill($("#lib-mtype"), [["", "All types"], ...META.themes]);
+  function drawBuilds() {
+    const c = $("#lib-class").value, l = $("#lib-level").value;
+    $("#lib-builds").replaceChildren(...META.builds.filter(b => (!c || b.class === c) && (!l || b.level == l)).map(b => h("div", { onclick: () => showSheet(b.name) }, h("span", { text: b.name }), h("span", { class: "muted", text: b.profile }))));
+  }
+  async function showSheet(name) {
+    const out = $("#lib-sheet");
+    try {
+      const s = await api("/api/build", { name });
+      out.replaceChildren(h("h2", { text: s.name }), h("p", { class: "muted", text: `${s.max_hp} HP · AC ${s.ac} · speed ${s.speed} · proficiency +${s.proficiency_bonus}` + (s.spell_dc ? ` · spell DC ${s.spell_dc}, attack +${s.spell_attack_bonus}` : "") }),
+        h("p", { text: Object.entries(s.abilities).map(([k, v]) => `${k.toUpperCase()} ${v}`).join(" · ") }),
+        h("h3", { text: "Attacks" }), h("table", {}, ...s.attacks.map(a => h("tr", {}, h("td", { text: a.name }), h("td", { class: "num", text: `+${a.to_hit}` }), h("td", { text: a.damage })))),
+        ...(s.spells && s.spells.length ? [h("h3", { text: "Spells" }), h("p", { class: "muted", text: s.spells.join(", ") })] : []),
+        ...(Object.keys(s.limited_uses || {}).length ? [h("h3", { text: "Limited uses" }), h("p", { class: "muted", text: Object.entries(s.limited_uses).map(([k, v]) => `${k.replace(/_/g, " ")} ${v.max ?? v}`).join(", ") })] : []),
+        ...(s.unsupported && s.unsupported.length ? [h("details", {}, h("summary", { text: `Not simulated (${s.unsupported.length})` }), h("ul", {}, ...s.unsupported.map(u => h("li", { class: "muted", text: u }))))] : []));
+    } catch (e) { out.replaceChildren(h("div", { class: "err", text: e.message })); }
+  }
+  function drawMonsters() {
+    const q = $("#lib-msearch").value.trim().toLowerCase().replace(/ /g, "_"), t = $("#lib-mtype").value;
+    $("#lib-monsters").replaceChildren(h("tr", {}, h("th", { text: "Monster" }), h("th", { class: "num", text: "CR" }), h("th", { class: "num", text: "XP" }), h("th", { class: "num", text: "HP" }), h("th", { class: "num", text: "AC" }), h("th", { text: "Type" })),
+      ...META.monsters.filter(m => (!q || m.name.includes(q)) && (!t || m.type === t)).map(m => h("tr", { title: m.unsupported.join("\n") }, h("td", { text: m.label }), h("td", { class: "num", text: m.cr }), h("td", { class: "num", text: fmt(m.xp) }), h("td", { class: "num", text: m.hp }), h("td", { class: "num", text: m.ac }), h("td", { class: "muted", text: m.type }))));
+  }
+  $("#lib-class").onchange = $("#lib-level").onchange = drawBuilds; $("#lib-msearch").oninput = $("#lib-mtype").onchange = drawMonsters;
+  drawBuilds(); drawMonsters();
+}
+function showTab(name) {
+  $$("#nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
+  $$("section.tab").forEach(s => s.classList.toggle("on", s.id === "tab-" + name));
+  try { localStorage.setItem("tab", name); } catch (e) {}
+}
+$("#nav").onclick = e => { if (e.target.dataset.tab) showTab(e.target.dataset.tab); };
+
+(async () => {
+  try { META = await api("/api/meta"); }
+  catch (e) { document.querySelector("main").replaceChildren(h("div", { class: "err", text: "Could not load data from the simulator: " + e.message })); return; }
+  const fightPicker = setupFight(); setupDay(); setupEncounters(fightPicker); setupCompare(); setupSearch(); setupRating(); setupLibrary();
+  try { const t = localStorage.getItem("tab"); if (t && $("#tab-" + t)) showTab(t); } catch (e) {}
+})();
+</script>
+</body>
+</html>

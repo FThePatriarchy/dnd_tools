@@ -39,6 +39,14 @@ Dungeon Masters (DMs) frequently struggle to balance combat encounters using the
 
 ## 🚀 Usage (Command Line Interface)
 
+## 🖥️ The app
+
+```bash
+python -m engine.app
+```
+
+opens the simulator in your browser (it runs on your own computer at http://127.0.0.1:8765; nothing is sent anywhere). Tabs: **Fight** and **Adventuring day** (pick a party and monsters, get the odds and a per-character breakdown), **Encounter ideas** (DMG-budget fills by shape and creature type, sent to the Fight tab in one click), **Compare builds** and **Build search** (min-maxing with 95% intervals), **Party rating**, and a **Library** of builds and monsters. Long jobs run in the background with a progress log. `--port N` picks another port, `--no-browser` skips opening a tab. Needs only Python 3.11+ and `pyyaml`.
+
 As a backend-first engine, the primary UI is a Command Line Interface (CLI). 
 
 Run from the repository root. Builds are named after files in `data/handwritten/builds/` and monsters after files in `data/handwritten/monsters/`.
