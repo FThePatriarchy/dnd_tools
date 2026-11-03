@@ -1,18 +1,18 @@
 # Party rating: fighter_15+items_full, cleric_15+items_full, rogue_15+items_full, wizard_15+items_full
 
-Level 15, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,800 runs.
+Level 15, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,300 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 15 (7800 XP).
 
-**Overall: 26,392 XP (6,598 per PC, 0.85x High)**, the geometric mean of the types.
+**Overall: 26,530 XP (6,633 per PC, 0.85x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
 | brute | 16,683 | 4,171 | 0.53 |
-| ranged | 34,450 | 8,612 | 1.10 |
-| caster | 30,993 | 7,748 | 0.99 |
-| swarm | 22,886 | 5,721 | 0.73 |
-| control | 24,414 | 6,104 | 0.78 |
+| ranged | 35,700 | 8,925 | 1.14 |
+| caster | 31,662 | 7,915 | 1.01 |
+| swarm | 22,800 | 5,700 | 0.73 |
+| control | 23,888 | 5,972 | 0.77 |
 | solo | 33,952 | 8,488 | 1.09 |
 
 ## Magic items
@@ -49,7 +49,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | assassin x5 | 19,500 | 0.0% | 1.8% | 100 |
 | assassin x6 | 23,400 | 0.0% | 1.8% | 100 |
 | assassin x8 | 31,200 | 0.0% | 1.8% | 100 |
-| assassin x10 | 39,000 | 12.0% | 9.1% | 50 |
+| assassin x10 | 39,000 | 8.7% | 4.6% | 150 |
 
 ### caster
 
@@ -58,7 +58,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | archmage x1 | 8,400 | 0.0% | 1.8% | 100 |
 | archmage x2 | 16,800 | 0.0% | 1.8% | 100 |
 | archmage x3 | 25,200 | 0.0% | 1.8% | 100 |
-| archmage x4 | 33,600 | 7.2% | 2.6% | 400 |
+| archmage x4 | 33,600 | 6.5% | 2.0% | 600 |
+| archmage x5 | 42,000 | 60.0% | 13.1% | 50 |
 
 ### swarm
 
@@ -73,7 +74,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | gladiator x8 | 14,400 | 0.0% | 1.8% | 100 |
 | gladiator x10 | 18,000 | 0.0% | 1.8% | 100 |
 | gladiator x12 | 21,600 | 0.0% | 1.8% | 100 |
-| gladiator x16 | 28,800 | 28.0% | 12.1% | 50 |
+| gladiator x16 | 28,800 | 30.0% | 12.3% | 50 |
 
 ### control
 
@@ -84,8 +85,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | chain_devil x3 | 11,700 | 0.0% | 1.8% | 100 |
 | chain_devil x4 | 15,600 | 0.0% | 1.8% | 100 |
 | chain_devil x5 | 19,500 | 0.0% | 1.8% | 100 |
-| chain_devil x6 | 23,400 | 0.7% | 1.8% | 150 |
-| chain_devil x8 | 31,200 | 34.0% | 12.7% | 50 |
+| chain_devil x6 | 23,400 | 2.0% | 1.9% | 250 |
+| chain_devil x8 | 31,200 | 50.0% | 13.4% | 50 |
 
 ### solo
 
