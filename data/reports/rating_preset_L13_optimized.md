@@ -1,19 +1,19 @@
 # Party rating: fighter_13_optimized, cleric_13_optimized, rogue_13_optimized, wizard_13_optimized
 
-Level 13, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,850 runs.
+Level 13, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 4,600 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 13 (5400 XP).
 
-**Overall: 15,965 XP (3,991 per PC, 0.74x High)**, the geometric mean of the types.
+**Overall: 15,927 XP (3,982 per PC, 0.74x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
 | brute | 14,138 | 3,534 | 0.65 |
-| ranged | 23,545 | 5,886 | 1.09 |
-| caster | 12,458 | 3,115 | 0.58 |
+| ranged | 23,495 | 5,874 | 1.09 |
+| caster | 12,219 | 3,055 | 0.57 |
 | swarm | 15,092 | 3,773 | 0.70 |
-| control | 17,100 | 4,275 | 0.79 |
-| solo | 15,469 | 3,867 | 0.72 |
+| control | 16,993 | 4,248 | 0.79 |
+| solo | 15,682 | 3,920 | 0.73 |
 
 ## Ladder results
 
@@ -37,8 +37,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | assassin x3 | 11,700 | 0.0% | 1.8% | 100 |
 | assassin x4 | 15,600 | 0.0% | 1.8% | 100 |
 | assassin x5 | 19,500 | 0.0% | 1.8% | 100 |
-| assassin x6 | 23,400 | 4.2% | 1.9% | 450 |
-| assassin x8 | 31,200 | 46.0% | 13.3% | 50 |
+| assassin x6 | 23,400 | 4.4% | 1.9% | 450 |
+| assassin x8 | 31,200 | 50.0% | 13.4% | 50 |
 
 ### caster
 
@@ -49,7 +49,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | mage x3 | 6,900 | 0.0% | 1.8% | 100 |
 | mage x4 | 9,200 | 0.0% | 1.8% | 100 |
 | mage x5 | 11,500 | 0.0% | 1.8% | 100 |
-| mage x6 | 13,800 | 12.0% | 9.1% | 50 |
+| mage x6 | 13,800 | 16.0% | 10.1% | 50 |
 
 ### swarm
 
@@ -72,7 +72,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | chain_devil x2 | 7,800 | 0.0% | 1.8% | 100 |
 | chain_devil x3 | 11,700 | 0.0% | 1.8% | 100 |
 | chain_devil x4 | 15,600 | 0.0% | 1.8% | 100 |
-| chain_devil x5 | 19,500 | 13.0% | 6.6% | 100 |
+| chain_devil x5 | 19,500 | 14.0% | 9.6% | 50 |
 
 ### solo
 
@@ -86,4 +86,4 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | adult_black_dragon x1 | 11,500 | 0.0% | 1.8% | 100 |
 | adult_green_dragon x1 | 13,000 | 0.0% | 1.8% | 100 |
 | adult_blue_dragon x1 | 15,000 | 0.0% | 1.8% | 100 |
-| adult_red_dragon x1 | 18,000 | 32.0% | 12.5% | 50 |
+| adult_red_dragon x1 | 18,000 | 22.0% | 11.2% | 50 |
