@@ -11,7 +11,8 @@ Each round:
 1. screen every neighbour with a short focused run (--screen-runs per step);
 2. measure the best --finalists, plus up to as many more whose screen interval
    still reaches above the leader's lower bound, with --runs per step;
-3. accept the finalist with the highest estimate whose interval excludes zero.
+3. accept the finalist with the highest estimate whose interval's lower bound
+   clears --min-gain (0.5% by default, so near-equal options don't swap on noise).
 
 The changes come from engine.compare's generators (variants, feats,
 abilities), each turned into the set of recipe fields it changes relative to
@@ -32,6 +33,9 @@ import yaml
 from .loader import ROOT
 
 DEFAULT_RUNS, DEFAULT_SCREEN_RUNS, DEFAULT_FINALISTS, MAX_ROUNDS = 400, 100, 3, 6
+# A change is accepted only when its interval's lower bound clears this margin. With 0 the search can swap
+# between near-equal options on noise (an L5 Orc/Goliath swap measured -0.5% one round and +1.4% (+0.1%) the next).
+MIN_GAIN = 0.005
 
 
 def recipe_of(member):
@@ -110,7 +114,7 @@ class Step:
 
 def optimize(party, member, *, seed=1, runs=DEFAULT_RUNS, screen_runs=DEFAULT_SCREEN_RUNS, finalists=DEFAULT_FINALISTS,
              max_rounds=MAX_ROUNDS, strategy="default", cover=False, workers=None, changes=None, comparison=None, log=print,
-             max_extra=None):
+             max_extra=None, min_gain=MIN_GAIN):
     """Hill-climb one member's build in a party. Returns (final recipe, [Step]).
 
     comparison(builds, runs) -> a FocusedComparison-like object; replaceable in tests."""
@@ -151,7 +155,7 @@ def optimize(party, member, *, seed=1, runs=DEFAULT_RUNS, screen_runs=DEFAULT_SC
             step.finalists.append((label, *ch["overall"], {k: v[:3] for k, v in ch.items() if k != "overall"}))
             est, lo, hi = ch["overall"]
             log(f"  {label}: {est:+.1%} ({lo:+.1%} to {hi:+.1%})")
-            if lo > 0 and (best is None or est > best[1]): best = (label, est, r)
+            if lo > min_gain and (best is None or est > best[1]): best = (label, est, r)
         steps.append(step)
         if best is None:
             log(f"round {rnd}: no change is clearly better; stopping")
@@ -173,7 +177,7 @@ def markdown(party, member, final, steps, runs, screen_runs):
     out = [f"# Build search: {label(member)}", "",
            f"Party: {', '.join(label(b) for b in party)}. Each round tries every one-change neighbour of the current build, "
            f"screens them with a short focused run ({screen_runs} runs per bracket step), measures the leaders with {runs} runs per step "
-           "(`engine.focused`, paired with shared seeds), and accepts the best change whose 95% interval is above zero.", ""]
+           "(`engine.focused`, paired with shared seeds), and accepts the best change whose 95% interval's lower bound clears the minimum gain.", ""]
     for s in steps:
         out += [f"## Round {s.round}", "", f"Party rating at the start: {s.rating:,.0f} XP.", "",
                 "| Finalist | Change | 95% interval |", "| --- | ---: | --- |"]
@@ -196,6 +200,7 @@ def main():
     parser.add_argument("--screen-runs", type=int, default=DEFAULT_SCREEN_RUNS, help="runs per bracket step for the screen")
     parser.add_argument("--finalists", type=int, default=DEFAULT_FINALISTS)
     parser.add_argument("--rounds", type=int, default=MAX_ROUNDS)
+    parser.add_argument("--min-gain", type=float, default=MIN_GAIN, help="smallest lower bound a change needs to be accepted (default 0.005)")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--strategy", default="default")
     parser.add_argument("--cover", action="store_true")
@@ -207,7 +212,7 @@ def main():
     log = lambda m: print(m, file=sys.stderr, flush=True)
     final, steps = optimize(args.party, args.member, seed=args.seed, runs=args.runs, screen_runs=args.screen_runs,
                             finalists=args.finalists, max_rounds=args.rounds, strategy=args.strategy, cover=args.cover,
-                            workers=args.workers, log=log)
+                            workers=args.workers, log=log, min_gain=args.min_gain)
     text = markdown(args.party, args.member, final, steps, args.runs, args.screen_runs)
     if args.write:
         from .calibration import REPORTS

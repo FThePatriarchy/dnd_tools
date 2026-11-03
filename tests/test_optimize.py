@@ -68,3 +68,14 @@ def test_a_change_that_rewrites_an_accepted_changes_fields_replaces_it():
     assert [s.accepted for s in steps if s.accepted] == [split, gwm]
     assert final["name"] == gwm
     assert any(isinstance(v, dict) and v.get("feat") == "great_weapon_master" for v in final["choices"]["asis"].values())
+
+
+def test_min_gain_rejects_changes_that_barely_clear_zero():
+    class Marginal(FakeComparison):
+        def change(self, builds):
+            est, lo, hi = super().change(builds)["overall"]
+            return {"overall": (est, min(lo, .003), hi)}  # every lower bound at most +0.3%
+    final, steps = optimize(PARTY, "fighter_5", comparison=Marginal, log=lambda m: None)
+    assert [s.accepted for s in steps if s.accepted] == []
+    final, steps = optimize(PARTY, "fighter_5", comparison=Marginal, log=lambda m: None, min_gain=0)
+    assert [s.accepted for s in steps if s.accepted]
