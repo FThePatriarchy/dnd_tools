@@ -255,6 +255,8 @@ def compare(req, log=lambda m: None):
         member = req.get("replace") or next((b for b in party if b.split("_")[0] == cls), None)
         if member not in party: raise ValueError("replace: choose the party member the candidates replace")
         parties = {"your party": (party, party.index(member))}
+    measure = _choice(req.get("measure"), ("rating", "day"), "judge by", "rating")
+    if measure == "day": return _compare_day(req, level, cls, mode, found, parties, log)
     screened = None
     finalists = _int(req.get("finalists"), "finalists", 1, 40, 4)
     if mode != "candidates" and len(found) - 1 > finalists:
@@ -277,6 +279,46 @@ def compare(req, log=lambda m: None):
     return {"level": level, "class": cls, "mode": mode, "screen": screened, "results": out}
 
 
+def _day_comparison(req, base, runs):
+    from ..day_compare import DayComparison
+    preset, slots = _day_slots(req)
+    scale = req.get("day_scale", 1.0)
+    if not isinstance(scale, (int, float)) or not 0.05 <= scale <= 5: raise ValueError("day scale: expected a number from 0.05 to 5")
+    return DayComparison(base, preset=preset, slots=slots, scale=scale, days=_int(req.get("days"), "days", 1, 12, 4), runs=runs,
+                         strategy=_choice(req.get("day_strategy"), STRATEGIES, "day strategy", "rationed"), themes=req.get("themes") or None)
+
+
+def _compare_day(req, level, cls, mode, found, parties, log):
+    from .. import compare as cmp
+    from ..presets import party as preset_party
+    base_party, slot = next(iter(parties.values())) if parties else (preset_party(level, "standard"), cmp.REFERENCE_CLASSES.index(cmp.ROLES[cls]))
+    runs = _int(req.get("day_runs"), "runs per day", 25, 1000, 50)
+    finalists = _int(req.get("finalists"), "finalists", 1, 40, 4)
+    trial = lambda c: [c if i == slot else b for i, b in enumerate(base_party)]
+    screened = None
+    if mode != "candidates" and len(found) - 1 > finalists:
+        log(f"Screening {len(found) - 1} variants over one day each")
+        quick = _day_comparison({**req, "days": 1}, base_party, 25)
+        scores = [(v, quick.change(quick.measure(cmp.label(v), trial(v)))["overall"][0]) for v in found[1:]]
+        ranked = sorted(scores, key=lambda vs: -vs[1])[:finalists]
+        found = [found[0]] + [v for v, _ in ranked]
+        screened = [{"name": cmp.label(v), "change": s, "rated": any(v is r for r, _ in ranked)} for v, s in sorted(scores, key=lambda vs: -vs[1])]
+    log(f"Running the base party through the days ({runs} runs per day)")
+    dc = _day_comparison(req, base_party, runs)
+    rows = []
+    for c in found:
+        if c == base_party[slot]: continue
+        log(f"Measuring {cmp.label(c)}")
+        ch = dc.change(dc.measure(cmp.label(c), trial(c)))
+        rows.append({"name": cmp.label(c), "overall": list(ch["overall"]),
+                     "types": {k: {"change": list(v[:3]), "edge": False} for k, v in ch.items() if k not in ("overall", "complete")}})
+    base = {"complete": dc.base_rating.complete, "death": dc.base_rating.death, "slots_left": dc.base.mean("slots_left"),
+            "downs": dc.base.mean("downs"), "days": [labels for _, labels in dc.days], "note": dc.flag()}
+    return {"level": level, "class": cls, "mode": mode, "measure": "day", "screen": screened,
+            "results": [{"party": [cmp.label(b) for b in base_party], "replacing": cmp.label(base_party[slot]), "day_base": base,
+                         "runs": dc.runs, "rows": sorted(rows, key=lambda r: -r["overall"][0])}]}
+
+
 def optimize(req, log=lambda m: None):
     from ..optimize import DEFAULT_FINALISTS, MIN_GAIN, optimize as search
     party = req.get("party")
@@ -286,9 +328,14 @@ def optimize(req, log=lambda m: None):
     if member not in party: raise ValueError("member: choose the party member to improve")
     runs = _int(req.get("runs"), "runs per step", 50, 2000, 300)
     screen = _int(req.get("screen_runs"), "screen runs per step", 20, 1000, 60)
+    comparison = None
+    if _choice(req.get("measure"), ("rating", "day"), "judge by", "rating") == "day":
+        comparison = lambda builds, n: _day_comparison(req, builds, n)
+        runs = _int(req.get("runs"), "runs per day", 25, 1000, 50); screen = max(25, runs // 2)
     final, steps = search(party, member, runs=runs, screen_runs=screen, finalists=_int(req.get("finalists"), "finalists", 1, 10, DEFAULT_FINALISTS),
-                          max_rounds=_int(req.get("rounds"), "rounds", 1, 10, 4), min_gain=req.get("min_gain", MIN_GAIN), log=log)
-    return {"party": party, "member": member, "final": final,
+                          max_rounds=_int(req.get("rounds"), "rounds", 1, 10, 4), min_gain=req.get("min_gain", MIN_GAIN), log=log,
+                          comparison=comparison)
+    return {"party": party, "member": member, "final": final, "measure": req.get("measure", "rating"),
             "rounds": [{"round": s.round, "accepted": s.accepted, "rating": s.rating,
                         "finalists": [{"name": f[0], "change": list(f[1:4])} for f in s.finalists],
                         "screened": [{"name": x[0], "change": list(x[1:4])} for x in s.screened]} for s in steps]}

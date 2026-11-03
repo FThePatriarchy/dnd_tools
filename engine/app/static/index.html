@@ -152,6 +152,9 @@ code, .mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
       <label>In which party?</label>
       <div class="seg" id="cmp-partymode"><button data-v="ref" class="on">Reference party</button><button data-v="own">My party</button></div>
       <div id="cmp-own" style="display:none"><div class="muted" style="margin-top:6px">The candidates replace the first party member of the same class.</div><div id="cmp-own-party"></div></div>
+      <label>Judge by</label>
+      <div class="seg" id="cmp-measure"><button data-v="rating" class="on">Single fights (party rating)</button><button data-v="day">Adventuring day</button></div>
+      <div id="cmp-day" style="display:none"><div data-day="cmp"></div><label>Runs per day</label><input id="cmp-dayruns" type="number" value="50" min="25"></div>
       <div class="row"><div><label>Runs per deciding step</label><input id="cmp-runs" type="number" value="400" min="50" max="2000"></div><div><label>Finalists</label><input id="cmp-finalists" type="number" value="4" min="1" max="40"></div></div>
       <button class="go" id="cmp-go">Compare</button>
       <p class="muted">Each candidate replaces the member of its class and the party is re-rated on the benchmark steps that decide its rating, with the same dice as the base. Expect several minutes per candidate.</p>
@@ -168,6 +171,9 @@ code, .mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
       <label>Member to improve</label><select id="srch-member"></select>
       <div class="row"><div><label>Runs per step</label><input id="srch-runs" type="number" value="300" min="50"></div><div><label>Screen runs</label><input id="srch-screen" type="number" value="60" min="20"></div></div>
       <div class="row"><div><label>Max rounds</label><input id="srch-rounds" type="number" value="4" min="1" max="10"></div><div><label>Minimum gain</label><input id="srch-min" type="number" value="0.005" step="0.001"></div></div>
+      <label>Judge by</label>
+      <div class="seg" id="srch-measure"><button data-v="rating" class="on">Single fights</button><button data-v="day">Adventuring day</button></div>
+      <div id="srch-day" style="display:none"><div data-day="srch"></div></div>
       <button class="go" id="srch-go">Start the search</button>
     </div>
     <div class="card" id="srch-out"><div class="empty">The search log and each round's results appear here.</div></div>
@@ -359,7 +365,28 @@ function ciBar(est, lo, hi, span) {
     h("i", { style: `left:${x(lo)};right:calc(100% - ${x(hi)})` }), h("u", { style: "left:50%" }), h("b", { style: `left:${x(est)}` }));
 }
 function change(c) { const [e, lo, hi] = c; const noise = lo <= 0 && hi >= 0; return h("span", { class: noise ? "noise" : e > 0 ? "pos" : "neg", text: signed(e) + (noise ? " ≈" : "") }); }
+const DAY_COLS = { death: ["Someone dies", "pts"], defeat: ["Defeat", "pts"], downs: ["Drops to 0 HP", "n"], hp_left: ["HP left", "pts"], slots_left: ["Slots left", "pts"] };
+function dayChange(c, kind, better) {
+  const [e, lo, hi] = c, noise = lo <= 0 && hi >= 0, good = better === "up" ? e > 0 : e < 0;
+  const text = kind === "n" ? (e >= 0 ? "+" : "−") + Math.abs(e).toFixed(2) : (e >= 0 ? "+" : "−") + Math.abs(100 * e).toFixed(1) + " pts";
+  return h("span", { class: noise ? "noise" : good ? "pos" : "neg", text: text + (noise ? " ≈" : "") });
+}
+function renderDayCompare(r, out) {
+  for (const res of r.results) {
+    const b = res.day_base;
+    out.append(h("h2", { text: `${r.class} ${r.level}: ${r.mode}, judged over adventuring days` }),
+      h("p", { class: "muted", text: `In ${res.party.join(", ")}, replacing ${res.replacing}. The base party finishes ${pct(b.complete)} of these days without a death (${pct(b.death)} with one), ${b.downs.toFixed(1)} drops to 0 HP per day, ${pct(b.slots_left)} of slots left. ${fmt(res.runs)} day runs.` }),
+      ...(b.note ? [h("p", { class: "err", text: b.note })] : []),
+      h("div", { style: "overflow:auto" }, h("table", {}, h("tr", {}, h("th", { text: "Candidate" }), h("th", { class: "num", text: "Day without a death" }), h("th", { text: "95% interval" }), ...Object.values(DAY_COLS).map(([l]) => h("th", { class: "num", text: l }))),
+        ...res.rows.map(x => h("tr", {}, h("td", { text: x.name }), h("td", { class: "num" }, dayChange(x.overall, "pts", "up")),
+          h("td", {}, ciBar(...x.overall, Math.max(0.1, ...res.rows.map(y => Math.max(Math.abs(y.overall[1]), Math.abs(y.overall[2]))))), h("small", { class: "muted", text: `${(100 * x.overall[1]).toFixed(1)} to ${(100 * x.overall[2]).toFixed(1)} pts` })),
+          ...Object.entries(DAY_COLS).map(([k, [, kind]]) => h("td", { class: "num" }, dayChange(x.types[k].change, kind, ["hp_left", "slots_left"].includes(k) ? "up" : "down"))))))),
+      h("details", {}, h("summary", { text: "The days" }), ...b.days.map((d, i) => h("div", {}, h("b", { text: `Day ${i + 1}` }), h("ol", {}, ...d.map(s => h("li", { text: s.replace(/_/g, " ") })))))));
+  }
+  if (r.screen) out.append(h("details", {}, h("summary", { text: `Screen (${r.screen.length} variants)` }), h("table", {}, ...r.screen.map(s => h("tr", {}, h("td", { text: s.name }), h("td", { class: "num", text: (100 * s.change).toFixed(1) + " pts" }), h("td", { class: "muted", text: s.rated ? "measured" : "" }))))));
+}
 function renderCompare(r, out) {
+  if (r.measure === "day") return renderDayCompare(r, out);
   for (const res of r.results) {
     const kinds = Object.keys(res.rows[0].types), span = Math.max(0.05, ...res.rows.map(x => Math.max(Math.abs(x.overall[1]), Math.abs(x.overall[2]))));
     out.append(h("h2", { text: `${r.class} ${r.level}: ${r.mode}` }),
@@ -374,7 +401,7 @@ function renderCompare(r, out) {
 function renderSearch(r, out) {
   for (const rd of r.rounds) {
     out.append(h("h3", { text: `Round ${rd.round}: ${rd.accepted ? "accepted " + rd.accepted : "nothing clearly better"}` }),
-      h("p", { class: "muted", text: `Party rating at the start: ${fmt(rd.rating)} XP` }),
+      h("p", { class: "muted", text: r.measure === "day" ? `Days completed without a death at the start: ${pct(rd.rating)}` : `Party rating at the start: ${fmt(rd.rating)} XP` }),
       h("table", {}, ...rd.finalists.map(f => h("tr", {}, h("td", { text: f.name + (f.name === rd.accepted ? " ✓" : "") }), h("td", { class: "num" }, change(f.change)), h("td", { class: "muted", text: `${signed(f.change[1])} to ${signed(f.change[2])}` })))));
   }
   const yaml = JSON.stringify(Object.fromEntries(Object.entries(r.final).filter(([k]) => k !== "name")), null, 2);
@@ -488,12 +515,15 @@ function setupCompare() {
   }
   $("#cmp-class").onchange = $("#cmp-level").onchange = drawCands; drawCands(); drawOwn();
   $("#cmp-mode").onchange = e => $("#cmp-cands").style.display = e.target.value === "candidates" ? "" : "none";
-  let partyMode = "ref";
+  let partyMode = "ref", cmpMeasure = "rating";
+  dayPicker("cmp", $("[data-day=cmp]"), { slot: false });
+  $("#cmp-measure").onclick = e => { const v = e.target.dataset.v; if (!v) return; cmpMeasure = v; $$("#cmp-measure button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); $("#cmp-day").style.display = v === "day" ? "" : "none"; $("#cmp-runs").parentElement.style.display = v === "day" ? "none" : ""; };
   $("#cmp-partymode").onclick = e => { const v = e.target.dataset.v; if (!v) return; partyMode = v; $$("#cmp-partymode button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); $("#cmp-own").style.display = v === "own" ? "" : "none"; };
   $("#cmp-go").onclick = () => {
     const body = { class: $("#cmp-class").value, level: +$("#cmp-level").value, mode: $("#cmp-mode").value, runs: +$("#cmp-runs").value, finalists: +$("#cmp-finalists").value };
     if (body.mode === "candidates") body.candidates = $$("#cmp-cand-list option").filter(o => o.selected).map(o => o.value);
     if (partyMode === "own") body.party = own.builds;
+    if (cmpMeasure === "day") Object.assign(body, { measure: "day", ...dayBody("cmp"), day_runs: +$("#cmp-dayruns").value });
     runJob("compare", body, $("#cmp-out"), $("#cmp-go"), renderCompare);
   };
 }
@@ -506,8 +536,11 @@ function setupSearch() {
   }
   function members() { fill($("#srch-member"), st.builds, $("#srch-member").value || st.builds[0]); }
   draw();
+  let measure = "rating";
+  dayPicker("srch", $("[data-day=srch]"), { slot: false });
+  $("#srch-measure").onclick = e => { const v = e.target.dataset.v; if (!v) return; measure = v; $$("#srch-measure button").forEach(b => b.classList.toggle("on", b.dataset.v === v)); $("#srch-day").style.display = v === "day" ? "" : "none"; };
   $("#srch-go").onclick = () => runJob("optimize", { party: st.builds, member: $("#srch-member").value, runs: +$("#srch-runs").value, screen_runs: +$("#srch-screen").value,
-    rounds: +$("#srch-rounds").value, min_gain: +$("#srch-min").value }, $("#srch-out"), $("#srch-go"), renderSearch);
+    rounds: +$("#srch-rounds").value, min_gain: +$("#srch-min").value, ...(measure === "day" ? { measure: "day", ...dayBody("srch"), runs: 50 } : {}) }, $("#srch-out"), $("#srch-go"), renderSearch);
 }
 function setupRating() {
   partyPicker("rating", $("[data-party=rating]"));
