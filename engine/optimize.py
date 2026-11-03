@@ -9,8 +9,8 @@ helps, so changes combine (for example a feat on top of a better kit).
 
 Each round:
 1. screen every neighbour with a short focused run (--screen-runs per step);
-2. measure the best --finalists, plus any whose screen interval still reaches
-   above the leader's lower bound, with --runs per step;
+2. measure the best --finalists, plus up to as many more whose screen interval
+   still reaches above the leader's lower bound, with --runs per step;
 3. accept the finalist with the highest estimate whose interval excludes zero.
 
 The changes come from engine.compare's generators (variants, feats,
@@ -109,7 +109,8 @@ class Step:
 
 
 def optimize(party, member, *, seed=1, runs=DEFAULT_RUNS, screen_runs=DEFAULT_SCREEN_RUNS, finalists=DEFAULT_FINALISTS,
-             max_rounds=MAX_ROUNDS, strategy="default", cover=False, workers=None, changes=None, comparison=None, log=print):
+             max_rounds=MAX_ROUNDS, strategy="default", cover=False, workers=None, changes=None, comparison=None, log=print,
+             max_extra=None):
     """Hill-climb one member's build in a party. Returns (final recipe, [Step]).
 
     comparison(builds, runs) -> a FocusedComparison-like object; replaceable in tests."""
@@ -120,6 +121,7 @@ def optimize(party, member, *, seed=1, runs=DEFAULT_RUNS, screen_runs=DEFAULT_SC
     current = recipe_of(member)
     current["name"] = current.get("name", "start")
     if changes is None: changes = candidate_changes(current["class"], current["level"])
+    if max_extra is None: max_extra = finalists  # at most twice the top-N count gets the full measurement
     by_label = dict(changes)
     applied, steps = [], []  # labels of the changes in effect, in the order accepted
     from .compare import sheet_key
@@ -138,7 +140,10 @@ def optimize(party, member, *, seed=1, runs=DEFAULT_RUNS, screen_runs=DEFAULT_SC
         step.screened = [(l, e, lo, hi) for l, _, e, lo, hi in scored]
         log(f"round {rnd}: screened {len(scored)} changes; best {scored[0][0]} {scored[0][2]:+.1%}")
         leader_lo = scored[0][3]
-        chosen = scored[:finalists] + [s for s in scored[finalists:] if s[4] > leader_lo]
+        # The top finalists, plus changes whose screen interval still reaches the leader's lower bound,
+        # capped at max_extra (highest upper bound first): a 100-run screen is wide enough to let most through.
+        extra = sorted((s for s in scored[finalists:] if s[4] > leader_lo), key=lambda s: -s[4])[:max_extra]
+        chosen = scored[:finalists] + extra
         full = comparison(trial_party(current), runs)
         best = None
         for label, r, *_ in chosen:
