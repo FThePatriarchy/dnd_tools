@@ -12,8 +12,8 @@ from .jobs import Jobs
 
 STATIC = Path(__file__).resolve().parent / "static"
 MAX_BODY = 1 << 20
-JOBS = Jobs({"fight": api.fight, "day": api.day, "rate": api.rate, "compare": api.compare, "optimize": api.optimize})
-QUICK = {"/api/suggest": api.suggest, "/api/build": api.build_sheet}
+JOBS = Jobs({"fight": api.fight, "range": api.fight_range, "day": api.day, "rate": api.rate, "compare": api.compare, "optimize": api.optimize})
+QUICK = {"/api/suggest": api.suggest, "/api/build": api.build_sheet, "/api/preset_day": api.preset_day}
 _META = None
 
 

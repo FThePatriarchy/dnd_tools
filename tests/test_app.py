@@ -75,3 +75,29 @@ def test_http_server_serves_page_meta_and_jobs():
         assert err.value.code == 400
     finally:
         server.shutdown(); server.server_close()
+
+
+def test_no_resources_floor_and_presets():
+    from engine.encounters import run_encounter
+    party = ["fighter_5", "cleric_5", "rogue_5", "wizard_5"]
+    full = run_encounter(party, ["troll x2"], 60, 1)
+    floor = run_encounter(party, ["troll x2"], 60, 1, resources="none")
+    assert floor["slots_spent"] == 0 and full["slots_spent"] > 0
+    assert floor["defeat"] > full["defeat"] + .1
+    with pytest.raises(ValueError): run_encounter(party, ["ogre"], 5, 1, resources="some")
+    from engine.day_presets import PRESETS, make_day
+    for name in PRESETS:
+        day, labels = make_day(name, 5)
+        assert len(day["steps"]) == len(PRESETS[name]["slots"]) == len(labels)
+    day, labels = make_day("typical", 5, fight=["troll x2"])
+    assert day["steps"][-1] == {"encounter": ["troll x2"]}
+    assert make_day("typical", 5, seed=1)[1] != make_day("typical", 5, seed=2)[1]
+    with pytest.raises(ValueError): make_day("typical", 5, fight=["ogre"], slot=2)  # a rest, not a fight
+    with pytest.raises(ValueError): make_day("typical", 5, scale=10)
+
+
+def test_preset_day_api():
+    r = api.preset_day({"party": {"preset": {"level": 5}}, "day_preset": "short", "days": 2, "day_seed": 3})
+    assert len(r["days"]) == 2 and r["days"][0]["steps"][1] == {"rest": "short"}
+    assert all(m["count"] >= 1 for d in r["days"] for s in d["steps"] if "encounter" in s for m in s["encounter"])
+    assert "typical" in api.meta()["day_presets"]

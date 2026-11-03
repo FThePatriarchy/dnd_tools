@@ -71,6 +71,7 @@ pre.log { background: var(--bg); border: 1px solid var(--line); border-radius: 6
 .step { display: flex; gap: 6px; align-items: flex-start; margin-top: 8px; }
 .step .rest { flex: 1; background: var(--chip); border-radius: 7px; padding: 6px 9px; font-size: 14px; }
 .step .enc { flex: 1; border: 1px dashed var(--line); border-radius: 7px; padding: 6px; }
+.range td.num { font-size: 15px; } .range th.num { white-space: nowrap; }
 details summary { cursor: pointer; color: var(--muted); font-size: 13px; margin-top: 10px; }
 code, .mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
 </style>
@@ -97,6 +98,10 @@ code, .mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
       <div class="card"><h2>Monsters</h2><div data-monsters="fight"></div></div>
       <div class="card"><h2>Options</h2><div data-options="fight"></div>
         <button class="go" id="fight-go">Simulate the fight</button></div>
+      <div class="card"><h2>How hard is it in a real day?</h2>
+        <p class="muted" style="margin-top:0">Runs the fight three ways: with no resources (cantrips and weapons only), in its place in an adventuring day, and with everything (as above). A few minutes.</p>
+        <div data-day="fight"></div>
+        <button class="go" id="range-go">Difficulty range</button></div>
     </div>
     <div class="card" id="fight-out"><div class="empty">Pick a party and some monsters, then simulate.<br>The fight runs until the odds are within about ±5 points.</div></div>
   </div>
@@ -106,6 +111,8 @@ code, .mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
   <div class="grid">
     <div>
       <div class="card"><h2>Party</h2><div data-party="day"></div></div>
+      <div class="card"><h2>Start from a preset</h2><div data-day="day"></div>
+        <button class="small" id="day-generate" style="margin-top:10px">Fill the day below from this preset</button></div>
       <div class="card"><h2>The day</h2><div id="day-steps"></div>
         <div class="row" style="margin-top:10px">
           <button class="small" id="day-add-enc">+ Encounter</button><button class="small" id="day-add-short">+ Short rest</button><button class="small" id="day-add-long">+ Long rest</button>
@@ -293,12 +300,13 @@ function optionsPicker(key, host, extra = {}) {
 function optionsBody(key) { const s = OPTS[key]; const b = { strategy: s.strategy, morale: s.morale, seed: s.seed }; if (s.cover) b.cover = true; if (s.runs) b.runs = s.runs; return b; }
 
 const GROUPS = {};
-function monsterPicker(key, host, onchange = () => {}) {
+function monsterPicker(key, host, onchange = () => {}, { compact = false } = {}) {
   const groups = GROUPS[key] = [];
   const search = h("input", { placeholder: "Search by name, type or CR" });
   const list = h("div", { class: "picker" }), chosen = h("div", { class: "chips" }), xp = h("div", { class: "muted", style: "margin-top:8px" });
   function draw() {
     const q = search.value.trim().toLowerCase();
+    list.style.display = compact && !q ? "none" : "";
     list.replaceChildren(...META.monsters.filter(m => !q || m.name.includes(q.replace(/ /g, "_")) || m.type === q || `cr ${m.cr}` === q || m.cr === q).slice(0, 200)
       .map(m => h("div", { title: `${m.hp} HP, AC ${m.ac}`, onclick: () => { const g = groups.find(g => g.name === m.name); g ? g.count++ : groups.push({ name: m.name, count: 1 }); drawChosen(); } },
         h("span", {}, m.label), h("span", { class: "muted", text: `CR ${m.cr} · ${m.type}` }))));
@@ -311,7 +319,8 @@ function monsterPicker(key, host, onchange = () => {}) {
   }
   function total() { const x = groups.reduce((a, g) => a + g.count * META.monsters.find(m => m.name === g.name).xp, 0); xp.textContent = groups.length ? `${fmt(x)} XP` : "No monsters yet: click one below."; }
   search.oninput = draw; draw(); drawChosen();
-  host.append(chosen, xp, h("label", { text: "Add monsters" }), search, list);
+  if (compact) search.placeholder = "Type to add monsters";
+  host.append(chosen, xp, ...(compact ? [] : [h("label", { text: "Add monsters" })]), search, list);
   return { groups, set(list) { groups.splice(0, groups.length, ...list); drawChosen(); } };
 }
 
@@ -377,12 +386,52 @@ function renderRating(r, out) {
       ...Object.entries(r.types).map(([k, t]) => h("tr", {}, h("td", { text: k }), h("td", { class: "num", text: (t.censored === "below" ? "< " : t.censored === "above" ? "> " : "") + fmt(t.xp) }), h("td", { class: "num", text: t.multiple.toFixed(2) })))));
 }
 
+const DAY = {};
+function dayPicker(key, host, { slot = true } = {}) {
+  const P = META.day_presets, st = DAY[key] = { preset: "typical", slot: null, scale: 1, strategy: "rationed", days: 4 };
+  const preset = h("select", {}); fill(preset, Object.entries(P).filter(([k]) => !k.startsWith("_")).map(([k, v]) => [k, v.label]), "typical");
+  const slotSel = h("select", {}), scale = h("input", { type: "number", min: 0.1, max: 3, step: 0.1, value: 1 });
+  const strat = h("select", {}); fill(strat, [["rationed", "Rationed (saves for later fights)"], ["default", "Default (spends freely)"]], "rationed");
+  const days = h("input", { type: "number", min: 1, max: 12, value: 4 });
+  function slots() { const fights = P[st.preset].fights; fill(slotSel, fights.map(([i, l]) => [i, l]), fights[fights.length - 1][0]); st.slot = +slotSel.value; }
+  preset.onchange = e => { st.preset = e.target.value; slots(); };
+  slotSel.onchange = e => st.slot = +e.target.value; scale.oninput = e => st.scale = +e.target.value || 1;
+  strat.onchange = e => st.strategy = e.target.value; days.oninput = e => st.days = Math.max(1, +e.target.value || 4);
+  slots();
+  host.append(h("label", { text: "Day" }), preset);
+  if (slot) host.append(h("label", { text: "Your fight takes the place of" }), slotSel);
+  host.append(slot ? h("div", { class: "row" }, h("div", {}, h("label", { text: "Intensity (× DMG budgets)" }), scale), h("div", {}, h("label", { text: "Random days" }), days))
+                   : h("div", {}, h("label", { text: "Intensity (× DMG budgets)" }), scale));
+  if (slot) host.append(h("label", { text: "Party tactics in the day" }), strat);
+  host.append(h("p", { class: "muted", text: "Easy is half the DMG Low budget. In the simulation, full DMG budgets chained across a day are very hard on a party; lower the intensity to match your table." }));
+  return st;
+}
+function dayBody(key) { const s = DAY[key]; return { day_preset: s.preset, day_slot: s.slot, day_scale: s.scale, day_strategy: s.strategy, days: s.days }; }
+function renderRange(r, out) {
+  const c = r.ceiling, f = r.floor, d = r.in_day;
+  const row = (label, a, b, x) => h("tr", {}, h("td", { text: label }), h("td", { class: "num", text: a }), h("td", { class: "num", text: b }), h("td", { class: "num", text: x }));
+  out.append(h("h2", { text: r.encounter.join(", ").replace(/_/g, " ") }), bandLine(r.budget),
+    h("table", { class: "range" }, h("tr", {}, h("th", { text: "" }), h("th", { class: "num", text: "No resources" }), h("th", { class: "num", text: "In your day" }), h("th", { class: "num", text: "Full resources" })),
+      row("Party wins the fight", pct(f.win), pct(d.cleared / Math.max(d.reached, 1e-9)), pct(c.win)),
+      row("Someone goes down", pct(f.down), pct(d.down / Math.max(d.reached, 1e-9)), pct(c.down)),
+      row("Someone dies", pct(f.death), `${pct(d.day_death)} (whole day)`, pct(c.death)),
+      row("Party HP lost / left", `${pct(f.hp_lost)} lost`, `${pct(Math.min(1, d.hp_left))} left at day's end`, `${pct(c.hp_lost)} lost`),
+      row("Spell slots", "none", `${pct(d.slots_left)} left at day's end`, `${pct(c.slots_spent)} spent`)),
+    h("p", { class: "muted", text: `In your day: the party reached this fight in ${pct(d.reached)} of days and finished the whole day without a death in ${pct(d.day_complete)}. ${d.runs} day runs over ${d.days.length} random ${r.options.day_preset} days, ${r.options.day_strategy} tactics.` }),
+    h("details", {}, h("summary", { text: "The days that were simulated" }), ...d.days.map((x, i) => h("div", { style: "margin-top:8px" },
+      h("b", { text: `Day ${i + 1}: ` }), h("span", { class: "muted", text: `completed without a death ${pct(x.complete)}` }), h("ol", {}, ...x.steps.map(s => h("li", { text: s.replace(/_/g, " ") })))))),
+    ...characterTable(c.characters, "full resources, one fight"));
+}
+
 /* ---------- tabs ---------- */
 function setupFight() {
   partyPicker("fight", $("[data-party=fight]"));
   const mp = monsterPicker("fight", $("[data-monsters=fight]"));
   optionsPicker("fight", $("[data-options=fight]"), { cover: true, runs: "adaptive (100–800)" });
   $("#fight-go").onclick = () => runJob("fight", { ...partyBody("fight"), ...optionsBody("fight"), monsters: mp.groups }, $("#fight-out"), $("#fight-go"), renderFight);
+  dayPicker("fight", $("[data-day=fight]"));
+  $("#range-go").onclick = () => { const o = optionsBody("fight"); delete o.runs;
+    runJob("range", { ...partyBody("fight"), ...o, ...dayBody("fight"), monsters: mp.groups }, $("#fight-out"), $("#range-go"), renderRange); };
   return mp;
 }
 function setupDay() {
@@ -392,10 +441,17 @@ function setupDay() {
   const host = $("#day-steps");
   function draw() {
     host.replaceChildren(...steps.map((s, i) => h("div", { class: "step" },
-      s.rest ? h("div", { class: "rest", text: `${s.rest} rest` }) : (() => { const box = h("div", { class: "enc" }); s.picker = s.picker || null; const p = monsterPicker(`day${i}-${Math.random()}`, box); p.set(s.encounter); s.encounter = p.groups; return box; })(),
+      s.rest ? h("div", { class: "rest", text: `${s.rest} rest` }) : (() => { const box = h("div", { class: "enc" }); s.picker = s.picker || null; const p = monsterPicker(`day${i}-${Math.random()}`, box, () => {}, { compact: true }); p.set(s.encounter); s.encounter = p.groups; return box; })(),
       h("button", { class: "small", text: "×", onclick: () => { steps.splice(i, 1); draw(); } }))));
     if (!steps.length) host.append(h("div", { class: "muted", text: "Add encounters and rests in order." }));
   }
+  dayPicker("day", $("[data-day=day]"), { slot: false });
+  let daySeed = 0;
+  $("#day-generate").onclick = async () => {
+    try { const r = await api("/api/preset_day", { ...partyBody("day"), ...dayBody("day"), days: 1, day_slot: null, day_seed: ++daySeed });
+      steps.splice(0, steps.length, ...r.days[0].steps.map(s => s.rest ? { rest: s.rest } : { encounter: s.encounter })); draw(); }
+    catch (e) { host.replaceChildren(h("div", { class: "err", text: e.message })); }
+  };
   $("#day-add-enc").onclick = () => { steps.push({ encounter: [] }); draw(); };
   $("#day-add-short").onclick = () => { steps.push({ rest: "short" }); draw(); };
   $("#day-add-long").onclick = () => { steps.push({ rest: "long" }); draw(); };

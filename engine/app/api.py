@@ -127,7 +127,7 @@ def meta():
             "difficulties": list(DIFFICULTIES), "templates": {k: v for k, v in TEMPLATES.items()},
             "themes": sorted({m["type"] for m in monsters if m["type"]}), "classes": list(CLASSES),
             "species": {k: sorted(v) if v else None for k, v in SPECIES.items()}, "monsters": monsters, "builds": builds,
-            "budgets": {str(l): list(v) for l, v in BUDGETS.items()}}
+            "budgets": {str(l): list(v) for l, v in BUDGETS.items()}, "day_presets": day_presets()}
 
 
 def build_sheet(req):
@@ -292,3 +292,94 @@ def optimize(req, log=lambda m: None):
             "rounds": [{"round": s.round, "accepted": s.accepted, "rating": s.rating,
                         "finalists": [{"name": f[0], "change": list(f[1:4])} for f in s.finalists],
                         "screened": [{"name": x[0], "change": list(x[1:4])} for x in s.screened]} for s in steps]}
+
+
+# ---------- a fight's difficulty range: floor, in your day, ceiling ----------
+
+def day_presets():
+    from ..day_presets import DIFFICULTY, PRESETS, fight_slots
+    return {k: {"label": v["label"], "slots": [list(s) for s in v["slots"]], "fights": [[i, label] for i, label in fight_slots(k)]}
+            for k, v in PRESETS.items()} | {"_difficulties": list(DIFFICULTY)}
+
+
+def _day_slots(req):
+    """A preset name, or custom slots [["fight", difficulty, shape] | ["rest", kind], ...]."""
+    from ..day_presets import DEFAULT, PRESETS, validate_slots
+    custom = req.get("day_slots")
+    if custom:
+        slots = [tuple(s) for s in custom]
+        validate_slots(slots)
+        return "custom", slots
+    preset = _choice(req.get("day_preset"), tuple(PRESETS), "day preset", DEFAULT)
+    return preset, PRESETS[preset]["slots"]
+
+
+def _one_day(task):
+    builds, day, runs, seed, strategy, morale = task
+    from ..encounters import run_day_runs
+    return run_day_runs(builds, day, runs, seed, strategy=strategy, morale=morale, detail=True)
+
+
+def make_days(req, builds, fight=None):
+    from ..day_presets import boss_slot, make_day
+    preset, slots = _day_slots(req)
+    levels = _levels(builds)
+    level = round(sum(levels) / len(levels))
+    slot = req.get("day_slot")
+    if slot is None: slot = boss_slot(preset, slots)
+    slot = _int(slot, "day slot", 0, len(slots) - 1)
+    if slots[slot][0] != "fight": raise ValueError("day slot: choose one of the day's fights")
+    scale = req.get("day_scale", 1.0)
+    if not isinstance(scale, (int, float)) or not 0.05 <= scale <= 5: raise ValueError("day scale: expected a number from 0.05 to 5")
+    themes = req.get("themes") or None
+    count = _int(req.get("days"), "days", 1, 12, 4)
+    first = _int(req.get("day_seed"), "day seed", 1, 10**6, 1)
+    days = [make_day(preset, level, len(builds), seed=seed, themes=themes, fight=fight, slot=slot if fight else None, scale=scale, slots=slots)
+            for seed in range(first, first + count)]
+    return preset, slots, slot, days
+
+
+def fight_range(req, log=lambda m: None):
+    """The same fight with no resources (floor), in its place in a day (rationed), and with everything (ceiling)."""
+    from concurrent.futures import ProcessPoolExecutor
+    import os
+    from ..encounters import Adaptive, run_encounter
+    builds = party_of(req)
+    entries = monster_entries(req.get("monsters"))
+    common = _common(req)
+    cover = bool(req.get("cover"))
+    preset, slots, slot, days = make_days(req, builds, fight=entries)
+    day_strategy = _choice(req.get("day_strategy"), STRATEGIES, "day strategy", "rationed")
+    per_day = _int(req.get("day_runs"), "runs per day", 10, 1000, 50)
+    fight_index = sum(1 for s in slots[:slot] if s[0] == "fight")
+    out = {"party": [_label(b) for b in builds], "encounter": entries, "budget": budget_info(_xp(entries), _levels(builds)),
+           "options": {**common, "cover": cover, "items": req.get("items"), "day_preset": preset, "day_slot": slot,
+                       "day_strategy": day_strategy, "day_scale": req.get("day_scale", 1.0)}}
+    kw = dict(detail=True, cover=cover, morale=common["morale"], strategy=common["strategy"], monster_strategy=common["monster_strategy"])
+    log("Ceiling: every resource available")
+    out["ceiling"] = run_encounter(builds, entries, Adaptive(min_runs=100), common["seed"], **kw)
+    log("Floor: cantrips, weapons and passive traits only")
+    out["floor"] = run_encounter(builds, entries, Adaptive(min_runs=100), common["seed"], resources="none", **kw)
+    log(f"In your day: {len(days)} {preset} days, your fight as fight {fight_index + 1}, {per_day} runs each, {day_strategy} strategy")
+    tasks = [(builds, day, per_day, common["seed"] + n, day_strategy, common["morale"]) for n, (day, _) in enumerate(days)]
+    with ProcessPoolExecutor(max_workers=min(len(tasks), os.cpu_count() or 1)) as pool:
+        results = list(pool.map(_one_day, tasks))
+    n = sum(r["runs"] for r in results) or 1
+    w = lambda key: sum(r[key] * r["runs"] for r in results) / n
+    step = lambda key: sum(r["encounters"][fight_index][key] * r["runs"] for r in results) / n
+    out["in_day"] = {"runs": n, "reached": step("reached"), "cleared": step("cleared"), "down": step("down"),
+                     "day_complete": w("complete"), "day_death": w("death"), "day_defeat": w("defeat"),
+                     "slots_left": w("slots_left"), "hp_left": w("hp_left"),
+                     "days": [{"steps": labels, "complete": r["complete"], "death": r["death"],
+                               "reached": r["encounters"][fight_index]["reached"], "cleared": r["encounters"][fight_index]["cleared"]}
+                              for (_, labels), r in zip(days, results)]}
+    return out
+
+
+def preset_day(req):
+    """Generated days from a preset, for the Day tab: [{"steps": [...], "labels": [...]}]."""
+    builds = party_of(req)
+    preset, slots, _, days = make_days(req, builds)
+    return {"preset": preset, "days": [{"steps": [{"rest": s["rest"]} if "rest" in s else
+                                                  {"encounter": [{"name": e.split(" x")[0], "count": int(e.split(" x")[1]) if " x" in e else 1} for e in s["encounter"]]}
+                                                  for s in day["steps"]], "labels": labels} for day, labels in days]}
