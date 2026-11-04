@@ -583,11 +583,22 @@ def build(class_name, level, subclass=None, abilities=None, equipment=None, choi
         raise ValidationError(f"<build>:$: malformed build ({exc})") from exc
 
 
+# Characters saved from the app (python -m engine.app), kept apart from the project's preset builds.
+USER_BUILDS = ROOT.parent / "user" / "builds"
+
+
+def build_path(name):
+    """The file of a build name: a project preset, else a user build (data/user/builds)."""
+    if not re.fullmatch(r"[a-z][a-z0-9_]*",str(name)): raise ValueError("invalid build name")
+    preset=ROOT/"builds"/(str(name)+".yaml")
+    user=USER_BUILDS/(str(name)+".yaml")
+    return preset if preset.is_file() or not user.is_file() else user
+
+
 def load_build(name_or_path, *, background=True):
     path=Path(name_or_path)
     if path.suffix!=".yaml":
-        if not re.fullmatch(r"[a-z][a-z0-9_]*",str(path)): raise ValueError("invalid build name")
-        path=ROOT/"builds"/(str(path)+".yaml")
+        path=build_path(str(path))
     d=read_yaml(path); v=Validator(path)
     v.obj(d,"$","class level subclass abilities equipment choices")
     try: return build(d["class"],d["level"],d["subclass"],d["abilities"],d["equipment"],d["choices"],background=background)

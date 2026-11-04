@@ -101,3 +101,31 @@ def test_preset_day_api():
     assert len(r["days"]) == 2 and r["days"][0]["steps"][1] == {"rest": "short"}
     assert all(m["count"] >= 1 for d in r["days"] for s in d["steps"] if "encounter" in s for m in s["encounter"])
     assert "typical" in api.meta()["day_presets"]
+
+
+def test_character_builder_preview_save_load_delete(monkeypatch, tmp_path):
+    from engine import builder
+    monkeypatch.setattr(builder, "USER_BUILDS", tmp_path / "builds")
+    recipe = {"class": "fighter", "level": 4, "choices": {"species": "orc", "origin_feat": "lucky",
+                                                          "asis": {"4": {"feat": "great_weapon_master", "ability": "str"}}}}
+    p = api.preview_build({"recipe": recipe})
+    assert p["ok"] and p["sheet"]["name"] == "Fighter 4 (Champion), Orc" and p["sheet"]["abilities"]["str"] == 18
+    bad = api.preview_build({"recipe": {"class": "wizard", "level": 5, "choices": {"cantrips": ["Fire Bolt"]}}})
+    assert not bad["ok"] and "cantrip" in bad["error"]
+    with pytest.raises(ValueError, match="preset"): api.save_build({"name": "fighter_5", "recipe": recipe})
+    with pytest.raises(ValueError, match="lowercase"): api.save_build({"name": "Thorin", "recipe": recipe})
+    api.save_build({"name": "thorin_4", "recipe": recipe})
+    assert {"name": "thorin_4", "class": "fighter", "level": 4, "profile": "mine"} in api.user_builds()
+    assert api.load_user_build({"name": "thorin_4"})["recipe"]["choices"]["species"] == "orc"
+    from engine.builder import load_character
+    assert load_character("thorin_4")["name"] == "Fighter 4 (Champion), Orc"      # loads by name like a preset
+    r = api.fight({"party": {"builds": ["thorin_4", "cleric_5"]}, "monsters": [{"name": "ogre"}], "runs": 10})
+    assert r["party"][0] == "thorin_4"
+    api.delete_build({"name": "thorin_4"})
+    assert api.user_builds() == []
+
+
+def test_builder_options_cover_any_level():
+    o = api.builder_options({"class": "wizard", "level": 6})                       # no preset exists at 6
+    assert o["start"]["level"] == 6 and o["counts"]["cantrips"] > 0 and "Fireball" in [n for _, n in o["spells"]]
+    assert api.preview_build({"recipe": o["start"]})["ok"]

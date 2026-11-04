@@ -42,7 +42,8 @@ def recipe_of(member):
     """A build name, a recipe .yaml path (e.g. an earlier search's result) or an in-memory recipe -> a recipe dict with a name."""
     if isinstance(member, dict): return deepcopy(member)
     from pathlib import Path
-    path = Path(member) if str(member).endswith(".yaml") else ROOT / "builds" / f"{member}.yaml"
+    from .builder import build_path
+    path = Path(member) if str(member).endswith(".yaml") else build_path(member)
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     return {"name": path.stem if str(member).endswith(".yaml") else member, **data}
 

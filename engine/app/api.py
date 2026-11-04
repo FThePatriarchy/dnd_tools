@@ -32,7 +32,8 @@ def _int(value, field, lo, hi, default=None):
 
 
 def _build_name(name, field="party"):
-    if not isinstance(name, str) or not NAME.fullmatch(name) or not (ROOT / "builds" / f"{name}.yaml").is_file():
+    from ..builder import build_path
+    if not isinstance(name, str) or not NAME.fullmatch(name) or not build_path(name).is_file():
         raise ValueError(f"{field}: unknown build {name!r}")
     return name
 
@@ -123,6 +124,7 @@ def meta():
         if m: builds.append({"name": path.stem, "class": m[1], "level": int(m[2]), "profile": m[3] or "standard"})
     order = {"standard": 0, "casual": 1, "optimized": 2}
     builds.sort(key=lambda b: (b["class"], b["level"], order.get(b["profile"], 3), b["name"]))
+    builds = user_builds() + builds
     return {"preset_levels": preset_levels(), "profiles": list(PROFILES), "strategies": list(STRATEGIES), "morale": list(MORALE),
             "difficulties": list(DIFFICULTIES), "templates": {k: v for k, v in TEMPLATES.items()},
             "themes": sorted({m["type"] for m in monsters if m["type"]}), "classes": list(CLASSES),
@@ -430,3 +432,124 @@ def preset_day(req):
     return {"preset": preset, "days": [{"steps": [{"rest": s["rest"]} if "rest" in s else
                                                   {"encounter": [{"name": e.split(" x")[0], "count": int(e.split(" x")[1]) if " x" in e else 1} for e in s["encounter"]]}
                                                   for s in day["steps"]], "labels": labels} for day, labels in days]}
+
+
+# ---------- your own characters ----------
+
+def user_builds():
+    """Saved characters (data/user/builds), first in every build list."""
+    from ..builder import USER_BUILDS
+    import yaml
+    out = []
+    for path in sorted(USER_BUILDS.glob("*.yaml")) if USER_BUILDS.is_dir() else []:
+        try: data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except Exception: continue
+        if isinstance(data, dict) and {"class", "level"} <= data.keys():
+            out.append({"name": path.stem, "class": data["class"], "level": data["level"], "profile": "mine"})
+    return out
+
+
+def _recipe(req):
+    """A recipe from the page, with JSON's string ASI levels turned back into integers."""
+    from ..builder import DEFAULT_ABILITIES, DEFAULT_EQUIPMENT, SUBCLASSES
+    r = req.get("recipe")
+    if not isinstance(r, dict): raise ValueError("recipe: expected an object")
+    cls = _choice(r.get("class"), tuple(SUBCLASSES), "class")
+    level = _int(r.get("level"), "level", 1, 20)
+    choices = dict(r.get("choices") or {})
+    if isinstance(choices.get("asis"), dict):
+        try: choices["asis"] = {int(k): v for k, v in choices["asis"].items()}
+        except (TypeError, ValueError): raise ValueError("choices.asis: levels must be numbers")
+    return {"class": cls, "level": level, "subclass": r.get("subclass") or SUBCLASSES[cls],
+            "abilities": r.get("abilities") or dict(DEFAULT_ABILITIES[cls]), "equipment": r.get("equipment") or DEFAULT_EQUIPMENT[cls],
+            "choices": choices}
+
+
+def builder_options(req):
+    """What a class at a level can choose, and a starting recipe (its preset if one exists)."""
+    import yaml
+    from ..builder import (ABILITIES, DEFAULT_ABILITIES, DEFAULT_EQUIPMENT, EQUIPMENT, FEATS, ORIGIN_FEATS, SPECIES, STYLES,
+                           SUBCLASSES, WEAPONS, _class, asi_levels, build, spell_options)
+    cls = _choice(req.get("class"), tuple(SUBCLASSES), "class")
+    level = _int(req.get("level"), "level", 1, 20)
+    c = _class(cls)
+    row = c["levels"][level]
+    preset = ROOT / "builds" / f"{cls}_{level}.yaml"
+    start = yaml.safe_load(preset.read_text(encoding="utf-8")) if preset.is_file() else \
+        {"class": cls, "level": level, "subclass": SUBCLASSES[cls], "abilities": dict(DEFAULT_ABILITIES[cls]), "equipment": DEFAULT_EQUIPMENT[cls], "choices": {}}
+    kits = []
+    for kit in EQUIPMENT:
+        try: build(cls, level, start["subclass"], start["abilities"], kit, {k: v for k, v in start["choices"].items() if k not in ("weapon_masteries", "fighting_style")})
+        except Exception: continue
+        kits.append(kit)
+    options = spell_options(cls, level)
+    return {"class": cls, "level": level, "start": start, "abilities": list(ABILITIES), "kits": kits,
+            "styles": sorted(STYLES), "weapons": sorted(WEAPONS), "feats": sorted(k for k in FEATS if k != "boon_of_fortitude" or level >= 19),
+            "origin_feats": sorted(ORIGIN_FEATS), "species": {k: sorted(v) if v else None for k, v in SPECIES.items()},
+            "asi_levels": [n for n in asi_levels(c) if n <= level], "cantrips": sorted(n for n, s in options.items() if s["level"] == 0),
+            "spells": sorted(((s["level"], n) for n, s in options.items() if s["level"] > 0)),
+            "counts": {"cantrips": row.get("cantrips", 0), "prepared": row.get("prepared", 0), "masteries": row.get("weapon_masteries", 0)}}
+
+
+def preview_build(req):
+    """Build the recipe; the sheet summary, or the builder's message for what is wrong."""
+    from ..builder import build
+    from ..loader import ValidationError
+    r = _recipe(req)
+    try: sheet = build(r["class"], r["level"], r["subclass"], r["abilities"], r["equipment"], r["choices"])
+    except (ValidationError, ValueError, KeyError, TypeError) as exc:
+        return {"ok": False, "error": str(exc).replace("<build>:", "").strip()}
+    out = _summary(sheet)
+    return {"ok": True, "sheet": out}
+
+
+def _summary(sheet):
+    keep = ("name", "level", "max_hp", "ac", "abilities", "speed", "proficiency_bonus", "spell_dc", "spell_attack_bonus",
+            "spell_slots", "spells", "limited_uses", "resistances", "save_proficiencies", "unsupported")
+    out = {k: sheet[k] for k in keep if k in sheet}
+    def dmg(d):
+        bonus = d.get("bonus") or 0
+        flat = f"{bonus:+d}" if isinstance(bonus, int) and bonus else ""
+        return f"{d.get('dice', '')}{flat} {d.get('type', '')}".strip()
+    out["attacks"] = [{"name": a["name"], "to_hit": a["to_hit"], "damage": " + ".join(dmg(p["damage"]) for p in a["effects"] if "damage" in p)}
+                      for a in sheet.get("attacks", [])]
+    out["features"] = sorted(k for k, v in sheet.get("features", {}).items() if v)
+    return out
+
+
+def save_build(req):
+    """Save a valid recipe as a character under data/user/builds; it then loads by name everywhere."""
+    import yaml
+    from ..builder import USER_BUILDS
+    name = req.get("name")
+    if not isinstance(name, str) or not NAME.fullmatch(name) or len(name) > 40:
+        raise ValueError("name: lowercase letters, digits and underscores, starting with a letter (at most 40)")
+    if (ROOT / "builds" / f"{name}.yaml").is_file(): raise ValueError(f"name: {name!r} is a preset build; choose another name")
+    preview = preview_build(req)
+    if not preview["ok"]: raise ValueError(preview["error"])
+    r = _recipe(req)
+    USER_BUILDS.mkdir(parents=True, exist_ok=True)
+    (USER_BUILDS / f"{name}.yaml").write_text(yaml.safe_dump(r, sort_keys=False), encoding="utf-8")
+    from ..encounters import _SHEETS
+    for key in [k for k in _SHEETS if k[0] == name]: del _SHEETS[key]
+    return {"saved": name, "builds": user_builds()}
+
+
+def delete_build(req):
+    from ..builder import USER_BUILDS
+    name = req.get("name")
+    if not isinstance(name, str) or not NAME.fullmatch(name): raise ValueError("name: invalid")
+    path = USER_BUILDS / f"{name}.yaml"
+    if not path.is_file(): raise ValueError(f"no saved character {name!r}")
+    path.unlink()
+    return {"deleted": name, "builds": user_builds()}
+
+
+def load_user_build(req):
+    import yaml
+    from ..builder import USER_BUILDS
+    name = req.get("name")
+    if not isinstance(name, str) or not NAME.fullmatch(name): raise ValueError("name: invalid")
+    path = USER_BUILDS / f"{name}.yaml"
+    if not path.is_file(): raise ValueError(f"no saved character {name!r}")
+    return {"name": name, "recipe": yaml.safe_load(path.read_text(encoding="utf-8"))}

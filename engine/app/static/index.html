@@ -86,6 +86,7 @@ code, .mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
     <button data-tab="compare">Compare builds</button>
     <button data-tab="search">Build search</button>
     <button data-tab="rating">Party rating</button>
+    <button data-tab="characters">My characters</button>
     <button data-tab="library">Library</button>
   </nav>
 </header>
@@ -188,6 +189,22 @@ code, .mono { font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
         <p class="muted">The rating is the encounter XP at which the party's chance of defeat reaches 5%, against six kinds of opponent. 1.00× means exactly the DMG High budget. Takes a few minutes.</p></div>
     </div>
     <div class="card" id="rate-out"><div class="empty">Rate a party to see how much it can take.</div></div>
+  </div>
+</section>
+
+<section class="tab" id="tab-characters">
+  <div class="grid">
+    <div>
+      <div class="card"><h2>Character</h2>
+        <div class="row"><div><label>Class</label><select id="cb-class"></select></div><div><label>Level</label><select id="cb-level"></select></div></div>
+        <button class="small" id="cb-start" style="margin-top:10px">Start from this class and level</button>
+        <label>Saved characters</label><div class="row"><div><select id="cb-saved"></select></div><div style="flex:0 0 auto" class="row"><button class="small" id="cb-load">Load</button><button class="small" id="cb-delete">Delete</button></div></div>
+      </div>
+      <div class="card" id="cb-form"><div class="empty">Choose a class and level, then start.</div></div>
+      <div class="card"><h2>Save</h2><label>Name (lowercase, e.g. thorin_5)</label><input id="cb-name"><button class="go" id="cb-save">Save character</button><div id="cb-saved-msg" class="muted"></div>
+        <p class="muted">Saved characters appear first in every party list (Fight, Day, Rating, Compare, Build search). They are stored on this computer in data/user/builds.</p></div>
+    </div>
+    <div class="card" id="cb-preview"><div class="empty">The character sheet appears here as you build.</div></div>
   </div>
 </section>
 
@@ -575,6 +592,90 @@ function setupLibrary() {
   $("#lib-class").onchange = $("#lib-level").onchange = drawBuilds; $("#lib-msearch").oninput = $("#lib-mtype").onchange = drawMonsters;
   drawBuilds(); drawMonsters();
 }
+function setupCharacters() {
+  fill($("#cb-class"), META.classes, "fighter");
+  fill($("#cb-level"), Array.from({ length: 20 }, (_, i) => i + 1), 5);
+  let O = null, R = null, timer = null;
+  const form = $("#cb-form"), preview = $("#cb-preview");
+  function drawSaved() { const mine = META.builds.filter(b => b.profile === "mine"); fill($("#cb-saved"), mine.length ? mine.map(b => [b.name, `${b.name} (${b.class} ${b.level})`]) : [["", "none yet"]]); }
+  drawSaved();
+  async function refreshMeta() { META = await api("/api/meta"); drawSaved(); }
+  async function start(recipe) {
+    try {
+      O = await api("/api/builder/options", { class: recipe ? recipe.class : $("#cb-class").value, level: recipe ? recipe.level : +$("#cb-level").value });
+      R = JSON.parse(JSON.stringify(recipe || O.start)); R.choices = R.choices || {};
+      $("#cb-class").value = R.class; $("#cb-level").value = R.level;
+      draw(); update();
+    } catch (e) { form.replaceChildren(h("div", { class: "err", text: e.message })); }
+  }
+  const sel = (values, current, onchange, blank) => { const s = h("select", {}); fill(s, (blank ? [["", blank]] : []).concat(values), current ?? ""); s.onchange = e => onchange(e.target.value); return s; };
+  const multi = (values, current, size, onchange) => { const s = h("select", { multiple: true, size }); fill(s, values); $$("option", s).forEach(o => o.selected = (current || []).includes(o.value)); s.onchange = () => onchange($$("option", s).filter(o => o.selected).map(o => o.value)); return s; };
+  function set(key, value) { if (value === "" || value === null || (Array.isArray(value) && !value.length)) delete R.choices[key]; else R.choices[key] = value; update(); }
+  function draw() {
+    const c = R.choices, ab = O.abilities;
+    const scores = h("div", { class: "row", style: "flex-wrap:wrap" }, ...ab.map(a => h("div", { style: "flex:1 0 70px" }, h("label", { text: a.toUpperCase() }),
+      (() => { const n = h("input", { type: "number", min: 3, max: 20, value: R.abilities[a] }); n.oninput = e => { R.abilities[a] = +e.target.value; update(); }; return n; })())));
+    const bg = c.background || {}, plus2 = Object.keys(bg).find(k => bg[k] === 2) || "", plus1 = Object.keys(bg).find(k => bg[k] === 1) || "";
+    const bgSet = (two, one) => set("background", two && one && two !== one ? { [two]: 2, [one]: 1 } : null);
+    const asiRows = O.asi_levels.map(lv => {
+      const cur = (c.asis || {})[lv] || (c.asis || {})[String(lv)] || {};
+      const kind = cur.feat ? "feat:" + cur.feat : Object.keys(cur).length === 1 ? "two:" + Object.keys(cur)[0] : Object.keys(cur).length === 2 ? "split:" + Object.keys(cur).join(",") : "";
+      const choicesList = [...ab.map(a => ["two:" + a, `+2 ${a.toUpperCase()}`]), ...O.feats.map(f => ["feat:" + f, `feat: ${f.replace(/_/g, " ")}`])];
+      const abilitySel = sel(ab.map(a => [a, a.toUpperCase()]), cur.ability || cur.ability, v => { cur.ability = v; setAsi(lv, cur); }, null);
+      const main = sel(choicesList, kind.startsWith("split") ? "" : kind, v => {
+        if (!v) return setAsi(lv, null);
+        const [k, x] = v.split(":"); setAsi(lv, k === "two" ? { [x]: 2 } : { feat: x, ability: cur.ability || ab[0] }); draw(); }, "default");
+      return h("div", { class: "row", style: "align-items:end" }, h("div", {}, h("label", { text: `Level ${lv}` }), main), cur.feat ? h("div", {}, h("label", { text: "+1 to" }), abilitySel) : h("div", {}));
+    });
+    function setAsi(lv, value) { const a = Object.fromEntries(Object.entries(c.asis || {}).map(([k, v]) => [String(k), v])); if (value) a[String(lv)] = value; else delete a[String(lv)];
+      Object.keys(a).length ? (c.asis = a) : delete c.asis; update(); }
+    const species = O.species[c.species] || null;
+    const json = h("textarea", { rows: 10, class: "mono" }); json.value = JSON.stringify(R, null, 1);
+    form.replaceChildren(h("h2", { text: `${R.class} ${R.level}` }),
+      h("label", { text: "Ability score method" }), sel([["standard_array", "Standard array (15 14 13 12 10 8)"], ["point_buy", "Point buy (27)"], ["assigned", "Assigned (rolled or any)"]], c.ability_method || "standard_array", v => set("ability_method", v === "standard_array" ? null : v)),
+      h("label", { text: "Scores before background and ASIs" }), scores,
+      h("div", { class: "row" }, h("div", {}, h("label", { text: "Background +2" }), sel(ab.map(a => [a, a.toUpperCase()]), plus2, v => bgSet(v, plus1), "default")),
+        h("div", {}, h("label", { text: "Background +1" }), sel(ab.map(a => [a, a.toUpperCase()]), plus1, v => bgSet(plus2, v), "default"))),
+      h("div", { class: "row" }, h("div", {}, h("label", { text: "Species" }), sel(Object.keys(O.species), c.species, v => { set("species", v); delete R.choices.species_choice; draw(); update(); }, "none")),
+        species ? h("div", {}, h("label", { text: "Species option" }), sel(species, c.species_choice, v => set("species_choice", v), "choose")) : h("div", {})),
+      h("label", { text: "Origin feat" }), sel(O.origin_feats, c.origin_feat, v => set("origin_feat", v), "none"),
+      ...(asiRows.length ? [h("h3", { text: "Ability score improvements and feats" }), ...asiRows] : []),
+      h("h3", { text: "Gear and fighting" }),
+      h("label", { text: "Equipment kit" }), sel(O.kits.map(k => [k, k.replace(/_/g, " ")]), R.equipment, v => { R.equipment = v; update(); }),
+      ...(["fighter", "paladin", "ranger"].includes(R.class) ? [h("label", { text: "Fighting style (leave empty for the default)" }), multi(O.styles, c.fighting_style, 4, v => set("fighting_style", v))] : []),
+      ...(O.counts.masteries ? [h("label", { text: `Weapon masteries (${O.counts.masteries}; leave empty for the default)` }), multi(O.weapons, c.weapon_masteries, 5, v => set("weapon_masteries", v))] : []),
+      ...(O.cantrips.length ? [h("h3", { text: "Spells" }), h("label", { text: `Cantrips (${O.counts.cantrips}; leave empty for the default)` }), multi(O.cantrips, c.cantrips, 6, v => set("cantrips", v))] : []),
+      ...(O.spells.length && O.counts.prepared ? [h("label", { text: `Prepared spells (${O.counts.prepared}; leave empty for the default)` }), multi(O.spells.map(([l, n]) => [n, `${l}: ${n}`]), c.prepared_spells, 10, v => set("prepared_spells", v))] : []),
+      h("details", {}, h("summary", { text: "Advanced: edit the full recipe" }), json,
+        h("button", { class: "small", text: "Apply", onclick: () => { try { R = JSON.parse(json.value); draw(); update(); } catch (e) { preview.replaceChildren(h("div", { class: "err", text: "Not valid JSON: " + e.message })); } } })));
+  }
+  function update() {
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      try {
+        const r = await api("/api/builder/preview", { recipe: R });
+        if (!r.ok) { preview.replaceChildren(h("h2", { text: "Not valid yet" }), h("p", { class: "err", text: r.error })); return; }
+        const s = r.sheet;
+        preview.replaceChildren(h("h2", { text: s.name }), h("p", { class: "muted", text: `${s.max_hp} HP · AC ${s.ac} · speed ${s.speed} · proficiency +${s.proficiency_bonus}` + (s.spell_dc ? ` · spell DC ${s.spell_dc}, attack +${s.spell_attack_bonus}` : "") }),
+          h("p", { text: Object.entries(s.abilities).map(([k, v]) => `${k.toUpperCase()} ${v}`).join(" · ") }),
+          h("h3", { text: "Attacks" }), h("table", {}, ...s.attacks.map(a => h("tr", {}, h("td", { text: a.name }), h("td", { class: "num", text: `+${a.to_hit}` }), h("td", { text: a.damage })))),
+          ...(s.spells && s.spells.length ? [h("h3", { text: "Spells" }), h("p", { class: "muted", text: s.spells.join(", ") })] : []),
+          ...(Object.keys(s.limited_uses || {}).length ? [h("h3", { text: "Limited uses" }), h("p", { class: "muted", text: Object.entries(s.limited_uses).map(([k, v]) => `${k.replace(/_/g, " ")} ${v.max ?? v}`).join(", ") })] : []),
+          h("h3", { text: "Features" }), h("p", { class: "muted", text: s.features.map(f => f.replace(/_/g, " ")).join(", ") }),
+          ...(s.unsupported && s.unsupported.length ? [h("details", {}, h("summary", { text: `Not simulated (${s.unsupported.length})` }), h("ul", {}, ...s.unsupported.map(u => h("li", { class: "muted", text: u }))))] : []));
+      } catch (e) { preview.replaceChildren(h("div", { class: "err", text: e.message })); }
+    }, 250);
+  }
+  $("#cb-start").onclick = () => start(null);
+  $("#cb-load").onclick = async () => { const n = $("#cb-saved").value; if (!n) return; try { const r = await api("/api/builder/load", { name: n }); $("#cb-name").value = n; start(r.recipe); } catch (e) { $("#cb-saved-msg").textContent = e.message; } };
+  $("#cb-delete").onclick = async () => { const n = $("#cb-saved").value; if (!n || !confirm(`Delete ${n}?`)) return; try { await api("/api/builder/delete", { name: n }); await refreshMeta(); $("#cb-saved-msg").textContent = `Deleted ${n}.`; } catch (e) { $("#cb-saved-msg").textContent = e.message; } };
+  $("#cb-save").onclick = async () => {
+    if (!R) return;
+    try { await api("/api/builder/save", { name: $("#cb-name").value.trim(), recipe: R }); await refreshMeta();
+      $("#cb-saved-msg").textContent = `Saved. Reload the page to see it in the party lists.`; }
+    catch (e) { $("#cb-saved-msg").textContent = e.message; }
+  };
+}
 function showTab(name) {
   $$("#nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
   $$("section.tab").forEach(s => s.classList.toggle("on", s.id === "tab-" + name));
@@ -585,7 +686,7 @@ $("#nav").onclick = e => { if (e.target.dataset.tab) showTab(e.target.dataset.ta
 (async () => {
   try { META = await api("/api/meta"); }
   catch (e) { document.querySelector("main").replaceChildren(h("div", { class: "err", text: "Could not load data from the simulator: " + e.message })); return; }
-  const fightPicker = setupFight(); setupDay(); setupEncounters(fightPicker); setupCompare(); setupSearch(); setupRating(); setupLibrary();
+  const fightPicker = setupFight(); setupDay(); setupEncounters(fightPicker); setupCompare(); setupSearch(); setupRating(); setupCharacters(); setupLibrary();
   try { const t = localStorage.getItem("tab"); if (t && $("#tab-" + t)) showTab(t); } catch (e) {}
 })();
 </script>

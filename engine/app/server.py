@@ -13,7 +13,9 @@ from .jobs import Jobs
 STATIC = Path(__file__).resolve().parent / "static"
 MAX_BODY = 1 << 20
 JOBS = Jobs({"fight": api.fight, "range": api.fight_range, "day": api.day, "rate": api.rate, "compare": api.compare, "optimize": api.optimize})
-QUICK = {"/api/suggest": api.suggest, "/api/build": api.build_sheet, "/api/preset_day": api.preset_day}
+QUICK = {"/api/suggest": api.suggest, "/api/build": api.build_sheet, "/api/preset_day": api.preset_day,
+         "/api/builder/options": api.builder_options, "/api/builder/preview": api.preview_build, "/api/builder/load": api.load_user_build}
+CHANGES = {"/api/builder/save": api.save_build, "/api/builder/delete": api.delete_build}  # these change the build list
 _META = None
 
 
@@ -67,6 +69,11 @@ class Handler(BaseHTTPRequestHandler):
         try:
             req = self.read_json()
             if path in QUICK: self.send_json(QUICK[path](req))
+            elif path in CHANGES:
+                global _META
+                result = CHANGES[path](req)
+                _META = None  # the build lists in the page's reference data change
+                self.send_json(result)
             elif m := re.fullmatch(r"/api/jobs/([a-z]+)", path): self.send_json(JOBS.start(m[1], req).view(), 202)
             else: self.send_json({"error": "not found"}, 404)
         except (ValueError, json.JSONDecodeError) as exc:
