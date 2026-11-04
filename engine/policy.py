@@ -894,7 +894,8 @@ class BudgetedPolicy(RationedPolicy):
 
     def level_price(self, combat, actor, level):
         later = self.slot_later(combat, actor)
-        if later == 0 or self.released(combat, actor): return 0
+        # A fight forecast to be costly with weapons and cantrips frees slots, as in rationed.
+        if later == 0 or self.released(combat, actor) or self.needs_resources(combat, actor): return 0
         scarcity = min(1, later * self.DEMAND / max(1, sum(actor.spell_slots.values())))
         return self.DISCOUNT * scarcity * self.level_value(combat, actor, level)
 
