@@ -184,18 +184,17 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         return bool(options and options.cover)
 
     def half_cover(self, defender):
-        """No-grid cover: a back-row target is behind a standing front-row ally (+2 AC against ranged attacks).
-        Monsters have no rows, so only the party's back row gets it."""
+        """Either side's back row gets +2 AC against ranged attacks behind a standing front-row ally."""
         return defender.position == "back" and any(
             c is not defender and c.team == defender.team and c.alive and c.position == "front"
             and not c.has_condition("incapacitated") for c in self.combatants)
 
     def in_melee(self, actor):
         """No-grid adjacency for ranged attacks: an enemy that can still fight is within 5 feet when the
-        actor stands in the front row facing a melee enemy, or a melee attack reached it since its last turn."""
+        actor stands in the front row facing a front-row melee enemy, or a melee attack reached it since its last turn."""
         engaged = actor.statuses.get("melee_engaged", ())
         return any(e.alive and not e.has_condition("incapacitated") and any(a.get("kind") == "melee" for a in e.attacks)
-                   and (e.id in engaged or actor.position == "front" and actor.team == "party")
+                   and (e.id in engaged or actor.position == "front" and e.position == "front")
                    for e in self.combatants if e.team != actor.team)
 
     def turn_rules(self, actor):

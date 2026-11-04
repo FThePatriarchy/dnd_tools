@@ -353,6 +353,10 @@ def run_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max
         buff("before_encounter")
         names = encounter_names(step["encounter"])
         enemies = [Combatant.from_sheet(monsters[name], f"enc{len(results)}_enemy_{i}", "enemy") for i, name in enumerate(names)]
+        if opts.cover:
+            for enemy, name in zip(enemies, names):
+                if "position" not in monsters[name]:
+                    enemy.position = "front" if enemy.attacks and enemy.attacks[0].get("kind") == "melee" else "back"
         # Keep summoned allies and spell instances, not defeated enemies.
         summons = [c for c in combat.combatants if c.summoner_id and c.alive and c.team == "party"]
         combat.combatants = [*party, *summons, *enemies]

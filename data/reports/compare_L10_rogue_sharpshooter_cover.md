@@ -4,12 +4,12 @@ Each row swaps the candidate into the reference party in place of its rogue and 
 
 ## Reference party: standard (fighter_10, cleric_10, rogue_10, wizard_10)
 
-Base rating 9,113 XP (0.73× High).
+Base rating 8,645 XP (0.70× High).
 
 | Candidate | Overall | brute | ranged | caster | swarm | control | solo |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| archer, no feat | +1% ≈ (0.74×) | +3% ≈ | -1% ≈ | +4% ≈ | +0% ≈ | -1% ≈ | -1% ≈ |
-| archer + sharpshooter | +0% ≈ (0.74×) | +2% ≈ | -0% ≈ | +4% ≈ | +0% ≈ | -3% ≈ | -1% ≈ |
-| standard | +0% ≈ (0.73×) | +0% ≈ | +0% ≈ | +0% ≈ | +0% ≈ | +0% ≈ | +0% ≈ |
+| archer, no feat | +1% ≈ (0.70×) | +3% ≈ | -1% ≈ | +4% ≈ | +0% ≈ | -1% ≈ | +0% ≈ |
+| archer + sharpshooter | +0% ≈ (0.70×) | +2% ≈ | -2% ≈ | +4% ≈ | +0% ≈ | -3% ≈ | +0% ≈ |
+| standard | +0% ≈ (0.70×) | +0% ≈ | +0% ≈ | +0% ≈ | +0% ≈ | +0% ≈ | +0% ≈ |
 
 † a rating at the edge of its benchmark ladder (a bound), so the change is a bound too.

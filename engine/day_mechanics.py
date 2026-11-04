@@ -234,7 +234,7 @@ class DayMechanics:
 
     def reachable(self, actor, enemies, attack=None):
         options = getattr(self, "day_options", None)
-        if not options or not options.engagement or actor.team == "party": return enemies
+        if not options or not options.engagement or actor.team == "party" and not options.cover: return enemies
         if attack is not None and attack.get("kind") == "ranged": return enemies
         if attack is None or attack.get("reach_ft", 5) > 5 or actor.movement_modes.get("fly") or set(actor.engagement_tags) & {"reach", "flying", "teleport"}:
             return enemies
