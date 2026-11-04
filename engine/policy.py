@@ -634,6 +634,8 @@ class RationedPolicy(Policy):
     at-will forecast costs half the party's HP) everything is released: any
     spell, the highest slot, healing below half HP and short-rest features.
     """
+    PACT_UNTIL_SHORT_REST = True   # pact slots are shared over the fights until the next rest, when they return
+    BUDGET_SORCERY_POINTS = True   # Sorcery Points get a per-fight share until the long rest, like slots
     EMERGENCY = 0.25   # an ally below this HP share (or down) frees every resource
     NEED = 0.25        # forecast at-will HP loss above this party share frees slots
     LOSING = 0.5       # forecast loss of this party share (or half the party out of action) releases everything
@@ -776,11 +778,24 @@ class RationedPolicy(Policy):
         _, enemy_hp, outgoing, _ = self.at_will_fight(combat, actor)
         return enemy_hp > 0 and outgoing >= enemy_hp
 
+    def slot_fights(self, combat, actor):
+        """Fights (this one included) that the slots in hand must cover: until the next rest for pact
+        slots, which return on a short rest, otherwise until the long rest."""
+        if self.PACT_UNTIL_SHORT_REST and actor.features.get("pact_magic"):
+            return max(1, getattr(combat, "encounters_until_rest", None) or self.remaining(combat))
+        return self.remaining(combat)
+
     def within_budget(self, combat, actor, cost):
         start = getattr(combat, "slots_at_start", {}).get(actor.id, actor.spell_slots)
         start_points = sum(level * n for level, n in start.items())
         spent = start_points - sum(level * n for level, n in actor.spell_slots.items())
-        return spent + cost <= math.ceil(start_points / self.remaining(combat))
+        return spent + cost <= math.ceil(start_points / self.slot_fights(combat, actor))
+
+    def allow_resource(self, combat, actor, name):
+        if not (self.BUDGET_SORCERY_POINTS and name == "sorcery_points"): return True
+        if self.remaining(combat) <= 1 or self.emergency(combat, actor) or self.losing(combat, actor) or self.needs_resources(combat, actor): return True
+        start = getattr(combat, "uses_at_start", {}).get(actor.id, {}).get(name, actor.limited_uses.get(name, 0))
+        return start - actor.limited_uses.get(name, 0) < math.ceil(start / self.remaining(combat))
 
     def allow_spell(self, combat, actor, spec):
         if spec["level"] == 0 or spec["name"] in actor.innate_spells: return True

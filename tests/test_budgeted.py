@@ -45,3 +45,34 @@ def test_pact_slots_refresh_on_a_short_rest():
     assert policy.level_price(combat, warlock, 3) == 0                # pact slots come back at the next rest
     combat2, wizard, policy2 = setup("wizard_5", until_rest=1, remaining=4)
     assert policy2.level_price(combat2, wizard, 3) > 0                # wizard slots only after the long rest
+
+
+def rationed(name, until_rest, remaining):
+    from engine.policy import RationedPolicy
+    pc = Combatant.from_sheet(load_character(name), "p0", "party")
+    enemy = Combatant.from_sheet(load_sheet(ROOT / "monsters" / "goblin_minion.yaml"), "e0", "enemy")
+    policy = RationedPolicy()
+    combat = Combat([pc, enemy], SPELLS, seed=1, policy=policy)
+    combat.encounters_until_rest, combat.encounters_remaining = until_rest, remaining
+    combat.uses_at_start = {pc.id: dict(pc.limited_uses)}
+    combat.slots_at_start = {pc.id: dict(pc.spell_slots)}
+    combat.begin_turn(pc)
+    return combat, pc, policy
+
+
+def test_rationed_shares_pact_slots_until_the_next_rest():
+    combat, warlock, policy = rationed("warlock_5", until_rest=1, remaining=4)
+    assert policy.slot_fights(combat, warlock) == 1               # both pact slots usable before the short rest
+    assert policy.within_budget(combat, warlock, 3)
+    combat2, wizard, policy2 = rationed("wizard_5", until_rest=1, remaining=4)
+    assert policy2.slot_fights(combat2, wizard) == 4              # wizard slots last until the long rest
+
+
+def test_rationed_budgets_sorcery_points(monkeypatch):
+    combat, sorcerer, policy = rationed("sorcerer_5", until_rest=2, remaining=3)
+    monkeypatch.setattr(policy, "needs_resources", lambda *a: False)
+    assert policy.allow_resource(combat, sorcerer, "sorcery_points")
+    sorcerer.limited_uses["sorcery_points"] -= 2                  # 5 points over 3 fights: a share of 2
+    assert not policy.allow_resource(combat, sorcerer, "sorcery_points")
+    combat.encounters_remaining = 1
+    assert policy.allow_resource(combat, sorcerer, "sorcery_points")
