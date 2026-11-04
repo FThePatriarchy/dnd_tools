@@ -825,6 +825,14 @@ class RationedPolicy(Policy):
 class BudgetedPolicy(RationedPolicy):
     """Every resource is budgeted until it comes back, and spell slots carry a price.
 
+    EXPERIMENTAL: in a paired evaluation (2026-11-04; L5 standard, warlock, sorcerer and paladin
+    parties on typical and long days, 120 runs each on shared days and seeds) it was never better
+    than rationed and was worse on the standard party's typical day (days without a death 78% ->
+    65%) and the sorcerer's long day (73% -> 62%), always ending the day with more slots unspent.
+    Rationed stays the default for days. The likely cause: the price compares a spell's value now,
+    capped at the enemies' remaining HP, with a future value against a fresh target, so it leans
+    towards saving; and a fixed DISCOUNT and DEMAND fit no party in particular.
+
     Refresh: a short-rest resource (Action Surge, Rage, Wild Shape, Second Wind,
     Bardic Inspiration, Channel Divinity, pact slots...) is shared over the
     fights until the next rest; a long-rest one (spell slots, Sorcery Points,
