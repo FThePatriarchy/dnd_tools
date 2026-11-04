@@ -1,5 +1,6 @@
 """The DM command line: argument parsing, reports and per-character detail."""
 import json
+import re
 
 import pytest
 
@@ -62,7 +63,7 @@ def test_levels_without_presets_are_rejected_cleanly(capsys):
     from engine.dm import main
     with pytest.raises(SystemExit):
         main(["fight", "--level", "4", "--monsters", "ogre"])
-    assert "invalid choice: '4'" in capsys.readouterr().err
+    assert re.search(r"invalid choice: '?4'?", capsys.readouterr().err)  # newer Python versions quote the value
 
 
 def test_compare_party_must_contain_the_replaced_member(monkeypatch, capsys):
