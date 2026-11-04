@@ -1621,18 +1621,46 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if key not in cache: cache[key] = self.scale(actor, self.spells[name], 0)
         return cache[key]
 
+    def state_key(self):
+        """A fingerprint of everything the AI's read-only estimates depend on. Estimates are reused
+        only while it is unchanged (engine.combat.Combat.memo); any action, damage, condition, effect,
+        status or spell that changes it makes them recompute."""
+        return (self.turn_index, self.time_rounds, self.round, len(self.instances),
+                sum(1 for i in self.instances.values() if i.active),
+                tuple((c.id, c.hp, c.temp_hp, c.max_hp, c.team, c.removed, c.permanently_removed, c.raging, c.concentration,
+                       c.action, c.bonus_action, c.reaction, tuple(sorted(c.conditions)),
+                       tuple((e.kind, e.source, len(e.data)) for e in c.effects),
+                       tuple(sorted((k, repr(v)) for k, v in c.statuses.items())))
+                      for c in self.combatants))
+
+    def memo(self, name, objects, compute, *extra):
+        """compute() cached under (name, the objects' identities, extra) for the current state_key.
+        Only creatures in the fight are cached; probes and copies (a buffed ally, a Wild Shape form,
+        forecast enemies) always recompute."""
+        present = {id(c) for c in self.combatants}
+        if not all(id(o) in present for o in objects): return compute()
+        key = self.state_key()
+        cache = self.__dict__.get("_memo")
+        if cache is None or cache[0] != key:
+            cache = (key, {}); self.__dict__["_memo"] = cache
+        slot = (name, tuple(id(o) for o in objects), extra)
+        if slot not in cache[1]: cache[1][slot] = compute()
+        return cache[1][slot]
+
     def at_will_damage_rate(self, actor, target):
         # Explicit one-round horizon prevents recursion into encounter estimation.
-        return max([self.expected_weapon_damage(actor, target)] + [
+        return self.memo("at_will", (actor, target), lambda: max([self.expected_weapon_damage(actor, target)] + [
             self.expected_spell_damage(actor, self.cantrip_spec(actor, name), target, horizon=1)
-            for name in actor.spells if self.spells[name]["level"] == 0])
+            for name in actor.spells if self.spells[name]["level"] == 0]))
 
     def expected_remaining_rounds(self, actor):
-        enemies = self.enemies(actor)
-        if not enemies: return 1
-        allies = [c for c in self.combatants if c.team == actor.team and c.alive and not c.has_condition("incapacitated")]
-        rate = sum(self.at_will_damage_rate(c, enemies[0]) for c in allies)
-        return max(1, sum(c.hp for c in enemies) / max(1, rate))
+        def compute():
+            enemies = self.enemies(actor)
+            if not enemies: return 1
+            allies = [c for c in self.combatants if c.team == actor.team and c.alive and not c.has_condition("incapacitated")]
+            rate = sum(self.at_will_damage_rate(c, enemies[0]) for c in allies)
+            return max(1, sum(c.hp for c in enemies) / max(1, rate))
+        return self.memo("rounds_left", (actor,), compute)
 
     def expected_attack_hits(self, actor, target):
         names = actor.multiattack or ([actor.attacks[0]["name"]] * actor.extra_attack if actor.attacks else [])

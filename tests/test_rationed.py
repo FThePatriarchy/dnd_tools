@@ -87,6 +87,7 @@ def test_losing_when_the_forecast_costs_half_the_party(monkeypatch):
     monkeypatch.setattr(p, "at_will_fight", lambda c, a: (40, 100, 10, 19))
     assert not p.losing(combat, caster)
     monkeypatch.setattr(p, "at_will_fight", lambda c, a: (40, 100, 10, 20))
+    combat.__dict__.pop("_memo", None)  # estimates are cached per fight state; the fake forecast changed without it
     assert p.losing(combat, caster)
 
 

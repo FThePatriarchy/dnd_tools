@@ -658,6 +658,9 @@ class RationedPolicy(Policy):
     def at_will_fight(self, combat, actor):
         """(party HP, enemy HP, party at-will damage per round, forecast HP loss) for a weapons-and-cantrips fight.
         Only allies who can act (not incapacitated: petrified, stunned, paralyzed...) deal damage."""
+        return combat.memo("at_will_fight", (actor,), lambda: self._at_will_fight(combat, actor))
+
+    def _at_will_fight(self, combat, actor):
         allies = [c for c in combat.combatants if c.team == actor.team and c.alive and c.summoner_id is None]
         enemies = combat.enemies(actor)
         if not allies or not enemies: return 0, 0, 0, 0
@@ -762,6 +765,9 @@ class RationedPolicy(Policy):
     def losing(self, combat, actor):
         """The fight is being lost: at most half the party can still act (down, incapacitated or
         dominated), or a weapons-and-cantrips fight would cost at least half the party's HP."""
+        return combat.memo("losing", (actor,), lambda: self._losing(combat, actor), type(self).LOSING)
+
+    def _losing(self, combat, actor):
         party = [c for c in combat.combatants if c.__dict__["team"] == actor.__dict__["team"] and c.summoner_id is None
                  and not c.dead and not c.removed and not c.permanently_removed]
         able = [c for c in party if c.alive and not c.has_condition("incapacitated") and c.team == actor.team]
