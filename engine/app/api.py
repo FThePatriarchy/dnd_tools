@@ -11,7 +11,7 @@ import re
 from ..calibration import BUDGETS, DIFFICULTIES, XP_BY_CR, budget
 from ..loader import ROOT, load_sheet
 
-STRATEGIES = ("default", "nova", "conservative", "rationed")
+STRATEGIES = ("default", "nova", "conservative", "rationed", "budgeted")
 MORALE = ("none", "dmg", "rout")
 PROFILES = ("casual", "standard", "optimized")
 NAME = re.compile(r"[a-z][a-z0-9_]*")

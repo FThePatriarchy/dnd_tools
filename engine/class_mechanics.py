@@ -710,6 +710,7 @@ class ClassMechanics:
     def adrenaline_rush(self, actor):
         """Orc Adrenaline Rush with an unused Bonus Action: Dash (no grid) for Proficiency Bonus Temporary Hit Points."""
         if not actor.limited_uses.get("adrenaline_rush") or not actor.bonus_action or not actor.alive or actor.has_condition("incapacitated"): return
+        if not self.policy_for(actor).allow_resource(self, actor, "adrenaline_rush"): return
         if not self.enemies(actor) or actor.temp_hp >= actor.proficiency_bonus: return
         actor.bonus_action -= 1
         actor.limited_uses["adrenaline_rush"] -= 1; actor.spend("adrenaline_rush")

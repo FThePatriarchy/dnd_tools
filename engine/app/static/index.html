@@ -293,7 +293,7 @@ function partyBody(key) {
 const OPTS = {};
 function optionsPicker(key, host, extra = {}) {
   const st = OPTS[key] = { strategy: "default", morale: "none", cover: false, runs: "", seed: 1 };
-  const strat = h("select", {}); fill(strat, [["default", "Default (spend freely)"], ["rationed", "Rationed (save for later fights)"], ["nova", "Nova"], ["conservative", "Conservative"]], "default");
+  const strat = h("select", {}); fill(strat, [["default", "Default (spend freely)"], ["budgeted", "Budgeted (price resources until they return)"], ["rationed", "Rationed (equal share of slot levels)"], ["nova", "Nova"], ["conservative", "Conservative"]], "default");
   const morale = h("select", {}); fill(morale, [["none", "Fight to the last"], ["dmg", "DMG morale (monsters may flee)"], ["rout", "Rout (upper bound)"]], "none");
   strat.onchange = e => st.strategy = e.target.value; morale.onchange = e => st.morale = e.target.value;
   host.append(h("label", { text: "Party tactics" }), strat, h("label", { text: "Monster morale" }), morale);
@@ -418,7 +418,7 @@ function dayPicker(key, host, { slot = true } = {}) {
   const P = META.day_presets, st = DAY[key] = { preset: "typical", slot: null, scale: 1, strategy: "rationed", days: 4 };
   const preset = h("select", {}); fill(preset, Object.entries(P).filter(([k]) => !k.startsWith("_")).map(([k, v]) => [k, v.label]), "typical");
   const slotSel = h("select", {}), scale = h("input", { type: "number", min: 0.1, max: 3, step: 0.1, value: 1 });
-  const strat = h("select", {}); fill(strat, [["rationed", "Rationed (saves for later fights)"], ["default", "Default (spends freely)"]], "rationed");
+  const strat = h("select", {}); fill(strat, [["rationed", "Rationed (equal share of slot levels)"], ["budgeted", "Budgeted (price resources until they return)"], ["default", "Default (spends freely)"]], "rationed");
   const days = h("input", { type: "number", min: 1, max: 12, value: 4 });
   function slots() { const fights = P[st.preset].fights; fill(slotSel, fights.map(([i, l]) => [i, l]), fights[fights.length - 1][0]); st.slot = +slotSel.value; }
   preset.onchange = e => { st.preset = e.target.value; slots(); };

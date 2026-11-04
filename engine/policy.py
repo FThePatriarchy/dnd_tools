@@ -69,6 +69,7 @@ class Policy:
         from .loader import monster_sheet
         from .state import Combatant
         if actor.has_status("wild_shape") or not actor.limited_uses.get("wild_shape") or not actor.bonus_action: return
+        if not self.allow_resource(combat, actor, "wild_shape"): return
         enemies=combat.enemies(actor)
         if not enemies: return
         concentration=any(combat.spells[n]["concentration"] and combat.can_cast(actor,n) for n in actor.spells)
@@ -81,7 +82,7 @@ class Policy:
     def combat_spell(self, combat, actor, name):
         spec=combat.spells[name]
         option=None
-        points=actor.limited_uses.get("sorcery_points",0)
+        points=actor.limited_uses.get("sorcery_points",0) if self.allow_resource(combat,actor,"sorcery_points") else 0
         if points>=2 and actor.features.get("quickened_spell") and actor.action and actor.bonus_action and spec["casting_time"]=="action" and spec["level"] and actor.statuses.get("leveled_spell_turn")!=combat.turn_index:
             option="quickened_spell"
         elif points>=2 and actor.features.get("heightened_spell") and spec["level"]>=2 and any(b["save"] for b in spec["effects"]): option="heightened_spell"
@@ -162,6 +163,14 @@ class Policy:
 
     def allow_action(self, combat, actor, action):
         return True
+
+    def allow_resource(self, combat, actor, name):
+        """May the actor start spending this limited-use feature now? (Rage, Wild Shape, Sorcery Points...)"""
+        return True
+
+    def slot_price(self, combat, actor, spec, slot):
+        """Damage-equivalent cost of spending this slot now (0: slots are free to spend)."""
+        return 0
 
     def weapon_target(self, combat, actor, enemies):
         target = combat.monster_target(actor, enemies)
@@ -377,8 +386,8 @@ class Policy:
         if rules.get("no_action") and rules.get("no_bonus_action"): return
         enemies = combat.enemies(actor)
         if not enemies: return
-        if actor.features.get("rage"): combat.rage(actor)
-        if actor.features.get("innate_sorcery"): combat.innate_sorcery(actor)
+        if actor.features.get("rage") and (actor.raging or self.allow_resource(combat, actor, "rage")): combat.rage(actor)
+        if actor.features.get("innate_sorcery") and self.allow_resource(combat, actor, "innate_sorcery"): combat.innate_sorcery(actor)
         if actor.features.get("wild_shape"): self.choose_wild_shape(combat,actor)
         if actor.features.get("monks_focus") and actor.hp<actor.max_hp*.35 and any(e.attacks for e in enemies) and self.focus_allowed(combat,actor): combat.patient_defense(actor,dodge=True)
         if actor.features.get("wholeness_of_body") and actor.hp<actor.max_hp/2: combat.wholeness(actor)
@@ -411,7 +420,7 @@ class Policy:
             elif self.allow_healing(combat, actor, wounded[0]) and combat.can_cast(actor, "Cure Wounds"):
                 combat.cast(actor, "Cure Wounds", targets=[wounded[0]])
         for action in actor.actions:
-            if action.get("resource") == "second_wind" and actor.hp < actor.max_hp / 2:
+            if action.get("resource") == "second_wind" and actor.hp < actor.max_hp / 2 and self.allow_resource(combat, actor, "second_wind"):
                 combat.use_action(actor, action["name"], [actor])
         # Keep concentration and command existing forces/marks rather than recast.
         for instance in list(combat.instances.values()):
@@ -454,6 +463,7 @@ class Policy:
                 # Cleric/wizard share the buff blind spot; preserve their published baselines.
                 if actor.features.get("values_buffs"):
                     value = max(value, combat.expected_buff_value(actor, scaled, slot=slot))
+                if spec["level"] and not combat.free_mark(actor, name): value -= self.slot_price(combat, actor, spec, slot)
                 if actor.features.get("lay_on_hands"):
                     # The slot could power a later smite instead.
                     value -= self.smite_slot_cost(combat, actor, enemies[0], slot)
@@ -488,7 +498,7 @@ class Policy:
                 else: combat.weapon_action(actor)
         if actor.features.get("wild_shape"): self.choose_wild_shape(combat,actor)
         if actor.features.get("martial_arts") and actor.bonus_action and combat.enemies(actor): combat.monk_bonus(actor,flurry=self.focus_allowed(combat,actor))
-        if actor.features.get("bardic_inspiration") and actor.bonus_action and combat.enemies(actor):
+        if actor.features.get("bardic_inspiration") and actor.bonus_action and combat.enemies(actor) and self.allow_resource(combat, actor, "bardic_inspiration"):
             allies=[c for c in combat.combatants if c is not actor and c.team==actor.team and c.alive and c.statuses.get("bardic_inspiration",{}).get("expires",0)<=combat.time_rounds]
             for ally in sorted(allies,key=lambda c:(-combat.expected_attack_hits(c,combat.enemies(actor)[0]),c.hp/c.max_hp,c.id)):
                 if combat.inspire(actor,ally): break
@@ -812,7 +822,104 @@ class RationedPolicy(Policy):
         return False
 
 
-STRATEGIES = {"default": Policy, "nova": NovaPolicy, "conservative": ConservativePolicy, "rationed": RationedPolicy}
+class BudgetedPolicy(RationedPolicy):
+    """Every resource is budgeted until it comes back, and spell slots carry a price.
+
+    Refresh: a short-rest resource (Action Surge, Rage, Wild Shape, Second Wind,
+    Bardic Inspiration, Channel Divinity, pact slots...) is shared over the
+    fights until the next rest; a long-rest one (spell slots, Sorcery Points,
+    Innate Sorcery...) over the fights until the long rest. Each fight may start
+    using a feature while it has spent less than its share of what it had when the
+    fight began. With no fight left before the resource returns, an ally down or
+    low, or a losing or costly fight, everything is available (as in rationed).
+
+    Price: a leveled spell is valued (damage equivalent, the same unit as every
+    option) minus the price of its slot: DISCOUNT x scarcity x what the caster's
+    best spell of that slot level does against a fresh target (no overkill cap,
+    so slots are saved when the enemies left are weak). Scarcity is the share of
+    the caster's remaining slots that later fights before the refresh would use
+    (DEMAND per fight), capped at 1. A slot that returns before the next fight is
+    free. The slot level cast is the one with the best value after its price, so
+    upcasting happens when it pays. Reactions (Shield, Counterspell) keep the
+    rationed per-fight slot share.
+    """
+    DISCOUNT = 0.6   # a slot's future value is uncertain: later fights may not need it
+    DEMAND = 3       # slot uses a caster would want in a fight
+
+    def fights_after(self, combat, short):
+        """Fights after this one before a short-rest (short=True) or long-rest resource returns."""
+        n = getattr(combat, "encounters_until_rest", None) if short else getattr(combat, "encounters_remaining", None)
+        return max(0, (n if n is not None else 1) - 1)
+
+    def released(self, combat, actor):
+        return self.emergency(combat, actor) or self.losing(combat, actor)
+
+    def allow_resource(self, combat, actor, name):
+        if name not in actor.limited_uses: return True
+        later = self.fights_after(combat, bool(actor.resource_recovery.get(name, {}).get("short_rest")))
+        if later == 0 or self.released(combat, actor) or self.needs_resources(combat, actor): return True
+        start = getattr(combat, "uses_at_start", {}).get(actor.id, {}).get(name, actor.limited_uses[name])
+        return start - actor.limited_uses[name] < math.ceil(start / (later + 1))
+
+    def allow_surge(self, combat, actor):
+        return self.allow_resource(combat, actor, "action_surge")
+
+    def allow_action(self, combat, actor, action):
+        return self.allow_resource(combat, actor, action["resource"]) if action.get("resource") else True
+
+    def allow_spell(self, combat, actor, spec):
+        if spec["level"] == 0 or spec["name"] in actor.innate_spells or self.released(combat, actor): return True
+        return not self.already_won(combat, actor)  # otherwise the slot's price decides
+
+    def slot_later(self, combat, actor):
+        return self.fights_after(combat, bool(actor.features.get("pact_magic")))
+
+    def level_value(self, combat, actor, level):
+        """What the caster's best action or bonus-action spell does at this slot level against a fresh target."""
+        cache = combat.__dict__.setdefault("_level_values", {})
+        key = (combat.turn_index, actor.id, level)
+        if key not in cache:
+            enemies = combat.enemies(actor)
+            best = 0
+            for name in actor.spells:
+                spec = combat.spells[name]
+                if not 1 <= spec["level"] <= level or name in actor.innate_spells: continue
+                if actor.spell_costs.get(name, spec["casting_time"]) not in {"action", "bonus_action"}: continue
+                scaled = combat.scale(actor, spec, level)
+                value = combat.expected_spell_damage(actor, scaled, enemies[0]) if enemies else 0
+                if actor.features.get("values_buffs"): value = max(value, combat.expected_buff_value(actor, scaled, slot=level))
+                best = max(best, value)
+            cache[key] = best
+        return cache[key]
+
+    def level_price(self, combat, actor, level):
+        later = self.slot_later(combat, actor)
+        if later == 0 or self.released(combat, actor): return 0
+        scarcity = min(1, later * self.DEMAND / max(1, sum(actor.spell_slots.values())))
+        return self.DISCOUNT * scarcity * self.level_value(combat, actor, level)
+
+    def slot_price(self, combat, actor, spec, slot):
+        if not spec["level"] or slot is None or spec["name"] in actor.innate_spells: return 0
+        return self.level_price(combat, actor, slot)
+
+    def slot(self, combat, actor, spec, slots):
+        if len(slots) == 1 or self.losing(combat, actor): return slots[-1] if self.losing(combat, actor) else slots[0]
+        enemies = combat.enemies(actor)
+        def net(level):
+            scaled = combat.scale(actor, spec, level)
+            value = combat.expected_spell_damage(actor, scaled, enemies[0], overkill=True) if enemies else 0
+            if actor.features.get("values_buffs"): value = max(value, combat.expected_buff_value(actor, scaled, slot=level))
+            return value - self.level_price(combat, actor, level)
+        return max(slots, key=lambda level: (net(level), -level))
+
+    def reaction(self, combat, reactor, spell, trigger):
+        if "level" in spell and spell["level"] and not (self.released(combat, reactor) or self.slot_later(combat, reactor) == 0):
+            cost = min((k for k, n in reactor.spell_slots.items() if n and k >= spell["level"]), default=spell["level"])
+            if not self.within_budget(combat, reactor, cost): return False
+        return Policy.reaction(self, combat, reactor, spell, trigger)
+
+
+STRATEGIES = {"default": Policy, "nova": NovaPolicy, "conservative": ConservativePolicy, "rationed": RationedPolicy, "budgeted": BudgetedPolicy}
 
 
 def strategy_policy(name):

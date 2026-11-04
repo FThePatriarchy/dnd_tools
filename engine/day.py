@@ -264,6 +264,7 @@ def _run_legacy_day(party, day, spells, seed=1, *, policy=None, monster_policy=N
         combat.record_log = False
         combat.encounters_remaining = remaining  # includes this encounter, even across a long rest
         combat.slots_at_start = {c.id: c.spell_slots.copy() for c in party}
+        combat.uses_at_start = {c.id: dict(c.limited_uses) for c in party}
         start = snapshot(party)
         before_downs = {c.id: c.downs for c in party}
         outcome = combat.run(max_rounds) if any(c.alive for c in party) else {"winner": "enemy", "rounds": 0}
@@ -361,6 +362,7 @@ def run_day(party, day, spells, seed=1, *, policy=None, monster_policy=None, max
         combat.round = 1
         combat.damage_dealt.clear()
         combat.slots_at_start = {c.id: c.spell_slots.copy() for c in party}
+        combat.uses_at_start = {c.id: dict(c.limited_uses) for c in party}
         start = snapshot(party)
         before_downs = {c.id: c.downs for c in party}
         before_deaths = sum(c.deaths for c in party)

@@ -22,7 +22,7 @@ from .calibration import BUDGETS, XP_BY_CR
 from .encounters import Adaptive, party_sheets, run_day_runs, run_encounter
 from .loader import ROOT, load_sheet
 
-STRATEGIES = ("default", "nova", "conservative", "rationed")
+STRATEGIES = ("default", "nova", "conservative", "rationed", "budgeted")
 REST = {"short", "long", "s", "l"}
 
 
