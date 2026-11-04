@@ -76,4 +76,13 @@ def test_suggestions_are_seeded_and_cube_needs_opt_in():
 
 
 def test_impossible_budget_gives_no_fill():
-    assert fills({"boss": 1}, 10) == []
+    assert fills({"boss": 1}, 5) == []  # below the cheapest monster (CR 0, 10 XP)
+
+
+def test_theme_keeps_only_those_creature_types():
+    import pytest
+    from engine.templates import creature_types, suggest, themed
+    picks = suggest(TEMPLATES["boss_minions"], 4400, themes=["undead"], count=3)
+    assert picks and all(creature_types()[m] == "undead" for fill, _ in picks for _, m, _, _ in fill)
+    with pytest.raises(ValueError, match="no monsters of type"):
+        themed(["dragonz"])

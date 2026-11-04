@@ -100,7 +100,7 @@ def party_sheets(builds, options):
 
 
 def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, morale="none", cover=False,
-                  strategy="default", monster_strategy="default", detail=False):
+                  strategy="default", monster_strategy="default", detail=False, resources="full"):
     """Run a party (build names) against one encounter (entries like "ogre x3").
 
     runs is a fixed count or an Adaptive spec. area and target_cap are engine
@@ -109,7 +109,11 @@ def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, 
     fled, plus runs, failed_runs, errors and ci (95% half-widths). With detail,
     also "characters": per PC in party order, the chance of going down and of
     dying, the mean share of HP left and the mean resources spent per fight.
+    resources="none" starts every PC with no spell slots and no limited-use
+    features (cantrips, weapons and passive traits only): the floor of what the
+    fight demands, against "full" (the default) as its ceiling.
     """
+    if resources not in ("full", "none"): raise ValueError("resources must be 'full' or 'none'")
     global _SPELLS
     from .day import encounter_names, run_day
     from .day_options import DayOptions
@@ -128,9 +132,13 @@ def run_encounter(builds, encounter, runs, seed, *, area=None, target_cap=None, 
 
     def one_run():
         party = [Combatant.from_sheet(s, f"party_{i}", "party") for i, s in enumerate(sheets)]
+        if resources == "none":
+            for c in party:
+                c.spell_slots = dict.fromkeys(c.spell_slots, 0)
+                c.limited_uses = dict.fromkeys(c.limited_uses, 0)
         base_hp = {c.id: c.max_hp for c in party}
         max_hp = sum(base_hp.values())
-        max_slots = sum(sum(c.max_spell_slots.values()) for c in party)
+        max_slots = sum(sum(c.spell_slots.values()) for c in party)  # slots at the start of the fight
         run_seed = rng.getrandbits(64)
         try:
             result = run_day(party, day, _SPELLS, run_seed, policy=strategy_policy(strategy),

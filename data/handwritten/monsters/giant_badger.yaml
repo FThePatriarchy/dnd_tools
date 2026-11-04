@@ -1,0 +1,43 @@
+name: Giant Badger
+source: XMM
+cr: 1/4
+ac: 13
+max_hp: 15
+hp_formula: 2d8 + 6
+abilities:
+  str: 13
+  dex: 10
+  con: 17
+  int: 2
+  wis: 12
+  cha: 5
+speed: 30
+movement_modes:
+  walk: 30
+  burrow: 10
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- poison
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 3
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d4
+      bonus: 1
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M

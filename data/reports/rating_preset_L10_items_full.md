@@ -1,19 +1,19 @@
 # Party rating: fighter_10+items_full, cleric_10+items_full, rogue_10+items_full, wizard_10+items_full
 
-Level 10, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,750 runs.
+Level 10, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 4,950 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 10 (3100 XP).
 
-**Overall: 10,414 XP (2,604 per PC, 0.84x High)**, the geometric mean of the types.
+**Overall: 10,771 XP (2,693 per PC, 0.87x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
-| brute | 12,075 | 3,019 | 0.97 |
-| ranged | 13,976 | 3,494 | 1.13 |
-| caster | 9,529 | 2,382 | 0.77 |
-| swarm | 9,717 | 2,429 | 0.78 |
-| control | 12,300 | 3,075 | 0.99 |
-| solo | 6,638 | 1,659 | 0.54 |
+| brute | 12,385 | 3,096 | 1.00 |
+| ranged | 15,442 | 3,861 | 1.25 |
+| caster | 9,593 | 2,398 | 0.77 |
+| swarm | 10,886 | 2,722 | 0.88 |
+| control | 11,808 | 2,952 | 0.95 |
+| solo | 6,620 | 1,655 | 0.53 |
 
 ## Magic items
 
@@ -36,7 +36,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | wyvern x2 | 4,600 | 0.0% | 1.8% | 100 |
 | wyvern x3 | 6,900 | 0.0% | 1.8% | 100 |
 | wyvern x4 | 9,200 | 0.0% | 1.8% | 100 |
-| wyvern x5 | 11,500 | 2.3% | 1.8% | 300 |
+| wyvern x5 | 11,500 | 0.0% | 1.8% | 100 |
 | wyvern x6 | 13,800 | 13.0% | 6.6% | 100 |
 
 ### ranged
@@ -49,8 +49,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | barbed_devil x4 | 7,200 | 0.0% | 1.8% | 100 |
 | barbed_devil x5 | 9,000 | 0.0% | 1.8% | 100 |
 | barbed_devil x6 | 10,800 | 0.0% | 1.8% | 100 |
-| barbed_devil x8 | 14,400 | 5.7% | 1.9% | 600 |
-| barbed_devil x10 | 18,000 | 66.0% | 12.7% | 50 |
+| barbed_devil x8 | 14,400 | 1.3% | 2.2% | 150 |
+| barbed_devil x10 | 18,000 | 14.0% | 9.6% | 50 |
 
 ### caster
 
@@ -60,7 +60,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | mage x2 | 4,600 | 0.0% | 1.8% | 100 |
 | mage x3 | 6,900 | 0.0% | 1.8% | 100 |
 | mage x4 | 9,200 | 1.5% | 1.9% | 200 |
-| mage x5 | 11,500 | 26.0% | 11.8% | 50 |
+| mage x5 | 11,500 | 22.0% | 11.2% | 50 |
 
 ### swarm
 
@@ -73,7 +73,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | guard_captain x5 | 5,500 | 0.0% | 1.8% | 100 |
 | guard_captain x6 | 6,600 | 0.0% | 1.8% | 100 |
 | guard_captain x8 | 8,800 | 0.0% | 1.8% | 100 |
-| guard_captain x10 | 11,000 | 12.0% | 6.4% | 100 |
+| guard_captain x10 | 11,000 | 5.3% | 1.9% | 550 |
+| guard_captain x12 | 13,200 | 52.0% | 13.3% | 50 |
 
 ### control
 
@@ -84,8 +85,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | vampire_spawn x3 | 5,400 | 0.0% | 1.8% | 100 |
 | vampire_spawn x4 | 7,200 | 0.0% | 1.8% | 100 |
 | vampire_spawn x5 | 9,000 | 0.0% | 1.8% | 100 |
-| vampire_spawn x6 | 10,800 | 0.0% | 1.8% | 100 |
-| vampire_spawn x8 | 14,400 | 12.0% | 9.1% | 50 |
+| vampire_spawn x6 | 10,800 | 1.5% | 1.9% | 200 |
+| vampire_spawn x8 | 14,400 | 14.0% | 9.6% | 50 |
 
 ### solo
 
@@ -97,4 +98,4 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | young_green_dragon x1 | 3,900 | 0.0% | 1.8% | 100 |
 | young_blue_dragon x1 | 5,000 | 0.0% | 1.8% | 100 |
 | young_red_dragon x1 | 5,900 | 0.0% | 1.8% | 100 |
-| adult_red_dragon x1 | 18,000 | 82.0% | 10.5% | 50 |
+| adult_red_dragon x1 | 18,000 | 84.0% | 10.1% | 50 |

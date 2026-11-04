@@ -70,17 +70,17 @@ def validate_sheet(data, path, *, summoned=False):
                 else: v.number(val, p, 0, True)
     spells = None
     if "spells" in data:
-        from .loader import load_spells
-        spells = load_spells()
+        from .loader import spell_levels
+        spells = spell_levels()
         v.sequence(data["spells"], "spells")
         for name in data["spells"]: v.check(name in spells, "spells", f"unknown spell {name}")
     for key in ("prepared_spells", "spellbook"):
         if key not in data: continue
-        from .loader import load_spells
-        catalog = load_spells()
+        from .loader import spell_levels
+        catalog = spell_levels()
         v.sequence(data[key], key)
         v.check(len(data[key]) == len(set(data[key])), key, "duplicate spell")
-        for name in data[key]: v.check(name in catalog and catalog[name]["level"] > 0, key, "requires an existing leveled spell")
+        for name in data[key]: v.check(name in catalog and catalog[name] > 0, key, "requires an existing leveled spell")
     v.check(set(data.get("prepared_spells", [])) <= set(data.get("spells", [])), "prepared_spells", "prepared spell missing from spells")
     if "spellbook" in data: v.check(set(data.get("prepared_spells", [])) <= set(data["spellbook"]), "spellbook", "prepared spell missing from spellbook")
     for name in data.get("innate_spells", {}):
@@ -158,7 +158,7 @@ def validate_sheet(data, path, *, summoned=False):
             elif key == "spell_costs": v.enum(value, {"action", "bonus_action", "reaction"}, key)
             else:
                 v.number(value, key, 0 if key == "spell_levels" else 1, True)
-                v.check(spells[name]["level"] <= value <= 9, key, "invalid innate spell level")
+                v.check(spells[name] <= value <= 9, key, "invalid innate spell level")
     if "spell_recharge" in data:
         v.check(isinstance(data["spell_recharge"], dict), "spell_recharge", "expected mapping")
         for name, threshold in data["spell_recharge"].items():

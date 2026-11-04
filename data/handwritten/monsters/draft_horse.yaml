@@ -1,0 +1,41 @@
+name: Draft Horse
+source: XMM
+cr: 1/4
+ac: 10
+max_hp: 15
+hp_formula: 2d10 + 4
+abilities:
+  str: 18
+  dex: 10
+  con: 15
+  int: 2
+  wis: 11
+  cha: 7
+speed: 40
+movement_modes:
+  walk: 40
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Hooves
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 4
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: L

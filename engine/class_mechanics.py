@@ -148,6 +148,11 @@ class ClassMechanics:
 
     def class_initiative(self, actor):
         if not actor.alive: return
+        if actor.limited_uses.get("resourceful") and "heroic_inspiration" not in actor.statuses:
+            # Human Resourceful: Heroic Inspiration after each Long Rest, granted when the day's first fight starts.
+            actor.limited_uses["resourceful"] -= 1; actor.spend("resourceful")
+            actor.statuses["heroic_inspiration"] = {}
+            self.feature_log(actor, "Resourceful")
         used = actor.statuses.pop("used_metabolism", False)
         if actor.features.get("persistent_rage") and not actor.statuses.get("persistent_rage_used") and actor.limited_uses.get("rage", 0) < actor.max_limited_uses.get("rage", 0):
             actor.statuses["persistent_rage_used"] = True
@@ -326,8 +331,11 @@ class ClassMechanics:
         if not enemies: return 0
         duration = spec.get("duration", {"type": "instant"})
         cap = duration.get("n", 1) * {"rounds": 1, "minutes": 10, "hours": 600, "days": 14400}.get(duration["type"], 0)
-        horizon = min(self.expected_remaining_rounds(actor), cap)
-        if spec.get("concentration"): horizon = self.concentration_horizon(actor, enemies, horizon)
+        full = horizon = min(self.expected_remaining_rounds(actor), cap)
+        broken = 0  # chance that concentration breaks before the fight (or the spell) would end
+        if spec.get("concentration"):
+            horizon = self.concentration_horizon(actor, enemies, horizon)
+            broken = 1 - self.concentration_keep(actor, enemies) ** full
         slot = spec["level"] if slot is None else slot
         probe = SpellInstance(0, spec, actor, slot, self.turn_index, self.time_rounds)
         selected = {}
@@ -364,15 +372,27 @@ class ClassMechanics:
                         else: total += min(incoming * horizon, max(0, amount - ally.temp_hp))
                     elif "max_hp" in p:
                         total += min(incoming * horizon, p["max_hp"]["amount"])
+                    elif "grant_action" in p and "attack" in p["grant_action"].get("restricted_to", []):
+                        # Haste: one more weapon attack each round while it lasts.
+                        swings = len(ally.multiattack) if ally.multiattack else max(1, ally.extra_attack)
+                        per_attack = self.expected_weapon_damage(ally, enemies[0]) / swings
+                        total += per_attack * min(swings, p["grant_action"].get("attack_limit", 1)) * horizon
+                    elif "on_spell_end" in p and any(q.get("apply_condition", {}).get("condition") == "incapacitated" for q in p["on_spell_end"]):
+                        # Haste's lethargy: a turn lost if the spell ends while the fight goes on.
+                        total -= self.at_will_damage_rate(ally, enemies[0]) * broken
         return total
 
-    def concentration_horizon(self, actor, enemies, horizon):
-        """Expected rounds a concentration spell lasts: each hit risks a DC 10 Constitution save."""
+    def concentration_keep(self, actor, enemies):
+        """Chance a caster keeps concentration through one round: each hit risks a DC 10 Constitution save."""
         allies = [c for c in self.combatants if c.team == actor.team and c.alive]
         hits = sum(self.expected_attack_hits(e, actor) for e in enemies) / max(1, len(allies))
         bonus = actor.save_bonus("con")
         fail = min(.95, max(.05, (9 - bonus) / 20)) * (.5 if (actor.features.get("war_caster") or actor.features.get("eldritch_mind")) else 1)
-        keep = (1 - fail) ** hits
+        return (1 - fail) ** hits
+
+    def concentration_horizon(self, actor, enemies, horizon):
+        """Expected rounds a concentration spell lasts."""
+        keep = self.concentration_keep(actor, enemies)
         return horizon if keep >= 1 else (1 - keep ** horizon) / (1 - keep)
 
     def buff_attack_gain(self, ally, target, attack_bonus, damage_bonus=0, *, weapon_only=False):
@@ -601,6 +621,12 @@ class ClassMechanics:
                 self.feature_log(actor, "Death Strike")
             self.damage(target, amount, dtype, actor)
             self.feature_log(actor, "Sneak Attack", dice=f"{n}d{sides}", critical=critical)
+        if actor.features.get("fires_burn") and actor.limited_uses.get("fires_burn") and actor.statuses.get("fires_burn_turn") != self.turn_index:
+            # Goliath Fire's Burn: +1d10 Fire on a hit (Proficiency Bonus uses per Long Rest; the AI spends one a turn).
+            actor.statuses["fires_burn_turn"] = self.turn_index
+            actor.limited_uses["fires_burn"] -= 1; actor.spend("fires_burn")
+            self.damage(target, dice.roll(self.rng, "1d10", critical), "fire", actor)
+            self.feature_log(actor, "Fire's Burn")
         if actor.features.get("divine_strike") and self.current is actor and actor.statuses.get("strike_turn") != self.turn_index:
             actor.statuses["strike_turn"] = self.turn_index
             self.damage(target, dice.roll(self.rng, actor.features["divine_strike"], critical), "radiant", actor)
@@ -664,6 +690,33 @@ class ClassMechanics:
             typed[k] = n // 2 + extra
             spare -= extra
 
+    def stone_reduce(self, typed, attack_context):
+        """Goliath Stone's Endurance: a Reaction reduces the damage of a hit by 1d12 + Con modifier."""
+        if attack_context is None: return
+        attacker, target, attack = attack_context
+        if not target.features.get("stones_endurance") or not target.limited_uses.get("stones_endurance") or not target.reaction: return
+        if target.has_condition("incapacitated") or self.turn_rules(target).get("no_reactions"): return
+        entries = [(k, n) for k, n in typed.items() if k[0] is target]
+        total = sum(n for _, n in entries)
+        # Worth a use when the hit is at least the average reduction (6.5 + Con).
+        if total < 6.5 + target.mod("con") or not self.policy_for(target).reaction(self, target, {"name": "Stone's Endurance"}, {"attack": attack, "damage": total}): return
+        target.reaction -= 1
+        target.limited_uses["stones_endurance"] -= 1; target.spend("stones_endurance")
+        reduction = dice.roll(self.rng, "1d12") + target.mod("con")
+        self.record("reaction", actor=target.id, name="Stone's Endurance", damage=total, reduction=reduction)
+        for key, n in sorted(entries, key=lambda e: -e[1]):
+            removed = min(n, max(0, reduction)); typed[key] -= removed; reduction -= removed
+
+    def adrenaline_rush(self, actor):
+        """Orc Adrenaline Rush with an unused Bonus Action: Dash (no grid) for Proficiency Bonus Temporary Hit Points."""
+        if not actor.limited_uses.get("adrenaline_rush") or not actor.bonus_action or not actor.alive or actor.has_condition("incapacitated"): return
+        if not self.policy_for(actor).allow_resource(self, actor, "adrenaline_rush"): return
+        if not self.enemies(actor) or actor.temp_hp >= actor.proficiency_bonus: return
+        actor.bonus_action -= 1
+        actor.limited_uses["adrenaline_rush"] -= 1; actor.spend("adrenaline_rush")
+        actor.temp_hp = max(actor.temp_hp, actor.proficiency_bonus)
+        self.feature_log(actor, "Adrenaline Rush", temp_hp=actor.temp_hp)
+
     def class_flags(self, actor, on, scope, against):
         adv = bool(on == "initiative" and actor.features.get("initiative_advantage"))
         adv |= on == "ability_checks" and scope == "athletics" and actor.features.get("remarkable_athlete", False)
@@ -671,6 +724,7 @@ class ClassMechanics:
             adv = True
         adv |= on in {"saves", "ability_checks"} and scope == "str" and actor.raging
         adv |= on == "saves" and scope == "death" and actor.features.get("survivor", False)
+        adv |= on == "saves" and scope in {"int", "wis", "cha"} and actor.features.get("gnomish_cunning", False)
         adv |= on == "attack_rolls" and against is not None and actor.features.get("precise_hunter", False) and self.marked_by(against, actor)
         adv |= on == "saves" and scope == "dex" and actor.features.get("danger_sense",False) and not actor.has_condition("incapacitated")
         adv |= on == "attack_rolls" and scope == "str" and bool(actor.statuses.get("reckless"))
@@ -684,6 +738,10 @@ class ClassMechanics:
         return adv, dis
 
     def heroic_reroll(self, actor, natural, succeeds, kind="save"):
+        if natural == 1 and actor.features.get("halfling_luck"):
+            # Halfling Luck: a 1 on the d20 of a D20 Test is rerolled, and the new roll must be used.
+            natural = dice.d20(self.rng)
+            self.feature_log(actor, "Halfling Luck", roll=kind)
         if not succeeds(natural) and actor.statuses.pop("heroic_inspiration", None) is not None:
             self.feature_log(actor, "Heroic Inspiration")
             natural = dice.reroll(self.rng, natural, self.policy_for(actor).reroll_die(self, actor, natural))

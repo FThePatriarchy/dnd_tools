@@ -1,0 +1,60 @@
+name: Minotaur Skeleton
+source: XMM
+cr: '2'
+ac: 12
+max_hp: 45
+hp_formula: 6d10 + 12
+abilities:
+  str: 18
+  dex: 11
+  con: 15
+  int: 6
+  wis: 8
+  cha: 5
+speed: 40
+movement_modes:
+  walk: 40
+creature_type: undead
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities:
+- poison
+vulnerabilities:
+- bludgeoning
+condition_immunities:
+- exhaustion
+- poisoned
+attacks:
+- name: Gore
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d6
+      bonus: 4
+      type: piercing
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: piercing
+- name: Slam
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 4
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Gore: the extra damage and Prone needs a grid: the rider applies only after moving 20+ feet straight toward the
+  target, which is not simulated.'
+size: L

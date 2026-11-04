@@ -47,6 +47,21 @@ def catalogue():
     return tuple(sorted(((monster_xp(p.stem), p.stem) for p in (ROOT / "monsters").glob("*.yaml"))))
 
 
+@lru_cache(maxsize=None)
+def creature_types():
+    """Every monster's creature type, by file name."""
+    from .loader import load_sheet
+    return {p.stem: load_sheet(p)["creature_type"] for p in (ROOT / "monsters").glob("*.yaml")}
+
+
+def themed(themes=None):
+    """The catalogue, or only the monsters of the given creature types (e.g. undead, fiend)."""
+    if not themes: return catalogue()
+    unknown = set(themes) - set(creature_types().values())
+    if unknown: raise ValueError(f"no monsters of type {', '.join(sorted(unknown))}; types are {', '.join(sorted(set(creature_types().values())))}")
+    return tuple(m for m in catalogue() if creature_types()[m[1]] in themes)
+
+
 def parse_shape(text):
     """'1 boss, 6 goons' -> {'boss': 1, 'minion': 6}."""
     shape = {}
@@ -86,9 +101,9 @@ def fills(shape, total, *, exclude=DEFAULT_EXCLUDE, monsters=None):
     return result
 
 
-def suggest(shape, total, *, seed=1, count=3, exclude=DEFAULT_EXCLUDE):
-    """Up to count distinct fills: a seeded pick from the closest legal fills."""
-    legal = fills(shape, total, exclude=exclude)
+def suggest(shape, total, *, seed=1, count=3, exclude=DEFAULT_EXCLUDE, themes=None):
+    """Up to count distinct fills: a seeded pick from the closest legal fills (of the given creature types)."""
+    legal = fills(shape, total, exclude=exclude, monsters=themed(themes) if themes else None)
     pool = legal[:max(count * 3, count)]
     random.Random(seed).shuffle(pool)
     return sorted(pool[:count], key=lambda f: total - f[1])
@@ -117,6 +132,7 @@ def main():
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--exclude", nargs="*", default=list(DEFAULT_EXCLUDE),
                         help="monsters to leave out (default: the gelatinous cube; pass --exclude with no names to allow it)")
+    parser.add_argument("--theme", nargs="+", metavar="TYPE", help="only monsters of these creature types, e.g. undead fiend")
     parser.add_argument("--simulate", action="store_true", help="run each suggestion against a preset party")
     parser.add_argument("--profile", choices=("casual", "standard", "optimized"), default="standard")
     parser.add_argument("--runs", type=int, default=200)
@@ -124,9 +140,9 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     try:
         layout = TEMPLATES[args.template] if args.template else parse_shape(args.shape)
+        total = args.xp if args.xp else budget(args.level, args.difficulty, args.size)
+        picks = suggest(layout, total, seed=args.seed, count=args.suggestions, exclude=set(args.exclude), themes=args.theme)
     except ValueError as exc: parser.error(str(exc))
-    total = args.xp if args.xp else budget(args.level, args.difficulty, args.size)
-    picks = suggest(layout, total, seed=args.seed, count=args.suggestions, exclude=set(args.exclude))
     label = args.template or args.shape
     print(f"Level {args.level}, {args.size} PCs, budget {total:,.0f} XP ({args.difficulty or 'explicit'}), shape {label}")
     if not picks:

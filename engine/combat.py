@@ -427,6 +427,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 removed=min(n,reduction); typed[key]-=removed; reduction-=removed
         self.deflect_reduce(typed, attack_context)
         self.uncanny_reduce(typed, attack_context)
+        self.stone_reduce(typed, attack_context)
         grouped = defaultdict(dict)
         for (target, dtype), amount in typed.items():
             grouped[target][dtype] = self.mitigate_damage(target, amount, dtype, sources[target])
@@ -458,6 +459,11 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             if self.saving_throw(target, "con", target.features["undead_fortitude"] + amount):
                 target.hp = 1
                 self.feature_log(target, "Undead Fortitude")
+        if before > 0 and target.hp == 0 and not target.dead and target.features.get("relentless_endurance") and target.limited_uses.get("relentless_endurance"):
+            # Orc: reduced to 0 Hit Points but not killed outright, drop to 1 instead (once per Long Rest).
+            target.limited_uses["relentless_endurance"] -= 1; target.spend("relentless_endurance")
+            target.hp = 1
+            self.feature_log(target, "Relentless Endurance")
         if before > 0 and target.hp == 0 and not target.dead and target.raging and target.features.get("relentless_rage"):
             uses = target.statuses.get("relentless_uses", 0)
             target.statuses["relentless_uses"] = uses + 1
@@ -1559,6 +1565,19 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
     def hit_probability(self, actor, target, bonus):
         return min(.95, max(.05, (21 + bonus - self.armor_class(target)) / 20))
 
+    def damage_factor(self, target, dtype):
+        """Expected multiplier mitigate_damage applies to dtype (immunity, resistance, vulnerability).
+
+        Read-only mirror for the AI's estimates; flat reductions (reduce_damage dice) are left out."""
+        if not dtype or target is None: return 1
+        if dtype in target.immunities or any(e.kind == "defense" and dtype in e.data.get("immunity", []) for e in target.active_effects): return 0
+        factor = 1
+        if ((target.raging and dtype in {"bludgeoning", "piercing", "slashing"}) or dtype in target.resistances or target.has_condition("petrified")
+                or (dtype != "force" and any(e.kind == "status" and e.data.get("id") == "superior_defense" for e in target.active_effects))
+                or any(e.kind == "defense" and dtype in e.data.get("resistance", []) for e in target.active_effects)): factor = .5
+        if dtype in target.vulnerabilities or any(e.kind == "defense" and dtype in e.data.get("vulnerability", []) for e in target.active_effects): factor *= 2
+        return factor
+
     def expected_weapon_damage(self, actor, target, *, attack_bonus=0, damage_bonus=0):
         if actor.routines: return max(self.routine_value(actor, names, target) for names in actor.routines)
         if not actor.attacks: return 0
@@ -1566,7 +1585,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         names = actor.multiattack or [actor.attacks[0]["name"]] * actor.extra_attack
         for name in names:
             attack = next(a for a in actor.attacks if a["name"] == name)
-            expected = sum(dice.base_mean(p["damage"]) + p["damage"].get("bonus", 0) for p in attack["effects"] if "damage" in p and "if" not in p)
+            expected = sum((dice.base_mean(p["damage"]) + p["damage"].get("bonus", 0)) * self.damage_factor(target, p["damage"].get("type")) for p in attack["effects"] if "damage" in p and "if" not in p)
             if actor.features.get("great_weapon_fighting") and attack["kind"]=="melee" and "two_handed" in attack.get("properties",[]):
                 for p in attack["effects"]:
                     if "damage" in p and "dice" in p["damage"]:
@@ -1601,18 +1620,46 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         if key not in cache: cache[key] = self.scale(actor, self.spells[name], 0)
         return cache[key]
 
+    def state_key(self):
+        """A fingerprint of everything the AI's read-only estimates depend on. Estimates are reused
+        only while it is unchanged (engine.combat.Combat.memo); any action, damage, condition, effect,
+        status or spell that changes it makes them recompute."""
+        return (self.turn_index, self.time_rounds, self.round, len(self.instances),
+                sum(1 for i in self.instances.values() if i.active),
+                tuple((c.id, c.hp, c.temp_hp, c.max_hp, c.team, c.removed, c.permanently_removed, c.raging, c.concentration,
+                       c.action, c.bonus_action, c.reaction, tuple(sorted(c.conditions)),
+                       tuple((e.kind, e.source, len(e.data)) for e in c.effects),
+                       tuple(sorted((k, repr(v)) for k, v in c.statuses.items())))
+                      for c in self.combatants))
+
+    def memo(self, name, objects, compute, *extra):
+        """compute() cached under (name, the objects' identities, extra) for the current state_key.
+        Only creatures in the fight are cached; probes and copies (a buffed ally, a Wild Shape form,
+        forecast enemies) always recompute."""
+        present = {id(c) for c in self.combatants}
+        if not all(id(o) in present for o in objects): return compute()
+        key = self.state_key()
+        cache = self.__dict__.get("_memo")
+        if cache is None or cache[0] != key:
+            cache = (key, {}); self.__dict__["_memo"] = cache
+        slot = (name, tuple(id(o) for o in objects), extra)
+        if slot not in cache[1]: cache[1][slot] = compute()
+        return cache[1][slot]
+
     def at_will_damage_rate(self, actor, target):
         # Explicit one-round horizon prevents recursion into encounter estimation.
-        return max([self.expected_weapon_damage(actor, target)] + [
+        return self.memo("at_will", (actor, target), lambda: max([self.expected_weapon_damage(actor, target)] + [
             self.expected_spell_damage(actor, self.cantrip_spec(actor, name), target, horizon=1)
-            for name in actor.spells if self.spells[name]["level"] == 0])
+            for name in actor.spells if self.spells[name]["level"] == 0]))
 
     def expected_remaining_rounds(self, actor):
-        enemies = self.enemies(actor)
-        if not enemies: return 1
-        allies = [c for c in self.combatants if c.team == actor.team and c.alive and not c.has_condition("incapacitated")]
-        rate = sum(self.at_will_damage_rate(c, enemies[0]) for c in allies)
-        return max(1, sum(c.hp for c in enemies) / max(1, rate))
+        def compute():
+            enemies = self.enemies(actor)
+            if not enemies: return 1
+            allies = [c for c in self.combatants if c.team == actor.team and c.alive and not c.has_condition("incapacitated")]
+            rate = sum(self.at_will_damage_rate(c, enemies[0]) for c in allies)
+            return max(1, sum(c.hp for c in enemies) / max(1, rate))
+        return self.memo("rounds_left", (actor,), compute)
 
     def expected_attack_hits(self, actor, target):
         names = actor.multiattack or ([actor.attacks[0]["name"]] * actor.extra_attack if actor.attacks else [])
@@ -1638,9 +1685,12 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             gain += (advantage - hit) * damage + (advantage * crit_dice if auto_crit else 0)
         return gain
 
-    def expected_spell_damage(self, actor, spec, target, *, horizon=None, control_value=True, precombat=False):
+    def expected_spell_damage(self, actor, spec, target, *, horizon=None, control_value=True, precombat=False, overkill=False):
         """Damage-equivalent EV, not search. See BUILD_REPORT's Step 1 fix round.
 
+        Damage is scaled by each victim's immunity, resistance and vulnerability. With
+        overkill=True, the damage counted on each victim is capped at its remaining HP
+        (an area spell's excess on a nearly dead creature is wasted; used to pick spells).
         Lasting effects use enemy HP / allied at-will DPR, capped by duration.
         Concentration reserves 10% of value; future commands reserve 15% of
         bonus actions for healing/other uses. Repeat saves give geometric uptime.
@@ -1693,7 +1743,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 rounds = min(horizon, cap)
             for victim in targets:
                 if victim.id in probe.choices.get("_sculpted",set()): continue
-                damage = sum(dice.base_mean(p["damage"]) + (actor.spell_mod if p["damage"].get("bonus", 0) == "spell_mod" else p["damage"].get("bonus", 0)) for p in primitives if "damage" in p)
+                damage = sum((dice.base_mean(p["damage"]) + (actor.spell_mod if p["damage"].get("bonus", 0) == "spell_mod" else p["damage"].get("bonus", 0))) * self.damage_factor(victim, p["damage"].get("type")) for p in primitives if "damage" in p)
                 if damage and spec.get("level")==0 and actor.features.get("potent_spellcasting"): damage += actor.spell_mod
                 if damage and affinity and any(p.get("damage",{}).get("type")=="fire" for p in primitives): damage+=actor.mod("cha"); affinity=False
                 if damage and empowered: damage += actor.mod("int"); empowered=False
@@ -1708,6 +1758,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 elif aura: damage *= rounds
                 elif rider: damage *= rounds * self.expected_attack_hits(actor, victim)
                 elif "on_cast" not in event: damage = 0
+                if overkill and victim.team != actor.team and victim.hp > 0: damage = min(damage, victim.hp)
                 removed = any("remove_from_combat" in p for p in primitives)
                 denied_rate = max((self.at_will_damage_rate(victim, ally) for ally in allies), default=0) if control else 0
                 condition_value = fail * rounds * denied_rate if removed else 0

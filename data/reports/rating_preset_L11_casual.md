@@ -1,18 +1,18 @@
 # Party rating: fighter_11_casual, cleric_11_casual, rogue_11_casual, wizard_11_casual
 
-Level 11, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 4,800 runs.
+Level 11, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 3,500 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 11 (4100 XP).
 
-**Overall: 7,754 XP (1,938 per PC, 0.47x High)**, the geometric mean of the types.
+**Overall: 7,791 XP (1,948 per PC, 0.48x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
-| brute | 9,542 | 2,385 | 0.58 |
-| ranged | 9,506 | 2,376 | 0.58 |
-| caster | 6,943 | 1,736 | 0.42 |
-| swarm | 7,600 | 1,900 | 0.46 |
-| control | 6,450 | 1,612 | 0.39 |
+| brute | 9,706 | 2,426 | 0.59 |
+| ranged | 9,606 | 2,402 | 0.59 |
+| caster | 6,946 | 1,737 | 0.42 |
+| swarm | 7,517 | 1,879 | 0.46 |
+| control | 6,525 | 1,631 | 0.40 |
 | solo | 7,039 | 1,760 | 0.43 |
 
 ## Ladder results
@@ -27,7 +27,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | wyvern x2 | 4,600 | 0.0% | 1.8% | 100 |
 | wyvern x3 | 6,900 | 0.0% | 1.8% | 100 |
 | wyvern x4 | 9,200 | 1.3% | 2.2% | 150 |
-| wyvern x5 | 11,500 | 26.0% | 11.8% | 50 |
+| wyvern x5 | 11,500 | 18.0% | 10.5% | 50 |
 
 ### ranged
 
@@ -36,7 +36,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | stone_giant x1 | 2,900 | 0.0% | 1.8% | 100 |
 | stone_giant x2 | 5,800 | 0.0% | 1.8% | 100 |
 | stone_giant x3 | 8,700 | 0.0% | 1.8% | 100 |
-| stone_giant x4 | 11,600 | 18.0% | 10.5% | 50 |
+| stone_giant x4 | 11,600 | 16.0% | 10.1% | 50 |
 
 ### caster
 
@@ -45,7 +45,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | mage x1 | 2,300 | 0.0% | 1.8% | 100 |
 | mage x2 | 4,600 | 0.0% | 1.8% | 100 |
 | mage x3 | 6,900 | 4.4% | 1.9% | 450 |
-| mage x4 | 9,200 | 34.0% | 12.7% | 50 |
+| mage x4 | 9,200 | 32.0% | 12.5% | 50 |
 
 ### swarm
 
@@ -57,7 +57,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | guard_captain x4 | 4,400 | 0.0% | 1.8% | 100 |
 | guard_captain x5 | 5,500 | 0.0% | 1.8% | 100 |
 | guard_captain x6 | 6,600 | 0.0% | 1.8% | 100 |
-| guard_captain x8 | 8,800 | 11.0% | 6.2% | 100 |
+| guard_captain x8 | 8,800 | 12.0% | 5.2% | 150 |
 
 ### control
 
@@ -65,7 +65,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | --- | ---: | ---: | ---: | ---: |
 | mind_flayer x1 | 2,900 | 0.0% | 1.8% | 100 |
 | mind_flayer x2 | 5,800 | 0.7% | 1.8% | 150 |
-| mind_flayer x3 | 8,700 | 20.0% | 10.9% | 50 |
+| mind_flayer x3 | 8,700 | 18.0% | 10.5% | 50 |
 
 ### solo
 

@@ -595,6 +595,23 @@ def load_spell(path) -> dict:
     return deepcopy(_validated_spell(str(path), stat.st_mtime_ns, stat.st_size))
 
 
+def spell_levels() -> dict[str, int]:
+    """Spell name -> level for the project's spells, from the parse cache (no copies): enough to validate sheets."""
+    out = {}
+    for p in sorted((ROOT / "spells").glob("*.yaml")):
+        stat = p.stat()
+        spec = _validated_spell(str(p), stat.st_mtime_ns, stat.st_size)
+        out[spec["name"]] = spec["level"]
+    return out
+
+
+def monster_cr(name) -> str:
+    """A monster's CR string, from the validated-sheet cache (no copy)."""
+    path = (ROOT / "monsters" / (name + ".yaml")).resolve()
+    stat = path.stat()
+    return str(_validated_sheet(str(path), stat.st_mtime_ns, stat.st_size)["cr"])
+
+
 def load_spells(directory=None) -> dict[str, dict]:
     return {s["name"]: s for s in (load_spell(p) for p in sorted(Path(directory or ROOT / "spells").glob("*.yaml")))}
 
@@ -669,7 +686,7 @@ def scaled_spell(spell: dict, slot: int, level: int, choices=None) -> dict:
     return result
 
 
-@lru_cache(maxsize=64)
+@lru_cache(maxsize=1024)
 def _validated_sheet(path, mtime_ns, size):
     return load_sheet(path)
 

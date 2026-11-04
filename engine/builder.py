@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 
 from .classes import MAX_LEVEL, load_class, substitute, SUBCLASSES
-from .class_source import source
+from .class_facts import facts
 from .loader import ROOT, Validator, ValidationError, load_spells, read_yaml
 from .sheets import validate_sheet
 from .items import ATTUNEMENT_SLOTS, ITEMS, legal as item_legal
@@ -104,6 +104,12 @@ FEATS = {
     "boon_of_fortitude": {"abilities": set(ABILITIES), "requires": "epic"},
 }
 ORIGIN_FEATS = {"alert", "lucky", "tough"}
+# 2024 species with combat traits the engine simulates (see CLASS_FORMAT.md, "Species"); choice -> allowed options.
+DRACONIC = {"black": "acid", "blue": "lightning", "brass": "fire", "bronze": "lightning", "copper": "acid",
+            "gold": "fire", "green": "poison", "red": "fire", "silver": "cold", "white": "cold"}
+FIENDISH = {"abyssal": "poison", "chthonic": "necrotic", "infernal": "fire"}
+SPECIES = {"dwarf": None, "halfling": None, "human": ORIGIN_FEATS, "orc": None, "goliath": {"stone", "fire"},
+           "gnome": None, "tiefling": set(FIENDISH), "dragonborn": set(DRACONIC)}
 ARCANUM = {6: ["Circle of Death"], 7: ["Finger of Death"], 8: ["Power Word Stun", "Dominate Monster"], 9: ["Power Word Kill", "Foresight"]}
 MARTIAL_DIE = {level: "1d6" if level < 5 else "1d8" if level < 11 else "1d10" if level < 17 else "1d12" for level in range(1, MAX_LEVEL + 1)}
 
@@ -198,7 +204,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     subclass = c["subclass"] if subclass is None else subclass
     v.enum(subclass,{c["subclass"]},"subclass")
     choices=deepcopy(choices) if choices is not None else {}
-    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat invocations magical_discoveries hunters_prey open_hand stunning_budget primal_order metamagic spell_mastery signature_spells mystic_arcanum items")
+    v.obj(choices,"choices","","ability_method asis fighting_style weapon_masteries cantrips prepared_spells spellbook expertise skills cunning_strike divine_order blessed_strikes background origin_feat species species_choice invocations magical_discoveries hunters_prey open_hand stunning_budget primal_order metamagic spell_mastery signature_spells mystic_arcanum items")
     v.check(class_name=="bard" or "magical_discoveries" not in choices,"choices.magical_discoveries","Bard choice only")
     v.check(type(background) is bool,"background","expected boolean")
     items=choices.get("items",[]); v.sequence(items,"choices.items")
@@ -306,6 +312,16 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     faces=int(c["hit_die"][1:]); hp=max(1,faces+mod("con"))+(level-1)*max(1,faces//2+1+mod("con"))
     if class_name=="sorcerer" and level>=3: hp += level
     if choices.get("origin_feat")=="tough": hp += 2*level
+    species=choices.get("species"); species_choice=choices.get("species_choice")
+    if species is not None:
+        v.enum(species,set(SPECIES),"choices.species")
+        options=SPECIES.get(species)
+        if options is None: v.check(species_choice is None,"choices.species_choice",f"{species} has no choice")
+        else: v.enum(species_choice,options,"choices.species_choice")
+        if species=="human": v.check(species_choice!=choices.get("origin_feat"),"choices.species_choice","Versatile must be a different Origin feat")
+    elif species_choice is not None: v.check(False,"choices.species_choice","needs choices.species")
+    if species=="dwarf": hp += level  # Dwarven Toughness
+    if species=="human" and species_choice=="tough": hp += 2*level
     if "boon_of_fortitude" in feats: hp += 40
     sheet={"name":f"{class_name.title()} {level} ({subclass.title()})", "source":"XPHB", "level":level,
            "hit_dice":{"die":c["hit_die"],"count":level}, "max_hp":hp,"ac":ac,"abilities":abilities,
@@ -323,8 +339,8 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         sheet["actions"].extend(substitute(f.get("actions",[]),level,row))
         sheet["features"].update({k:substitute(x,level,row) for k,x in f.get("mechanics",{}).items() if k not in {"builder","progression"}})
         if "unsupported" in f: sheet["unsupported"].append(f["name"]+": "+f["unsupported"])
-    # Do not enable for cleric/wizard: their published results must stay bit-identical.
-    if class_name in {"paladin","warlock","bard","monk","ranger","druid","sorcerer"}: sheet["features"]["values_buffs"]=True
+    # Every class values in-combat buffs (until 2026-11-02 the cleric and wizard did not, to keep old baselines).
+    sheet["features"]["values_buffs"]=True
     if class_name=="barbarian" and level>=14:
         sheet["limited_uses"]["intimidating_presence"]={"max":1,"long_rest":"all"}
         sheet["actions"].append({"name":"Intimidating Presence","cost":"bonus_action","resource":"intimidating_presence","duration":{"type":"minutes","n":1},
@@ -367,7 +383,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     if class_name=="warlock":
         invocations=choices.get("invocations",["armor_of_shadows"] + (["agonizing_blast","eldritch_mind"] if level>=2 else []))
         v.sequence(invocations,"choices.invocations")
-        v.check(len(set(invocations))==len(invocations) and len(invocations)<=source(class_name)[0]["classTableGroups"][0]["rows"][level-1][0],"choices.invocations","duplicate or too many invocations")
+        v.check(len(set(invocations))==len(invocations) and len(invocations)<=facts(class_name)["invocations"][level-1],"choices.invocations","duplicate or too many invocations")
         for inv in invocations:
             v.enum(inv,{"armor_of_shadows","agonizing_blast","eldritch_mind"},"choices.invocations")
             v.check(inv=="armor_of_shadows" or level>=2,"choices.invocations","invocation requires level 2")
@@ -383,11 +399,41 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     for feat in feats: sheet["features"][feat]=True
     if resilient: sheet["save_proficiencies"].append(resilient)
     origin=choices.get("origin_feat")
-    if origin is not None:
-        v.enum(origin,ORIGIN_FEATS,"choices.origin_feat")
+    origins=[f for f in (origin, species_choice if species=="human" else None) if f is not None]
+    if origin is not None: v.enum(origin,ORIGIN_FEATS,"choices.origin_feat")
+    for origin in origins:
         sheet["features"][origin]=True
         if origin=="alert": sheet["initiative_bonus"]=sheet.get("initiative_bonus",0)+row["proficiency_bonus"]
         if origin=="lucky": sheet["limited_uses"]["luck"]={"max":row["proficiency_bonus"],"long_rest":"all"}
+    pb=row["proficiency_bonus"]
+    if species=="dwarf":
+        sheet["resistances"]=sorted(set(sheet.get("resistances",[]))|{"poison"})
+    elif species=="halfling":
+        sheet["size"]="S"; sheet["features"]["halfling_luck"]=True
+    elif species=="human":
+        sheet["limited_uses"]["resourceful"]={"max":1,"long_rest":"all"}  # Heroic Inspiration after each Long Rest
+    elif species=="orc":
+        sheet["features"]["relentless_endurance"]=True
+        sheet["limited_uses"]["relentless_endurance"]={"max":1,"long_rest":"all"}
+        sheet["limited_uses"]["adrenaline_rush"]={"max":pb,"short_rest":"all","long_rest":"all"}
+    elif species=="gnome":
+        sheet["features"]["gnomish_cunning"]=True  # Advantage on Int, Wis and Cha saves
+    elif species=="tiefling":
+        sheet["resistances"]=sorted(set(sheet.get("resistances",[]))|{FIENDISH[species_choice]})
+    elif species=="dragonborn":
+        dtype=DRACONIC[species_choice]
+        sheet["resistances"]=sorted(set(sheet.get("resistances",[]))|{dtype})
+        sheet["limited_uses"]["breath_weapon"]={"max":pb,"long_rest":"all"}
+        n=1+(level>=5)+(level>=11)+(level>=17)
+        sheet["actions"].append({"name":"Breath Weapon","cost":"action","resource":"breath_weapon","effects":[{
+            "id":"breath","event":"on_cast","target":{"select":"area","shape":"cone","size_ft":15,"affects":"all","filter":["creature"]},
+            "attack":None,"save":{"ability":"dex","on_success":"half","dc":8+mod("con")+pb},
+            "on_hit":[],"on_fail":[{"damage":{"dice":f"{n}d10","bonus":0,"type":dtype}}],"on_success":[],"apply":[],"limit":None}]})
+    elif species=="goliath":
+        key={"stone":"stones_endurance","fire":"fires_burn"}[species_choice]
+        sheet["features"][key]=True
+        sheet["limited_uses"][key]={"max":pb,"long_rest":"all"}
+    if species: sheet["name"]+=", "+(species.title() if species_choice is None else f"{species.title()} ({species_choice.replace('_',' ')})")
     if class_name in {"fighter","barbarian","paladin","monk","ranger"} and level>=5: sheet["extra_attack"]=2
     if class_name=="fighter" and level>=11: sheet["extra_attack"]=3 if level<20 else 4
     for weapon in weapons:
@@ -411,7 +457,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
     if class_name=="barbarian" and level<3 and "skills" not in choices: skills=skills[:2]
     expected=4 if class_name=="rogue" else 3 if class_name=="barbarian" and level>=3 else 3 if class_name in {"bard","ranger"} else 2
     v.check(len(skills)==expected and len(set(skills))==len(skills),"choices.skills","wrong skill count")
-    allowed=source(class_name)[0]["startingProficiencies"]["skills"][0].get("choose",{}).get("from","acrobatics; animal handling; arcana; athletics; deception; history; insight; intimidation; investigation; medicine; nature; perception; performance; persuasion; religion; sleight of hand; stealth; survival".split("; "))
+    allowed=(facts(class_name)["skills"] or "acrobatics; animal handling; arcana; athletics; deception; history; insight; intimidation; investigation; medicine; nature; perception; performance; persuasion; religion; sleight of hand; stealth; survival".split("; "))
     for skill in skills: v.enum(skill,set(allowed),"choices.skills")
     count=(2+2*int(level>=6)) if class_name=="rogue" else int(class_name=="wizard" and level>=2)
     expertise=choices.get("expertise",skills[:count]); v.sequence(expertise,"choices.expertise")
@@ -443,7 +489,7 @@ def _build(class_name, level, subclass=None, abilities=None, equipment=None, cho
         for n in cantrips: v.check(n in options and options[n]["level"]==0,"choices.cantrips",f"not a supported {class_name} cantrip: {n}")
         domain=["Hunter's Mark"] if class_name=="ranger" else []
         if class_name in {"cleric","paladin","warlock","druid","sorcerer"} and level>=3:
-            for at,names in source(class_name)[1]["additionalSpells"][0]["prepared"].items():
+            for at,names in facts(class_name)["prepared"].items():
                 if int(at)<=level:
                     for ref in names:
                         n=next((n for n in _spells() if n.lower()==ref.split('|')[0]),None)
@@ -537,11 +583,22 @@ def build(class_name, level, subclass=None, abilities=None, equipment=None, choi
         raise ValidationError(f"<build>:$: malformed build ({exc})") from exc
 
 
+# Characters saved from the app (python -m engine.app), kept apart from the project's preset builds.
+USER_BUILDS = ROOT.parent / "user" / "builds"
+
+
+def build_path(name):
+    """The file of a build name: a project preset, else a user build (data/user/builds)."""
+    if not re.fullmatch(r"[a-z][a-z0-9_]*",str(name)): raise ValueError("invalid build name")
+    preset=ROOT/"builds"/(str(name)+".yaml")
+    user=USER_BUILDS/(str(name)+".yaml")
+    return preset if preset.is_file() or not user.is_file() else user
+
+
 def load_build(name_or_path, *, background=True):
     path=Path(name_or_path)
     if path.suffix!=".yaml":
-        if not re.fullmatch(r"[a-z][a-z0-9_]*",str(path)): raise ValueError("invalid build name")
-        path=ROOT/"builds"/(str(path)+".yaml")
+        path=build_path(str(path))
     d=read_yaml(path); v=Validator(path)
     v.obj(d,"$","class level subclass abilities equipment choices")
     try: return build(d["class"],d["level"],d["subclass"],d["abilities"],d["equipment"],d["choices"],background=background)

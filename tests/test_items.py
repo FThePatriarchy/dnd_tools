@@ -1,6 +1,5 @@
 """Magic items: source fields, builder effects, engine hooks and DMG-sized kits."""
 import json
-import zipfile
 
 import pytest
 
@@ -8,17 +7,15 @@ from engine import Combat, Combatant
 from engine.builder import build
 from engine.items import AWARDS, ITEMS, allocate, awarded, with_items
 from engine.loader import ROOT, ValidationError, load_spells
-
-ZIP = ROOT.parent.parent / "5etools-v2.30.1.zip"
+from engine.source_files import archive_member
 
 
 @pytest.fixture(scope="module")
 def source():
-    with zipfile.ZipFile(ZIP) as z:
-        items = {i["name"]: i for i in json.loads(z.read("data/items.json"))["item"] if i.get("source") == "XDMG"}
-        for v in json.loads(z.read("data/magicvariants.json"))["magicvariant"]:
-            if v.get("inherits", {}).get("source") == "XDMG": items[v["name"]] = v["inherits"]
-        book = json.loads(z.read("data/book/book-xdmg.json"))
+    items = {i["name"]: i for i in json.loads(archive_member("data/items.json"))["item"] if i.get("source") == "XDMG"}
+    for v in json.loads(archive_member("data/magicvariants.json"))["magicvariant"]:
+        if v.get("inherits", {}).get("source") == "XDMG": items[v["name"]] = v["inherits"]
+    book = json.loads(archive_member("data/book/book-xdmg.json"))
     return items, book
 
 

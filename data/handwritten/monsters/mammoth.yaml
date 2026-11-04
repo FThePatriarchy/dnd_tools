@@ -1,0 +1,75 @@
+name: Mammoth
+source: XMM
+cr: '6'
+ac: 13
+max_hp: 126
+hp_formula: 11d12 + 55
+abilities:
+  str: 24
+  dex: 9
+  con: 21
+  int: 3
+  wis: 11
+  cha: 6
+speed: 50
+movement_modes:
+  walk: 50
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 3
+save_bonuses:
+  str: 10
+  con: 8
+save_proficiencies:
+- str
+- con
+initiative_bonus: 3
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Gore
+  kind: melee
+  to_hit: 10
+  reach_ft: 10
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 7
+      type: piercing
+multiattack:
+- Gore
+- Gore
+actions:
+- name: Trample
+  cost: bonus_action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: single
+      filter:
+      - creature
+      affects: any
+      eligible_if: target.has_condition(prone)
+    attack: null
+    save:
+      ability: dex
+      dc: 18
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 4d10
+        bonus: 7
+        type: bludgeoning
+    on_success: []
+    apply: []
+    limit: null
+    if: target.has_condition(prone)
+traits: []
+unsupported:
+- 'Gore: Prone needs a grid: the rider applies only after moving 20+ feet straight toward the target, which is not
+  simulated.'
+size: H

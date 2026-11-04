@@ -1,0 +1,59 @@
+name: Aarakocra Skirmisher
+source: XMM
+cr: 1/4
+ac: 12
+max_hp: 11
+hp_formula: 2d8 + 2
+abilities:
+  str: 10
+  dex: 14
+  con: 12
+  int: 11
+  wis: 12
+  cha: 11
+speed: 20
+movement_modes:
+  walk: 20
+  fly: 50
+creature_type: elemental
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Talons
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 2
+      type: slashing
+  - damage:
+      dice: 3d4
+      bonus: 2
+      type: slashing
+- name: Wind Javelin
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: piercing
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: thunder
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M

@@ -1,0 +1,48 @@
+name: Manes
+source: XMM
+cr: 1/8
+ac: 9
+max_hp: 9
+hp_formula: 2d6 + 2
+abilities:
+  str: 10
+  dex: 9
+  con: 13
+  int: 3
+  wis: 8
+  cha: 4
+speed: 20
+movement_modes:
+  walk: 20
+creature_type: fiend
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- cold
+- fire
+- lightning
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- charmed
+- frightened
+- poisoned
+attacks:
+- name: Claw
+  kind: melee
+  to_hit: 2
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d4
+      bonus: 0
+      type: slashing
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: S

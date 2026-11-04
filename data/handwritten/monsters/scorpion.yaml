@@ -1,0 +1,41 @@
+name: Scorpion
+source: XMM
+cr: '0'
+ac: 11
+max_hp: 1
+hp_formula: 1d4 - 1
+abilities:
+  str: 2
+  dex: 11
+  con: 8
+  int: 1
+  wis: 8
+  cha: 2
+speed: 10
+movement_modes:
+  walk: 10
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Sting
+  kind: melee
+  to_hit: 2
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: poison
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: T

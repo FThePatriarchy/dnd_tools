@@ -1,0 +1,25 @@
+class: fighter
+level: 5
+subclass: champion
+abilities:
+  str: 15
+  dex: 12
+  con: 14
+  int: 10
+  wis: 13
+  cha: 8
+equipment: chain_greatsword
+choices:
+  ability_method: standard_array
+  asis:
+    4:
+      feat: great_weapon_master
+      ability: str
+  weapon_masteries:
+  - greatsword
+  fighting_style:
+  - defense
+  expertise: []
+  species: goliath
+  origin_feat: lucky
+  species_choice: stone

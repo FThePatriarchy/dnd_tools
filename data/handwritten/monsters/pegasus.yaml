@@ -1,0 +1,54 @@
+name: Pegasus
+source: XMM
+cr: '2'
+ac: 12
+max_hp: 59
+hp_formula: 7d10 + 21
+abilities:
+  str: 18
+  dex: 15
+  con: 16
+  int: 10
+  wis: 15
+  cha: 13
+speed: 60
+movement_modes:
+  walk: 60
+  fly: 90
+creature_type: celestial
+alignment: good
+proficiency_bonus: 2
+save_bonuses:
+  dex: 4
+  con: 5
+  wis: 4
+  cha: 3
+save_proficiencies:
+- dex
+- con
+- wis
+- cha
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Hooves
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 4
+      type: bludgeoning
+  - damage:
+      dice: 2d4
+      bonus: 0
+      type: radiant
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: L

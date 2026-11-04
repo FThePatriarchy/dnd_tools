@@ -1,0 +1,102 @@
+name: Silver Dragon Wyrmling
+source: XMM
+cr: '2'
+ac: 17
+max_hp: 45
+hp_formula: 6d8 + 18
+abilities:
+  str: 19
+  dex: 10
+  con: 17
+  int: 12
+  wis: 11
+  cha: 15
+speed: 30
+movement_modes:
+  walk: 30
+  fly: 60
+creature_type: dragon
+alignment: good
+proficiency_bonus: 2
+save_bonuses:
+  dex: 2
+  wis: 2
+save_proficiencies:
+- dex
+- wis
+initiative_bonus: 2
+resistances: []
+immunities:
+- cold
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d10
+      bonus: 4
+      type: piercing
+multiattack:
+- Rend
+- Rend
+actions:
+- name: Cold Breath
+  cost: action
+  recharge: 5
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 15
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 13
+      on_success: half
+    on_hit: []
+    on_fail:
+    - damage:
+        dice: 4d8
+        bonus: 0
+        type: cold
+    on_success: []
+    apply: []
+    limit: null
+- name: Paralyzing Breath
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: cone
+      size_ft: 15
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: con
+      dc: 13
+      on_success: negate
+    on_hit: []
+    on_fail:
+    - apply_condition:
+        condition: incapacitated
+      until: end_of_turn(target.next_turn)
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- 'Paralyzing Breath: the second save''s Paralyzed condition is not modeled.'
+size: M

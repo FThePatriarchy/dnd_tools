@@ -1,0 +1,45 @@
+name: Polar Bear
+source: XMM
+cr: '2'
+ac: 12
+max_hp: 42
+hp_formula: 5d10 + 15
+abilities:
+  str: 20
+  dex: 14
+  con: 16
+  int: 2
+  wis: 13
+  cha: 7
+speed: 40
+movement_modes:
+  walk: 40
+  swim: 40
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- cold
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 5
+      type: slashing
+multiattack:
+- Rend
+- Rend
+actions: []
+traits: []
+unsupported: []
+size: L

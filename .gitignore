@@ -14,3 +14,6 @@ tests/test_spellsim.py
 data/manual_packets/
 data/normalized/
 data/semantic/
+
+# Characters saved from the app (engine.app); remove this line to keep them in git
+data/user/

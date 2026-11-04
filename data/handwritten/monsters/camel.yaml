@@ -1,0 +1,43 @@
+name: Camel
+source: XMM
+cr: 1/8
+ac: 10
+max_hp: 17
+hp_formula: 2d10 + 6
+abilities:
+  str: 15
+  dex: 8
+  con: 17
+  int: 2
+  wis: 11
+  cha: 5
+speed: 50
+movement_modes:
+  walk: 50
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses:
+  con: 5
+save_proficiencies:
+- con
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 2
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: L

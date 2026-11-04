@@ -1,0 +1,49 @@
+name: Griffon
+source: XMM
+cr: '2'
+ac: 12
+max_hp: 59
+hp_formula: 7d10 + 21
+abilities:
+  str: 18
+  dex: 15
+  con: 16
+  int: 2
+  wis: 13
+  cha: 8
+speed: 30
+movement_modes:
+  walk: 30
+  fly: 80
+creature_type: monstrosity
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 4
+      type: piercing
+  - apply_condition:
+      condition: grappled
+      escape_dc: 14
+      max_size: M
+      linked: true
+multiattack:
+- Rend
+- Rend
+actions: []
+traits: []
+unsupported: []
+size: L

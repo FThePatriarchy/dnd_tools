@@ -1,0 +1,66 @@
+name: Harpy
+source: XMM
+cr: '1'
+ac: 11
+max_hp: 38
+hp_formula: 7d8 + 7
+abilities:
+  str: 12
+  dex: 13
+  con: 12
+  int: 7
+  wis: 10
+  cha: 13
+speed: 20
+movement_modes:
+  walk: 20
+  fly: 40
+creature_type: monstrosity
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Claw
+  kind: melee
+  to_hit: 3
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d4
+      bonus: 1
+      type: slashing
+multiattack: []
+actions:
+- name: Luring Song
+  cost: action
+  effects:
+  - id: main
+    event: on_cast
+    target:
+      select: area
+      shape: emanation
+      size_ft: 300
+      affects: all
+      filter:
+      - creature
+    attack: null
+    save:
+      ability: wis
+      dc: 11
+      on_success: negate
+    on_hit: []
+    on_fail: []
+    on_success: []
+    apply: []
+    limit: null
+traits: []
+unsupported:
+- Luring Song (Charmed and pulled toward the harpy) is not modeled (the action has no simulated effect, so the AI
+  never uses it).
+size: M

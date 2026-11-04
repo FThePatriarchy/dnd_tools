@@ -17,11 +17,12 @@ import argparse
 import json
 import sys
 
+from .presets import preset_levels
 from .calibration import BUDGETS, XP_BY_CR
 from .encounters import Adaptive, party_sheets, run_day_runs, run_encounter
 from .loader import ROOT, load_sheet
 
-STRATEGIES = ("default", "nova", "conservative", "rationed")
+STRATEGIES = ("default", "nova", "conservative", "rationed", "budgeted")
 REST = {"short", "long", "s", "l"}
 
 
@@ -61,7 +62,9 @@ def budget_line(xp, levels):
     """The encounter's XP against the summed 2024 DMG budgets of these PCs."""
     if any(level not in BUDGETS for level in levels): return f"{xp:,} XP"
     low, moderate, high = (sum(BUDGETS[level][k] for level in levels) for k in range(3))
-    return f"{xp:,} XP = {xp / high:.2f}× DMG High (this party's budgets: Low {low:,} · Moderate {moderate:,} · High {high:,})"
+    # The smallest DMG budget that fits the encounter (below Low counts as Low), as in BUILD_REPORT's step 4.
+    band = "Low" if xp <= low else "Moderate" if xp <= moderate else "High" if xp <= high else "above High"
+    return f"{xp:,} XP = {xp / high:.2f}× DMG High, {band} (this party's budgets: Low {low:,} · Moderate {moderate:,} · High {high:,})"
 
 
 def pct(p, ci=None):
@@ -74,9 +77,21 @@ def resource_text(spent):
 
 
 def party_from(args):
-    if args.party: return args.party
     from .presets import party
-    return party(args.level, args.profile)
+    builds = list(args.party) if args.party else party(args.level, args.profile)
+    if args.items:
+        from .items import with_items
+        builds = with_items(builds, args.items)
+    return builds
+
+
+def names(builds):
+    """Build names, with each PC's magic items when the party carries a kit."""
+    out = []
+    for b in builds:
+        if isinstance(b, dict): out.append(b["name"] + (f" [{', '.join(b['choices'].get('items', []))}]" if b["choices"].get("items") else ""))
+        else: out.append(b)
+    return ", ".join(out)
 
 
 def character_table(characters, scope):
@@ -89,9 +104,10 @@ def character_table(characters, scope):
 
 def fight_report(builds, entries, result, levels, args):
     ci = result["ci"]
-    out = [f"Party: {', '.join(builds)}",
+    out = [f"Party: {names(builds)}",
            f"Encounter: {', '.join(entries)} — {budget_line(encounter_xp(entries), levels)}",
-           f"Runs: {result['runs']}, seed {args.seed}, party strategy {args.strategy}, morale {args.morale}", "",
+           f"Runs: {result['runs']}, seed {args.seed}, party strategy {args.strategy}, morale {args.morale}"
+           + (", cover rules on" if getattr(args, "cover", False) else "") + (f", {args.items} item kit" if args.items else ""), "",
            f"  {'Outcome':<32} {'Chance':>6}  95% ±",
            f"  {'Party wins':<32} {pct(result['win'])}",
            f"  {'Defeat (TPK or all PCs out)':<32} {pct(result['defeat'], ci['defeat'])}",
@@ -105,7 +121,7 @@ def fight_report(builds, entries, result, levels, args):
 
 
 def day_report(builds, day, result, levels, args):
-    out = [f"Party: {', '.join(builds)}",
+    out = [f"Party: {names(builds)}",
            f"Day: {day['name']}, runs {result['runs']}, seed {args.seed}, party strategy {args.strategy}, morale {args.morale}", "",
            f"  {'Outcome':<32} {'Chance':>6}",
            f"  {'Whole day cleared, no deaths':<32} {pct(result['complete'])}",
@@ -154,7 +170,7 @@ def main(argv=None):
         p = sub.add_parser(command, help="one encounter" if command == "fight" else "encounters and rests in order")
         who = p.add_mutually_exclusive_group(required=True)
         who.add_argument("--party", nargs="+", help="build names, e.g. fighter_5 cleric_5")
-        who.add_argument("--level", type=int, choices=sorted(BUDGETS), help="the preset fighter/cleric/rogue/wizard party at this level")
+        who.add_argument("--level", type=int, choices=preset_levels(), help="the preset fighter/cleric/rogue/wizard party at this level")
         p.add_argument("--profile", choices=("casual", "standard", "optimized"), default="standard", help="preset party profile (with --level)")
         if command == "fight":
             p.add_argument("--monsters", nargs="+", required=True, help='e.g. "ogre x2" "goblin_warrior x4"')
@@ -167,6 +183,9 @@ def main(argv=None):
         p.add_argument("--strategy", choices=STRATEGIES, default="default", help="party resource strategy")
         p.add_argument("--monster-strategy", choices=STRATEGIES, default="default")
         p.add_argument("--morale", choices=("none", "dmg", "rout"), default="none", help="DMG optional morale rule (default: fight to the last)")
+        p.add_argument("--items", choices=("half", "full"), help="give the party a DMG-sized magic item kit (engine/items.py)")
+        if command == "fight":
+            p.add_argument("--cover", action="store_true", help="optional cover and ranged-in-melee rules (DayOptions.cover)")
         p.add_argument("--json", action="store_true", help="print the raw results as JSON")
     m = sub.add_parser("monsters", help="list the monsters that can be used, with CR and XP")
     m.add_argument("--min-cr", type=cr_value, default=cr_value("0"))
@@ -184,7 +203,7 @@ def main(argv=None):
         common = dict(seed=args.seed, morale=args.morale, strategy=args.strategy, monster_strategy=args.monster_strategy)
         if args.command == "fight":
             entries = monster_entries(args.monsters)
-            result = run_encounter(builds, entries, args.runs or Adaptive(min_runs=100), detail=True, **common)
+            result = run_encounter(builds, entries, args.runs or Adaptive(min_runs=100), detail=True, cover=args.cover, **common)
             lines = fight_report(builds, entries, result, levels, args)
         else:
             from .day import load_day, validate_day

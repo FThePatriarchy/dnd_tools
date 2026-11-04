@@ -1,0 +1,45 @@
+name: Black Bear
+source: XMM
+cr: 1/2
+ac: 11
+max_hp: 19
+hp_formula: 3d8 + 6
+abilities:
+  str: 15
+  dex: 12
+  con: 14
+  int: 2
+  wis: 12
+  cha: 7
+speed: 30
+movement_modes:
+  walk: 30
+  climb: 30
+  swim: 30
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 4
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 2
+      type: slashing
+multiattack:
+- Rend
+- Rend
+actions: []
+traits: []
+unsupported: []
+size: M

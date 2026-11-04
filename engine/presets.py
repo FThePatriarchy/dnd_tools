@@ -198,6 +198,13 @@ def preset_name(name, level, profile):
     return f"{name}_{level}" if profile == "standard" else f"{name}_{level}_{profile}"
 
 
+def preset_levels():
+    """Levels that have a preset fighter/cleric/rogue/wizard party on disk (every profile)."""
+    from .classes import MAX_LEVEL
+    return [n for n in range(1, MAX_LEVEL + 1)
+            if all((ROOT / "builds" / (preset_name(c, n, p) + ".yaml")).exists() for c in ("fighter", "cleric", "rogue", "wizard") for p in PROFILES)]
+
+
 def party(level, profile="standard"):
     """Build names for the four-class preset party at a level."""
     return [preset_name(name, level, profile) for name in ("fighter", "cleric", "rogue", "wizard")]

@@ -1,0 +1,50 @@
+name: Giant Eagle
+source: XMM
+cr: '1'
+ac: 13
+max_hp: 26
+hp_formula: 4d10 + 4
+abilities:
+  str: 16
+  dex: 17
+  con: 13
+  int: 8
+  wis: 14
+  cha: 10
+speed: 10
+movement_modes:
+  walk: 10
+  fly: 80
+creature_type: celestial
+alignment: good
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances:
+- necrotic
+- radiant
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Rend
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d4
+      bonus: 3
+      type: slashing
+  - damage:
+      dice: 1d6
+      bonus: 0
+      type: radiant
+multiattack:
+- Rend
+- Rend
+actions: []
+traits: []
+unsupported: []
+size: L

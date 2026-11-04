@@ -264,8 +264,9 @@ def test_new_buff_flags_and_no_smite_cost(spells,monkeypatch,name):
     monkeypatch.setattr(c.policy,"smite_forgone",lambda *args:pytest.fail("new class charged for smite"))
     c.policy.take_turn(c,a)
     assert calls and any(x.get("spell")=="Heroism" for x in c.log)
-    assert not build("cleric",5)["features"].get("values_buffs")
-    assert not build("wizard",5)["features"].get("values_buffs")
+    # Since 2026-11-02 every class values buffs, the reference cleric and wizard included.
+    assert build("cleric",5)["features"].get("values_buffs")
+    assert build("wizard",5)["features"].get("values_buffs")
 
 
 def test_compare_roles_and_variants():
@@ -309,8 +310,11 @@ def test_hex_rider_per_beam(spells,monkeypatch):
     assert t.hp==500-2*(1+w.mod("cha")+1)
 
 
-def test_no_bard_buffs_evaluated_for_published_casters(spells,monkeypatch):
+def test_reference_casters_evaluate_buffs(spells,monkeypatch):
+    # Until 2026-11-02 the cleric and wizard skipped buff valuation to keep old baselines.
     for name in ("cleric","wizard"):
         a=pc(name); a.spells=["Bless"]; t=Combatant("t"); c=Combat([a,t],spells); c.begin_turn(a)
-        monkeypatch.setattr(c,"expected_buff_value",lambda *args,**kwargs:pytest.fail("old caster behavior changed"))
+        calls=[]
+        monkeypatch.setattr(c,"expected_buff_value",lambda *args,**kwargs:(calls.append(True) or 0))
         c.policy.take_turn(c,a)
+        assert calls, name

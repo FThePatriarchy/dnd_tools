@@ -1,19 +1,19 @@
 # Party rating: fighter_15, cleric_15, rogue_15, wizard_15
 
-Level 15, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,850 runs.
+Level 15, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 4,350 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 15 (7800 XP).
 
-**Overall: 18,525 XP (4,631 per PC, 0.59x High)**, the geometric mean of the types.
+**Overall: 18,402 XP (4,601 per PC, 0.59x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
-| brute | 13,650 | 3,412 | 0.44 |
-| ranged | 24,458 | 6,114 | 0.78 |
-| caster | 18,900 | 4,725 | 0.61 |
-| swarm | 18,095 | 4,524 | 0.58 |
-| control | 18,679 | 4,670 | 0.60 |
-| solo | 18,949 | 4,737 | 0.61 |
+| brute | 13,325 | 3,331 | 0.43 |
+| ranged | 24,570 | 6,142 | 0.79 |
+| caster | 18,550 | 4,638 | 0.59 |
+| swarm | 18,214 | 4,553 | 0.58 |
+| control | 17,921 | 4,480 | 0.57 |
+| solo | 19,591 | 4,898 | 0.63 |
 
 ## Ladder results
 
@@ -26,7 +26,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | tyrannosaurus_rex x1 | 3,900 | 0.0% | 1.8% | 100 |
 | tyrannosaurus_rex x2 | 7,800 | 0.0% | 1.8% | 100 |
 | tyrannosaurus_rex x3 | 11,700 | 0.0% | 1.8% | 100 |
-| tyrannosaurus_rex x4 | 15,600 | 10.0% | 6.0% | 100 |
+| tyrannosaurus_rex x4 | 15,600 | 12.0% | 6.4% | 100 |
 
 ### ranged
 
@@ -37,7 +37,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | assassin x3 | 11,700 | 0.0% | 1.8% | 100 |
 | assassin x4 | 15,600 | 0.0% | 1.8% | 100 |
 | assassin x5 | 19,500 | 0.0% | 1.8% | 100 |
-| assassin x6 | 23,400 | 2.3% | 1.8% | 300 |
+| assassin x6 | 23,400 | 2.0% | 1.9% | 250 |
 | assassin x8 | 31,200 | 22.0% | 11.2% | 50 |
 
 ### caster
@@ -46,7 +46,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | --- | ---: | ---: | ---: | ---: |
 | archmage x1 | 8,400 | 0.0% | 1.8% | 100 |
 | archmage x2 | 16,800 | 0.0% | 1.8% | 100 |
-| archmage x3 | 25,200 | 20.0% | 10.9% | 50 |
+| archmage x3 | 25,200 | 24.0% | 11.6% | 50 |
 
 ### swarm
 
@@ -59,7 +59,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | gladiator x5 | 9,000 | 0.0% | 1.8% | 100 |
 | gladiator x6 | 10,800 | 0.0% | 1.8% | 100 |
 | gladiator x8 | 14,400 | 0.0% | 1.8% | 100 |
-| gladiator x10 | 18,000 | 4.0% | 1.8% | 450 |
+| gladiator x10 | 18,000 | 2.7% | 1.9% | 300 |
 | gladiator x12 | 21,600 | 42.0% | 13.2% | 50 |
 
 ### control
@@ -70,8 +70,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | chain_devil x2 | 7,800 | 0.0% | 1.8% | 100 |
 | chain_devil x3 | 11,700 | 0.0% | 1.8% | 100 |
 | chain_devil x4 | 15,600 | 0.0% | 1.8% | 100 |
-| chain_devil x5 | 19,500 | 6.3% | 2.0% | 600 |
-| chain_devil x6 | 23,400 | 40.0% | 13.1% | 50 |
+| chain_devil x5 | 19,500 | 8.4% | 3.5% | 250 |
 
 ### solo
 
@@ -84,5 +83,5 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | adult_black_dragon x1 | 11,500 | 0.0% | 1.8% | 100 |
 | adult_green_dragon x1 | 13,000 | 0.0% | 1.8% | 100 |
 | adult_blue_dragon x1 | 15,000 | 0.0% | 1.8% | 100 |
-| adult_red_dragon x1 | 18,000 | 2.3% | 1.8% | 300 |
+| adult_red_dragon x1 | 18,000 | 0.0% | 1.8% | 100 |
 | ancient_white_dragon x1 | 25,000 | 22.0% | 11.2% | 50 |

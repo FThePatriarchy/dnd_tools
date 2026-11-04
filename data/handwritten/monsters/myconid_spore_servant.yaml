@@ -1,0 +1,51 @@
+name: Myconid Spore Servant
+source: XMM
+cr: '1'
+ac: 13
+max_hp: 37
+hp_formula: 5d8 + 15
+abilities:
+  str: 16
+  dex: 12
+  con: 16
+  int: 2
+  wis: 6
+  cha: 1
+speed: 20
+movement_modes:
+  walk: 20
+creature_type: plant
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities:
+- poison
+vulnerabilities: []
+condition_immunities:
+- blinded
+- charmed
+- frightened
+- paralyzed
+- poisoned
+attacks:
+- name: Slam
+  kind: melee
+  to_hit: 5
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 3
+      type: bludgeoning
+  - damage:
+      dice: 1d4
+      bonus: 0
+      type: poison
+multiattack: []
+actions: []
+traits: []
+unsupported: []
+size: M

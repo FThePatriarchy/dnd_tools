@@ -1,0 +1,52 @@
+name: Allosaurus
+source: XMM
+cr: '2'
+ac: 13
+max_hp: 51
+hp_formula: 6d10 + 18
+abilities:
+  str: 19
+  dex: 13
+  con: 17
+  int: 2
+  wis: 12
+  cha: 5
+speed: 60
+movement_modes:
+  walk: 60
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Bite
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d10
+      bonus: 4
+      type: piercing
+- name: Claws
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d8
+      bonus: 4
+      type: slashing
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Claws: Prone and the extra Bite needs a grid: the rider applies only after moving 20+ feet straight toward the
+  target, which is not simulated.'
+size: L

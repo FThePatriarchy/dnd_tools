@@ -1,0 +1,67 @@
+name: Ettin
+source: XMM
+cr: '4'
+ac: 12
+max_hp: 85
+hp_formula: 10d10 + 30
+abilities:
+  str: 21
+  dex: 8
+  con: 17
+  int: 6
+  wis: 10
+  cha: 8
+speed: 40
+movement_modes:
+  walk: 40
+creature_type: giant
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities:
+- blinded
+- charmed
+- deafened
+- frightened
+- stunned
+- unconscious
+attacks:
+- name: Battleaxe
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 5
+      type: slashing
+  - apply_condition:
+      condition: prone
+      max_size: L
+- name: Morningstar
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 5
+      type: piercing
+  - disadvantage:
+      'on': attack_rolls
+      scope: all
+      against: null
+      uses: 1
+    until: end_of_turn(target.next_turn)
+multiattack:
+- Battleaxe
+- Morningstar
+actions: []
+traits: []
+unsupported: []
+size: L

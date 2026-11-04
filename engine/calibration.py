@@ -137,9 +137,21 @@ def budget(level, difficulty, party_size=len(CLASSES)):
     return per * party_size
 
 
+def calibration_roster():
+    """The monsters the DMG budget sweeps draw from: every reviewed sheet except later DM-tool batches.
+
+    The sweeps sample compositions across the roster's XP, so adding monsters would change which fights
+    fill each budget slot. engine.monster_more's batch (2026-11-02) is left out to keep the sweeps
+    comparable; widening the roster would be a new sweep, like a new benchmark version."""
+    from .monster_import import slug
+    from .monster_more import NAMES
+    later = {slug(n) for n in NAMES}
+    return [p for p in sorted((ROOT / "monsters").glob("*.yaml")) if p.stem not in later]
+
+
 def monster_xp():
     result = {}
-    for path in sorted((ROOT / "monsters").glob("*.yaml")):
+    for path in calibration_roster():
         result[path.stem] = XP_BY_CR[str(load_sheet(path)["cr"])]
     return result
 

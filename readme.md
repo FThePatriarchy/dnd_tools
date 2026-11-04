@@ -39,6 +39,14 @@ Dungeon Masters (DMs) frequently struggle to balance combat encounters using the
 
 ## 🚀 Usage (Command Line Interface)
 
+## 🖥️ The app
+
+```bash
+python -m engine.app
+```
+
+opens the simulator in your browser (it runs on your own computer at http://127.0.0.1:8765; nothing is sent anywhere). Tabs: **Fight** and **Adventuring day** (pick a party and monsters, get the odds and a per-character breakdown), **Encounter ideas** (DMG-budget fills by shape and creature type, sent to the Fight tab in one click), **Compare builds** and **Build search** (min-maxing with 95% intervals), **Party rating**, and a **Library** of builds and monsters. The Fight tab's **Difficulty range** shows a fight with no resources, in its place in an adventuring day, and with every resource; days come from presets (typical: easy, hard, short rest, easy, boss; short; long) or your own list, with an adjustable intensity, and builds can be compared or searched over days instead of single fights. **My characters** builds your own party members at any level 1-20 (ability scores, background, species, feats and ASIs, kit, fighting style, masteries, spells), checked live by the engine's builder; saved characters (in `data/user/builds`, gitignored) appear in every party list and load by name in the command-line tools too. Long jobs run in the background with a progress log. `--port N` picks another port, `--no-browser` skips opening a tab. Needs only Python 3.11+ and `pyyaml`.
+
 As a backend-first engine, the primary UI is a Command Line Interface (CLI). 
 
 Run from the repository root. Builds are named after files in `data/handwritten/builds/` and monsters after files in `data/handwritten/monsters/`.
@@ -70,14 +78,31 @@ python -m engine.simulate --party fighter_5 cleric_5 rogue_5 wizard_5 --monsters
 python -m engine.rating --party fighter_5 cleric_5 rogue_5 wizard_5
 ```
 
-**Find the encounter a party can take (here: half the time someone goes down):**
+**Find the encounter a party can take (here: half the time someone goes down; add `--theme undead` for an undead fight):**
 ```bash
 python -m engine.finder encounter --level 5 --template elite_pack --target down=0.5
 ```
 
-**Compare build choices by swapping them into a reference party:**
+**Compare build choices by swapping them into a reference party** (paired runs on the ladder steps that decide the rating, with 95% intervals; `--method full` re-rates each candidate from scratch):
 ```bash
 python -m engine.compare --level 5 --class fighter --variants
+```
+
+**...or into your own party:**
+```bash
+python -m engine.compare --level 5 --class fighter --feats --party fighter_5 paladin_5 bard_5 sorcerer_5 --replace fighter_5
+```
+
+**Let it find a better build for one member of your party** (tries kits, spell lists, feats and ability/ASI plans one change at a time, keeping a change only when its 95% interval is above zero):
+```bash
+python -m engine.optimize --party fighter_5 cleric_5 rogue_5 wizard_5 --member fighter_5 --write my_fighter
+```
+
+**Source cross-checks.** The engine runs from `data/handwritten/` alone. The tests that check those files against the 2024 books also need the pinned 5etools v2.30.1 data (gitignored); in a fresh clone, fetch it once:
+```bash
+pip install -e ".[dev]"
+python -m engine.source_files --fetch
+python -m pytest
 ```
 
 See `ROADMAP.md` for what each tool measures and the results so far.

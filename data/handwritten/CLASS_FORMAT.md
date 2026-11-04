@@ -330,3 +330,20 @@ From level 11, default and preset characters prepare their class's listed
 spells of level 6+ before lower-level ones (`builder.high_first`); levels 1–10
 are unchanged. The level 6–9 spells are in `engine/spell_high.py`, which lists
 the omitted ones and why.
+
+## Species (2024, 2026-11-02)
+
+`choices.species` (and `choices.species_choice` where the species has one) adds a species' combat traits. Source: 5etools v2.30.1 `races.json`, XPHB entries. Traits that need a grid, light or terrain (Darkvision, Stonecunning, Halfling Nimbleness, Naturally Stealthy, Large Form, Powerful Build) are not simulated.
+
+| Species | Simulated | Not simulated / approximation |
+| --- | --- | --- |
+| Dwarf | Dwarven Toughness: +1 HP per level. Dwarven Resilience: Resistance to Poison damage. | Advantage on saves against the Poisoned condition. |
+| Halfling | Luck: a 1 on the d20 of a D20 Test (attack, save, check, death save) is rerolled, and the new roll is used. Size Small. | Brave (Advantage against Frightened). |
+| Human | Versatile: a second Origin feat (`species_choice`: alert, lucky or tough; not the same as `origin_feat`). Resourceful: Heroic Inspiration once per Long Rest, granted when the day's first fight starts. | Skillful. |
+| Orc | Relentless Endurance: reduced to 0 HP but not killed outright, drop to 1 instead, once per Long Rest. Adrenaline Rush: a Bonus Action Dash for Temporary HP equal to the Proficiency Bonus, Proficiency Bonus uses per Short or Long Rest; the AI uses it when its Bonus Action is otherwise unused. | The Dash's movement (no grid). |
+| Gnome | Gnomish Cunning: Advantage on Intelligence, Wisdom and Charisma saving throws. | Gnomish Lineage (utility cantrips). |
+| Tiefling | Fiendish Legacy resistance (`species_choice`: abyssal Poison, chthonic Necrotic, infernal Fire). | The legacy cantrip and spells, and Otherworldly Presence. |
+| Dragonborn | Draconic Ancestry (`species_choice`: a colour) sets the damage type: Resistance to it, and Breath Weapon, a 15-foot Cone, Dex save DC 8 + Con modifier + Proficiency Bonus, 1d10 (2d10 at 5, 3d10 at 11, 4d10 at 17), half on a success, Proficiency Bonus uses per Long Rest. | Breath Weapon is an Action that replaces all of the turn's attacks, not one of them, so it is understated for characters with Extra Attack (the AI rarely uses it there); the 30-foot Line option; Draconic Flight. |
+| Goliath | Giant Ancestry, Proficiency Bonus uses per Long Rest. `stone`: Stone's Endurance, a Reaction to reduce a hit's damage by 1d12 + Con modifier, used when the hit is at least 6.5 + Con. `fire`: Fire's Burn, +1d10 Fire on a weapon hit, at most once a turn. | Stone's Endurance on damage other than attacks; Fire's Burn on spell attacks. The other ancestries (Cloud, Frost, Hill, Storm). |
+
+The other XPHB species (Aasimar, Elf) are not modeled yet. `python -m engine.compare --species` rates each supported species on the standard build, and `engine.optimize` includes species among its changes.

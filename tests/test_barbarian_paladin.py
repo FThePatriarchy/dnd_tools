@@ -399,13 +399,17 @@ def test_paladin_buffs_respect_allow_spell(spells,monkeypatch,policy):
 
 @pytest.mark.parametrize("name",["fighter","rogue","cleric","wizard","barbarian"])
 def test_non_paladin_buff_choices_unchanged(spells,monkeypatch,name):
+    # Since 2026-11-02 every class values buffs; a lone caster still attacks rather than Bless itself.
     actor=pc(name); actor.spells=["Bless"]; actor.spell_slots={1:2}
     t=Combatant("t",max_hp=10000)
     c=Combat([actor,t],spells,seed=7); c.begin_turn(actor)
-    def unexpected(*args,**kwargs): pytest.fail("non-paladin used new buff valuation")
-    monkeypatch.setattr(c,"expected_buff_value",unexpected)
     c.policy.take_turn(c,actor)
-    assert not any(e["event"]=="cast" and e["spell"]=="Bless" for e in c.log)
+    blessed=any(e["event"]=="cast" and e["spell"]=="Bless" for e in c.log)
+    if name=="wizard":
+        # Stripped to a quarterstaff (about 2.3 damage a round) against a target that never attacks,
+        # ten rounds of Bless on itself (about 4.4) beat one swing, so the wizard casts it.
+        assert blessed; return
+    assert not blessed
     if name=="cleric":
         assert any(e["event"]=="action" and e["name"]=="Divine Spark (Radiant)" for e in c.log)
     else: assert any(e["event"]=="attack" for e in c.log)

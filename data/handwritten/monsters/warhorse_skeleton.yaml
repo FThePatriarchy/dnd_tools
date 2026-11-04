@@ -1,0 +1,47 @@
+name: Warhorse Skeleton
+source: XMM
+cr: 1/2
+ac: 13
+max_hp: 22
+hp_formula: 3d10 + 6
+abilities:
+  str: 18
+  dex: 12
+  con: 15
+  int: 2
+  wis: 8
+  cha: 5
+speed: 60
+movement_modes:
+  walk: 60
+creature_type: undead
+alignment: evil
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities:
+- poison
+vulnerabilities:
+- bludgeoning
+condition_immunities:
+- exhaustion
+- poisoned
+attacks:
+- name: Hooves
+  kind: melee
+  to_hit: 6
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 1d6
+      bonus: 4
+      type: bludgeoning
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Hooves: Prone needs a grid: the rider applies only after moving 20+ feet straight toward the target, which is
+  not simulated.'
+size: L

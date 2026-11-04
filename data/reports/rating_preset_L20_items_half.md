@@ -1,19 +1,19 @@
 # Party rating: fighter_20+items_half, cleric_20+items_half, rogue_20+items_half, wizard_20+items_half
 
-Level 20, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 7,200 runs.
+Level 20, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,550 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 20 (22000 XP).
 
-**Overall: 59,916 XP (14,979 per PC, 0.68x High)**, the geometric mean of the types (bounds used for solo).
+**Overall: 58,604 XP (14,651 per PC, 0.67x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
-| brute | 59,591 | 14,898 | 0.68 |
-| ranged | 57,927 | 14,482 | 0.66 |
-| caster | 55,148 | 13,787 | 0.63 |
-| swarm | 64,037 | 16,009 | 0.73 |
+| brute | 59,727 | 14,932 | 0.68 |
+| ranged | 57,979 | 14,495 | 0.66 |
+| caster | 54,166 | 13,541 | 0.62 |
+| swarm | 64,453 | 16,113 | 0.73 |
 | control | 61,215 | 15,304 | 0.70 |
-| solo | > 62,000 | > 15,500 | > 0.70 |
+| solo | 54,737 | 13,684 | 0.62 |
 
 ## Magic items
 
@@ -39,7 +39,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | roc x5 | 36,000 | 0.0% | 1.8% | 100 |
 | roc x6 | 43,200 | 0.0% | 1.8% | 100 |
 | roc x8 | 57,600 | 0.7% | 1.8% | 150 |
-| roc x10 | 72,000 | 32.0% | 12.5% | 50 |
+| roc x10 | 72,000 | 30.0% | 12.3% | 50 |
 
 ### ranged
 
@@ -52,7 +52,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | horned_devil x5 | 36,000 | 0.0% | 1.8% | 100 |
 | horned_devil x6 | 43,200 | 0.0% | 1.8% | 100 |
 | horned_devil x8 | 57,600 | 4.0% | 2.0% | 400 |
-| horned_devil x10 | 72,000 | 48.0% | 13.3% | 50 |
+| horned_devil x10 | 72,000 | 42.0% | 13.2% | 50 |
 
 ### caster
 
@@ -64,7 +64,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | archmage x4 | 33,600 | 0.0% | 1.8% | 100 |
 | archmage x5 | 42,000 | 0.0% | 1.8% | 100 |
 | archmage x6 | 50,400 | 0.7% | 1.8% | 150 |
-| archmage x8 | 67,200 | 16.0% | 10.1% | 50 |
+| archmage x8 | 67,200 | 20.0% | 10.9% | 50 |
 
 ### swarm
 
@@ -79,8 +79,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | frost_giant x8 | 31,200 | 0.0% | 1.8% | 100 |
 | frost_giant x10 | 39,000 | 0.0% | 1.8% | 100 |
 | frost_giant x12 | 46,800 | 0.0% | 1.8% | 100 |
-| frost_giant x16 | 62,400 | 1.6% | 1.7% | 250 |
-| frost_giant x20 | 78,000 | 34.0% | 12.7% | 50 |
+| frost_giant x16 | 62,400 | 0.0% | 1.8% | 100 |
+| frost_giant x20 | 78,000 | 38.0% | 13.0% | 50 |
 
 ### control
 
@@ -107,4 +107,4 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | ancient_black_dragon x1 | 33,000 | 0.0% | 1.8% | 100 |
 | ancient_green_dragon x1 | 41,000 | 0.0% | 1.8% | 100 |
 | ancient_blue_dragon x1 | 50,000 | 0.0% | 1.8% | 100 |
-| ancient_red_dragon x1 | 62,000 | 1.3% | 2.2% | 150 |
+| ancient_red_dragon x1 | 62,000 | 12.7% | 5.3% | 150 |

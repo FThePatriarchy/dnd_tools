@@ -1,0 +1,47 @@
+name: Rhinoceros
+source: XMM
+cr: '2'
+ac: 13
+max_hp: 45
+hp_formula: 6d10 + 12
+abilities:
+  str: 21
+  dex: 8
+  con: 15
+  int: 2
+  wis: 12
+  cha: 6
+speed: 40
+movement_modes:
+  walk: 40
+creature_type: beast
+alignment: neutral
+proficiency_bonus: 2
+save_bonuses: {}
+save_proficiencies: []
+initiative_bonus: 0
+resistances: []
+immunities: []
+vulnerabilities: []
+condition_immunities: []
+attacks:
+- name: Gore
+  kind: melee
+  to_hit: 7
+  reach_ft: 5
+  effects:
+  - damage:
+      dice: 2d8
+      bonus: 5
+      type: piercing
+  - damage:
+      dice: 2d8
+      bonus: 0
+      type: piercing
+multiattack: []
+actions: []
+traits: []
+unsupported:
+- 'Gore: the extra damage and Prone needs a grid: the rider applies only after moving 20+ feet straight toward the
+  target, which is not simulated.'
+size: L

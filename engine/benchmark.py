@@ -69,7 +69,8 @@ def default_version(level):
 
 @lru_cache(maxsize=None)
 def monster_xp(name):
-    return XP_BY_CR[str(load_sheet(ROOT / "monsters" / (name + ".yaml"))["cr"])]
+    from .loader import monster_cr
+    return XP_BY_CR[monster_cr(name)]
 
 
 def encounter_xp(encounter):
