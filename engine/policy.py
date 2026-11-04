@@ -634,6 +634,10 @@ class RationedPolicy(Policy):
     at-will forecast costs half the party's HP) everything is released: any
     spell, the highest slot, healing below half HP and short-rest features.
     """
+    # 2026-11-04, paired evaluation against both flags off (L5 warlock and sorcerer parties, typical and
+    # long days, 120 runs each): no measurable change. Warlock -1.7 and -4.2 points of days without a
+    # death, both within noise; sorcerer identical, as it already spends about one Metamagic per fight.
+    # Kept because they follow the rules (pact slots return on a short rest).
     PACT_UNTIL_SHORT_REST = True   # pact slots are shared over the fights until the next rest, when they return
     BUDGET_SORCERY_POINTS = True   # Sorcery Points get a per-fight share until the long rest, like slots
     EMERGENCY = 0.25   # an ally below this HP share (or down) frees every resource
