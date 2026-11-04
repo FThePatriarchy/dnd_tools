@@ -205,6 +205,7 @@ class MonsterMechanics:
             enemies = self.reachable(actor, enemies, attack)
             if not enemies: return False
             target = targets[0] if targets else (self.monster_target(actor,enemies) or min(enemies, key=lambda c: (c.hp, c.id)))
+            if not targets and actor.team == "party" and actor.has_condition("grappled"): target = self.policy_for(actor).weapon_target(self,actor,enemies)
             return self.weapon_attack(actor, target, attack)
         # A routine/legendary action grants just this option, not a whole turn.
         old = actor.action, actor.bonus_action, actor.reaction, self.current

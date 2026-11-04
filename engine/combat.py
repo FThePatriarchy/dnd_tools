@@ -1445,7 +1445,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 cleave = {**attack,"effects":deepcopy(attack["effects"])}
                 cleave["effects"][0]["damage"]["bonus"] = cleave["effects"][0]["damage"].get("bonus",0)-max(0,actor.mod(attack.get("ability","str")))
                 self.feature_log(actor,"Cleave")
-                self.weapon_attack(actor,others[0],cleave)
+                other = self.policy_for(actor).weapon_target(self,actor,others) if actor.team == "party" and actor.has_condition("grappled") else others[0]
+                self.weapon_attack(actor,other,cleave)
         if extra in actor.effects: actor.effects.remove(extra)
         if (success and actor.features.get("great_weapon_master") and attack.get("kind", "melee") == "melee"
                 and (landed["critical"] or (before_hp > 0 and target.hp == 0)) and self.current is actor
@@ -1562,8 +1563,21 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
         self.end_spell(inst.id)
         return True
 
-    def hit_probability(self, actor, target, bonus):
-        return min(.95, max(.05, (21 + bonus - self.armor_class(target)) / 20))
+    def hit_probability(self, actor, target, bonus, *, spell=False):
+        hit = min(.95, max(.05, (21 + bonus - self.armor_class(target)) / 20))
+        if actor.team == "party" and actor.has_condition("grappled"):
+            grapplers = self.condition_sources(actor,"grappled")
+            if grapplers and target not in grapplers:
+                adv,_ = self.roll_flags(actor,"attack_rolls",against=target)
+                adv |= spell and actor.has_status("innate_sorcery")
+                adv |= any(target.has_condition(c) for c in ("paralyzed","stunned","unconscious","blinded","restrained"))
+                adv |= actor.has_condition("invisible") and not target.has_condition("invisible") and not target.has_status("see_invisible")
+                return hit if adv else hit**2
+        return 1-(1-hit)**2 if spell and actor.has_status("innate_sorcery") else hit
+
+    def attack_target_value(self, actor, block, target):
+        damage = sum((dice.base_mean(p["damage"]) + (actor.spell_mod if p["damage"].get("bonus") == "spell_mod" else p["damage"].get("bonus",0))) * self.damage_factor(target,p["damage"].get("type")) for p in block["on_hit"] if "damage" in p)
+        return min(target.hp,damage) * self.hit_probability(actor,target,actor.spell_attack_bonus,spell=True)
 
     def damage_factor(self, target, dtype):
         """Expected multiplier mitigate_damage applies to dtype (immunity, resistance, vulnerability).
@@ -1602,8 +1616,10 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
             hit=self.hit_probability(actor,target,attack["to_hit"])
             if attack_bonus: hit=min(.95,hit+attack_bonus*.05)
             adv,dis=self.roll_flags(actor,"attack_rolls",attack.get("ability","dex"),against=target)
-            if adv and not dis: hit=1-(1-hit)**2
-            if dis and not adv: hit=hit**2
+            grapplers = self.condition_sources(actor,"grappled") if actor.team == "party" else []
+            if not grapplers or target in grapplers:
+                if adv and not dis: hit=1-(1-hit)**2
+                if dis and not adv: hit=hit**2
             bonus=dice.mean(actor.features["sneak_attack"])+(actor.level if actor.features.get("assassinate") and self.round==1 else 0)
             total += bonus*(1-(1-hit)**len(names))
         return total
@@ -1719,6 +1735,8 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 declaration = next((b for b in spec["effects"] if b["id"] == block["target"]["ref"]), block)
             eligible = [c for c in self.eligible(probe, declaration) if c.team != actor.team]
             eligible.sort(key=lambda c: (c.hp, c.id))
+            if declaration["attack"] and actor.team == "party" and actor.has_condition("grappled"):
+                eligible.sort(key=lambda c:(-self.attack_target_value(actor,declaration,c),c.hp,c.id))
             t = declaration["target"]
             if t["select"] == "self": continue
             if t["select"] == "area":
@@ -1749,8 +1767,7 @@ class Combat(MonsterMechanics, SpellMechanics, WeaponSpells, ClassMechanics, Day
                 if damage and empowered: damage += actor.mod("int"); empowered=False
                 fail = self.save_failure_probability(actor, victim, block["save"]["ability"], block["save"].get("dc")) if block["save"] else 1
                 if block["attack"]:
-                    hit=self.hit_probability(actor, victim, actor.spell_attack_bonus)
-                    if actor.has_status("innate_sorcery"): hit=1-(1-hit)**2
+                    hit=self.hit_probability(actor, victim, actor.spell_attack_bonus,spell=True)
                     miss=sum(dice.base_mean(p["damage"])+(actor.spell_mod if p["damage"].get("bonus")=="spell_mod" else p["damage"].get("bonus",0)) for p in block.get("on_miss",[]) if "damage" in p)/2
                     damage=damage*hit+miss*(1-hit)
                 if block["save"]: damage *= fail + ((1 - fail) / 2 if block["save"]["on_success"] == "half" else 0)

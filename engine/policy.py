@@ -1,5 +1,6 @@
 """Replace Policy, area_heuristic or grab_cap without changing spell resolution."""
 import math
+from copy import copy
 
 from .dice import mean
 from .state import SpellInstance
@@ -177,9 +178,44 @@ class Policy:
         if target is not None: return target
         active=[c for c in enemies if not c.has_condition("incapacitated")] if "armored" in actor.features or actor.features.get("sneak_attack") else enemies
         candidates=active or enemies
-        if actor.features.get("sneak_attack"):
+        if actor.features.get("sneak_attack") or actor.team == "party" and actor.has_condition("grappled"):
             return max(candidates,key=lambda c:(combat.expected_weapon_damage(actor,c),-c.hp,c.id))
         return min(candidates,key=lambda c:(c.hp,c.id))
+
+    def should_escape(self, combat, actor):
+        """Plain grapples must repay the lost action within two rounds."""
+        if actor.has_condition("restrained") or actor.has_status("engulfed") or actor.has_status("swallowed"): return True
+        if not actor.has_condition("grappled"): return False
+        if actor.team != "party": return True
+        effects = actor.active_effects
+        grapples = [e for e in effects if e.kind == "apply_condition" and e.data["condition"] == "grappled" and actor.condition_effective(e, effects)]
+        sources = {e.source for e in grapples}
+        if any(e.kind == "apply_condition" and e.source in sources and e.data.get("linked") and e.data["condition"] != "grappled" and actor.condition_effective(e, effects) for e in effects): return True
+        enemies = combat.enemies(actor)
+        reachable = combat.reachable(actor,enemies,combat.pc_weapon(actor)) if actor.attacks else []
+        if any(c in reachable and combat.expected_weapon_damage(actor,c) > 0 for c in combat.condition_sources(actor,"grappled")): return False
+        spells = [combat.scale(actor,combat.spells[n],combat.available_slot(actor,combat.spells[n])) for n in actor.spells
+                  if combat.can_cast(actor,n) and self.allow_spell(combat,actor,combat.spells[n])
+                  and actor.spell_costs.get(n,combat.spells[n]["casting_time"]) == "action"
+                  and not (combat.spells[n]["concentration"] and actor.concentration is not None)]
+        if any(not any(b["attack"] for b in s["effects"]) for s in spells): return False
+        if any(a["cost"] == "action" and combat.action_available(actor,a) and self.allow_action(combat,actor,a) and combat.expected_action_damage(actor,a,enemies[0]) > 0 for a in actor.actions): return False
+        if not grapples or "escape_dc" not in grapples[0].data: return False
+        free = copy(actor)
+        free.conditions = actor.conditions - {"grappled"}
+        free.effects = [e for e in actor.effects if e.source != grapples[0].source]
+        def value(c):
+            return max([combat.expected_weapon_damage(c,t) for t in enemies] + [combat.expected_spell_damage(c,s,enemies[0],horizon=1) for s in spells], default=0)
+        current, released = value(actor), value(free)
+        ability = max(("str","dex"),key=actor.mod)
+        bonus = combat.modifier(actor,"ability_check",actor.mod(ability),(ability,None)) - combat.exhaustion_penalty(actor)
+        chance = max(0,min(1,(21+bonus-grapples[0].data["escape_dc"])/20))
+        adv,dis = combat.roll_flags(actor,"ability_checks",ability)
+        dis |= actor.has_condition("poisoned") or actor.has_condition("frightened")
+        if adv and not dis: chance = 1-(1-chance)**2
+        if dis and not adv: chance *= chance
+        # shortcut: ignore re-grapples and check rerolls, revisit with movement AI.
+        return chance * min(2,combat.expected_remaining_rounds(actor)) * (released-current) > current
 
     def memorize_spell(self, actor):
         if "Fireball" in actor.spellbook and "Fireball" not in actor.spells and actor.prepared_spells:
@@ -309,6 +345,10 @@ class Policy:
         # Allegiance-neutral legality stays in the engine; this is preference only.
         preferred = [x for x in eligible if (x.team == instance.caster.team) == beneficial]
         ordered = sorted(preferred or eligible, key=lambda x: (x.hp / max(1,x.max_hp) if beneficial else x.hp, x.id))
+        if not beneficial and block["attack"] and instance.caster.team == "party" and instance.caster.has_condition("grappled"):
+            ordered = sorted(preferred or eligible,key=lambda c:(-combat.attack_target_value(instance.caster,block,c),c.hp,c.id))
+        elif not beneficial and instance.caster.team == "party" and instance.caster.has_condition("grappled") and any("weapon_strike" in p for p in block["apply"]):
+            ordered = sorted(preferred or eligible,key=lambda c:(-combat.expected_weapon_damage(instance.caster,c),c.hp,c.id))
         if paladin_buff and any(p.get("modify", {}).get("stat") == "ac" for p in block["apply"]):
             ordered = sorted(eligible, key=lambda c: (c.position != "front", -max((combat.at_will_damage_rate(e,c) for e in combat.enemies(instance.caster)), default=0), c.id))
         if not beneficial and instance.caster.team != "party" and getattr(combat, "day_options", None):
@@ -395,7 +435,7 @@ class Policy:
             dead = [c for c in combat.combatants if c.team == actor.team and combat.can_revive(c)]
             if dead: combat.cast(actor,"Revivify",targets=[dead[0]])
         if actor.has_status("burning"): combat.extinguish(actor)
-        if actor.has_condition("restrained") or actor.has_condition("grappled") or actor.has_status("engulfed"):
+        if self.should_escape(combat,actor):
             combat.escape(actor)
         if actor.has_condition("prone") and not actor.has_condition("grappled") and not actor.has_condition("restrained") and actor.speed > 0:
             actor.conditions.discard("prone")

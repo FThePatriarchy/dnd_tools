@@ -552,6 +552,9 @@ class ClassMechanics:
         if roll is None:
             adv, dis = self.roll_flags(actor, "attack_rolls", attack.get("ability", "dex"), against=target)
             dis |= any(actor.has_condition(c) for c in ("blinded", "restrained", "poisoned", "frightened", "prone"))
+            if actor.team == "party":
+                grapplers = self.condition_sources(actor,"grappled")
+                dis |= bool(grapplers) and target not in grapplers
             adv |= any(target.has_condition(c) for c in ("prone", "restrained", "paralyzed", "stunned", "unconscious", "blinded")) and attack["kind"] == "melee"
             advantage, disadvantage = adv and not dis, dis and not adv
         else: advantage, disadvantage = roll["advantage"], roll["disadvantage"]

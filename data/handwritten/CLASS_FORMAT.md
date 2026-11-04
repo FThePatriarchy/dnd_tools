@@ -45,6 +45,7 @@ No grid, concealment, movement or opportunity attacks are fabricated.
 
 | Addition / first user | Execution |
 |---|---|
+| PC grapple AI | Escape restraint, engulfing, swallowing or a same-source linked rider; keep attacking a useful grappler or using unaffected spells/actions for a plain grapple. Otherwise escape only when success-weighted damage regained over at most two rounds exceeds this turn's action. Weapon and spell-attack targeting value disadvantage against non-grapplers. |
 | Critical threshold / Champion | `improved_critical`: weapons only, qualifying natural rolls also hit automatically; spell attacks retain natural 20. |
 | Initiative / Champion, Assassin | `initiative_advantage`; Remarkable Athlete adds Athletics advantage. Assassinate grants attack advantage in round one against creatures without a turn; first-round Sneak Attack adds Rogue level as undoubled damage. |
 | Failed rolls / Fighter | Tactical Mind rolls d10 after a failed check, spending Second Wind only on success. Indomitable spends its daily counter and rerolls with class level added, retaining roll flags. Automatic save failures cannot be rerolled away. Heroic Warrior grants Inspiration at own turn start; policy rerolls failed D20s, not damage dice. |
