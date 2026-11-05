@@ -1,18 +1,18 @@
 # Party rating: fighter_15+items_full, cleric_15+items_full, rogue_15+items_full, wizard_15+items_full
 
-Level 15, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,300 runs.
+Level 15, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 6,400 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 15 (7800 XP).
 
-**Overall: 26,530 XP (6,633 per PC, 0.85x High)**, the geometric mean of the types.
+**Overall: 26,428 XP (6,607 per PC, 0.85x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
-| brute | 16,683 | 4,171 | 0.53 |
+| brute | 16,324 | 4,081 | 0.52 |
 | ranged | 35,700 | 8,925 | 1.14 |
 | caster | 31,662 | 7,915 | 1.01 |
 | swarm | 22,800 | 5,700 | 0.73 |
-| control | 23,888 | 5,972 | 0.77 |
+| control | 23,855 | 5,964 | 0.76 |
 | solo | 33,952 | 8,488 | 1.09 |
 
 ## Magic items
@@ -35,8 +35,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | tyrannosaurus_rex x1 | 3,900 | 0.0% | 1.8% | 100 |
 | tyrannosaurus_rex x2 | 7,800 | 0.0% | 1.8% | 100 |
 | tyrannosaurus_rex x3 | 11,700 | 0.0% | 1.8% | 100 |
-| tyrannosaurus_rex x4 | 15,600 | 0.0% | 1.8% | 100 |
-| tyrannosaurus_rex x5 | 19,500 | 18.0% | 10.5% | 50 |
+| tyrannosaurus_rex x4 | 15,600 | 0.7% | 1.8% | 150 |
+| tyrannosaurus_rex x5 | 19,500 | 24.0% | 11.6% | 50 |
 
 ### ranged
 
@@ -85,8 +85,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | chain_devil x3 | 11,700 | 0.0% | 1.8% | 100 |
 | chain_devil x4 | 15,600 | 0.0% | 1.8% | 100 |
 | chain_devil x5 | 19,500 | 0.0% | 1.8% | 100 |
-| chain_devil x6 | 23,400 | 2.0% | 1.9% | 250 |
-| chain_devil x8 | 31,200 | 50.0% | 13.4% | 50 |
+| chain_devil x6 | 23,400 | 2.3% | 1.8% | 300 |
+| chain_devil x8 | 31,200 | 48.0% | 13.3% | 50 |
 
 ### solo
 

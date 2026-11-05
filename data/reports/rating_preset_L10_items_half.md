@@ -1,10 +1,10 @@
 # Party rating: fighter_10+items_half, cleric_10+items_half, rogue_10+items_half, wizard_10+items_half
 
-Level 10, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,100 runs.
+Level 10, 4 PCs; benchmark v1; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 6,400 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 10 (3100 XP).
 
-**Overall: 10,663 XP (2,666 per PC, 0.86x High)**, the geometric mean of the types.
+**Overall: 11,257 XP (2,814 per PC, 0.91x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
@@ -12,7 +12,7 @@ The rating is the encounter XP at which the party's chance of defeat (TPK, or ev
 | ranged | 15,081 | 3,770 | 1.22 |
 | caster | 9,558 | 2,389 | 0.77 |
 | swarm | 10,886 | 2,722 | 0.88 |
-| control | 11,481 | 2,870 | 0.93 |
+| control | 15,900 | 3,975 | 1.28 |
 | solo | 6,620 | 1,655 | 0.53 |
 
 ## Magic items
@@ -85,8 +85,9 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | vampire_spawn x3 | 5,400 | 0.0% | 1.8% | 100 |
 | vampire_spawn x4 | 7,200 | 0.0% | 1.8% | 100 |
 | vampire_spawn x5 | 9,000 | 0.0% | 1.8% | 100 |
-| vampire_spawn x6 | 10,800 | 1.5% | 1.9% | 200 |
-| vampire_spawn x8 | 14,400 | 20.0% | 10.9% | 50 |
+| vampire_spawn x6 | 10,800 | 0.0% | 1.8% | 100 |
+| vampire_spawn x8 | 14,400 | 0.0% | 1.8% | 100 |
+| vampire_spawn x10 | 18,000 | 12.0% | 9.1% | 50 |
 
 ### solo
 

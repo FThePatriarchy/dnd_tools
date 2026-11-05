@@ -1,6 +1,6 @@
 # Party rating: fighter_11_casual, cleric_11_casual, rogue_11_casual, wizard_11_casual
 
-Level 11, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 3,500 runs.
+Level 11, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 4,900 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 11 (4100 XP).
 

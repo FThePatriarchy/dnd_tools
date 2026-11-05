@@ -1,14 +1,14 @@
 # Party rating: fighter_13+items_full, cleric_13+items_full, rogue_13+items_full, wizard_13+items_full
 
-Level 13, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 4,950 runs.
+Level 13, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 6,150 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 13 (5400 XP).
 
-**Overall: 19,455 XP (4,864 per PC, 0.90x High)**, the geometric mean of the types.
+**Overall: 19,422 XP (4,855 per PC, 0.90x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
-| brute | 15,820 | 3,955 | 0.73 |
+| brute | 15,658 | 3,914 | 0.72 |
 | ranged | 27,900 | 6,975 | 1.29 |
 | caster | 14,519 | 3,630 | 0.67 |
 | swarm | 18,750 | 4,688 | 0.87 |
@@ -35,8 +35,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | tyrannosaurus_rex x1 | 3,900 | 0.0% | 1.8% | 100 |
 | tyrannosaurus_rex x2 | 7,800 | 0.0% | 1.8% | 100 |
 | tyrannosaurus_rex x3 | 11,700 | 0.0% | 1.8% | 100 |
-| tyrannosaurus_rex x4 | 15,600 | 2.7% | 1.9% | 300 |
-| tyrannosaurus_rex x5 | 19,500 | 44.0% | 13.3% | 50 |
+| tyrannosaurus_rex x4 | 15,600 | 4.4% | 1.9% | 450 |
+| tyrannosaurus_rex x5 | 19,500 | 42.0% | 13.2% | 50 |
 
 ### ranged
 

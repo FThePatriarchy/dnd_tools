@@ -1,10 +1,10 @@
 # Party rating: fighter_17_optimized, cleric_17_optimized, rogue_17_optimized, wizard_17_optimized
 
-Level 17, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,100 runs.
+Level 17, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 6,700 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 17 (11700 XP).
 
-**Overall: 28,179 XP (7,045 per PC, 0.60x High)**, the geometric mean of the types.
+**Overall: 28,211 XP (7,053 per PC, 0.60x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
@@ -12,7 +12,7 @@ The rating is the encounter XP at which the party's chance of defeat (TPK, or ev
 | ranged | 30,833 | 7,708 | 0.66 |
 | caster | 25,401 | 6,350 | 0.54 |
 | swarm | 31,071 | 7,768 | 0.66 |
-| control | 23,625 | 5,906 | 0.50 |
+| control | 23,788 | 5,947 | 0.51 |
 | solo | 34,429 | 8,607 | 0.74 |
 
 ## Ladder results
@@ -74,8 +74,8 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | chain_devil x3 | 11,700 | 0.0% | 1.8% | 100 |
 | chain_devil x4 | 15,600 | 0.0% | 1.8% | 100 |
 | chain_devil x5 | 19,500 | 0.0% | 1.8% | 100 |
-| chain_devil x6 | 23,400 | 3.4% | 2.0% | 350 |
-| chain_devil x8 | 31,200 | 58.0% | 13.2% | 50 |
+| chain_devil x6 | 23,400 | 2.3% | 1.8% | 300 |
+| chain_devil x8 | 31,200 | 56.0% | 13.3% | 50 |
 
 ### solo
 

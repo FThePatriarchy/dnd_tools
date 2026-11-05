@@ -1,18 +1,18 @@
 # Party rating: fighter_13+items_half, cleric_13+items_half, rogue_13+items_half, wizard_13+items_half
 
-Level 13, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,300 runs.
+Level 13, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 6,150 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 13 (5400 XP).
 
-**Overall: 18,086 XP (4,522 per PC, 0.84x High)**, the geometric mean of the types.
+**Overall: 17,964 XP (4,491 per PC, 0.83x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
-| brute | 13,867 | 3,467 | 0.64 |
+| brute | 13,325 | 3,331 | 0.62 |
 | ranged | 24,984 | 6,246 | 1.16 |
 | caster | 14,323 | 3,581 | 0.66 |
 | swarm | 18,043 | 4,511 | 0.84 |
-| control | 19,601 | 4,900 | 0.91 |
+| control | 19,587 | 4,897 | 0.91 |
 | solo | 19,944 | 4,986 | 0.92 |
 
 ## Magic items
@@ -35,7 +35,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | tyrannosaurus_rex x1 | 3,900 | 0.0% | 1.8% | 100 |
 | tyrannosaurus_rex x2 | 7,800 | 0.0% | 1.8% | 100 |
 | tyrannosaurus_rex x3 | 11,700 | 0.0% | 1.8% | 100 |
-| tyrannosaurus_rex x4 | 15,600 | 9.0% | 4.0% | 200 |
+| tyrannosaurus_rex x4 | 15,600 | 12.0% | 9.1% | 50 |
 
 ### ranged
 
@@ -84,7 +84,7 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | chain_devil x3 | 11,700 | 0.0% | 1.8% | 100 |
 | chain_devil x4 | 15,600 | 0.0% | 1.8% | 100 |
 | chain_devil x5 | 19,500 | 3.8% | 1.9% | 400 |
-| chain_devil x6 | 23,400 | 52.0% | 13.3% | 50 |
+| chain_devil x6 | 23,400 | 60.0% | 13.1% | 50 |
 
 ### solo
 

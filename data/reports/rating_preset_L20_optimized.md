@@ -1,10 +1,10 @@
 # Party rating: fighter_20_optimized, cleric_20_optimized, rogue_20_optimized, wizard_20_optimized
 
-Level 20, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 5,800 runs.
+Level 20, 4 PCs; benchmark v2; defeat threshold 5%; party strategy `default`; morale `none`; seed 1; 7,650 runs.
 
 The rating is the encounter XP at which the party's chance of defeat (TPK, or every PC still standing dominated or out of the fight) reaches the threshold. Multiples are of the 2024 DMG High budget per character at level 20 (22000 XP).
 
-**Overall: 41,934 XP (10,484 per PC, 0.48x High)**, the geometric mean of the types.
+**Overall: 43,794 XP (10,948 per PC, 0.50x High)**, the geometric mean of the types.
 
 | Opponent type | Rating | Per PC | × High |
 | --- | ---: | ---: | ---: |
@@ -12,7 +12,7 @@ The rating is the encounter XP at which the party's chance of defeat (TPK, or ev
 | ranged | 36,556 | 9,139 | 0.42 |
 | caster | 30,450 | 7,612 | 0.35 |
 | swarm | 46,861 | 11,715 | 0.53 |
-| control | 46,250 | 11,562 | 0.53 |
+| control | 60,000 | 15,000 | 0.68 |
 | solo | 51,111 | 12,778 | 0.58 |
 
 ## Ladder results
@@ -74,7 +74,9 @@ Defeat chance at each benchmark step, with its 95% half-width and run count.
 | vampire x2 | 20,000 | 0.0% | 1.8% | 100 |
 | vampire x3 | 30,000 | 0.0% | 1.8% | 100 |
 | vampire x4 | 40,000 | 0.0% | 1.8% | 100 |
-| vampire x5 | 50,000 | 8.0% | 2.9% | 350 |
+| vampire x5 | 50,000 | 0.0% | 1.8% | 100 |
+| vampire x6 | 60,000 | 5.0% | 1.9% | 500 |
+| vampire x8 | 80,000 | 96.0% | 6.2% | 50 |
 
 ### solo
 
